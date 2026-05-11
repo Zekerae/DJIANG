@@ -1,0 +1,296 @@
+/*
+  Character-slide.css — SCOPED VERSION
+  ══════════════════════════════════════════════════════════════════
+  All selectors namespaced under .cs-root so this stylesheet is
+  safe to inject into any page without polluting global styles.
+
+  .cs-root sizing/position is controlled from OUTSIDE:
+    Inline in document  →  position: relative; width: 100%; height: 100vh;
+    Anchored to parent  →  position: absolute; inset: 0;
+    Anchored to screen  →  position: fixed;    inset: 0;
+  ══════════════════════════════════════════════════════════════════
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* ── RESET (scoped) ───────────────────────────────────────────── */
+.cs-root *, .cs-root *::before, .cs-root *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── ROOT WRAPPER ─────────────────────────────────────────────── */
+/*
+  Replaces body styles. Sets the positioning context for all
+  internal absolute children. Width/height intentionally set
+  here as sensible defaults — override from outside as needed.
+*/
+.cs-root {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #0f0f0f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    --cs-green: #14ff72cb;
+    --cs-dark:  #2c2c2ccb;
+}
+
+/* ── CAROUSEL ─────────────────────────────────────────────────── */
+.cs-root .carousel {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.cs-root .carousel .list .item {
+    width: 180px;
+    height: 250px;
+    position: absolute;
+    top: 80%;
+    transform: translateY(-70%);
+    left: 70%;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    background-position: 50% 50%;
+    background-size: cover;
+    z-index: 100;
+    transition: 1s;
+}
+
+.cs-root .carousel .list .item:nth-child(1),
+.cs-root .carousel .list .item:nth-child(2) {
+    top: 0;
+    left: 0;
+    transform: translate(0, 0);
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.cs-root .carousel .list .item:nth-child(3) { left: 67%; }
+.cs-root .carousel .list .item:nth-child(4) { left: calc(67% + 200px); }
+.cs-root .carousel .list .item:nth-child(5) { left: calc(67% + 400px); }
+.cs-root .carousel .list .item:nth-child(6) { left: calc(67% + 600px); }
+.cs-root .carousel .list .item:nth-child(n+7) {
+    left: calc(67% + 800px);
+    opacity: 0;
+}
+
+/* ── SLIDE CONTENT ────────────────────────────────────────────── */
+.cs-root .list .item .content {
+    position: absolute;
+    top: 50%;
+    left: 100px;
+    transform: translateY(-50%);
+    width: 400px;
+    text-align: left;
+    color: #fff;
+    display: none;
+}
+
+.cs-root .list .item:nth-child(2) .content {
+    display: block;
+}
+
+.cs-root .content .title {
+    position: relative;
+    color: #ffffff;
+    text-shadow: 0 0 20px #000000;
+    top: -50px;
+    font-size: clamp(40px, 8vw, 80px);
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin: 0;
+    z-index: 3;
+    opacity: 0;
+    animation: cs-animate 1s ease-in-out 0.3s 1 forwards;
+}
+
+.cs-root .content .name {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(0, 0, 0, 0.67);
+    font-size: clamp(80px, 12vw, 150px);
+    font-weight: 900;
+    letter-spacing: 4px;
+    margin: 0;
+    z-index: 2;
+    white-space: nowrap;
+    opacity: 0;
+    animation: cs-animate 1s ease-in-out 0.6s 1 forwards;
+}
+
+.cs-root .content .des {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    margin-left: 5px;
+    text-shadow: 0 0 10px #000000;
+    opacity: 0;
+    animation: cs-animate 1s ease-in-out 0.9s 1 forwards;
+}
+
+.cs-root .content .btn {
+    margin-left: 5px;
+    opacity: 0;
+    animation: cs-animate 1s ease-in-out 1.2s 1 forwards;
+}
+
+.cs-root .content .btn button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border: 2px solid #fff;
+}
+
+.cs-root .content .btn button:nth-child(1) {
+    margin-right: 15px;
+}
+
+.cs-root .content .btn button:nth-child(2) {
+    background: transparent;
+    color: var(--cs-dark);
+    border: 2px solid #fff;
+    transition: 0.3s;
+}
+
+.cs-root .content .btn button:nth-child(2):hover {
+    background-color: var(--cs-dark);
+    color: #fff;
+    border-color: var(--cs-dark);
+}
+
+/* Prefixed keyframe — no collision with host page */
+@keyframes cs-animate {
+    from {
+        opacity: 0;
+        transform: translate(0, 100px);
+        filter: blur(33px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(0);
+        filter: blur(0);
+    }
+}
+
+/* ── ARROWS ───────────────────────────────────────────────────── */
+.cs-root .arrows {
+    position: absolute;
+    top: 80%;
+    right: 52%;
+    z-index: 100;
+    width: 300px;
+    max-width: 30%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.cs-root .arrows button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--cs-dark);
+    color: #fff;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-family: monospace;
+    font-weight: bold;
+    transition: .5s;
+    cursor: pointer;
+}
+
+.cs-root .arrows button:hover {
+    background: #fff;
+    color: #000;
+}
+
+/* ── TIME RUNNING ─────────────────────────────────────────────── */
+.cs-root .carousel .timeRunning {
+    position: absolute;
+    z-index: 1000;
+    width: 0%;
+    height: 4px;
+    background-color: var(--cs-green);
+    left: 0;
+    top: 0;
+    animation: cs-runningTime 7s linear 1 forwards;
+}
+
+@keyframes cs-runningTime {
+    from { width: 0%; }
+    to   { width: 100%; }
+}
+
+/* ── CAROUSEL TRANSITION STATES ───────────────────────────────── */
+/*
+  These were on .carousel in the original — kept as-is since
+  they're already scoped via .cs-root .carousel above when
+  the JS adds/removes .next/.prev on the carousel element.
+  Adding .cs-root prefix here for full safety.
+*/
+.cs-root .carousel.next .list .item:nth-child(1) {
+    width: 180px;
+    height: 250px;
+    position: absolute;
+    top: 80%;
+    left: 70%;
+    border-radius: 20px;
+    transform: translateY(-70%);
+    transition: 1s;
+}
+
+.cs-root .carousel.prev .list .item:nth-child(2) {
+    z-index: 2;
+}
+
+.cs-root .carousel.next .list .item:nth-child(2),
+.cs-root .carousel.prev .list .item:nth-child(2) {
+    z-index: 2;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────────── */
+@media screen and (max-width: 999px) {
+    .cs-root .list .item .content { left: 50px; }
+    .cs-root .content .title,
+    .cs-root .content .name       { font-size: 70px; }
+    .cs-root .content .des        { font-size: 16px; }
+}
+
+@media screen and (max-width: 690px) {
+    .cs-root .list .item .content { top: 40%; }
+
+    .cs-root .content .title {
+        font-size: 35px;
+        top: -145px;
+        left: -20px;
+    }
+
+    .cs-root .content .name {
+        font-size: 35px;
+        top: -115px;
+    }
+
+    .cs-root .content .des {
+        font-size: 14px;
+        width: 300px;
+        top: 0px;
+    }
+
+    .cs-root .content .btn button {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}

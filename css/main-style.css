@@ -1,0 +1,16 @@
+.body{
+    overflow-x: hidden;
+    overscroll-behavior-x: contain;
+}
+
+.landing-page{
+    overflow: hidden;
+}
+#carousel-3D{
+    background-color: rgb(45, 45, 45);
+    overflow: hidden;
+}
+#character-slide{
+    position: relative;
+    height: 120%;
+}
