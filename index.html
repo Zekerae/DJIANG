@@ -36,12 +36,16 @@
         <div class="sidebar-item"><span class="sidebar-icon">&#9632;</span> SETTINGS</div>
     </div>
 
+    <!-- 
+        SECTIONS START
+        this area is where the js fetcher gets the calss id os teh div sections
+    -->
 
-    <div id="landing-page">adada</div>
-    <div id="carousel-3D">adadad</div>
-    
-    <div id="character-slide">adadad</div>
-        
+    <div id="landing-page"></div>
+    <div id="carousel-3D"></div>
+    <div id="character-slide"></div>
+
+    <!-- SECTIONS END -->    
     <div class="sub-footer">
         <div id="sfc1" class="subFooter-container">
             <div class="top"></div>
@@ -102,54 +106,6 @@
     </div>
     <script src="js/text_glitch.js"></script>
     <script src="js/HTML-fetcher.js"></script>
-    <script>
-        const ham = document.getElementById('ham');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        const progress = document.getElementById('progress');
-        const sectionIds = ['build', 'guide', 'plan', 'about'];
-
-        /* ─── PROGRESS BAR — raw scroll distance ─── */
-        function updateProgress() {
-            const scrollTop = window.scrollY;
-            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            const pct = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
-            progress.style.width = pct + '%';
-
-            /* keep nav/sidebar active states in sync */
-            let activeIdx = 0;
-            for (let i = 0; i < sectionIds.length; i++) {
-                const el = document.getElementById(sectionIds[i]);
-                if (el && el.offsetTop <= scrollTop + window.innerHeight * 0.5) activeIdx = i;
-            }
-
-            document.querySelectorAll('.nav-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', i === activeIdx);
-            });
-            document.querySelectorAll('.sidebar-item[data-target]').forEach(item => {
-                item.classList.toggle('active', item.dataset.target === sectionIds[activeIdx]);
-            });
-        }
-
-        window.addEventListener('scroll', updateProgress);
-        window.addEventListener('resize', updateProgress);
-        updateProgress();
-
-        /* ─── SCROLL TO SECTION ─── */
-        document.querySelectorAll('[data-target]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const el = document.getElementById(btn.dataset.target);
-                if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
-                if (sidebar.classList.contains('open')) toggleSidebar();
-            });
-        });
-
-        /* ─── SIDEBAR TOGGLE ─── */
-        function toggleSidebar() {
-            const open = sidebar.classList.toggle('open');
-            ham.classList.toggle('open', open);
-            overlay.classList.toggle('visible', open);
-        }
-    </script>
+    <script src="js/navbar.js"></script>
 </body>
 </html>
