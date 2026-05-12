@@ -1,35 +1,51 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DJIANG: A Comprehensive Web-Based Information System for Skill Optimization, Material Logistics, and Player Quality-of-Life in Arknights: Endfield</title>
+    <title>DJIANG | Arknights: Endfield Intelligence Hub</title>
+    
+    <meta name="description" content="A comprehensive information system for Arknights: Endfield skill optimization and logistics.">
+
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/main-style.css">
     <link rel="stylesheet" href="css/footer-style.css">
     <link rel="stylesheet" href="css/wipe-hover.css">
-    <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
 
+<<<<<<< HEAD
     <!-- 
     
     NAVBAR 
     
     -->
+=======
+>>>>>>> aa490d87e1740a8d8e1bf201e731c3b895710655
     <nav class="navbar">
         <div class="progress-bar" id="progress"></div>
+        
         <div class="hamburger" id="ham" onclick="toggleSidebar()">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </div>
+
         <div class="nav-links">
             <div class="nav-btn" data-target="landing-page">
                 <div class="wipe-hover">
                     <div class="tglitch-animation swipe" data-speed="5" data-increment="20">HOME</div>
                 </div>
             </div>
+<<<<<<< HEAD
 
             <div class="nav-btn" data-target="character-slide">
+=======
+            <div class="nav-btn" data-target="carousel-3D">
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="5" data-increment="20">WEAPONS</div>
+                </div>
+            </div>
+            <div class="nav-btn" data-target="OperatorList.html">
+>>>>>>> aa490d87e1740a8d8e1bf201e731c3b895710655
                 <div class="wipe-hover">
                     <div class="tglitch-animation swipe" data-speed="5" data-increment="20">OPERATORS</div>
                 </div>
@@ -48,10 +64,9 @@
         <div class="nav-spacer"></div>
     </nav>
 
-    <!-- SIDEBAR -->
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-    <div class="sidebar" id="sidebar">
-
+    
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-label">NAVIGATE</div>
 
         <nav class="sidebar-nav">
@@ -60,74 +75,54 @@
                 <div class="sidebar-item-inner">
                     <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">HOME</div></span>
                 </div>
-                <div class="sidebar-page-num">
-                    <span>PAGE</span>
-                    <span>001</span>
-                </div>
+                <div class="sidebar-page-num"><span>PAGE</span><span>001</span></div>
             </div>
+            
             <div class="sidebar-item" data-target="carousel-3D">
                 <div class="sidebar-item-inner">
                     <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">WEAPONS</div></span>
                 </div>
-                <div class="sidebar-page-num">
-                    <span>PAGE</span>
-                    <span>002</span>
-                </div>
+                <div class="sidebar-page-num"><span>PAGE</span><span>002</span></div>
             </div>
+
             <div class="sidebar-item" data-target="OperatorList.html">
                 <div class="sidebar-item-inner">
                     <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">OPERATORS</div></span>
                 </div>
-                <div class="sidebar-page-num">
-                    <span>PAGE</span>
-                    <span>003</span>
-                </div>
+                <div class="sidebar-page-num"><span>PAGE</span><span>003</span></div>
             </div>
-             <div class="sidebar-item" data-target="footer">
+            
+            <div class="sidebar-item" data-target="footer">
                 <div class="sidebar-item-inner">
                     <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">TIER LIST</div></span>
                 </div>
-                <div class="sidebar-page-num">
-                    <span>PAGE</span>
-                    <span>004</span>
-                </div>
-            </div>           
+                <div class="sidebar-page-num"><span>PAGE</span><span>004</span></div>
+            </div>
+
             <div class="sidebar-item" data-target="footer">
                 <div class="sidebar-item-inner">
                     <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">PULL TRACKER</div></span>
                 </div>
-                <div class="sidebar-page-num">
-                    <span>PAGE</span>
-                    <span>005</span>
-                </div>
+                <div class="sidebar-page-num"><span>PAGE</span><span>005</span></div>
             </div>
+
             <div class="sidebar-item" data-target="footer">
                 <div class="sidebar-item-inner">
                     <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">MATERIAL TRACKER</div></span>
                 </div>
-                <div class="sidebar-page-num">
-                    <span>PAGE</span>
-                    <span>006</span>
-                </div>
+                <div class="sidebar-page-num"><span>PAGE</span><span>006</span></div>
             </div>
         </nav>
 
         <div class="sidebar-footer">
-            
             <div class="sidebar-footer-item">
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ &nbsp;FACEBOOK</div>
-                </div><br>
+                <div class="wipe-hover"><div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ DISCORD</div></div>
             </div>
             <div class="sidebar-footer-item">
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ &nbsp;DISCORD</div>
-                </div><br>
+                <div class="wipe-hover"><div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ FACEBOOK</div></div>
             </div>
             <div class="sidebar-footer-item">
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ &nbsp;INSTAGRAM</div>
-                </div><br>
+                <div class="wipe-hover"><div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ INSTAGRAM</div></div>
             </div>
         </div>
 
@@ -135,6 +130,7 @@
             <span>PAGE 001</span>
             <span>&#9644;</span>
         </div>
+    </aside>
 
     </div>
     <!-- 
@@ -377,73 +373,33 @@
         <div id="sfc1" class="subFooter-container">
             <div class="top"></div>
             <div class="bottom">
-                <br><br><br>
-                <div class="tglitch-animation" data-speed="10" data-increment="5">// INITIALIZING... </div><br>
-                <div class="tglitch-animation" data-speed="10" data-increment="5">&nbsp;&nbsp;NEW FILES IN DATABASE..</div><br><br>
-                <div class="tglitch-animation" data-speed="5" data-increment="5">&nbsp;&nbsp;U2FsdGVkX1/0UQamkwwS4V0ehyQJPf2W6Nyb/aZ3PSA.JPG </div><br>
-                <div class="tglitch-animation" data-speed="5" data-increment="5">&nbsp;&nbsp;AUDIO_LOG_U2FsdGVkX1+ACLRfG0X48dtjeP0Tmg/O.WAV </div><br><br>
+                <div class="tglitch-animation" data-speed="10" data-increment="5">// INITIALIZING...</div>
+                <div class="tglitch-animation" data-speed="10" data-increment="5">> NEW FILES IN DATABASE..</div>
+                <div class="tglitch-animation" data-speed="5" data-increment="5">> U2FsdGVkX1/0UQamkwwS4V0ehyQJPf2W6Nyb/aZ3PSA.JPG</div>
                 <div class="tglitch-animation" data-speed="10" data-increment="5">ACTIVATE CONSOLE FOR ACCESS ...</div>
             </div>
         </div>
-        <div class="subFooter-container">
-            <div class="top">
-                <div class="tglitch-animation" data-speed="10" data-increment="5">■ DEVELOPERS</div>
-            </div>
-            <div class="bottom">
-                <br><br><br>
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">ASTERISK</div>
-                </div><br>
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">ZEKERAE</div>
-                </div><br>
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">LEMELLON</div>
-                </div><br>
-            </div>
-        </div>
-        <div class="subFooter-container">
-            <div class="top">
-                <div class="tglitch-animation" data-speed="10" data-increment="5">■ JOIN THE CONVERSATION</div>
-            </div>
-            <div class="bottom">
-                <br><br><br>
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">FACEBOOK</div>
-                </div><br>
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">DISCORD</div>
-                </div><br>
-                <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">INSTAGRAM</div>
-                </div><br>
-            </div>
-        </div>
-        <div class="subFooter-container">
-            <div class="top">
-                <div class="tglitch-animation" data-speed="10" data-increment="5">■ SOURCES</div>
-            </div>
-            <div class="bottom">
-                <br><br><br>
-                <div class="wipe-hover">
-                    <div class="tglitch-animation" data-speed="10" data-increment="5">GIT FILE</div>
-                </div><br>
-            </div>
-        </div>
-    </div>
 
-    <div id="footer" class="footer">
+        <div class="subFooter-container">
+            <div class="top">■ DEVELOPERS</div>
+            <div class="bottom">
+                <div class="wipe-hover"><div class="tglitch-animation swipe" data-speed="10" data-increment="5">ASTERISK</div></div>
+                <div class="wipe-hover"><div class="tglitch-animation swipe" data-speed="10" data-increment="5">ZEKERAE</div></div>
+                <div class="wipe-hover"><div class="tglitch-animation swipe" data-speed="10" data-increment="5">LEMELLON</div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer" class="footer">
         <div class="parralax">
             <div class="footer-container">
                 <div class="brand">foot-djiang</div>
                 <div class="footnote">
-                    <div class="container"></div>
-                    <div class="container"></div>
-                    <div class="container"></div>
+                    <div class="container"></div><div class="container"></div><div class="container"></div>
                 </div>
             </div>
         </div>
-    </div>
+    </footer>
 
     <script src="js/text_glitch.js"></script>
     <script src="js/LandingPage.js"></script>
