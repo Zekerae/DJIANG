@@ -1,0 +1,55 @@
+/* ─── WIPE HOVER ─── */
+.wipe-hover {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    overflow: hidden;
+    padding: 2px 6px;
+}
+
+.wipe-hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 0;
+
+    transform: translateX(101%);            /* rests off-right after exit */
+    animation: wipe-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.wipe-hover:hover::before {
+    transform: translateX(0);
+    animation: wipe-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes wipe-in {
+    from { transform: translateX(-101%); } /* enters from left */
+    to   { transform: translateX(0); }
+}
+
+@keyframes wipe-out {
+    from { transform: translateX(0); }     /* exits to right */
+    to   { transform: translateX(101%); }
+}
+
+.wipe-hover:hover {
+    color: #000;
+}
+
+.wipe-hover > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ─── ACTIVE STATE ─── */
+.wipe-hover.active::before {
+    transform: translateX(0);
+}
+
+.wipe-hover.active {
+    color: #000;
+}
