@@ -33,7 +33,7 @@ const ASSETS = {
 // OPERATOR DATA
 // ==========================================
 const OPS = [
-  {id:"endministrator",name:"Endministrator",rarity:6,cls:"Guard",    element:"Physical",weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Endministrator/Endministrator_splash_art.png"}, 
+  {id:"endministrator",name:"Endministrator",rarity:6,cls:"Guard",    element:"Physical",weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Endministrator/Endministrator_Splash_Art.png"}, 
   {id:"ardelia",       name:"Ardelia",       rarity:6,cls:"Supporter",element:"Nature",  weapon:"Arts Unit",  img:"assets/CharacterAssets/6-stars/Ardelia/Ardelia_splash_art.png"},
   {id:"laevatain",     name:"Laevatain",     rarity:6,cls:"Striker",  element:"Heat",    weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Laevatain/Laevatain_splash_art.png"},
   {id:"last-rite",     name:"Last Rite",     rarity:6,cls:"Striker",  element:"Cryo",    weapon:"Great Sword",img:"assets/CharacterAssets/6-stars/Last Rite/Last_Rite_Splash_Art.png"},
