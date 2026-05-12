@@ -3,8 +3,15 @@
     --navbar-height: 48px;
     --sidebar-width: 220px;
     --border: 0.5px solid rgba(135, 135, 135, 0.4);
+
+    --sidebar-active-bg: #fff;
+    --sidebar-active-text: #000;
+    --sidebar-notch: 16px;
+    --sidebar-item-indent: 28px;   /* ← shift sidebar items left/right */
+    --sidebar-font: 'Arial Black', Arial, sans-serif; /* ← sidebar nav font */
 }
 
+/* ─── NAVBAR ─── */
 .navbar {
     position: fixed;
     top: 0;
@@ -19,7 +26,7 @@
     border-bottom: var(--border);
 }
 
-/* ─── PROGRESS BAR (sits on the bottom border of the navbar) ─── */
+/* ─── PROGRESS BAR ─── */
 .progress-bar {
     position: absolute;
     bottom: -1px;
@@ -31,9 +38,7 @@
     transition: width 0.1s linear;
 }
 
-.nav-spacer {
-    width: var(--navbar-height);
-}
+.nav-spacer { width: var(--navbar-height); }
 
 .nav-links {
     display: flex;
@@ -57,33 +62,16 @@
 }
 
 .nav-btn:hover { color: #fff; }
-
-/* ─── ACTIVE STATE (permanently white-filled) ─── */
-.nav-btn.active {
-    color: #000;
-}
-
-.nav-btn.active::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: #fff;
-    z-index: 0;
-}
-
-.nav-btn.active > * {
-    position: relative;
-    z-index: 1;
-}
+.nav-btn.active { color: #fff; }
 
 .nav-btn.active::after {
     content: '';
     position: absolute;
-    bottom: -1px;
-    left: 20%;
-    right: 20%;
-    height: 1.5px;
-    background: #000;
+    top: 1%;
+    left: 12%;
+    right: 12%;
+    height: 2px;
+    background: #fff;
     z-index: 1;
 }
 
@@ -117,41 +105,172 @@
 .sidebar {
     position: fixed;
     top: 0;
-    left: calc(-1 * var(--sidebar-width));
-    width: var(--sidebar-width);
+    left: -30vw;
+    width: 30vw;
+    min-width: 260px;
     height: 100%;
-    background: #0d0d0d;
+    background: #0a0a0a;
     border-right: var(--border);
     z-index: 90;
     display: flex;
     flex-direction: column;
     padding-top: var(--navbar-height);
-    transition: left 0.3s ease;
+    transition: left 0.4s cubic-bezier(0.77, 0, 0.18, 1);
+    overflow: hidden;
 }
 
 .sidebar.open { left: 0; }
 
-.sidebar-item {
-    padding: 14px 24px;
-    color: rgba(135, 135, 135, 0.7);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    cursor: pointer;
+/* ─── SIDEBAR LABEL ─── */
+.sidebar-label {
+    padding: 18px 28px 12px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: rgba(135, 135, 135, 0.45);
     border-bottom: var(--border);
     display: flex;
     align-items: center;
+    gap: 8px;
+}
+
+.sidebar-label::before {
+    content: '■';
+    font-size: 6px;
+    opacity: 0.5;
+}
+
+/* ─── NAV ITEMS ─── */
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+    border-bottom: var(--border);
+}
+
+.sidebar-item {
+    padding: 4px 0;
+    color: rgba(135, 135, 135, 0.5);
+    font-size: clamp(22px, 3.2vw, 38px);
+    font-family: var(--sidebar-font);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     gap: 10px;
-    transition: all 0.2s;
+    transition: color 0.2s ease;
+    user-select: none;
+    line-height: 1.15;
+    position: relative;
+}
+
+.sidebar-item:hover { color: #fff; }
+.sidebar-item.active { color: var(--sidebar-active-text); }
+.sidebar-item.active:hover { color: var(--sidebar-active-text); }
+
+/* ── Inner wrapper: THIS is what gets the bg + clip-path ── */
+.sidebar-item-inner {
+    /* padding controls how much bg shows around the text */
+    padding: 6px 40px 6px var(--sidebar-item-indent);
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    /* clip-path notch on bottom-right corner, sized to this element */
+    background: transparent;
+    clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        100% calc(100% - var(--sidebar-notch)),
+        calc(100% - var(--sidebar-notch)) 100%,
+        0% 100%
+    );
+    transition: background 0.2s ease;
+}
+
+/* active: fill the inner block */
+.sidebar-item.active .sidebar-item-inner {
+    background: var(--sidebar-active-bg);
+}
+
+/* hover on inactive: subtle white fill */
+.sidebar-item:not(.active):hover .sidebar-item-inner {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* active hover: keep the white fill */
+.sidebar-item.active:hover .sidebar-item-inner {
+    background: var(--sidebar-active-bg);
+}
+
+/* ── Text inside ── */
+.sidebar-text {
+    display: inline-block;
+    color: inherit;
+}
+
+/* ── Page number — flex sibling, always outside the highlight ── */
+.sidebar-page-num {
+    position: relative;
+    z-index: 1;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: rgba(135, 135, 135, 0.5);
+    line-height: 1.4;
+    padding-right: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: flex-start;
+    padding-top: 6px;
+    opacity: 0;
+    transform: translateX(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-page-num span { display: block; }
+
+.sidebar-item:hover .sidebar-page-num,
+.sidebar-item.active .sidebar-page-num {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ─── SIDEBAR FOOTER ─── */
+.sidebar-footer {
+    padding: 18px 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-footer-item {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: rgba(135, 135, 135, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
     user-select: none;
 }
 
-.sidebar-item:hover,
-.sidebar-item.active {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.03);
-}
+.sidebar-footer-item:hover { color: rgba(255, 255, 255, 0.7); }
 
-.sidebar-icon { font-size: 6px; opacity: 0.4; }
+/* ─── PAGE COUNTER ─── */
+.sidebar-page-count {
+    padding: 12px 28px;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(135, 135, 135, 0.25);
+    border-top: var(--border);
+    display: flex;
+    justify-content: space-between;
+}
 
 /* ─── OVERLAY ─── */
 .overlay {
