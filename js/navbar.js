@@ -38,12 +38,32 @@ window.addEventListener('scroll', updateProgress);
 window.addEventListener('resize', updateProgress);
 updateProgress();
 
-/* ─── SCROLL TO SECTION ─── */
+/* ─── Helper: detect if a target value is an HTML link ─── */
+function isLink(target) {
+    return target && (
+        target.endsWith('.html') ||
+        target.endsWith('.htm') ||
+        target.startsWith('http://') ||
+        target.startsWith('https://') ||
+        target.startsWith('/')
+    );
+}
+
+/* ─── SCROLL TO SECTION or NAVIGATE TO PAGE ─── */
 document.querySelectorAll('[data-target]').forEach(btn => {
     btn.addEventListener('click', () => {
-        const el = document.getElementById(btn.dataset.target);
-        if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
-        if (sidebar.classList.contains('open')) toggleSidebar();
+        const target = btn.dataset.target;
+
+        if (isLink(target)) {
+            /* It's an HTML page link — navigate to it */
+            if (sidebar.classList.contains('open')) toggleSidebar();
+            window.location.href = target;
+        } else {
+            /* It's a section ID — scroll to it */
+            const el = document.getElementById(target);
+            if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
+            if (sidebar.classList.contains('open')) toggleSidebar();
+        }
     });
 });
 
