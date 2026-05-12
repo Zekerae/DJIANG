@@ -57,7 +57,24 @@
 }
 
 .nav-btn:hover { color: #fff; }
-.nav-btn.active { color: #fff; }
+
+/* ─── ACTIVE STATE (permanently white-filled) ─── */
+.nav-btn.active {
+    color: #000;
+}
+
+.nav-btn.active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    z-index: 0;
+}
+
+.nav-btn.active > * {
+    position: relative;
+    z-index: 1;
+}
 
 .nav-btn.active::after {
     content: '';
@@ -66,7 +83,8 @@
     left: 20%;
     right: 20%;
     height: 1.5px;
-    background: #fff;
+    background: #000;
+    z-index: 1;
 }
 
 /* ─── HAMBURGER ─── */
