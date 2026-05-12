@@ -13,12 +13,12 @@ const ASSETS = {
     "Nature": "assets/ElementAssets/Natureicon.png"
   },
   classes: {
-    "Striker": "assets/ClassAssets/Strikericon.png",
-    "Guard": "assets/ClassAssets/Guardicon.png",
-    "Vanguard": "assets/ClassAssets/Vanguardicon.png",
-    "Caster": "assets/ClassAssets/Castericon.png",
-    "Defender": "assets/ClassAssets/Defendericon.png",
-    "Supporter": "assets/ClassAssets/supportericon.png"
+    "Striker": "assets/ClassAssets/StrikerIcon.png",
+    "Guard": "assets/ClassAssets/GuardIcon.png",
+    "Vanguard": "assets/ClassAssets/VanguardIcon.png",
+    "Caster": "assets/ClassAssets/CasterIcon.png",
+    "Defender": "assets/ClassAssets/DefenderIcon.png",
+    "Supporter": "assets/ClassAssets/SupporterIcon.png"
   },
   weapons: {
     "Sword": "assets/WeaponCharAssets/Short-Weapon.webp",
