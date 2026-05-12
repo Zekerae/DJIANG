@@ -156,3 +156,4 @@ function initLandingPage() {
 
 // Expose the init function to the global scope for the promise chain
 window.initLandingPage = initLandingPage;
+initLandingPage();

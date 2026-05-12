@@ -2,7 +2,7 @@ const ham = document.getElementById('ham');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
 const progress = document.getElementById('progress');
-const sectionIds = ['landing-page', 'carousel-3D', 'character-slide', 'footer'];
+const sectionIds = ['landing-page', 'character-slide', 'carousel-3D', 'footer'];
 
 /* ─── PROGRESS BAR — raw scroll distance ─── */
 function updateProgress() {
