@@ -1,0 +1,454 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJIANG: A Comprehensive Web-Based Information System for Skill Optimization, Material Logistics, and Player Quality-of-Life in Arknights: Endfield</title>
+    <link rel="stylesheet" href="css/main-style.css">
+    <link rel="stylesheet" href="css/footer-style.css">
+    <link rel="stylesheet" href="css/wipe-hover.css">
+    <link rel="stylesheet" href="css/navbar.css">
+</head>
+<body>
+
+    <!-- 
+    
+    NAVBAR 
+    
+    -->
+    <nav class="navbar">
+        <div class="progress-bar" id="progress"></div>
+        <div class="hamburger" id="ham" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="nav-links">
+            <div class="nav-btn" data-target="landing-page">
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="5" data-increment="20">HOME</div>
+                </div>
+            </div>
+
+            <div class="nav-btn" data-target="character-slide">
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="5" data-increment="20">OPERATORS</div>
+                </div>
+            </div>
+            <div class="nav-btn" data-target="carousel-3D">
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="5" data-increment="20">WEAPONS</div>
+                </div>
+            </div>
+            <div class="nav-btn" data-target="footer">
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="5" data-increment="20">ABOUT US</div>
+                </div>
+            </div>
+        </div>
+        <div class="nav-spacer"></div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+
+        <div class="sidebar-label">NAVIGATE</div>
+
+        <nav class="sidebar-nav">
+            
+            <div class="sidebar-item" data-target="index.html">
+                <div class="sidebar-item-inner">
+                    <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">HOME</div></span>
+                </div>
+                <div class="sidebar-page-num">
+                    <span>PAGE</span>
+                    <span>001</span>
+                </div>
+            </div>
+            <div class="sidebar-item" data-target="carousel-3D">
+                <div class="sidebar-item-inner">
+                    <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">WEAPONS</div></span>
+                </div>
+                <div class="sidebar-page-num">
+                    <span>PAGE</span>
+                    <span>002</span>
+                </div>
+            </div>
+            <div class="sidebar-item" data-target="OperatorList.html">
+                <div class="sidebar-item-inner">
+                    <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">OPERATORS</div></span>
+                </div>
+                <div class="sidebar-page-num">
+                    <span>PAGE</span>
+                    <span>003</span>
+                </div>
+            </div>
+             <div class="sidebar-item" data-target="footer">
+                <div class="sidebar-item-inner">
+                    <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">TIER LIST</div></span>
+                </div>
+                <div class="sidebar-page-num">
+                    <span>PAGE</span>
+                    <span>004</span>
+                </div>
+            </div>           
+            <div class="sidebar-item" data-target="footer">
+                <div class="sidebar-item-inner">
+                    <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">PULL TRACKER</div></span>
+                </div>
+                <div class="sidebar-page-num">
+                    <span>PAGE</span>
+                    <span>005</span>
+                </div>
+            </div>
+            <div class="sidebar-item" data-target="footer">
+                <div class="sidebar-item-inner">
+                    <span class="sidebar-text"><div class="tglitch-animation" data-speed="10" data-increment="5">MATERIAL TRACKER</div></span>
+                </div>
+                <div class="sidebar-page-num">
+                    <span>PAGE</span>
+                    <span>006</span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            
+            <div class="sidebar-footer-item">
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ &nbsp;FACEBOOK</div>
+                </div><br>
+            </div>
+            <div class="sidebar-footer-item">
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ &nbsp;DISCORD</div>
+                </div><br>
+            </div>
+            <div class="sidebar-footer-item">
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">■ &nbsp;INSTAGRAM</div>
+                </div><br>
+            </div>
+        </div>
+
+        <div class="sidebar-page-count">
+            <span>PAGE 001</span>
+            <span>&#9644;</span>
+        </div>
+
+    </div>
+    <!-- 
+    
+    NAVBAR 
+    
+    -->
+
+
+    <!-- SECTIONS START -->
+    <div id="landing-page">
+        
+      <!-- 
+      DJIANG Landing Page Section
+      ────────────────────────────────────────────────────────────────
+      Designed to be injected into any parent div via HTML-fetcher.js.
+
+      The parent div controls positioning:
+        • position: relative  → flows in document
+        • position: absolute  → anchored to nearest positioned ancestor
+        • position: fixed     → anchored to viewport
+
+      All internal elements (HUD, hero, etc.) are positioned relative
+      to .lp-root, NOT the viewport, so nothing breaks on injection.
+      ────────────────────────────────────────────────────────────────
+    -->
+    <div class="landing-page">
+      <link rel="stylesheet" href="css/landingPage.css">
+
+
+            <!-- HERO SECTION -->
+            <section id="hero">
+                <div class="hero-bg"></div>
+                <div class="hero-scanlines"></div>
+                <canvas id="heroCanvas"></canvas>
+
+                <div class="ui-corner tl"></div>
+                <div class="ui-corner tr"></div>
+                <div class="ui-corner bl"></div>
+                <div class="ui-corner br"></div>
+                <div class="ui-crosshair"></div>
+                <div class="ui-camera"></div>
+
+                <span class="ui-counter c1">01P</span>
+                <span class="ui-counter c2">02G</span>
+                <span class="ui-counter c3">03B</span>
+
+                <p class="hero-blurb">
+                DJIANG is a high-performance web companion for Arknights: Endfield designed to streamline gameplay.
+                It eliminates "logistical friction" by centralizing complex industrial data and combat mechanics into
+                a single, efficient interface.
+                </p>
+
+                <div class="hero-headline">
+                <span class="line">PLAN.</span>
+                <span class="line">GUIDE.</span>
+                <span class="line">BUILD.</span>
+                </div>
+
+                <div class="scroll-hint">
+                Scroll
+                <svg width="12" height="16" viewBox="0 0 12 16" fill="none">
+                    <path d="M6 0v13M1 9l5 7 5-7" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+                </div>
+            </div>
+            
+
+        </body>
+    </div>
+    <div id="character-slide">
+            <div class="cs-root">
+                <link rel="stylesheet" href="css/Character-slide.css">
+                <div class="carousel">
+
+                    <div class="list">
+
+                        <div class="item" style="background-image: url(O1.jpg);">
+                            <div class="content">
+                                <div class="title">LAEVATAIN</div>
+                                <div class="name">LAEVATAIN</div>
+                                <div class="des">Laevatain is a powerful and enigmatic character recognizable by her striking red hair, intense magenta eyes, and stoic demeanor.</div>
+                                <div class="btn">
+                                    <button>Profile</button>
+                                    <button>Track</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item" style="background-image: url(O2.jpg);">
+                            <div class="content">
+                                <div class="title">YVONNE</div>
+                                <div class="name">YVONNE</div>
+                                <div class="des">Yvonne is a mysterious and powerful character known for her agility and combat skills.</div>
+                                <div class="btn">
+                                    <button>Profile</button>
+                                    <button>Track</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item" style="background-image: url(O3.png);">
+                            <div class="content">
+                                <div class="title">ZHUANG FANGYI</div>
+                                <div class="name">ZHUANG FANGYI</div>
+                                <div class="des">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis culpa similique consequuntur, reprehenderit dicta repudiandae.</div>
+                                <div class="btn">
+                                    <button>Profile</button>
+                                    <button>Track</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item" style="background-image: url(O4.png);">
+                            <div class="content">
+                                <div class="title">TANGTANG</div>
+                                <div class="name">TANGTANG</div>
+                                <div class="des">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis culpa similique consequuntur, reprehenderit dicta repudiandae.</div>
+                                <div class="btn">
+                                    <button>Profile</button>
+                                    <button>Track</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item" style="background-image: url(O5.jpg);">
+                            <div class="content">
+                                <div class="title">LAST RITE</div>
+                                <div class="name">LAST RITE</div>
+                                <div class="des">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis culpa similique consequuntur, reprehenderit dicta repudiandae.</div>
+                                <div class="btn">
+                                    <button>Profile</button>
+                                    <button>Track</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="item" style="background-image: url(O6.png);">
+                            <div class="content">
+                                <div class="title">DANNY</div>
+                                <div class="name">CANTIKOL</div>
+                                <div class="des">Puro TIKOL</div>
+                                <div class="btn">
+                                    <button>See More</button>
+                                    <button>Subscribe</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- next prev buttons -->
+                    <div class="arrows">
+                        <button class="prev"><</button>
+                        <button class="next">></button>
+                    </div>
+
+                    <!-- time running -->
+                    <div class="timeRunning"></div>
+
+                </div>
+
+                
+
+            </div><!-- /.cs-root -->
+
+    </div>
+    <div id="carousel-3D">
+    <!-- =====================================================================
+         CAROUSEL
+         The JavaScript file (carousel.js) builds the cards dynamically, so
+         you do not need to add card elements by hand here.
+    ====================================================================== -->
+    <div class="carousel-3D">
+        <link rel="stylesheet" href="css/carousel.css">
+        <link rel="stylesheet" href="css/flip-box.css">
+
+        <div class="carousel-wrapper">
+
+                <!-- 3-D stage -->
+                <div class="carousel-scene">
+                    <div class="carousel-ring" id="carousel-ring">
+
+                        <div class="carousel-card" data-index="0">
+                            <div class="carousel-card-content">
+                                <h2>Card Two</h2>
+                                <p>Any HTML you wantafafafafafaff</p>
+                            </div>
+                        </div>
+
+                        <div class="carousel-card" data-index="1">
+                            <div class="carousel-card-content">
+                                <h2>Card Two</h2>
+                                <p>Any HTML you wantafafafafafaff</p>
+                            </div>
+                        </div>
+
+                        <div class="carousel-card" data-index="2">
+                            <div class="carousel-card-content">
+                                <h2>Card Two</h2>
+                                <p>Any HTML you wantafafafafafaff</p>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <!-- Active-card indicator dots (built by JavaScript) -->
+                <div class="carousel-indicator-dots" id="carousel-indicator-dots"></div>
+
+                <!-- Controls row -->
+                <div class="carousel-controls">
+
+                    <button class="carousel-arrow-button" id="carousel-prev-button" aria-label="Previous card">
+                        &#8249;
+                    </button>
+
+
+                    <button class="carousel-arrow-button" id="carousel-next-button" aria-label="Next card">
+                        &#8250;
+                    </button>
+
+                </div>
+
+
+            </div>
+        
+            
+        </div>
+    </div>
+
+    <!-- 
+    END CAROUSEL 
+    -->
+
+    <!-- SECTIONS END -->
+
+    <div class="sub-footer">
+        <div id="sfc1" class="subFooter-container">
+            <div class="top"></div>
+            <div class="bottom">
+                <br><br><br>
+                <div class="tglitch-animation" data-speed="10" data-increment="5">// INITIALIZING... </div><br>
+                <div class="tglitch-animation" data-speed="10" data-increment="5">&nbsp;&nbsp;NEW FILES IN DATABASE..</div><br><br>
+                <div class="tglitch-animation" data-speed="5" data-increment="5">&nbsp;&nbsp;U2FsdGVkX1/0UQamkwwS4V0ehyQJPf2W6Nyb/aZ3PSA.JPG </div><br>
+                <div class="tglitch-animation" data-speed="5" data-increment="5">&nbsp;&nbsp;AUDIO_LOG_U2FsdGVkX1+ACLRfG0X48dtjeP0Tmg/O.WAV </div><br><br>
+                <div class="tglitch-animation" data-speed="10" data-increment="5">ACTIVATE CONSOLE FOR ACCESS ...</div>
+            </div>
+        </div>
+        <div class="subFooter-container">
+            <div class="top">
+                <div class="tglitch-animation" data-speed="10" data-increment="5">■ DEVELOPERS</div>
+            </div>
+            <div class="bottom">
+                <br><br><br>
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">ASTERISK</div>
+                </div><br>
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">ZEKERAE</div>
+                </div><br>
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">LEMELLON</div>
+                </div><br>
+            </div>
+        </div>
+        <div class="subFooter-container">
+            <div class="top">
+                <div class="tglitch-animation" data-speed="10" data-increment="5">■ JOIN THE CONVERSATION</div>
+            </div>
+            <div class="bottom">
+                <br><br><br>
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">FACEBOOK</div>
+                </div><br>
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">DISCORD</div>
+                </div><br>
+                <div class="wipe-hover">
+                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">INSTAGRAM</div>
+                </div><br>
+            </div>
+        </div>
+        <div class="subFooter-container">
+            <div class="top">
+                <div class="tglitch-animation" data-speed="10" data-increment="5">■ SOURCES</div>
+            </div>
+            <div class="bottom">
+                <br><br><br>
+                <div class="wipe-hover">
+                    <div class="tglitch-animation" data-speed="10" data-increment="5">GIT FILE</div>
+                </div><br>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer" class="footer">
+        <div class="parralax">
+            <div class="footer-container">
+                <div class="brand">foot-djiang</div>
+                <div class="footnote">
+                    <div class="container"></div>
+                    <div class="container"></div>
+                    <div class="container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/text_glitch.js"></script>
+    <script src="js/LandingPage.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/CharacterSlide.js"></script>
+    <script src="js/carousel.js"></script>
+</body>
+</html>
