@@ -27,3 +27,7 @@ loadScript('js/CharacterSlide.js')
 loadScript('js/carousel.js')
     .then(() => loadSection('Carousel-3D.html', 'carousel-3D'))
     .then(() => initCarousel());
+
+loadScript('js/LandingPage.js')
+    .then(() => loadSection('LandingPage.html', 'landing-page'))
+    .then(() => initLandingPage());
