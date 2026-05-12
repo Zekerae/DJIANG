@@ -6,12 +6,15 @@
   <title>DJIANG — Operator Database</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="css/OperatorList.css">
+  <link rel="stylesheet" href="css/NavBar.css">
+  <link rel="stylesheet" href="css/WipeHover.css">
+  <link rel="stylesheet" href="css/MainStyle.css"> 
 </head>
 <body>
 
 <div class="container">
-
   <div class="page-hero">
     <div class="hero-flex">
       <div class="hero-left">
@@ -22,7 +25,6 @@
   </div>
 
   <div class="filter-zone" id="filterZone">
-    
     <div class="search-header">
       <input type="text" id="opSearch" class="search-input" placeholder="Search by operator name...">
       <button id="filterToggleBtn" class="filter-toggle-btn">
@@ -94,5 +96,12 @@
 </div>
 
 <script src="js/OperatorList.js"></script>
+<script src="js/TextGlitch.js"></script>
+<script src="js/NavBar.js"></script>
+    <script>
+    NavBar.init({
+        sections: []
+    });
+    </script>
 </body>
 </html>

@@ -4,12 +4,23 @@
     --sidebar-width: 520px;
     --border: 0.5px solid rgba(135, 135, 135, 0.4);
 
-
     --sidebar-active-bg: #fff;
     --sidebar-active-text: #000;
     --sidebar-notch: 16px;
-    --sidebar-item-indent: 5%;   /* ← shift sidebar items left/right */
-    --sidebar-font: 'Arial Black', Arial, sans-serif; /* ← sidebar nav font */
+    --sidebar-item-indent: 5%;
+    --sidebar-font: 'Arial Black', Arial, sans-serif;
+    --sidebar-page-count-offset: 32px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   STACKING CONTEXT FIX
+   Any element with transform/filter/will-change/opacity creates its own
+   stacking context, which traps children — even z-index:9999 ones.
+   Giving <body> an explicit stacking context at z=0 means the navbar's
+   z-index is always measured against the root, not a trapped ancestor.
+───────────────────────────────────────────────────────────────────────────── */
+body {
+    isolation: isolate;   /* creates root stacking context without side-effects */
 }
 
 /* ─── NAVBAR ─── */
@@ -20,7 +31,9 @@
     width: 100%;
     height: var(--navbar-height);
     background: #0a0a0a;
-    z-index: 100;
+    /* Use the highest possible z-index so nothing — transforms, filters, etc. — 
+       can push content over the bar.                                          */
+    z-index: 2147483647;
     display: grid;
     grid-template-columns: var(--navbar-height) 1fr var(--navbar-height);
     align-items: center;
@@ -35,7 +48,7 @@
     height: 1.5px;
     width: 0%;
     background: #fff;
-    z-index: 101;
+    z-index: 1;
     transition: width 0.1s linear;
 }
 
@@ -112,7 +125,8 @@
     height: 100%;
     background: #0a0a0a;
     border-right: var(--border);
-    z-index: 90;
+    /* One below navbar so the bar always renders on top */
+    z-index: 2147483646;
     display: flex;
     flex-direction: column;
     padding-top: var(--navbar-height);
@@ -172,16 +186,13 @@
 .sidebar-item.active { color: var(--sidebar-active-text); }
 .sidebar-item.active:hover { color: var(--sidebar-active-text); }
 
-/* ── Inner wrapper: THIS is what gets the bg + clip-path ── */
 .sidebar-item-inner {
-    /* padding controls how much bg shows around the text */
     padding: 6px 40px 6px 26px;
     margin-left: var(--sidebar-item-indent);
     position: relative;
     z-index: 1;
     display: inline-flex;
     align-items: center;
-    /* clip-path notch on bottom-right corner, sized to this element */
     background: transparent;
     clip-path: polygon(
         0% 0%,
@@ -193,28 +204,15 @@
     transition: background 0.2s ease;
 }
 
-/* active: fill the inner block */
-.sidebar-item.active .sidebar-item-inner {
-    background: var(--sidebar-active-bg);
-}
+.sidebar-item.active .sidebar-item-inner              { background: var(--sidebar-active-bg); }
+.sidebar-item:not(.active):hover .sidebar-item-inner  { background: rgba(255, 255, 255, 0.08); }
+.sidebar-item.active:hover .sidebar-item-inner        { background: var(--sidebar-active-bg); }
 
-/* hover on inactive: subtle white fill */
-.sidebar-item:not(.active):hover .sidebar-item-inner {
-    background: rgba(255, 255, 255, 0.08);
-}
-
-/* active hover: keep the white fill */
-.sidebar-item.active:hover .sidebar-item-inner {
-    background: var(--sidebar-active-bg);
-}
-
-/* ── Text inside ── */
 .sidebar-text {
     display: inline-block;
     color: inherit;
 }
 
-/* ── Page number — flex sibling, always outside the highlight ── */
 .sidebar-page-num {
     position: relative;
     z-index: 1;
@@ -223,7 +221,6 @@
     letter-spacing: 0.15em;
     color: rgba(135, 135, 135, 0.5);
     line-height: 1.4;
-    padding-right: 0;
     white-space: nowrap;
     flex-shrink: 0;
     align-self: flex-start;
@@ -266,6 +263,7 @@
 /* ─── PAGE COUNTER ─── */
 .sidebar-page-count {
     padding: 12px 28px;
+    margin-bottom: var(--sidebar-page-count-offset);
     font-size: 9px;
     letter-spacing: 0.15em;
     color: rgb(255, 255, 255);
@@ -282,7 +280,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 80;
+    z-index: 2147483645;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s;
@@ -291,4 +289,65 @@
 .overlay.visible {
     opacity: 1;
     pointer-events: all;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Mid tablets / small laptops  1025px → 768px
+═══════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .sidebar { width: 38vw; left: -38vw; }
+    .nav-btn { padding: 0 14px; font-size: 10px; }
+    .sidebar-item { font-size: clamp(20px, 3vw, 32px); }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Tablets (portrait)  769px → 480px
+═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    :root { --navbar-height: 52px; }
+    .nav-links { display: none; }
+    .navbar { grid-template-columns: var(--navbar-height) 1fr var(--navbar-height); }
+    .sidebar { width: 60vw; left: -60vw; }
+    .sidebar-item { font-size: clamp(16px, 4vw, 26px); white-space: normal; word-break: break-word; }
+    .sidebar-page-num { display: none; }
+    .sidebar-item-inner { padding: 8px 16px 8px 20px; width: 100%; box-sizing: border-box; }
+    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
+    .hamburger span { width: 20px; }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Mobile landscape  601px → 480px
+═══════════════════════════════════════════════ */
+@media (max-width: 600px) and (orientation: landscape) {
+    :root { --navbar-height: 44px; }
+    .sidebar { width: 70vw; left: -70vw; padding-top: var(--navbar-height); }
+    .sidebar-item { font-size: clamp(13px, 3.2vw, 18px); padding: 2px 0; white-space: normal; word-break: break-word; }
+    .sidebar-page-num { display: none; }
+    .sidebar-item-inner { padding: 4px 14px 4px 14px; width: 100%; box-sizing: border-box; }
+    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
+    .sidebar-label { padding: 10px 20px 8px; }
+    .sidebar-footer { padding: 10px 20px 14px; gap: 6px; }
+    .sidebar-page-count { padding: 8px 20px; }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Mobile portrait  ≤ 480px
+═══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+    :root { --navbar-height: 52px; --sidebar-notch: 12px; }
+    .nav-links { display: none; }
+    .sidebar { width: 88vw; left: -88vw; min-width: unset; }
+    .hamburger { width: var(--navbar-height); height: var(--navbar-height); gap: 6px; }
+    .hamburger span { width: 22px; height: 2px; }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px)  rotate(45deg); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    .sidebar-label { padding: 14px 20px 10px; font-size: 8px; }
+    .sidebar-item { font-size: clamp(16px, 6vw, 28px); padding: 3px 0; white-space: normal; word-break: break-word; }
+    .sidebar-item-inner { padding: 6px 14px 6px 16px; margin-left: 0; width: 100%; box-sizing: border-box; }
+    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
+    .sidebar-page-num { display: none; }
+    .sidebar-footer { padding: 14px 20px 18px; gap: 12px; }
+    .sidebar-footer-item { font-size: 9px; letter-spacing: 0.14em; min-height: 36px; }
+    .sidebar-page-count { padding: 10px 20px; font-size: 8px; }
+    .progress-bar { height: 2px; }
 }
