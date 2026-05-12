@@ -1,13 +1,14 @@
 :root {
     --navbar-color: rgb(135, 135, 135);
     --navbar-height: 48px;
-    --sidebar-width: 220px;
+    --sidebar-width: 520px;
     --border: 0.5px solid rgba(135, 135, 135, 0.4);
+
 
     --sidebar-active-bg: #fff;
     --sidebar-active-text: #000;
     --sidebar-notch: 16px;
-    --sidebar-item-indent: 28px;   /* ← shift sidebar items left/right */
+    --sidebar-item-indent: 5%;   /* ← shift sidebar items left/right */
     --sidebar-font: 'Arial Black', Arial, sans-serif; /* ← sidebar nav font */
 }
 
@@ -126,7 +127,7 @@
     padding: 18px 28px 12px;
     font-size: 9px;
     letter-spacing: 0.2em;
-    color: rgba(135, 135, 135, 0.45);
+    color: rgb(255, 255, 255);
     border-bottom: var(--border);
     display: flex;
     align-items: center;
@@ -251,7 +252,7 @@
 .sidebar-footer-item {
     font-size: 9px;
     letter-spacing: 0.16em;
-    color: rgba(135, 135, 135, 0.4);
+    color: rgb(255, 255, 255);
     cursor: pointer;
     display: flex;
     align-items: center;
