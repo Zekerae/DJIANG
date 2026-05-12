@@ -26,7 +26,7 @@ body::before {
 /* --- STICKY DROPDOWN FILTER ZONE --- */
 .filter-zone {
   background: rgba(19, 21, 28, 0.95); border: 1px solid var(--bord); border-radius: 12px;
-  padding: 24px 30px; margin-bottom: 30px; position: sticky; top: 10px; z-index: 999;
+  padding: 24px 30px; margin-bottom: 30px; position: sticky; top: 40px; z-index: 999;
   backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: padding 0.3s ease;
   overflow: visible;
 }
