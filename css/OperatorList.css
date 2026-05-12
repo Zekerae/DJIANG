@@ -31,7 +31,7 @@ body::before {
   overflow: visible;
 }
 
-.search-header { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
+.search-header { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; z-index: 997; }
 .search-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--bord2); border-radius: 6px; padding: 14px 20px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 1rem; margin-bottom: 0; flex: 1; transition: 0.3s; }
 .search-input:focus { outline: none; border-color: rgba(212,148,58,0.5); background: rgba(0,0,0,0.5); }
 
