@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Operator — Arknights: Endfield</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/CharacterIntroduction.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="load-inner">
+    <div class="load-logo">ENDFIELD</div>
+    <div class="load-bar"><div class="load-fill"></div></div>
+    <div class="load-text" id="load-msg">Loading Operator Data...</div>
+  </div>
+</div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<div class="topbar">
+  <div class="nav-left">
+    <div class="logo-mark">EF</div>
+    <div class="nav-breadcrumbs">
+      <a href="#">Characters</a>
+      <span>/</span>
+      <span class="current" id="nav-name">Loading…</span>
+    </div>
+  </div>
+  <select class="character-select" id="char-selector" onchange="navigateToCharacter(this.value)">
+    <option value="" disabled selected>Select Operator...</option>
+  </select>
+</div>
+
+<div class="hero">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-banner" id="dom-banner"></div> <div class="hero-inner">
+    <div class="hero-avatar-wrap">
+      <div class="hero-avatar">
+        <div class="avatar-letter" id="dom-avatar">?</div>
+      </div>
+      <div class="hero-avatar-ring"></div>
+    </div>
+    <div class="hero-info">
+      <div class="hero-eyebrow" id="dom-eyebrow">LOADING...</div>
+      <div class="hero-name" id="dom-name">Operator</div>
+      <div class="hero-sub" id="dom-quote"></div>
+      <div class="hero-tags" id="dom-tags"></div>
+    </div>
+    <div class="hero-stat-pills" id="dom-pills"></div>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab active" onclick="switchTab('profile')" role="tab"><span class="tab-icon">◈</span> Profile</button>
+    <button class="tab" onclick="switchTab('builds')"  role="tab"><span class="tab-icon">⚔</span> Builds</button>
+    <button class="tab" onclick="switchTab('teams')"   role="tab"><span class="tab-icon">⬡</span> Teams</button>
+    <button class="tab" onclick="switchTab('tracker')" role="tab"><span class="tab-icon">◎</span> Tracker</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="panel active" id="panel-profile">
+    <div class="video-plug mb-20" id="dom-video-wrap">
+      <div class="video-label">VIDEO GUIDE</div>
+      <iframe id="dom-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Attributes</div>
+          <div class="control-row">
+            <span class="control-label">Level</span>
+            <input type="range" class="control-slider" id="prof-level" min="1" max="90" value="90" oninput="updateProfileStats()">
+            <span class="control-val" id="prof-level-out">90</span>
+          </div>
+        </div>
+        <div class="attr-grid" id="dom-attr-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Overview</div></div>
+        <div class="stat-list" id="dom-overview"></div>
+      </div>
+    </div>
+    <div class="card mb-16">
+      <div class="card-header">
+        <div class="card-title">Skills (Scalable)</div>
+        <div class="control-row">
+          <span class="control-label">Rank</span>
+          <input type="range" class="control-slider" id="prof-rank" min="1" max="12" value="12" oninput="updateSkills()">
+          <span class="control-val" id="prof-rank-out">12</span>
+        </div>
+      </div>
+      <div class="skill-list" id="dom-skills"></div>
+    </div>
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-header"><div class="card-title">All Talents</div></div>
+        <div id="dom-talents"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Potentials</div></div>
+        <div class="pot-list" id="dom-potentials"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-builds">
+    <div class="mb-20">
+      <div class="card-header" style="margin-bottom:12px"><div class="card-title">Best Weapons</div></div>
+      <div id="dom-weapons"></div>
+    </div>
+    <div class="mb-20">
+      <div class="card-header" style="margin-bottom:12px">
+        <div class="card-title" id="dom-gear-title">Best Gear</div>
+      </div>
+      <div class="grid-3 mb-16" id="dom-gear-slots"></div>
+      <div class="set-bonus-card" id="dom-set-bonus"></div>
+    </div>
+    <div class="grid-2 mb-20">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Stat Priority</div></div>
+        <div class="prio-list" id="dom-stat-prio"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Beginner Guide &amp; Early Gear</div></div>
+        <div class="stat-list" id="dom-beginner-stats"></div>
+        <div class="talent-desc mt-12" id="dom-beginner-tip"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-teams">
+    <div class="card mb-20">
+      <div class="card-header"><div class="card-title">Synergy Mechanics</div></div>
+      <div class="stat-list" id="dom-synergies"></div>
+    </div>
+    <div id="dom-teams"></div>
+  </div>
+
+  <div class="panel" id="panel-tracker">
+    <div class="metrics">
+      <div class="metric hot"><div class="metric-label">Final ATK (est.)</div><div class="metric-val ht" id="t-atk">—</div></div>
+      <div class="metric"><div class="metric-label">Avg Skill DMG</div><div class="metric-val gd" id="t-dps">—</div></div>
+      <div class="metric"><div class="metric-label">Total Est. Gold</div><div class="metric-val gr" id="t-cost">0</div></div>
+    </div>
+
+    <div class="card mb-20">
+      <div class="card-header"><div class="card-title">Damage Calculator</div></div>
+      <div class="calc-grid">
+        <div>
+          <div class="calc-row-std">
+            <span class="calc-label">Operator Level <span id="c-level-out" class="highlight">90</span></span>
+            <input type="range" id="c-level" min="1" max="90" value="90" step="1" oninput="recalcDmg()">
+          </div>
+          <div class="calc-row-std">
+            <span class="calc-label">Primary Stat</span>
+            <input type="number" id="c-primary" value="177" oninput="recalcDmg()">
+          </div>
+          <div class="calc-row-std">
+            <span class="calc-label">Base ATK (weapon included)</span>
+            <input type="number" id="c-atk" value="550" oninput="recalcDmg()">
+          </div>
+          <div class="calc-row-std">
+            <span class="calc-label">ATK Bonus % / Element DMG Bonus %</span>
+            <div style="display:flex;gap:10px">
+              <input type="number" id="c-atkp" value="40" placeholder="ATK %" oninput="recalcDmg()">
+              <input type="number" id="c-elem" value="60" placeholder="Elem %" oninput="recalcDmg()">
+            </div>
+          </div>
+          <div class="calc-row-std">
+            <span class="calc-label">Skill Multiplier</span>
+            <select id="c-skill" onchange="recalcDmg()"></select>
+          </div>
+        </div>
+        <div class="result-box" style="align-self:start">
+          <div class="result-box-title">Output Estimation</div>
+          <div class="result-grid">
+            <div><div class="result-label">Final ATK</div><div class="result-val" id="r-atk">—</div></div>
+            <div><div class="result-label">Expected DMG</div><div class="result-val" id="r-avg">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-20">
+      <div class="card-header">
+        <div class="card-title">Character Leveling &amp; Ascension</div>
+        <div class="tracker-total" id="t-lv-summary">Lv 1 → 90</div>
+      </div>
+      <div class="range-row">
+        <div class="range-group">
+          <div class="range-label">Current Level <span class="range-val" id="lv-c-out">1</span></div>
+          <input type="range" id="m-lv-c" min="1" max="90" value="1" step="1" oninput="recalcMats()">
+          <div class="range-ticks"><span>1</span><span>20</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span></div>
+        </div>
+        <div class="range-arrow">→</div>
+        <div class="range-group">
+          <div class="range-label">Target Level <span class="range-val" id="lv-t-out">90</span></div>
+          <input type="range" id="m-lv-t" min="1" max="90" value="90" step="1" oninput="recalcMats()">
+          <div class="range-ticks"><span>1</span><span>20</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span></div>
+        </div>
+      </div>
+      <div id="dom-lv-mats"></div>
+    </div>
+
+    <div class="card mb-20">
+      <div class="card-header">
+        <div class="card-title">Skill Upgrades &amp; Masteries</div>
+        <div class="tracker-total" id="t-sk-summary">Ranks 1 → 12</div>
+      </div>
+      <div id="dom-skill-tracks"></div>
+      <div id="dom-sk-mats"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card mb-20">
+      <div class="card-header">
+        <div class="card-title">Build Progression Checklist</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div class="check-progress-wrap">
+            <div class="check-progress-bar"><div class="check-progress-fill" id="check-fill"></div></div>
+            <span class="check-progress-label" id="check-label">0 / 0</span>
+          </div>
+          <div style="display:flex;gap:4px">
+            <button class="tab mini-tab active" onclick="switchRoute('f2p')"   id="btn-f2p">F2P Route</button>
+            <button class="tab mini-tab"        onclick="switchRoute('spend')" id="btn-spend">Spender Route</button>
+          </div>
+        </div>
+      </div>
+      <div class="checklist" id="dom-checklist"></div>
+    </div>
+
+  </div></div><script src="js/CharacterIntroduction.js"></script>
+</body>
+</html>
