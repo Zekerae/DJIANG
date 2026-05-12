@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJIANG — Operator Database</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/OperatorList.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="page-hero">
+    <div class="hero-flex">
+      <div class="hero-left">
+        <h1>Operator Database</h1>
+        <div class="sub">Arknights: Endfield · Roster Overview</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-zone" id="filterZone">
+    
+    <div class="search-header">
+      <input type="text" id="opSearch" class="search-input" placeholder="Search by operator name...">
+      <button id="filterToggleBtn" class="filter-toggle-btn">
+        <img src="https://api.iconify.design/mdi:filter-variant.svg?color=%23ffffff" alt="">
+        Filters
+      </button>
+    </div>
+    
+    <div class="filter-row" id="filterRow">
+      <div class="fgroup">
+        <div class="flabel">Rarity</div>
+        <div class="fpills" data-group="rarity">
+          <button class="pill" data-val="6">6 ★</button>
+          <button class="pill" data-val="5">5 ★</button>
+          <button class="pill" data-val="4">4 ★</button>
+        </div>
+      </div>
+      
+      <div class="fgroup">
+        <div class="flabel">Class</div>
+        <div class="fpills" data-group="class">
+          <button class="pill" data-val="Striker">Striker</button>
+          <button class="pill" data-val="Guard">Guard</button>
+          <button class="pill" data-val="Vanguard">Vanguard</button>
+          <button class="pill" data-val="Caster">Caster</button>
+          <button class="pill" data-val="Defender">Defender</button>
+          <button class="pill" data-val="Supporter">Supporter</button>
+        </div>
+      </div>
+      
+      <div class="fgroup">
+        <div class="flabel">Element</div>
+        <div class="fpills" data-group="element">
+          <button class="pill" data-val="Heat">Heat</button>
+          <button class="pill" data-val="Cryo">Cryo</button>
+          <button class="pill" data-val="Electric">Electric</button>
+          <button class="pill" data-val="Physical">Physical</button>
+          <button class="pill" data-val="Nature">Nature</button>
+        </div>
+      </div>
+      
+      <div class="fgroup">
+        <div class="flabel">Weapon</div>
+        <div class="fpills" data-group="weapon">
+          <button class="pill" data-val="Sword">Sword</button>
+          <button class="pill" data-val="Great Sword">Greatsword</button>
+          <button class="pill" data-val="Polearm">Polearm</button>
+          <button class="pill" data-val="Hand Cannon">Hand Cannon</button>
+          <button class="pill" data-val="Arts Unit">Arts Unit</button>
+        </div>
+      </div>
+      
+      <button class="fclear" id="clearBtn">✕ Reset Filters</button>
+    </div>
+  </div>
+
+  <div class="results-row">
+    <div class="results-text">Showing <span id="visNum">26</span> operators</div>
+    
+    <div class="sort-group">
+      <span class="flabel" style="margin-right: 8px;">Sort By:</span>
+      <button class="pill sort-btn active" data-sort="rarity">Rarity</button>
+      <button class="pill sort-btn" data-sort="name">Name</button>
+    </div>
+  </div>
+
+  <div class="card-grid" id="cardGrid"></div>
+
+</div>
+
+<script src="js/OperatorList.js"></script>
+</body>
+</html>
