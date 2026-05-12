@@ -33,7 +33,7 @@ const ASSETS = {
 // OPERATOR DATA
 // ==========================================
 const OPS = [
-  {id:"endministrator",name:"Endministrator",rarity:6,cls:"Guard",    element:"Physical",weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Endministrator/Endministrator_Splash_Art.png"}, 
+  {id:"endministrator",name:"Endministrator",rarity:6,cls:"Guard",    element:"Physical",weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Endministrator/Endministrator_splash_art.png"}, 
   {id:"ardelia",       name:"Ardelia",       rarity:6,cls:"Supporter",element:"Nature",  weapon:"Arts Unit",  img:"assets/CharacterAssets/6-stars/Ardelia/Ardelia_Splash_Art.png"},
   {id:"laevatain",     name:"Laevatain",     rarity:6,cls:"Striker",  element:"Heat",    weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Laevatain/Laevatain_Splash_Art.png"},
   {id:"last-rite",     name:"Last Rite",     rarity:6,cls:"Striker",  element:"Cryo",    weapon:"Great Sword",img:"assets/CharacterAssets/6-stars/Last Rite/Last_Rite_Splash_Art.png"},
@@ -51,8 +51,8 @@ const OPS = [
   {id:"wulfgard",      name:"Wulfgard",      rarity:5,cls:"Caster",   element:"Heat",    weapon:"Hand Cannon",img:"assets/CharacterAssets/5-stars/Wulfgard/Wulfgard_Splash_Art.png"},
   {id:"alesh",         name:"Alesh",         rarity:5,cls:"Vanguard", element:"Cryo",    weapon:"Sword",      img:"assets/CharacterAssets/5-stars/Alesh/Alesh_Splash_Art.png"},
   {id:"arclight",      name:"Arclight",      rarity:5,cls:"Vanguard", element:"Electric",weapon:"Sword",      img:"assets/CharacterAssets/5-stars/Arclight/Arclight_Splash_Art.png"},
-  {id:"chen-qianyu",   name:"Chen Qianyu",   rarity:5,cls:"Guard",    element:"Physical",weapon:"Sword",      img:"assets/CharacterAssets/5-stars/Chen Qianyu/Chen_Qianyu_Splash_Art.png"},
-  {id:"da-pan",        name:"Da Pan",        rarity:5,cls:"Striker",  element:"Physical",weapon:"Great Sword",img:"assets/CharacterAssets/5-stars/Da Pan/Da_Pan_Splash_Art.png"},
+  {id:"chen-qianyu",   name:"Chen Qianyu",   rarity:5,cls:"Guard",    element:"Physical",weapon:"Sword",      img:"assets/CharacterAssets/5-stars/Chen_Qianyu/Chen_Qianyu_Splash_Art.png"},
+  {id:"da-pan",        name:"Da Pan",        rarity:5,cls:"Striker",  element:"Physical",weapon:"Great Sword",img:"assets/CharacterAssets/5-stars/Da_Pan/Da_Pan_Splash_Art.png"},
   {id:"snowshine",     name:"Snowshine",     rarity:5,cls:"Defender", element:"Cryo",    weapon:"Great Sword",img:"assets/CharacterAssets/5-stars/Snowshine/Snowshine_Splash_Art.png"},
   {id:"antal",         name:"Antal",         rarity:4,cls:"Supporter",element:"Electric",weapon:"Arts Unit",  img:"assets/CharacterAssets/4-stars/Antal/Antal_Splash_Art.png"},
   {id:"fluorite",      name:"Fluorite",      rarity:4,cls:"Caster",   element:"Nature",  weapon:"Hand Cannon",img:"assets/CharacterAssets/4-stars/Fluorite/Fluorite_Splash_Art.png"},
