@@ -10,6 +10,7 @@
     --sidebar-notch: 16px;
     --sidebar-item-indent: 5%;   /* ← shift sidebar items left/right */
     --sidebar-font: 'Arial Black', Arial, sans-serif; /* ← sidebar nav font */
+    --sidebar-page-count-offset: 32px; /* ← lift the bottom page counter */
 }
 
 /* ─── NAVBAR ─── */
@@ -266,6 +267,7 @@
 /* ─── PAGE COUNTER ─── */
 .sidebar-page-count {
     padding: 12px 28px;
+    margin-bottom: var(--sidebar-page-count-offset);
     font-size: 9px;
     letter-spacing: 0.15em;
     color: rgb(255, 255, 255);
@@ -291,4 +293,225 @@
 .overlay.visible {
     opacity: 1;
     pointer-events: all;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Mid tablets / small laptops
+   769px – 1024px
+═══════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 38vw;
+        left: -38vw;
+    }
+
+    .nav-btn {
+        padding: 0 14px;
+        font-size: 10px;
+    }
+
+    .sidebar-item {
+        font-size: clamp(20px, 3vw, 32px);
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Tablets (portrait)
+   481px – 768px
+═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    :root {
+        --navbar-height: 52px;
+    }
+
+    /* Hide desktop nav links — sidebar handles navigation */
+    .nav-links {
+        display: none;
+    }
+
+    /* Widen the spacer so the navbar grid stays balanced */
+    .navbar {
+        grid-template-columns: var(--navbar-height) 1fr var(--navbar-height);
+    }
+
+    /* Wider sidebar for tablet */
+    .sidebar {
+        width: 60vw;
+        left: -60vw;
+    }
+
+    .sidebar-item {
+        font-size: clamp(16px, 4vw, 26px);
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    /* Hide page numbers — give all space to text */
+    .sidebar-page-num {
+        display: none;
+    }
+
+    /* Full width inner so text never overflows */
+    .sidebar-item-inner {
+        padding: 8px 16px 8px 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .sidebar-text {
+        white-space: normal;
+        word-break: break-word;
+        flex: 1;
+    }
+
+    /* Slightly larger hamburger lines for easier tapping */
+    .hamburger span {
+        width: 20px;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Mobile (landscape)
+   481px – 600px
+═══════════════════════════════════════════════ */
+@media (max-width: 600px) and (orientation: landscape) {
+    :root {
+        --navbar-height: 44px;
+    }
+
+    .sidebar {
+        width: 70vw;
+        left: -70vw;
+        padding-top: var(--navbar-height);
+    }
+
+    .sidebar-item {
+        font-size: clamp(13px, 3.2vw, 18px);
+        padding: 2px 0;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .sidebar-page-num {
+        display: none;
+    }
+
+    .sidebar-item-inner {
+        padding: 4px 14px 4px 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .sidebar-text {
+        white-space: normal;
+        word-break: break-word;
+        flex: 1;
+    }
+
+    .sidebar-label {
+        padding: 10px 20px 8px;
+    }
+
+    .sidebar-footer {
+        padding: 10px 20px 14px;
+        gap: 6px;
+    }
+
+    .sidebar-page-count {
+        padding: 8px 20px;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — Mobile (portrait)
+   ≤ 480px
+═══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+    :root {
+        --navbar-height: 52px;
+        --sidebar-notch: 12px;
+    }
+
+    /* Hide desktop nav links */
+    .nav-links {
+        display: none;
+    }
+
+    /* Full-width-ish sidebar on mobile */
+    .sidebar {
+        width: 88vw;
+        left: -88vw;
+        min-width: unset;
+    }
+
+    /* Larger touch target for hamburger */
+    .hamburger {
+        width: var(--navbar-height);
+        height: var(--navbar-height);
+        gap: 6px;
+    }
+
+    .hamburger span {
+        width: 22px;
+        height: 2px;
+    }
+
+    /* Tighter hamburger X animation on mobile */
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* Sidebar label */
+    .sidebar-label {
+        padding: 14px 20px 10px;
+        font-size: 8px;
+    }
+
+    /* Sidebar nav items — font scales with sidebar, never clips */
+    .sidebar-item {
+        font-size: clamp(16px, 6vw, 28px);
+        padding: 3px 0;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .sidebar-item-inner {
+        padding: 6px 14px 6px 16px;
+        margin-left: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .sidebar-text {
+        white-space: normal;
+        word-break: break-word;
+        flex: 1;
+    }
+
+    /* Hide page numbers — text visibility is priority */
+    .sidebar-page-num {
+        display: none;
+    }
+
+    /* Footer links */
+    .sidebar-footer {
+        padding: 14px 20px 18px;
+        gap: 12px;
+    }
+
+    .sidebar-footer-item {
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        min-height: 36px; /* easier tap target */
+    }
+
+    /* Page counter */
+    .sidebar-page-count {
+        padding: 10px 20px;
+        font-size: 8px;
+    }
+
+    /* Progress bar slightly taller for visibility */
+    .progress-bar {
+        height: 2px;
+    }
 }

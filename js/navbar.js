@@ -11,6 +11,11 @@ function updateProgress() {
     const pct = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
     progress.style.width = pct + '%';
 
+    /* Current file — treat bare / or empty as index2.html (home).
+       Lowercase both sides so casing never causes a miss. */
+    const rawFile = window.location.pathname.split('/').pop();
+    const currentFile = (rawFile === '' || rawFile === '/') ? 'index2.html' : rawFile.toLowerCase();
+
     /* keep nav/sidebar active states in sync */
     let activeIdx = 0;
     for (let i = 0; i < sectionIds.length; i++) {
@@ -19,11 +24,21 @@ function updateProgress() {
     }
 
     document.querySelectorAll('.nav-btn').forEach((btn, i) => {
-        btn.classList.toggle('active', i === activeIdx);
+        const target = btn.dataset.target || '';
+        const isExternalLink = isLink(target);
+        const isOtherPage = isExternalLink && target.split('/').pop() !== currentFile;
+        if (isOtherPage) {
+            btn.classList.remove('active');
+        } else {
+            btn.classList.toggle('active', i === activeIdx);
+        }
     });
 
     document.querySelectorAll('.sidebar-item[data-target]').forEach(item => {
-        item.classList.toggle('active', item.dataset.target === sectionIds[activeIdx]);
+        const target = item.dataset.target;
+        /* Active only when the item points to the current page */
+        const targetFile = target.split('/').pop().toLowerCase();
+        item.classList.toggle('active', isLink(target) && targetFile === currentFile);
     });
 
     /* ─── update bottom page counter ─── */
