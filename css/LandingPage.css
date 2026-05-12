@@ -159,7 +159,7 @@
 
 .landing-page .hero-bg {
   position: absolute; inset: 0;
-  background-image: url('DJIANG.png');
+  background-image: url('../assets/DJIANG.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
