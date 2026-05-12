@@ -15,13 +15,25 @@
     width: 100%;
     height: 100%;
     background: white;
-    transform: translateX(-101%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 0;
+
+    transform: translateX(101%);            /* rests off-right after exit */
+    animation: wipe-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .wipe-hover:hover::before {
     transform: translateX(0);
+    animation: wipe-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes wipe-in {
+    from { transform: translateX(-101%); } /* enters from left */
+    to   { transform: translateX(0); }
+}
+
+@keyframes wipe-out {
+    from { transform: translateX(0); }     /* exits to right */
+    to   { transform: translateX(101%); }
 }
 
 .wipe-hover:hover {

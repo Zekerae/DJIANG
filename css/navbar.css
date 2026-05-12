@@ -174,7 +174,8 @@
 /* ── Inner wrapper: THIS is what gets the bg + clip-path ── */
 .sidebar-item-inner {
     /* padding controls how much bg shows around the text */
-    padding: 6px 40px 6px var(--sidebar-item-indent);
+    padding: 6px 40px 6px 26px;
+    margin-left: var(--sidebar-item-indent);
     position: relative;
     z-index: 1;
     display: inline-flex;
@@ -266,7 +267,7 @@
     padding: 12px 28px;
     font-size: 9px;
     letter-spacing: 0.15em;
-    color: rgba(135, 135, 135, 0.25);
+    color: rgb(255, 255, 255);
     border-top: var(--border);
     display: flex;
     justify-content: space-between;
