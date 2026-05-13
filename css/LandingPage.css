@@ -28,7 +28,7 @@
   overflow: hidden;
   width: 100%;
   height: 100vh;
-  background-image: url('../assets/DJIANG.png');
+  background: black;
 
   /* Styles that used to live on body */
   font-family: 'Barlow', sans-serif;
@@ -160,7 +160,7 @@
 
 .landing-page .hero-bg {
   position: absolute; inset: 0;
-  background-image: url('../assets/DJIANG.png');
+  background-image: url('../assets/HomepageAssets/DJIANG.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
