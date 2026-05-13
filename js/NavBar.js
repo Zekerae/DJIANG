@@ -67,6 +67,7 @@ const NavBar = (() => {
     const item = document.createElement('div');
     item.className = 'sidebar-item';
     item.dataset.target = target;
+    if (page) item.dataset.page = page;   // store page number for counter lookup
 
     const inner = document.createElement('div');
     inner.className = 'sidebar-item-inner';
@@ -227,9 +228,14 @@ const NavBar = (() => {
         item.classList.toggle('active', isLink(target) && targetFile === file);
       });
 
-      // Bottom page counter
+      // Bottom page counter — prefer the active sidebar item's page number,
+      // fall back to section index on pages like index.html that use sections
       const counter = document.querySelector('.sidebar-page-count span:first-child');
-      if (counter) counter.textContent = 'PAGE ' + String(activeIdx + 1).padStart(3, '0');
+      if (counter) {
+        const activeItem = document.querySelector('.sidebar-item.active');
+        const pageNum = activeItem?.dataset.page ?? String(activeIdx + 1).padStart(3, '0');
+        counter.textContent = 'PAGE ' + pageNum;
+      }
     }
 
     window.addEventListener('scroll', update);
@@ -271,4 +277,4 @@ const NavBar = (() => {
   window.toggleSidebar = toggleSidebar;
 
   return { init, toggleSidebar };
-})();
+})();s
