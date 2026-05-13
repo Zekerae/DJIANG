@@ -126,12 +126,12 @@ body::before {
       position: absolute;
       inset: 0;
       width: 100%;
-      height: auto;
+      height: 100%;
       display: block;
       
       /* Option 1: "cover" with a shifted focal point (Recommended for Endmin.jpg) */
       object-fit: cover;
-      object-position: center 10%; /* Shifts the camera up so the head isn't cut off */
+      object-position: 50% 20%; /* Shifts the camera up so the head isn't cut off */
       
       /* Option 2: Delete the two lines above and uncomment the line below to force the ENTIRE image to fit inside the box */
       /* object-fit: contain; */
