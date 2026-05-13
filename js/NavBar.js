@@ -164,6 +164,15 @@ const NavBar = (() => {
     body.insertBefore(sidebar, body.firstChild);
     body.insertBefore(overlay, body.firstChild);
     body.insertBefore(nav, body.firstChild);
+
+    // ── Wire up glitch on dynamically injected sidebar elements ──────
+    // TextGlitch.js runs its DOMContentLoaded pass before NavBar.init()
+    // injects the sidebar, so those elements are missed. Re-run init()
+    // scoped to just the sidebar — already-wired elements are skipped.
+    if (window.TextGlitch) {
+      window.TextGlitch.init(nav);
+      window.TextGlitch.init(sidebar);
+    }
   }
 
   /* ── Wire up click navigation ────────────────────────────────────── */
