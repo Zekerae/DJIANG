@@ -126,7 +126,8 @@ body::before {
       position: absolute;
       inset: 0;
       width: 100%;
-      height: 100%;
+      height: auto;
+      display: block;
       
       /* Option 1: "cover" with a shifted focal point (Recommended for Endmin.jpg) */
       object-fit: cover;
