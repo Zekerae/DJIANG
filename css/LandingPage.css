@@ -31,7 +31,7 @@
 
   /* Styles that used to live on body */
   font-family: 'Barlow', sans-serif;
-  background: url(../assets/DJIANG.png);
+  background: black;
   color: var(--lp-text);
 
   /* CSS custom properties scoped to this component */
@@ -159,7 +159,7 @@
 
 .landing-page .hero-bg {
   position: absolute; inset: 0;
-  background-image: url(../assets/DJIANG.png);
+  background-image: url('../assets/DJIANG.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
