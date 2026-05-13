@@ -31,7 +31,7 @@
 
   /* Styles that used to live on body */
   font-family: 'Barlow', sans-serif;
-  background: #1a0a2e;
+  background: url(../assets/DJIANG.png);
   color: var(--lp-text);
 
   /* CSS custom properties scoped to this component */
