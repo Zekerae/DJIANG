@@ -319,9 +319,15 @@
     <script src="js/OperatorSlide.js"></script>
     <script src="js/WeaponSpin.js"></script>
     <script>
-    NavBar.init({
-        sections: ['landing-page', 'character-slide', 'carousel-3D', 'footer']
-    });
+        NavBar.init({
+            sections: ['landing-page', 'character-slide', 'carousel-3D', 'footer'],
+            navLinks: [
+                { label: 'HOME',      target: 'landing-page' },
+                { label: 'OPERATORS', target: 'character-slide' },
+                { label: 'WEAPONS',   target: 'carousel-3D' },
+                { label: 'ABOUT US',  target: 'footer' },
+            ]
+        });
     </script>
 </body>
 </html>
