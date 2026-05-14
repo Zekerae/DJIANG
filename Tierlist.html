@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arknights: Endfield — Tier List</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/WipeHover.css">
+    <link rel="stylesheet" href="css/NavBar.css">
+    <style>
+        /* ─── TOKENS ──────────────────────────────────────────────────────── */
+        :root {
+            --bg: #08090d;
+            --surface: #0e1018;
+            --panel: #131620;
+            --border: #1e2235;
+            --border-hi: #2a3050;
+
+            --t0-color: #e8c85a;
+            --t05-color: #a06fe8;
+            --t1-color: #5ba0e8;
+            --t15-color: #4ec69a;
+            --t2-color: #8b8fa8;
+
+            --dmg-color: #e85a5a;
+            --ena-color: #5ae8c8;
+            --buf-color: #5a9ce8;
+
+            --text-bright: #e8eaf2;
+            --text-mid: #9098b8;
+            --text-dim: #555e7a;
+
+            --font-head: 'Rajdhani', sans-serif;
+            --font-body: 'Crimson Pro', serif;
+            --font-mono: 'Share Tech Mono', monospace;
+
+            --radius: 3px;
+            --card-w: 88px;
+            --card-h: 100px;
+        }
+
+        /* ─── RESET ──────────────────────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-bright);
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ─── SCANLINE OVERLAY ───────────────────────────────────────────── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 0, 0, .04) 2px,
+                    rgba(0, 0, 0, .04) 4px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ─── HEADER ─────────────────────────────────────────────────────── */
+        .page-header {
+            border-bottom: 1px solid var(--border);
+            padding: 28px 40px 22px;
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            background: linear-gradient(180deg, #0a0c13 0%, transparent 100%);
+        }
+
+        .page-header .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: .2em;
+            color: var(--t0-color);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .page-header h1 {
+            font-family: var(--font-head);
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            line-height: 1;
+        }
+
+        .page-header .sub {
+            font-size: 14px;
+            color: var(--text-mid);
+            font-style: italic;
+        }
+
+        .header-meta {
+            margin-left: auto;
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+
+        .header-meta .last-updated {
+            color: var(--text-mid);
+        }
+
+        /* ─── STATUS BAR ─────────────────────────────────────────────────── */
+        #status-bar {
+            height: 28px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            gap: 24px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-dim);
+        }
+
+        .status-dot.connected {
+            background: #4ec69a;
+            box-shadow: 0 0 6px #4ec69a80;
+        }
+
+        .status-dot.loading {
+            background: var(--t0-color);
+            animation: pulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--dmg-color);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .3
+            }
+        }
+
+        /* ─── MAIN LAYOUT ────────────────────────────────────────────────── */
+        .main-wrap {
+            padding: 32px 40px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ─── FILTERS ────────────────────────────────────────────────────── */
+        .filters-bar {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: .15em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .filter-btn {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            font-family: var(--font-head);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .05em;
+            padding: 4px 12px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--border-hi);
+            color: var(--text-bright);
+        }
+
+        .filter-btn.active-dmg {
+            border-color: var(--dmg-color);
+            color: var(--dmg-color);
+            background: rgba(232, 90, 90, .08);
+        }
+
+        .filter-btn.active-ena {
+            border-color: var(--ena-color);
+            color: var(--ena-color);
+            background: rgba(90, 232, 200, .08);
+        }
+
+        .filter-btn.active-buf {
+            border-color: var(--buf-color);
+            color: var(--buf-color);
+            background: rgba(90, 156, 232, .08);
+        }
+
+        .filter-btn.active-all {
+            border-color: var(--border-hi);
+            color: var(--text-bright);
+        }
+
+        .search-box {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .search-box input {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--text-bright);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            padding: 6px 12px 6px 30px;
+            border-radius: var(--radius);
+            width: 200px;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--border-hi);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .search-box::before {
+            content: '⌕';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        /* ─── TIER ROW ───────────────────────────────────────────────────── */
+        .tier-section {
+            margin-bottom: 6px;
+        }
+
+        .tier-row {
+            display: grid;
+            grid-template-columns: 72px 1fr;
+            min-height: 120px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--surface);
+            transition: opacity .2s;
+        }
+
+        .tier-row+.tier-row {
+            margin-top: 4px;
+        }
+
+        /* tier label cell */
+        .tier-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-head);
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: .02em;
+            border-right: 1px solid var(--border);
+            position: relative;
+            gap: 2px;
+        }
+
+        .tier-label::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: .07;
+        }
+
+        .tier-T0 {
+            color: var(--t0-color);
+        }
+
+        .tier-T0::after {
+            background: var(--t0-color);
+        }
+
+        .tier-T05 {
+            color: var(--t05-color);
+        }
+
+        .tier-T05::after {
+            background: var(--t05-color);
+        }
+
+        .tier-T1 {
+            color: var(--t1-color);
+        }
+
+        .tier-T1::after {
+            background: var(--t1-color);
+        }
+
+        .tier-T15 {
+            color: var(--t15-color);
+        }
+
+        .tier-T15::after {
+            background: var(--t15-color);
+        }
+
+        .tier-T2 {
+            color: var(--t2-color);
+        }
+
+        .tier-T2::after {
+            background: var(--t2-color);
+        }
+
+        .tier-label .tier-name {
+            position: relative;
+            z-index: 1;
+            line-height: 1;
+        }
+
+        .tier-label .tier-sub {
+            position: relative;
+            z-index: 1;
+            font-size: 9px;
+            letter-spacing: .15em;
+            font-family: var(--font-mono);
+            opacity: .6;
+        }
+
+        /* categories inside a tier row */
+        .tier-categories {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-row {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px 12px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .category-row+.category-row {
+            border-top: 1px solid var(--border);
+        }
+
+        .category-row.hidden {
+            display: none;
+        }
+
+        .cat-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 2px;
+            margin-top: 4px;
+            white-space: nowrap;
+            align-self: flex-start;
+            min-width: 64px;
+            text-align: center;
+        }
+
+        .cat-dmg {
+            background: rgba(232, 90, 90, .12);
+            color: var(--dmg-color);
+            border: 1px solid rgba(232, 90, 90, .25);
+        }
+
+        .cat-ena {
+            background: rgba(90, 232, 200, .10);
+            color: var(--ena-color);
+            border: 1px solid rgba(90, 232, 200, .22);
+        }
+
+        .cat-buf {
+            background: rgba(90, 156, 232, .10);
+            color: var(--buf-color);
+            border: 1px solid rgba(90, 156, 232, .22);
+        }
+
+        .chars-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* ─── CHARACTER CARD ─────────────────────────────────────────────── */
+        .char-card {
+            width: var(--card-w);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            transition: transform .15s;
+        }
+
+        .char-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .char-card.hidden-card {
+            display: none;
+        }
+
+        .char-portrait {
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: var(--radius);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color .15s;
+        }
+
+        .char-card:hover .char-portrait {
+            border-color: var(--border-hi);
+        }
+
+        .char-portrait img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+
+        /* Placeholder avatar when no image */
+        .char-portrait .placeholder-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-head);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dim);
+        }
+
+        /* rarity bar at bottom of portrait */
+        .rarity-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .rarity-6 {
+            background: linear-gradient(90deg, #e8a45a, #e8d25a);
+        }
+
+        .rarity-5 {
+            background: linear-gradient(90deg, #b0b0d8, #d8c0ff);
+        }
+
+        .rarity-4 {
+            background: linear-gradient(90deg, #5a8ad8, #5abde8);
+        }
+
+        /* tags */
+        .char-tags {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tag-pill {
+            font-family: var(--font-mono);
+            font-size: 7px;
+            padding: 1px 4px;
+            border-radius: 2px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            backdrop-filter: blur(4px);
+        }
+
+        .tag-new {
+            background: rgba(232, 200, 90, .85);
+            color: #1a1400;
+        }
+
+        .tag-expert {
+            background: rgba(232, 90, 90, .80);
+            color: #fff;
+        }
+
+        .tag-watchup {
+            background: rgba(90, 232, 200, .80);
+            color: #001a15;
+        }
+
+        .tag-watchdn {
+            background: rgba(232, 90, 90, .65);
+            color: #fff;
+        }
+
+        .char-name {
+            font-family: var(--font-head);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .02em;
+            text-align: center;
+            color: var(--text-bright);
+            line-height: 1.2;
+            max-width: var(--card-w);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ─── EMPTY STATE ────────────────────────────────────────────────── */
+        .empty-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: .1em;
+            width: 100%;
+        }
+
+        /* ─── LOADING SKELETON ───────────────────────────────────────────── */
+        .skeleton-card {
+            width: var(--card-w);
+            height: calc(var(--card-h) + 24px);
+            border-radius: var(--radius);
+            background: linear-gradient(90deg, var(--panel) 25%, var(--border) 50%, var(--panel) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        /* ─── LEGEND ─────────────────────────────────────────────────────── */
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-sep {
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+        }
+
+        /* ─── RESPONSIVE ─────────────────────────────────────────────────── */
+        @media (max-width: 700px) {
+            .page-header {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .main-wrap {
+                padding: 20px 16px 40px;
+            }
+
+            .header-meta {
+                margin-left: 0;
+                text-align: left;
+            }
+
+            :root {
+                --card-w: 76px;
+                --card-h: 86px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── HEADER ─────────────────────────────────────────────────────── -->
+    <header class="page-header">
+        <div>
+            <div class="eyebrow">Umbral Monument · General</div>
+            <h1>Arknights: Endfield Tier List</h1>
+            <div class="sub">Characters rated by performance in Umbral Monument endgame mode</div>
+        </div>
+        <div class="header-meta">
+            <div class="last-updated" id="last-updated">Last updated: —</div>
+            <div id="char-count">— characters</div>
+        </div>
+    </header>
+
+    <!-- ── STATUS BAR ─────────────────────────────────────────────────── -->
+    <div id="status-bar">
+        <div class="status-indicator">
+            <div class="status-dot" id="db-dot"></div>
+            <span id="db-status">Initialising…</span>
+        </div>
+    </div>
+
+    <!-- ── MAIN ───────────────────────────────────────────────────────── -->
+    <div class="main-wrap">
+
+        <!-- Filters -->
+        <div class="filters-bar">
+            <div class="filter-group">
+                <span class="filter-label">Role</span>
+                <button class="filter-btn active-all" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="damage" data-active-class="active-dmg">Damage</button>
+                <button class="filter-btn" data-filter="enabler" data-active-class="active-ena">Enabler</button>
+                <button class="filter-btn" data-filter="buffer" data-active-class="active-buf">Buffer</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search character…" />
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--dmg-color)"></div>Damage
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--ena-color)"></div>Enabler
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background:var(--buf-color)"></div>Buffer
+            </div>
+            <div class="legend-sep"></div>
+            <div class="legend-item"><span class="tag-pill tag-new" style="font-size:8px">NEW</span>Newly added</div>
+            <div class="legend-item"><span class="tag-pill tag-expert" style="font-size:8px">EXP</span>Expert tag</div>
+            <div class="legend-item"><span class="tag-pill tag-watchup" style="font-size:8px">▲</span>Watchlist Up</div>
+            <div class="legend-item"><span class="tag-pill tag-watchdn" style="font-size:8px">▼</span>Watchlist Down
+            </div>
+        </div>
+
+        <!-- Tier list container -->
+        <div id="tier-list-container">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <script>
+        /* ═══════════════════════════════════════════════════════════════════
+           SUPABASE CONFIG
+           ─────────────────────────────────────────────────────────────────
+           Replace with your real project values when connecting.
+           Table schema expected:
+             characters (
+               id          uuid primary key,
+               name        text not null,
+               slug        text,
+               tier        text not null,   -- 'T0' | 'T0.5' | 'T1' | 'T1.5' | 'T2'
+               role        text not null,   -- 'damage' | 'enabler' | 'buffer'
+               rarity      int,             -- 4 | 5 | 6
+               image_url   text,
+               is_new      boolean default false,
+               is_expert   boolean default false,
+               watchlist   text,            -- null | 'up' | 'down'
+               updated_at  timestamptz
+             )
+             tier_meta (
+               id          uuid primary key,
+               last_updated date
+             )
+           ═══════════════════════════════════════════════════════════════════ */
+
+        const SUPABASE_CONFIG = {
+            url: 'YOUR_SUPABASE_URL',   // e.g. https://xxxx.supabase.co
+            apiKey: 'YOUR_ANON_KEY',
+        };
+
+        /* ── Tier display order & labels ─────────────────────────────────── */
+        const TIER_ORDER = ['T0', 'T0.5', 'T1', 'T1.5', 'T2'];
+        const TIER_META = {
+            'T0': { label: 'T0', sub: 'APEX', cssClass: 'tier-T0' },
+            'T0.5': { label: 'T0.5', sub: 'ELITE', cssClass: 'tier-T05' },
+            'T1': { label: 'T1', sub: 'STRONG', cssClass: 'tier-T1' },
+            'T1.5': { label: 'T1.5', sub: 'SOLID', cssClass: 'tier-T15' },
+            'T2': { label: 'T2', sub: 'SITUATIONAL', cssClass: 'tier-T2' },
+        };
+        const ROLE_ORDER = ['damage', 'enabler', 'buffer'];
+        const ROLE_META = {
+            damage: { label: 'Damage', cssClass: 'cat-dmg' },
+            enabler: { label: 'Enabler', cssClass: 'cat-ena' },
+            buffer: { label: 'Buffer', cssClass: 'cat-buf' },
+        };
+
+        /* ─────────────────────────────────────────────────────────────────
+           FALLBACK DATA  (shown when Supabase is not yet connected)
+           Replace / remove once your DB is live.
+        ───────────────────────────────────────────────────────────────── */
+        const FALLBACK_DATA = {
+            lastUpdated: '17/04/2026',
+            characters: [
+                { name: 'Laevatain', tier: 'T0', role: 'damage', rarity: 6 },
+                { name: 'Rossi', tier: 'T0', role: 'damage', rarity: 6 },
+                { name: 'Yvonne', tier: 'T0', role: 'damage', rarity: 6 },
+                { name: 'Zhuang Fangyi', tier: 'T0', role: 'damage', rarity: 6, is_new: true, watchlist: 'up' },
+                { name: 'Tangtang', tier: 'T0', role: 'enabler', rarity: 6 },
+                { name: 'Gilberta', tier: 'T0', role: 'buffer', rarity: 6 },
+                { name: 'Pogranichnik', tier: 'T0', role: 'buffer', rarity: 6 },
+                { name: 'Last Rite', tier: 'T0.5', role: 'damage', rarity: 6 },
+                { name: 'Chen Qianyu', tier: 'T0.5', role: 'enabler', rarity: 5 },
+                { name: 'Lifeng', tier: 'T0.5', role: 'enabler', rarity: 5 },
+                { name: 'Wulfgard', tier: 'T0.5', role: 'enabler', rarity: 5 },
+                { name: 'Akekuri', tier: 'T0.5', role: 'buffer', rarity: 5 },
+                { name: 'Ardelia', tier: 'T0.5', role: 'buffer', rarity: 6 },
+                { name: 'Perlica', tier: 'T0.5', role: 'buffer', rarity: 5 },
+                { name: 'Xaihi', tier: 'T0.5', role: 'buffer', rarity: 5 },
+                { name: 'Avywenna', tier: 'T1', role: 'damage', rarity: 6, is_expert: true },
+                { name: 'Da Pan', tier: 'T1', role: 'damage', rarity: 5 },
+                { name: 'Endministrator', tier: 'T1', role: 'damage', rarity: 4 },
+                { name: 'Alesh', tier: 'T1', role: 'enabler', rarity: 5 },
+                { name: 'Arclight', tier: 'T1', role: 'enabler', rarity: 6, is_expert: true },
+                { name: 'Ember', tier: 'T1', role: 'enabler', rarity: 4 },
+                { name: 'Snowshine', tier: 'T1', role: 'enabler', rarity: 5 },
+                { name: 'Antal', tier: 'T1', role: 'buffer', rarity: 6 },
+                { name: 'Estella', tier: 'T1.5', role: 'enabler', rarity: 5 },
+                { name: 'Fluorite', tier: 'T1.5', role: 'enabler', rarity: 5 },
+                { name: 'Catcher', tier: 'T2', role: 'enabler', rarity: 4 },
+            ],
+        };
+
+        /* ─────────────────────────────────────────────────────────────────
+           SUPABASE CLIENT  (minimal, no SDK dependency)
+        ───────────────────────────────────────────────────────────────── */
+        const db = {
+            async query(table, params = '') {
+                const { url, apiKey } = SUPABASE_CONFIG;
+                if (!url || url === 'YOUR_SUPABASE_URL') return null; // not configured
+                const res = await fetch(`${url}/rest/v1/${table}?${params}`, {
+                    headers: {
+                        'apikey': apiKey,
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!res.ok) throw new Error(`Supabase error: ${res.status}`);
+                return res.json();
+            },
+
+            async fetchCharacters() {
+                return this.query('characters', 'select=*&order=name.asc');
+            },
+
+            async fetchMeta() {
+                return this.query('tier_meta', 'select=last_updated&limit=1');
+            },
+        };
+
+        /* ─────────────────────────────────────────────────────────────────
+           STATE
+        ───────────────────────────────────────────────────────────────── */
+        let allChars = [];
+        let activeFilter = 'all';
+        let searchQuery = '';
+
+        /* ─────────────────────────────────────────────────────────────────
+           STATUS BAR
+        ───────────────────────────────────────────────────────────────── */
+        function setStatus(state, msg) {
+            const dot = document.getElementById('db-dot');
+            const lbl = document.getElementById('db-status');
+            dot.className = 'status-dot ' + state;
+            lbl.textContent = msg;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────
+           RENDER
+        ───────────────────────────────────────────────────────────────── */
+        function buildCard(char) {
+            const div = document.createElement('div');
+            div.className = 'char-card';
+            div.dataset.role = char.role;
+            div.dataset.name = char.name.toLowerCase();
+
+            const rarity = char.rarity || 5;
+            const initials = char.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+
+            const tags = [];
+            if (char.is_new) tags.push(`<span class="tag-pill tag-new">NEW</span>`);
+            if (char.is_expert) tags.push(`<span class="tag-pill tag-expert">EXP</span>`);
+            if (char.watchlist === 'up') tags.push(`<span class="tag-pill tag-watchup">▲</span>`);
+            if (char.watchlist === 'down') tags.push(`<span class="tag-pill tag-watchdn">▼</span>`);
+
+            const imgTag = char.image_url
+                ? `<img src="${char.image_url}" alt="${char.name}" loading="lazy" />`
+                : `<div class="placeholder-avatar">${initials}</div>`;
+
+            div.innerHTML = `
+      <div class="char-portrait">
+        ${imgTag}
+        ${tags.length ? `<div class="char-tags">${tags.join('')}</div>` : ''}
+        <div class="rarity-bar rarity-${rarity}"></div>
+      </div>
+      <div class="char-name">${char.name}</div>
+    `;
+
+            if (char.slug) {
+                div.style.cursor = 'pointer';
+                div.addEventListener('click', () => {
+                    window.open(`https://www.prydwen.gg/arknights-endfield/characters/${char.slug}`, '_blank');
+                });
+            }
+            return div;
+        }
+
+        function renderTierList(characters) {
+            const container = document.getElementById('tier-list-container');
+            container.innerHTML = '';
+
+            // Group by tier → role
+            const grouped = {};
+            for (const tier of TIER_ORDER) {
+                grouped[tier] = { damage: [], enabler: [], buffer: [] };
+            }
+            for (const char of characters) {
+                if (grouped[char.tier] && grouped[char.tier][char.role]) {
+                    grouped[char.tier][char.role].push(char);
+                }
+            }
+
+            for (const tier of TIER_ORDER) {
+                const meta = TIER_META[tier];
+                const tierData = grouped[tier];
+
+                const section = document.createElement('div');
+                section.className = 'tier-section';
+                section.dataset.tier = tier;
+
+                const row = document.createElement('div');
+                row.className = 'tier-row';
+
+                // Label
+                const label = document.createElement('div');
+                label.className = `tier-label ${meta.cssClass}`;
+                label.innerHTML = `<span class="tier-name">${meta.label}</span><span class="tier-sub">${meta.sub}</span>`;
+
+                // Categories
+                const cats = document.createElement('div');
+                cats.className = 'tier-categories';
+
+                for (const role of ROLE_ORDER) {
+                    const chars = tierData[role];
+                    const rm = ROLE_META[role];
+                    const catRow = document.createElement('div');
+                    catRow.className = 'category-row';
+                    catRow.dataset.role = role;
+
+                    const catLabel = document.createElement('span');
+                    catLabel.className = `cat-label ${rm.cssClass}`;
+                    catLabel.textContent = rm.label;
+
+                    const wrap = document.createElement('div');
+                    wrap.className = 'chars-wrap';
+
+                    if (chars.length === 0) {
+                        const empty = document.createElement('div');
+                        empty.className = 'empty-row';
+                        empty.textContent = '—';
+                        wrap.appendChild(empty);
+                    } else {
+                        chars.forEach(c => wrap.appendChild(buildCard(c)));
+                    }
+
+                    catRow.appendChild(catLabel);
+                    catRow.appendChild(wrap);
+                    cats.appendChild(catRow);
+                }
+
+                row.appendChild(label);
+                row.appendChild(cats);
+                section.appendChild(row);
+                container.appendChild(section);
+            }
+
+            document.getElementById('char-count').textContent = `${characters.length} characters`;
+            applyFilters();
+        }
+
+        /* ─────────────────────────────────────────────────────────────────
+           FILTERS
+        ───────────────────────────────────────────────────────────────── */
+        function applyFilters() {
+            const cards = document.querySelectorAll('.char-card');
+            const catRows = document.querySelectorAll('.category-row');
+
+            cards.forEach(card => {
+                const roleMatch = activeFilter === 'all' || card.dataset.role === activeFilter;
+                const searchMatch = !searchQuery || card.dataset.name.includes(searchQuery);
+                card.classList.toggle('hidden-card', !(roleMatch && searchMatch));
+            });
+
+            // Hide category rows that are fully empty after filtering
+            catRows.forEach(row => {
+                const visible = row.querySelectorAll('.char-card:not(.hidden-card)');
+                row.classList.toggle('hidden', visible.length === 0 && activeFilter !== 'all');
+            });
+        }
+
+        /* ─────────────────────────────────────────────────────────────────
+           FILTER BUTTONS
+        ───────────────────────────────────────────────────────────────── */
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.className = 'filter-btn';
+                });
+                const filter = btn.dataset.filter;
+                const ac = btn.dataset.activeClass || 'active-all';
+                btn.classList.add(ac);
+                activeFilter = filter;
+                applyFilters();
+            });
+        });
+
+        document.getElementById('search-input').addEventListener('input', e => {
+            searchQuery = e.target.value.toLowerCase().trim();
+            applyFilters();
+        });
+
+        /* ─────────────────────────────────────────────────────────────────
+           INIT — try Supabase, fall back to static data
+        ───────────────────────────────────────────────────────────────── */
+        async function init() {
+            setStatus('loading', 'Connecting to database…');
+
+            if (!SUPABASE_CONFIG.url || SUPABASE_CONFIG.url === 'YOUR_SUPABASE_URL') {
+                // Not configured — use fallback
+                setStatus('', 'Using local data  ·  Connect Supabase to go live');
+                document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
+                allChars = FALLBACK_DATA.characters;
+                renderTierList(allChars);
+                return;
+            }
+
+            try {
+                const [chars, meta] = await Promise.all([db.fetchCharacters(), db.fetchMeta()]);
+
+                allChars = chars;
+
+                if (meta && meta.length > 0) {
+                    const d = new Date(meta[0].last_updated);
+                    document.getElementById('last-updated').textContent =
+                        `Last updated: ${d.toLocaleDateString('en-GB')}`;
+                }
+
+                setStatus('connected', `Supabase · ${chars.length} records loaded`);
+                renderTierList(allChars);
+            } catch (err) {
+                console.error('Supabase fetch failed:', err);
+                setStatus('error', 'DB error — using local fallback');
+                document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
+                allChars = FALLBACK_DATA.characters;
+                renderTierList(allChars);
+            }
+        }
+
+        init();
+    </script>
+    <script src="js/NavBar.js"></script>
+    <script>
+        NavBar.init({
+            sections: []
+        });
+    </script>
+</body>
+
+</html>
