@@ -33,22 +33,34 @@ function iconImg(srcOrEmoji, size = 20, extraClass = '') {
 }
 
 const DEFAULT_MAT_NAMES = {
-  proto1:'Basic Protodisk', proto2:'Advanced Protoset', proto3:'Prime Proto-core',
-  fun1:'Bolete', fun2:'Bloodcap', fun3:'Mycena',
-  steel1:'D96 Tube', steel2:'D96 Steel', steel3:'D96 Alloy',
-  book1:'Skill Summary I', book2:'Skill Summary II', pri1:'Protoprism',
-  den1:'Chrysodendra', den2:'Vitrodendra', den3:'Kalkodendra',
+  // Operator Promotion — Protodisk series
+  proto1:'Protodisk', proto2:'Protoset', proto3:'Triphasic Nanoflake',
+  // Operator Promotion — Fungus series (character-specific, overridden per char)
+  fun1:'Pink Bolete', fun2:'Red Bolete', fun3:'Ruby Bolete',
+  // Operator Promotion — Steel series (character-specific, overridden per char)
+  steel1:'Bloodcap', steel2:'Cosmagaric', steel3:'D96 Steel Sample 4',
+  // Skill Leveling — Books / Protoprism
+  book1:'False Aggela', book2:'False Aggela', pri1:'Protoprism',
+  // Skill Leveling — Dendra series
+  den1:'Kalkodendra', den2:'Chrysodendra', den3:'Vitrodendra',
+  // Mastery materials (Rank 8–12)
   mastery_proto:'Protohedron', mastery_jade:'Blighted Jadeleaf',
   mastery_nano:'Triphasic Nanoflake', mastery_mark:'Mark of Perseverance'
 };
 
 const DEFAULT_MAT_ICONS = {
   gold: '🪙', exp: '📼',
-  proto1: '💿', proto2: '💽', proto3: '📀',
-  fun1: '🍄', fun2: '🥀', fun3: '🌸',
-  steel1: '🔩', steel2: '⚙️', steel3: '🛠️',
-  book1: '📗', book2: '📘', pri1: '💠',
-  den1: '🌿', den2: '🍃', den3: '🌱',
+  // Protodisk series
+  proto1: '💿', proto2: '💽', proto3: '🧬',
+  // Fungus / character drop series (T1–T3)
+  fun1: '🍄', fun2: '🌺', fun3: '🔴',
+  // Steel / combat drop series (T1–T3)
+  steel1: '🥀', steel2: '🍂', steel3: '⚙️',
+  // Skill books / prisms
+  book1: '🔷', book2: '🔷', pri1: '💠',
+  // Dendra series
+  den1: '🌱', den2: '🌿', den3: '🍃',
+  // Mastery
   mastery_proto: '🧊', mastery_jade: '🍁', mastery_nano: '🧬', mastery_mark: '🏅'
 };
 
@@ -432,7 +444,7 @@ function renderLvMats() {
     <div class="mat-section-label">Universal Resources</div>
     <div class="mat-grid">
       <div class="mat-card tier-gold"><div class="mat-card-icon">${iconImg(i.gold,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-gold">0</div><div class="mat-card-label">T-Creds</div></div>
-      <div class="mat-card tier-exp"><div class="mat-card-icon">${iconImg(i.exp,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-exp">0</div><div class="mat-card-label">EXP Records</div></div>
+      <div class="mat-card tier-exp"><div class="mat-card-icon">${iconImg(i.exp,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-exp">0</div><div class="mat-card-label">Combat / Cognitive Records</div></div>
     </div>
     <div class="mat-section-label">Protodisk Series</div>
     <div class="mat-grid">
@@ -440,13 +452,13 @@ function renderLvMats() {
       <div class="mat-card tier-2"><div class="mat-card-icon">${iconImg(i.proto2,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-proto2">0</div><div class="mat-card-label">${m.proto2}</div></div>
       <div class="mat-card tier-3"><div class="mat-card-icon">${iconImg(i.proto3,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-proto3">0</div><div class="mat-card-label">${m.proto3}</div></div>
     </div>
-    <div class="mat-section-label">Character Materials (Series A)</div>
+    <div class="mat-section-label">Operator Drops — Fungus Series</div>
     <div class="mat-grid">
       <div class="mat-card tier-1"><div class="mat-card-icon">${iconImg(i.fun1,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-fun1">0</div><div class="mat-card-label">${m.fun1}</div></div>
       <div class="mat-card tier-2"><div class="mat-card-icon">${iconImg(i.fun2,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-fun2">0</div><div class="mat-card-label">${m.fun2}</div></div>
       <div class="mat-card tier-3"><div class="mat-card-icon">${iconImg(i.fun3,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-fun3">0</div><div class="mat-card-label">${m.fun3}</div></div>
     </div>
-    <div class="mat-section-label">Character Materials (Series B)</div>
+    <div class="mat-section-label">Operator Drops — Combat Series</div>
     <div class="mat-grid">
       <div class="mat-card tier-1"><div class="mat-card-icon">${iconImg(i.steel1,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-steel1">0</div><div class="mat-card-label">${m.steel1}</div></div>
       <div class="mat-card tier-2"><div class="mat-card-icon">${iconImg(i.steel2,26,'has-char-img')}</div><div class="mat-card-val" id="r-lv-steel2">0</div><div class="mat-card-label">${m.steel2}</div></div>
@@ -461,10 +473,10 @@ function renderSkMats() {
     <div class="mat-section-label">Universal Resources</div>
     <div class="mat-grid">
       <div class="mat-card tier-gold"><div class="mat-card-icon">${iconImg(i.gold,26,'has-char-img')}</div><div class="mat-card-val" id="r-sk-gold">0</div><div class="mat-card-label">T-Creds</div></div>
-      <div class="mat-card tier-1"><div class="mat-card-icon">${iconImg(i.book1,26,'has-char-img')}</div><div class="mat-card-val" id="r-sk-book1">0</div><div class="mat-card-label">${m.book1}</div></div>
-      <div class="mat-card tier-2"><div class="mat-card-icon">${iconImg(i.book2,26,'has-char-img')}</div><div class="mat-card-val" id="r-sk-book2">0</div><div class="mat-card-label">${m.book2}</div></div>
+      <div class="mat-card tier-1"><div class="mat-card-icon">${iconImg(i.book1,26,'has-char-img')}</div><div class="mat-card-val" id="r-sk-book1">0</div><div class="mat-card-label">False Aggela (T1)</div></div>
+      <div class="mat-card tier-2"><div class="mat-card-icon">${iconImg(i.book2,26,'has-char-img')}</div><div class="mat-card-val" id="r-sk-book2">0</div><div class="mat-card-label">False Aggela (T2)</div></div>
     </div>
-    <div class="mat-section-label">Enhancement Materials</div>
+    <div class="mat-section-label">Skill Enhancement Materials</div>
     <div class="mat-grid">
       <div class="mat-card tier-1"><div class="mat-card-icon">${iconImg(i.pri1,26,'has-char-img')}</div><div class="mat-card-val" id="r-sk-pri1">0</div><div class="mat-card-label">${m.pri1}</div></div>
       <div class="mat-card tier-1"><div class="mat-card-icon">${iconImg(i.den1,26,'has-char-img')}</div><div class="mat-card-val" id="r-sk-den1">0</div><div class="mat-card-label">${m.den1}</div></div>
