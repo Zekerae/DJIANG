@@ -41,6 +41,9 @@
             --radius: 3px;
             --card-w: 88px;
             --card-h: 100px;
+
+            /* ── FIX: offset for fixed 50px navbar ── */
+            --navbar-h: 50px;
         }
 
         /* ─── RESET ──────────────────────────────────────────────────────── */
@@ -54,6 +57,8 @@
 
         html {
             scroll-behavior: smooth;
+            /* Ensure anchor links land below the fixed navbar */
+            scroll-padding-top: calc(var(--navbar-h) + 8px);
         }
 
         body {
@@ -63,6 +68,8 @@
             font-size: 16px;
             line-height: 1.5;
             min-height: 100vh;
+            /* Push all content down so the fixed navbar doesn't overlap */
+            padding-top: var(--navbar-h);
         }
 
         /* ─── SCANLINE OVERLAY ───────────────────────────────────────────── */
@@ -167,15 +174,8 @@
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: .3
-            }
+            0%, 100% { opacity: 1 }
+            50% { opacity: .3 }
         }
 
         /* ─── MAIN LAYOUT ────────────────────────────────────────────────── */
@@ -183,6 +183,220 @@
             padding: 32px 40px 60px;
             max-width: 1400px;
             margin: 0 auto;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           VIEW TABS  (General ↔ Team)
+        ══════════════════════════════════════════════════════════════════ */
+        .view-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .view-tab {
+            font-family: var(--font-head);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            padding: 10px 22px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: color .15s, border-color .15s;
+        }
+
+        .view-tab:hover { color: var(--text-mid); }
+
+        .view-tab.active {
+            color: var(--t0-color);
+            border-bottom-color: var(--t0-color);
+        }
+
+        .view-panel { display: none; }
+        .view-panel.active { display: block; }
+
+        /* ══════════════════════════════════════════════════════════════════
+           INTRODUCTION / ACCORDION SECTION
+        ══════════════════════════════════════════════════════════════════ */
+        .intro-section {
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .intro-section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .intro-section-header .section-title {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--t0-color);
+        }
+
+        /* Accordion container */
+        .accordion {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 18px;
+            background: var(--panel);
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            gap: 12px;
+            transition: background .15s;
+        }
+
+        .accordion-trigger:hover {
+            background: #161926;
+        }
+
+        .accordion-trigger.open {
+            background: #161926;
+        }
+
+        .accordion-trigger-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accordion-icon {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--t0-color);
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .accordion-title {
+            font-family: var(--font-head);
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: .04em;
+            color: var(--text-bright);
+        }
+
+        .accordion-caret {
+            font-size: 10px;
+            color: var(--text-dim);
+            transition: transform .2s;
+            flex-shrink: 0;
+        }
+
+        .accordion-trigger.open .accordion-caret {
+            transform: rotate(180deg);
+        }
+
+        .accordion-body {
+            display: none;
+            padding: 16px 20px 18px 48px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            font-size: 15px;
+            color: var(--text-mid);
+            line-height: 1.7;
+        }
+
+        .accordion-body.open {
+            display: block;
+        }
+
+        .accordion-body p { margin-bottom: 10px; }
+        .accordion-body p:last-child { margin-bottom: 0; }
+
+        .accordion-body strong {
+            color: var(--text-bright);
+            font-weight: 600;
+        }
+
+        .accordion-body ul,
+        .accordion-body ol {
+            padding-left: 18px;
+            margin: 8px 0 10px;
+        }
+
+        .accordion-body li {
+            margin-bottom: 5px;
+        }
+
+        /* Criteria sub-headers */
+        .accordion-body .criteria-block {
+            margin-bottom: 14px;
+        }
+
+        .accordion-body .criteria-block:last-child { margin-bottom: 0; }
+
+        .accordion-body .criteria-heading {
+            font-family: var(--font-head);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--text-bright);
+            margin-bottom: 6px;
+        }
+
+        /* Changelog entries */
+        .changelog-entry {
+            margin-bottom: 16px;
+        }
+
+        .changelog-entry:last-child { margin-bottom: 0; }
+
+        .changelog-date {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: .15em;
+            color: var(--t0-color);
+            margin-bottom: 6px;
+        }
+
+        .changelog-entry ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .changelog-entry li {
+            padding: 4px 0 4px 12px;
+            border-left: 2px solid var(--border);
+            margin-bottom: 6px;
+            color: var(--text-mid);
+            font-size: 14px;
+        }
+
+        .changelog-entry li strong {
+            color: var(--text-bright);
         }
 
         /* ─── FILTERS ────────────────────────────────────────────────────── */
@@ -268,13 +482,8 @@
             transition: border-color .15s;
         }
 
-        .search-box input:focus {
-            border-color: var(--border-hi);
-        }
-
-        .search-box input::placeholder {
-            color: var(--text-dim);
-        }
+        .search-box input:focus { border-color: var(--border-hi); }
+        .search-box input::placeholder { color: var(--text-dim); }
 
         .search-box::before {
             content: '⌕';
@@ -288,9 +497,7 @@
         }
 
         /* ─── TIER ROW ───────────────────────────────────────────────────── */
-        .tier-section {
-            margin-bottom: 6px;
-        }
+        .tier-section { margin-bottom: 6px; }
 
         .tier-row {
             display: grid;
@@ -303,11 +510,8 @@
             transition: opacity .2s;
         }
 
-        .tier-row+.tier-row {
-            margin-top: 4px;
-        }
+        .tier-row + .tier-row { margin-top: 4px; }
 
-        /* tier label cell */
         .tier-label {
             display: flex;
             flex-direction: column;
@@ -329,45 +533,16 @@
             opacity: .07;
         }
 
-        .tier-T0 {
-            color: var(--t0-color);
-        }
-
-        .tier-T0::after {
-            background: var(--t0-color);
-        }
-
-        .tier-T05 {
-            color: var(--t05-color);
-        }
-
-        .tier-T05::after {
-            background: var(--t05-color);
-        }
-
-        .tier-T1 {
-            color: var(--t1-color);
-        }
-
-        .tier-T1::after {
-            background: var(--t1-color);
-        }
-
-        .tier-T15 {
-            color: var(--t15-color);
-        }
-
-        .tier-T15::after {
-            background: var(--t15-color);
-        }
-
-        .tier-T2 {
-            color: var(--t2-color);
-        }
-
-        .tier-T2::after {
-            background: var(--t2-color);
-        }
+        .tier-T0  { color: var(--t0-color);  }
+        .tier-T0::after  { background: var(--t0-color);  }
+        .tier-T05 { color: var(--t05-color); }
+        .tier-T05::after { background: var(--t05-color); }
+        .tier-T1  { color: var(--t1-color);  }
+        .tier-T1::after  { background: var(--t1-color);  }
+        .tier-T15 { color: var(--t15-color); }
+        .tier-T15::after { background: var(--t15-color); }
+        .tier-T2  { color: var(--t2-color);  }
+        .tier-T2::after  { background: var(--t2-color);  }
 
         .tier-label .tier-name {
             position: relative;
@@ -398,13 +573,8 @@
             flex-wrap: wrap;
         }
 
-        .category-row+.category-row {
-            border-top: 1px solid var(--border);
-        }
-
-        .category-row.hidden {
-            display: none;
-        }
+        .category-row + .category-row { border-top: 1px solid var(--border); }
+        .category-row.hidden { display: none; }
 
         .cat-label {
             font-family: var(--font-mono);
@@ -456,13 +626,8 @@
             transition: transform .15s;
         }
 
-        .char-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .char-card.hidden-card {
-            display: none;
-        }
+        .char-card:hover { transform: translateY(-3px); }
+        .char-card.hidden-card { display: none; }
 
         .char-portrait {
             width: var(--card-w);
@@ -478,9 +643,7 @@
             transition: border-color .15s;
         }
 
-        .char-card:hover .char-portrait {
-            border-color: var(--border-hi);
-        }
+        .char-card:hover .char-portrait { border-color: var(--border-hi); }
 
         .char-portrait img {
             width: 100%;
@@ -489,7 +652,6 @@
             object-position: top center;
         }
 
-        /* Placeholder avatar when no image */
         .char-portrait .placeholder-avatar {
             width: 52px;
             height: 52px;
@@ -504,7 +666,6 @@
             color: var(--text-dim);
         }
 
-        /* rarity bar at bottom of portrait */
         .rarity-bar {
             position: absolute;
             bottom: 0;
@@ -513,19 +674,10 @@
             height: 3px;
         }
 
-        .rarity-6 {
-            background: linear-gradient(90deg, #e8a45a, #e8d25a);
-        }
+        .rarity-6 { background: linear-gradient(90deg, #e8a45a, #e8d25a); }
+        .rarity-5 { background: linear-gradient(90deg, #b0b0d8, #d8c0ff); }
+        .rarity-4 { background: linear-gradient(90deg, #5a8ad8, #5abde8); }
 
-        .rarity-5 {
-            background: linear-gradient(90deg, #b0b0d8, #d8c0ff);
-        }
-
-        .rarity-4 {
-            background: linear-gradient(90deg, #5a8ad8, #5abde8);
-        }
-
-        /* tags */
         .char-tags {
             position: absolute;
             top: 4px;
@@ -545,25 +697,10 @@
             backdrop-filter: blur(4px);
         }
 
-        .tag-new {
-            background: rgba(232, 200, 90, .85);
-            color: #1a1400;
-        }
-
-        .tag-expert {
-            background: rgba(232, 90, 90, .80);
-            color: #fff;
-        }
-
-        .tag-watchup {
-            background: rgba(90, 232, 200, .80);
-            color: #001a15;
-        }
-
-        .tag-watchdn {
-            background: rgba(232, 90, 90, .65);
-            color: #fff;
-        }
+        .tag-new     { background: rgba(232, 200, 90, .85); color: #1a1400; }
+        .tag-expert  { background: rgba(232, 90, 90, .80);  color: #fff; }
+        .tag-watchup { background: rgba(90, 232, 200, .80); color: #001a15; }
+        .tag-watchdn { background: rgba(232, 90, 90, .65);  color: #fff; }
 
         .char-name {
             font-family: var(--font-head);
@@ -577,6 +714,161 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        /* ══════════════════════════════════════════════════════════════════
+           TEAM TIER LIST
+        ══════════════════════════════════════════════════════════════════ */
+
+        /* Team card — wider than char card */
+        .team-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 14px 12px;
+            min-width: 260px;
+            max-width: 340px;
+            flex: 1 1 260px;
+            transition: border-color .15s;
+        }
+
+        .team-card:hover { border-color: var(--border-hi); }
+
+        .team-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .team-name {
+            font-family: var(--font-head);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            color: var(--text-bright);
+        }
+
+        .team-tag {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 2px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .team-tag-expert {
+            background: rgba(232, 90, 90, .15);
+            color: var(--dmg-color);
+            border: 1px solid rgba(232, 90, 90, .3);
+        }
+
+        .team-members {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* Mini char portrait inside team card */
+        .team-member {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: transform .12s;
+        }
+
+        .team-member:hover { transform: translateY(-2px); }
+
+        .team-member-portrait {
+            width: 52px;
+            height: 60px;
+            border-radius: 2px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .team-member-portrait img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+
+        .team-member-portrait .placeholder-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-head);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dim);
+        }
+
+        .team-member-portrait .rarity-bar { height: 2px; }
+
+        .team-member-name {
+            font-family: var(--font-head);
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-mid);
+            text-align: center;
+            max-width: 52px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* divider between alt-member groups */
+        .team-divider {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin: 0 2px;
+            align-self: center;
+        }
+
+        .team-divider-line {
+            width: 1px;
+            height: 32px;
+            background: var(--border);
+        }
+
+        .team-divider-label {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: var(--text-dim);
+            writing-mode: vertical-rl;
+        }
+
+        /* Tier row for teams — single wide row, no role columns */
+        .tier-row-team {
+            display: grid;
+            grid-template-columns: 72px 1fr;
+            min-height: 120px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: var(--surface);
+        }
+
+        .team-cells {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 14px;
+            align-items: flex-start;
         }
 
         /* ─── EMPTY STATE ────────────────────────────────────────────────── */
@@ -603,13 +895,8 @@
         }
 
         @keyframes shimmer {
-            0% {
-                background-position: 200% 0
-            }
-
-            100% {
-                background-position: -200% 0
-            }
+            0%   { background-position: 200% 0 }
+            100% { background-position: -200% 0 }
         }
 
         /* ─── LEGEND ─────────────────────────────────────────────────────── */
@@ -650,9 +937,7 @@
                 align-items: flex-start;
             }
 
-            .main-wrap {
-                padding: 20px 16px 40px;
-            }
+            .main-wrap { padding: 20px 16px 40px; }
 
             .header-meta {
                 margin-left: 0;
@@ -663,6 +948,9 @@
                 --card-w: 76px;
                 --card-h: 86px;
             }
+
+            .accordion-body { padding-left: 18px; }
+            .team-card { min-width: 100%; }
         }
     </style>
 </head>
@@ -693,68 +981,361 @@
     <!-- ── MAIN ───────────────────────────────────────────────────────── -->
     <div class="main-wrap">
 
-        <!-- Filters -->
-        <div class="filters-bar">
-            <div class="filter-group">
-                <span class="filter-label">Role</span>
-                <button class="filter-btn active-all" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="damage" data-active-class="active-dmg">Damage</button>
-                <button class="filter-btn" data-filter="enabler" data-active-class="active-ena">Enabler</button>
-                <button class="filter-btn" data-filter="buffer" data-active-class="active-buf">Buffer</button>
-            </div>
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search character…" />
-            </div>
+        <!-- ── View tabs ──────────────────────────────────────────────── -->
+        <div class="view-tabs">
+            <button class="view-tab active" data-view="general">General Tier List</button>
+            <button class="view-tab"        data-view="team">Team Tier List</button>
         </div>
 
-        <!-- Legend -->
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-dot" style="background:var(--dmg-color)"></div>Damage
-            </div>
-            <div class="legend-item">
-                <div class="legend-dot" style="background:var(--ena-color)"></div>Enabler
-            </div>
-            <div class="legend-item">
-                <div class="legend-dot" style="background:var(--buf-color)"></div>Buffer
-            </div>
-            <div class="legend-sep"></div>
-            <div class="legend-item"><span class="tag-pill tag-new" style="font-size:8px">NEW</span>Newly added</div>
-            <div class="legend-item"><span class="tag-pill tag-expert" style="font-size:8px">EXP</span>Expert tag</div>
-            <div class="legend-item"><span class="tag-pill tag-watchup" style="font-size:8px">▲</span>Watchlist Up</div>
-            <div class="legend-item"><span class="tag-pill tag-watchdn" style="font-size:8px">▼</span>Watchlist Down
-            </div>
-        </div>
+        <!-- ══════════════════════════════════════════════════════════════
+             GENERAL TIER LIST VIEW
+        ══════════════════════════════════════════════════════════════════ -->
+        <div class="view-panel active" id="view-general">
 
-        <!-- Tier list container -->
-        <div id="tier-list-container">
-            <!-- Populated by JS -->
-        </div>
-    </div>
+            <!-- ── Introduction accordion ─────────────────────────────── -->
+            <div class="intro-section">
+                <div class="intro-section-header">
+                    <span class="section-title">Tier List — Introduction</span>
+                </div>
+                <div class="accordion">
+
+                    <!-- About -->
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" data-acc="about">
+                            <span class="accordion-trigger-left">
+                                <span class="accordion-icon">01</span>
+                                <span class="accordion-title">About the Tier List</span>
+                            </span>
+                            <span class="accordion-caret">▼</span>
+                        </button>
+                        <div class="accordion-body" id="acc-about">
+                            <p>
+                                Arknights: Endfield is a game <strong>where team building matters immensely</strong>,
+                                but at the same time, one where many units are usable only within a single element or team archetype.
+                                As a result, there are two tier lists: a <strong>General Tier List</strong> (this page) and a
+                                <strong>Team Tier List</strong> (accessible via the tab above).
+                            </p>
+                            <p>
+                                Our general tier list <strong>ranks all characters within categories according to their role and
+                                contribution in teams</strong>, as well as how impactful they are to the game's meta.
+                                For the <strong>story and the lower difficulties of permanent game modes, there is no need to be
+                                concerned with ratings</strong>. Players should be able to comfortably clear such content so long
+                                as a team is built and played correctly.
+                            </p>
+                            <p>
+                                Instead, the tier list criteria are based on the current hardest content in the game —
+                                <strong>Umbral Monument</strong>. As new or harder content is released, the tier list and its
+                                criteria will be updated accordingly.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Categories & Tags -->
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" data-acc="categories">
+                            <span class="accordion-trigger-left">
+                                <span class="accordion-icon">02</span>
+                                <span class="accordion-title">Categories &amp; Tags</span>
+                            </span>
+                            <span class="accordion-caret">▼</span>
+                        </button>
+                        <div class="accordion-body" id="acc-categories">
+                            <p>
+                                In Endfield, many characters possess elements of multiple categories.
+                                To avoid cluttering the tier list, each character is placed in a single category —
+                                whichever they're strongest in.
+                            </p>
+                            <ul>
+                                <li><strong>Damage</strong> — Characters whose main purpose is to deal damage, working as hypercarries or driving a team's damage output.</li>
+                                <li><strong>Enabler</strong> — Characters whose main purpose is to assist others beyond buffs: Inflictions, SP generation, stagger build, Ultimate Energy, and more.</li>
+                                <li><strong>Buffer</strong> — Characters whose main purpose is to provide buffs or debuffs that multiply the overall damage output of the squad.</li>
+                            </ul>
+                            <p><strong>Special Tags</strong></p>
+                            <ul>
+                                <li><strong>[Expert]</strong> — Characters with this tag have an optimal playstyle that must be mastered. Without the necessary skills, performance may drop by at least one tier.</li>
+                                <li><strong>[Watchlist ▲/▼]</strong> — Characters marked as highly likely to move up or down a tier in a future update.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Criteria -->
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" data-acc="criteria">
+                            <span class="accordion-trigger-left">
+                                <span class="accordion-icon">03</span>
+                                <span class="accordion-title">Evaluation Criteria</span>
+                            </span>
+                            <span class="accordion-caret">▼</span>
+                        </button>
+                        <div class="accordion-body" id="acc-criteria">
+                            <p>The general criteria are structured around <strong>Umbral Monument</strong>. Assessment assumes:</p>
+                            <ul>
+                                <li>Operators at Level <strong>90</strong>, Skills at max Rank, all Talents fully levelled.</li>
+                                <li>Optimal Gear/Sets equipped.</li>
+                                <li>P0 for 6★ and 5★ Operators; P5 for 4★ and Endministrator.</li>
+                                <li>Best-in-slot weapon assumed (P0 6★ weapon; P5 5★/4★/3★ weapon) with optimal essences.</li>
+                                <li>All Operators start at <strong>zero Ultimate Energy</strong>; no pre-casting before combat.</li>
+                                <li>Usables (food, Tacticals) are not included. Evaluations are done around optimal team compositions.</li>
+                            </ul>
+                            <p>Characters are compared <strong>within their role</strong>, not between roles. If a category has no Operators who perform at a given level, some tiers for that category may be empty.</p>
+
+                            <div class="criteria-block">
+                                <div class="criteria-heading">Damage</div>
+                                <ul>
+                                    <li><strong>Primary:</strong> Personal damage contribution.</li>
+                                    <li><strong>Secondary:</strong> Ability to handle different encounter types (bosses, multiple targets, intermission phases).</li>
+                                </ul>
+                            </div>
+                            <div class="criteria-block">
+                                <div class="criteria-heading">Enabler</div>
+                                <ul>
+                                    <li><strong>Primary:</strong> Providing resources and support that enable stronger, more optimal rotations.</li>
+                                    <li><strong>Secondary:</strong> Personal damage contribution and increases to team damage.</li>
+                                </ul>
+                            </div>
+                            <div class="criteria-block">
+                                <div class="criteria-heading">Buffer</div>
+                                <ul>
+                                    <li><strong>Primary:</strong> Providing increases to team damage.</li>
+                                    <li><strong>Secondary:</strong> Providing resources and support to enable stronger rotations.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Changelog -->
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" data-acc="changelog">
+                            <span class="accordion-trigger-left">
+                                <span class="accordion-icon">04</span>
+                                <span class="accordion-title">Changelog</span>
+                            </span>
+                            <span class="accordion-caret">▼</span>
+                        </button>
+                        <div class="accordion-body" id="acc-changelog">
+                            <div class="changelog-entry">
+                                <div class="changelog-date">17.04.2026</div>
+                                <ul>
+                                    <li><strong>Zhuang Fangyi</strong> (Damage) added at T0 with Watchlist ▲ — Debuts as an exorbitantly powerful unit with accessible teams, great range, and consistent damage output; however, long ramp-up periods and Sunderblade stacking hold back speedrun prospects. T0 with watchlist pending further community testing.</li>
+                                </ul>
+                            </div>
+                            <div class="changelog-entry">
+                                <div class="changelog-date">29.03.2026</div>
+                                <ul>
+                                    <li><strong>Rossi</strong> T0 (Damage) — Despite seemingly anti-synergistic teams, raw burst potential on Ultimate and high multipliers on Combo and Battle Skills make her a flexible, incredibly strong Operator deserving T0.</li>
+                                    <li><strong>Yvonne</strong> T0.5 → T0 (Damage) — Cryo team rotations further optimised; competitive even in 3-3 Umbral Monument stages. Proven strong and well-rounded across all content.</li>
+                                    <li><strong>Ardelia</strong> T0 → T0.5 (Buffer) — Still very strong, but steep SP costs and lower-rarity buffers (Perlica, Akekuri, Xaihi) have been more prominent. Not a core Operator when resources are tight.</li>
+                                    <li><strong>Last Rite</strong> remains T0.5 — Tangtang raises her ceiling but doesn't address pre-existing structural issues the same way as Yvonne.</li>
+                                </ul>
+                            </div>
+                            <div class="changelog-entry">
+                                <div class="changelog-date">15.03.2026</div>
+                                <ul>
+                                    <li><strong>Tangtang</strong> added at T0 (Enabler) — High personal damage, accessible Inflictions, utility on Ultimate, and wide AoE make her an all-around elite Enabler for Cryo teams.</li>
+                                </ul>
+                            </div>
+                            <div class="changelog-entry">
+                                <div class="changelog-date">03.03.2026</div>
+                                <ul>
+                                    <li>Tier list restructured: broad Damage / Enabler / Buffer categories introduced. Multiple characters repositioned accordingly (Gilberta T0, Pogranichnik T0, Chen Qianyu T0.5, Wulfgard T0.5, Perlica T0.5, Alesh T1, Antal T1, and others).</li>
+                                </ul>
+                            </div>
+                            <div class="changelog-entry">
+                                <div class="changelog-date">02.02.2026</div>
+                                <ul>
+                                    <li><strong>Yvonne</strong> added at T1 with Watchlist ▲.</li>
+                                    <li><strong>Fluorite</strong> T2 → T1.5 (major buff in 1.0 added Infliction to Ultimate).</li>
+                                    <li><strong>Xaihi</strong> T1 → T0.5 (mainstay in Last Rite and Yvonne teams, high flexibility).</li>
+                                    <li><strong>Gilberta</strong> T1 → T0.5 (strong niches in Electric and Yvonne teams confirmed).</li>
+                                    <li><strong>Akekuri</strong> T1 → T0.5 (flexible across archetypes despite nerfs).</li>
+                                </ul>
+                            </div>
+                            <div class="changelog-entry">
+                                <div class="changelog-date">20.01.2026</div>
+                                <ul>
+                                    <li>Initial release of the tier list.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /accordion -->
+            </div><!-- /intro-section -->
+
+            <!-- Filters -->
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <span class="filter-label">Role</span>
+                    <button class="filter-btn active-all" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="damage"  data-active-class="active-dmg">Damage</button>
+                    <button class="filter-btn" data-filter="enabler" data-active-class="active-ena">Enabler</button>
+                    <button class="filter-btn" data-filter="buffer"  data-active-class="active-buf">Buffer</button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search character…" />
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--dmg-color)"></div>Damage
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--ena-color)"></div>Enabler
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background:var(--buf-color)"></div>Buffer
+                </div>
+                <div class="legend-sep"></div>
+                <div class="legend-item"><span class="tag-pill tag-new"     style="font-size:8px">NEW</span>Newly added</div>
+                <div class="legend-item"><span class="tag-pill tag-expert"  style="font-size:8px">EXP</span>Expert tag</div>
+                <div class="legend-item"><span class="tag-pill tag-watchup" style="font-size:8px">▲</span>Watchlist Up</div>
+                <div class="legend-item"><span class="tag-pill tag-watchdn" style="font-size:8px">▼</span>Watchlist Down</div>
+            </div>
+
+            <!-- Tier list container -->
+            <div id="tier-list-container">
+                <!-- Populated by JS -->
+            </div>
+
+        </div><!-- /view-general -->
+
+        <!-- ══════════════════════════════════════════════════════════════
+             TEAM TIER LIST VIEW
+        ══════════════════════════════════════════════════════════════════ -->
+        <div class="view-panel" id="view-team">
+
+            <!-- Team intro accordion -->
+            <div class="intro-section">
+                <div class="intro-section-header">
+                    <span class="section-title">Team Tier List — Introduction</span>
+                </div>
+                <div class="accordion">
+
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" data-acc="team-about">
+                            <span class="accordion-trigger-left">
+                                <span class="accordion-icon">01</span>
+                                <span class="accordion-title">About the Team Tier List</span>
+                            </span>
+                            <span class="accordion-caret">▼</span>
+                        </button>
+                        <div class="accordion-body" id="acc-team-about">
+                            <p>
+                                The team tier list ranks the <strong>performance of full team compositions relative to one another</strong>,
+                                factoring in their peak potential in endgame content. For story and lower difficulties,
+                                there is no need to be concerned with ratings.
+                            </p>
+                            <p>
+                                The current hardest content, <strong>Umbral Monument</strong>, is the mode these ratings are built around.
+                                Team placements are determined by their overall efficacy across encounters, with higher teams being more
+                                capable of consistently clearing faster.
+                            </p>
+                            <p>
+                                The characters listed aren't the only viable compositions, but are the ones capable of the highest damage output.
+                                Lower-tier units and Survivalists are less likely to appear. All variations of a team's flex slots are listed
+                                where applicable.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" data-acc="team-criteria">
+                            <span class="accordion-trigger-left">
+                                <span class="accordion-icon">02</span>
+                                <span class="accordion-title">Ratings &amp; Criteria</span>
+                            </span>
+                            <span class="accordion-caret">▼</span>
+                        </button>
+                        <div class="accordion-body" id="acc-team-criteria">
+                            <p>The team tier list aims to cover teams from two angles:</p>
+                            <ul>
+                                <li>Ensuring all <strong>meta-relevant teams</strong> are ranked.</li>
+                                <li>Including as many <strong>viable team archetypes</strong> as possible to encompass as much of the cast as possible.</li>
+                            </ul>
+                            <p>
+                                When assessing the power of a team for tier placement, only the <strong>best character combinations</strong> are
+                                considered. For character-specific criteria, refer to the General Tier List.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-trigger" data-acc="team-changelog">
+                            <span class="accordion-trigger-left">
+                                <span class="accordion-icon">03</span>
+                                <span class="accordion-title">Changelog</span>
+                            </span>
+                            <span class="accordion-caret">▼</span>
+                        </button>
+                        <div class="accordion-body" id="acc-team-changelog">
+                            <div class="changelog-entry">
+                                <div class="changelog-date">02.02.2026</div>
+                                <ul>
+                                    <li>Added more synergy variations to top teams based on player discoveries.</li>
+                                    <li><strong>Yvonne Hyper</strong> added — Currently a tier below Last Rite; watchlisted for potential rise as the meta develops.</li>
+                                    <li><strong>Physical Sustainless</strong> added — Higher damage ceiling but riskier gameplay; requires precise Vulnerability alignment and no healing safety net.</li>
+                                </ul>
+                            </div>
+                            <div class="changelog-entry">
+                                <div class="changelog-date">20.01.2026</div>
+                                <ul>
+                                    <li>Initial release of the team tier list.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /team intro-section -->
+
+            <!-- Team tier list container -->
+            <div id="team-tier-list-container">
+                <!-- Populated by JS -->
+            </div>
+
+        </div><!-- /view-team -->
+
+    </div><!-- /main-wrap -->
 
     <script>
         /* ═══════════════════════════════════════════════════════════════════
            SUPABASE CONFIG
            ─────────────────────────────────────────────────────────────────
            Replace with your real project values when connecting.
-           Table schema expected:
-             characters (
-               id          uuid primary key,
-               name        text not null,
-               slug        text,
-               tier        text not null,   -- 'T0' | 'T0.5' | 'T1' | 'T1.5' | 'T2'
-               role        text not null,   -- 'damage' | 'enabler' | 'buffer'
-               rarity      int,             -- 4 | 5 | 6
-               image_url   text,
-               is_new      boolean default false,
-               is_expert   boolean default false,
-               watchlist   text,            -- null | 'up' | 'down'
-               updated_at  timestamptz
-             )
-             tier_meta (
-               id          uuid primary key,
-               last_updated date
-             )
+
+           characters table schema:
+             id          uuid primary key,
+             name        text not null,
+             slug        text,
+             tier        text not null,   -- 'T0' | 'T0.5' | 'T1' | 'T1.5' | 'T2'
+             role        text not null,   -- 'damage' | 'enabler' | 'buffer'
+             rarity      int,             -- 4 | 5 | 6
+             image_url   text,
+             is_new      boolean default false,
+             is_expert   boolean default false,
+             watchlist   text,            -- null | 'up' | 'down'
+             updated_at  timestamptz
+
+           teams table schema:
+             id          uuid primary key,
+             name        text not null,
+             tier        text not null,
+             is_expert   boolean default false,
+             sort_order  int default 0,
+             updated_at  timestamptz
+
+           team_members table schema:
+             id          uuid primary key,
+             team_id     uuid references teams(id),
+             character_slug text,         -- matches characters.slug
+             group_index int default 0,   -- 0 = core, 1+ = alt groups
+             sort_order  int default 0
+
+           tier_meta table schema:
+             id          uuid primary key,
+             last_updated date
            ═══════════════════════════════════════════════════════════════════ */
 
         const SUPABASE_CONFIG = {
@@ -765,62 +1346,158 @@
         /* ── Tier display order & labels ─────────────────────────────────── */
         const TIER_ORDER = ['T0', 'T0.5', 'T1', 'T1.5', 'T2'];
         const TIER_META = {
-            'T0': { label: 'T0', sub: 'APEX', cssClass: 'tier-T0' },
-            'T0.5': { label: 'T0.5', sub: 'ELITE', cssClass: 'tier-T05' },
-            'T1': { label: 'T1', sub: 'STRONG', cssClass: 'tier-T1' },
-            'T1.5': { label: 'T1.5', sub: 'SOLID', cssClass: 'tier-T15' },
-            'T2': { label: 'T2', sub: 'SITUATIONAL', cssClass: 'tier-T2' },
+            'T0':  { label: 'T0',  sub: 'APEX',        cssClass: 'tier-T0'  },
+            'T0.5':{ label: 'T0.5',sub: 'ELITE',       cssClass: 'tier-T05' },
+            'T1':  { label: 'T1',  sub: 'STRONG',      cssClass: 'tier-T1'  },
+            'T1.5':{ label: 'T1.5',sub: 'SOLID',       cssClass: 'tier-T15' },
+            'T2':  { label: 'T2',  sub: 'SITUATIONAL', cssClass: 'tier-T2'  },
         };
         const ROLE_ORDER = ['damage', 'enabler', 'buffer'];
         const ROLE_META = {
-            damage: { label: 'Damage', cssClass: 'cat-dmg' },
+            damage:  { label: 'Damage',  cssClass: 'cat-dmg' },
             enabler: { label: 'Enabler', cssClass: 'cat-ena' },
-            buffer: { label: 'Buffer', cssClass: 'cat-buf' },
+            buffer:  { label: 'Buffer',  cssClass: 'cat-buf' },
         };
 
         /* ─────────────────────────────────────────────────────────────────
-           FALLBACK DATA  (shown when Supabase is not yet connected)
-           Replace / remove once your DB is live.
+           FALLBACK DATA
         ───────────────────────────────────────────────────────────────── */
         const FALLBACK_DATA = {
             lastUpdated: '17/04/2026',
             characters: [
-                { name: 'Laevatain', tier: 'T0', role: 'damage', rarity: 6 },
-                { name: 'Rossi', tier: 'T0', role: 'damage', rarity: 6 },
-                { name: 'Yvonne', tier: 'T0', role: 'damage', rarity: 6 },
-                { name: 'Zhuang Fangyi', tier: 'T0', role: 'damage', rarity: 6, is_new: true, watchlist: 'up' },
-                { name: 'Tangtang', tier: 'T0', role: 'enabler', rarity: 6 },
-                { name: 'Gilberta', tier: 'T0', role: 'buffer', rarity: 6 },
-                { name: 'Pogranichnik', tier: 'T0', role: 'buffer', rarity: 6 },
-                { name: 'Last Rite', tier: 'T0.5', role: 'damage', rarity: 6 },
+                { name: 'Laevatain',    tier: 'T0',   role: 'damage',  rarity: 6 },
+                { name: 'Rossi',        tier: 'T0',   role: 'damage',  rarity: 6 },
+                { name: 'Yvonne',       tier: 'T0',   role: 'damage',  rarity: 6 },
+                { name: 'Zhuang Fangyi',tier: 'T0',   role: 'damage',  rarity: 6, is_new: true, watchlist: 'up' },
+                { name: 'Tangtang',     tier: 'T0',   role: 'enabler', rarity: 6 },
+                { name: 'Gilberta',     tier: 'T0',   role: 'buffer',  rarity: 6 },
+                { name: 'Pogranichnik', tier: 'T0',   role: 'buffer',  rarity: 6 },
+                { name: 'Last Rite',    tier: 'T0.5', role: 'damage',  rarity: 6 },
                 { name: 'Chen Qianyu', tier: 'T0.5', role: 'enabler', rarity: 5 },
-                { name: 'Lifeng', tier: 'T0.5', role: 'enabler', rarity: 5 },
-                { name: 'Wulfgard', tier: 'T0.5', role: 'enabler', rarity: 5 },
-                { name: 'Akekuri', tier: 'T0.5', role: 'buffer', rarity: 5 },
-                { name: 'Ardelia', tier: 'T0.5', role: 'buffer', rarity: 6 },
-                { name: 'Perlica', tier: 'T0.5', role: 'buffer', rarity: 5 },
-                { name: 'Xaihi', tier: 'T0.5', role: 'buffer', rarity: 5 },
-                { name: 'Avywenna', tier: 'T1', role: 'damage', rarity: 6, is_expert: true },
-                { name: 'Da Pan', tier: 'T1', role: 'damage', rarity: 5 },
-                { name: 'Endministrator', tier: 'T1', role: 'damage', rarity: 4 },
-                { name: 'Alesh', tier: 'T1', role: 'enabler', rarity: 5 },
-                { name: 'Arclight', tier: 'T1', role: 'enabler', rarity: 6, is_expert: true },
-                { name: 'Ember', tier: 'T1', role: 'enabler', rarity: 4 },
-                { name: 'Snowshine', tier: 'T1', role: 'enabler', rarity: 5 },
-                { name: 'Antal', tier: 'T1', role: 'buffer', rarity: 6 },
-                { name: 'Estella', tier: 'T1.5', role: 'enabler', rarity: 5 },
-                { name: 'Fluorite', tier: 'T1.5', role: 'enabler', rarity: 5 },
-                { name: 'Catcher', tier: 'T2', role: 'enabler', rarity: 4 },
+                { name: 'Lifeng',       tier: 'T0.5', role: 'enabler', rarity: 5 },
+                { name: 'Wulfgard',     tier: 'T0.5', role: 'enabler', rarity: 5 },
+                { name: 'Akekuri',      tier: 'T0.5', role: 'buffer',  rarity: 5 },
+                { name: 'Ardelia',      tier: 'T0.5', role: 'buffer',  rarity: 6 },
+                { name: 'Perlica',      tier: 'T0.5', role: 'buffer',  rarity: 5 },
+                { name: 'Xaihi',        tier: 'T0.5', role: 'buffer',  rarity: 5 },
+                { name: 'Avywenna',     tier: 'T1',   role: 'damage',  rarity: 6, is_expert: true },
+                { name: 'Da Pan',       tier: 'T1',   role: 'damage',  rarity: 5 },
+                { name: 'Endministrator',tier:'T1',   role: 'damage',  rarity: 4 },
+                { name: 'Alesh',        tier: 'T1',   role: 'enabler', rarity: 5 },
+                { name: 'Arclight',     tier: 'T1',   role: 'enabler', rarity: 6, is_expert: true },
+                { name: 'Ember',        tier: 'T1',   role: 'enabler', rarity: 4 },
+                { name: 'Snowshine',    tier: 'T1',   role: 'enabler', rarity: 5 },
+                { name: 'Antal',        tier: 'T1',   role: 'buffer',  rarity: 6 },
+                { name: 'Estella',      tier: 'T1.5', role: 'enabler', rarity: 5 },
+                { name: 'Fluorite',     tier: 'T1.5', role: 'enabler', rarity: 5 },
+                { name: 'Catcher',      tier: 'T2',   role: 'enabler', rarity: 4 },
+            ],
+            // Team tier list fallback data
+            // Each team has: name, tier, is_expert, members[]
+            // members is an array of groups; each group is an array of char names
+            // group[0] = core, group[1] = flex option A, group[2] = flex option B, etc.
+            teams: [
+                {
+                    name: 'Laevatain Hyper', tier: 'T0', is_expert: false,
+                    memberGroups: [
+                        ['Laevatain'],
+                        ['Wulfgard', 'Akekuri'],
+                        ['Antal', 'Akekuri'],
+                        ['Ardelia', 'Gilberta'],
+                    ],
+                },
+                {
+                    name: 'Last Rite Hyper', tier: 'T0.5', is_expert: false,
+                    memberGroups: [
+                        ['Last Rite'],
+                        ['Xaihi'],
+                        ['Ardelia'],
+                        ['Perlica', 'Fluorite', 'Akekuri'],
+                    ],
+                },
+                {
+                    name: 'Physical Sustainless', tier: 'T0.5', is_expert: true,
+                    memberGroups: [
+                        ['Pogranichnik'],
+                        ['Chen Qianyu'],
+                        ['Endministrator', 'Da Pan'],
+                        ['Lifeng'],
+                    ],
+                },
+                {
+                    name: 'Endmin Physical', tier: 'T1', is_expert: false,
+                    memberGroups: [
+                        ['Endministrator'],
+                        ['Chen Qianyu'],
+                        ['Pogranichnik', 'Lifeng'],
+                        ['Ardelia'],
+                    ],
+                },
+                {
+                    name: 'Da Pan Physical', tier: 'T1', is_expert: false,
+                    memberGroups: [
+                        ['Da Pan'],
+                        ['Chen Qianyu'],
+                        ['Ardelia'],
+                        ['Pogranichnik', 'Lifeng', 'Endministrator'],
+                    ],
+                },
+                {
+                    name: 'Avywenna Electric', tier: 'T1', is_expert: true,
+                    memberGroups: [
+                        ['Avywenna'],
+                        ['Arclight', 'Akekuri'],
+                        ['Perlica'],
+                        ['Antal', 'Gilberta'],
+                    ],
+                },
+                {
+                    name: 'Yvonne Hyper', tier: 'T1', is_expert: false,
+                    memberGroups: [
+                        ['Yvonne'],
+                        ['Xaihi'],
+                        ['Gilberta'],
+                        ['Last Rite', 'Fluorite', 'Snowshine', 'Estella'],
+                    ],
+                },
+                {
+                    name: 'Wulfgard DPS', tier: 'T1.5', is_expert: false,
+                    memberGroups: [
+                        ['Wulfgard'],
+                        ['Perlica'],
+                        ['Antal'],
+                        ['Arclight', 'Gilberta', 'Akekuri'],
+                    ],
+                },
+                {
+                    name: 'Cryo / Physical Hybrid', tier: 'T1.5', is_expert: false,
+                    memberGroups: [
+                        ['Estella'],
+                        ['Alesh'],
+                        ['Ardelia', 'Chen Qianyu'],
+                        ['Endministrator'],
+                    ],
+                },
             ],
         };
 
+        /* Build a quick name → char lookup for team member portraits */
+        function buildCharMap(chars) {
+            const map = {};
+            for (const c of chars) {
+                map[c.name.toLowerCase()] = c;
+                if (c.slug) map[c.slug] = c;
+            }
+            return map;
+        }
+
         /* ─────────────────────────────────────────────────────────────────
-           SUPABASE CLIENT  (minimal, no SDK dependency)
+           SUPABASE CLIENT
         ───────────────────────────────────────────────────────────────── */
         const db = {
             async query(table, params = '') {
                 const { url, apiKey } = SUPABASE_CONFIG;
-                if (!url || url === 'YOUR_SUPABASE_URL') return null; // not configured
+                if (!url || url === 'YOUR_SUPABASE_URL') return null;
                 const res = await fetch(`${url}/rest/v1/${table}?${params}`, {
                     headers: {
                         'apikey': apiKey,
@@ -831,35 +1508,30 @@
                 if (!res.ok) throw new Error(`Supabase error: ${res.status}`);
                 return res.json();
             },
-
-            async fetchCharacters() {
-                return this.query('characters', 'select=*&order=name.asc');
-            },
-
-            async fetchMeta() {
-                return this.query('tier_meta', 'select=last_updated&limit=1');
-            },
+            async fetchCharacters() { return this.query('characters', 'select=*&order=name.asc'); },
+            async fetchTeams()      { return this.query('teams', 'select=*,team_members(*)&order=tier.asc,sort_order.asc'); },
+            async fetchMeta()       { return this.query('tier_meta', 'select=last_updated&limit=1'); },
         };
 
         /* ─────────────────────────────────────────────────────────────────
            STATE
         ───────────────────────────────────────────────────────────────── */
-        let allChars = [];
+        let allChars   = [];
+        let allTeams   = [];
+        let charMap    = {};
         let activeFilter = 'all';
-        let searchQuery = '';
+        let searchQuery  = '';
 
         /* ─────────────────────────────────────────────────────────────────
            STATUS BAR
         ───────────────────────────────────────────────────────────────── */
         function setStatus(state, msg) {
-            const dot = document.getElementById('db-dot');
-            const lbl = document.getElementById('db-status');
-            dot.className = 'status-dot ' + state;
-            lbl.textContent = msg;
+            document.getElementById('db-dot').className = 'status-dot ' + state;
+            document.getElementById('db-status').textContent = msg;
         }
 
         /* ─────────────────────────────────────────────────────────────────
-           RENDER
+           BUILD CHAR CARD (General Tier List)
         ───────────────────────────────────────────────────────────────── */
         function buildCard(char) {
             const div = document.createElement('div');
@@ -867,13 +1539,13 @@
             div.dataset.role = char.role;
             div.dataset.name = char.name.toLowerCase();
 
-            const rarity = char.rarity || 5;
+            const rarity   = char.rarity || 5;
             const initials = char.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
             const tags = [];
-            if (char.is_new) tags.push(`<span class="tag-pill tag-new">NEW</span>`);
-            if (char.is_expert) tags.push(`<span class="tag-pill tag-expert">EXP</span>`);
-            if (char.watchlist === 'up') tags.push(`<span class="tag-pill tag-watchup">▲</span>`);
+            if (char.is_new)           tags.push(`<span class="tag-pill tag-new">NEW</span>`);
+            if (char.is_expert)        tags.push(`<span class="tag-pill tag-expert">EXP</span>`);
+            if (char.watchlist === 'up')   tags.push(`<span class="tag-pill tag-watchup">▲</span>`);
             if (char.watchlist === 'down') tags.push(`<span class="tag-pill tag-watchdn">▼</span>`);
 
             const imgTag = char.image_url
@@ -881,16 +1553,15 @@
                 : `<div class="placeholder-avatar">${initials}</div>`;
 
             div.innerHTML = `
-      <div class="char-portrait">
-        ${imgTag}
-        ${tags.length ? `<div class="char-tags">${tags.join('')}</div>` : ''}
-        <div class="rarity-bar rarity-${rarity}"></div>
-      </div>
-      <div class="char-name">${char.name}</div>
-    `;
+                <div class="char-portrait">
+                    ${imgTag}
+                    ${tags.length ? `<div class="char-tags">${tags.join('')}</div>` : ''}
+                    <div class="rarity-bar rarity-${rarity}"></div>
+                </div>
+                <div class="char-name">${char.name}</div>
+            `;
 
             if (char.slug) {
-                div.style.cursor = 'pointer';
                 div.addEventListener('click', () => {
                     window.open(`https://www.prydwen.gg/arknights-endfield/characters/${char.slug}`, '_blank');
                 });
@@ -898,11 +1569,13 @@
             return div;
         }
 
+        /* ─────────────────────────────────────────────────────────────────
+           RENDER GENERAL TIER LIST
+        ───────────────────────────────────────────────────────────────── */
         function renderTierList(characters) {
             const container = document.getElementById('tier-list-container');
             container.innerHTML = '';
 
-            // Group by tier → role
             const grouped = {};
             for (const tier of TIER_ORDER) {
                 grouped[tier] = { damage: [], enabler: [], buffer: [] };
@@ -914,7 +1587,7 @@
             }
 
             for (const tier of TIER_ORDER) {
-                const meta = TIER_META[tier];
+                const meta     = TIER_META[tier];
                 const tierData = grouped[tier];
 
                 const section = document.createElement('div');
@@ -924,18 +1597,16 @@
                 const row = document.createElement('div');
                 row.className = 'tier-row';
 
-                // Label
                 const label = document.createElement('div');
                 label.className = `tier-label ${meta.cssClass}`;
                 label.innerHTML = `<span class="tier-name">${meta.label}</span><span class="tier-sub">${meta.sub}</span>`;
 
-                // Categories
                 const cats = document.createElement('div');
                 cats.className = 'tier-categories';
 
                 for (const role of ROLE_ORDER) {
                     const chars = tierData[role];
-                    const rm = ROLE_META[role];
+                    const rm    = ROLE_META[role];
                     const catRow = document.createElement('div');
                     catRow.className = 'category-row';
                     catRow.dataset.role = role;
@@ -972,35 +1643,140 @@
         }
 
         /* ─────────────────────────────────────────────────────────────────
-           FILTERS
+           BUILD TEAM MEMBER MINI-PORTRAIT
+        ───────────────────────────────────────────────────────────────── */
+        function buildTeamMember(name) {
+            const char     = charMap[name.toLowerCase()];
+            const rarity   = char ? (char.rarity || 5) : 5;
+            const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            const imgTag   = (char && char.image_url)
+                ? `<img src="${char.image_url}" alt="${name}" loading="lazy" />`
+                : `<div class="placeholder-avatar">${initials}</div>`;
+            const slug     = char ? char.slug : null;
+
+            const el = document.createElement('div');
+            el.className = 'team-member';
+            if (slug) {
+                el.style.cursor = 'pointer';
+                el.addEventListener('click', () => {
+                    window.open(`https://www.prydwen.gg/arknights-endfield/characters/${slug}`, '_blank');
+                });
+            }
+            el.innerHTML = `
+                <div class="team-member-portrait">
+                    ${imgTag}
+                    <div class="rarity-bar rarity-${rarity}"></div>
+                </div>
+                <div class="team-member-name">${name}</div>
+            `;
+            return el;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────
+           BUILD TEAM CARD
+        ───────────────────────────────────────────────────────────────── */
+        function buildTeamCard(team) {
+            const card = document.createElement('div');
+            card.className = 'team-card';
+
+            const header = document.createElement('div');
+            header.className = 'team-card-header';
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'team-name';
+            nameEl.textContent = team.name;
+            header.appendChild(nameEl);
+
+            if (team.is_expert) {
+                const tag = document.createElement('span');
+                tag.className = 'team-tag team-tag-expert';
+                tag.textContent = 'Expert';
+                header.appendChild(tag);
+            }
+
+            const members = document.createElement('div');
+            members.className = 'team-members';
+
+            const groups = team.memberGroups || [];
+            groups.forEach((group, gi) => {
+                if (gi > 0) {
+                    const divider = document.createElement('div');
+                    divider.className = 'team-divider';
+                    divider.innerHTML = `<div class="team-divider-line"></div><span class="team-divider-label">OR</span><div class="team-divider-line"></div>`;
+                    members.appendChild(divider);
+                }
+                group.forEach(name => members.appendChild(buildTeamMember(name)));
+            });
+
+            card.appendChild(header);
+            card.appendChild(members);
+            return card;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────
+           RENDER TEAM TIER LIST
+        ───────────────────────────────────────────────────────────────── */
+        function renderTeamTierList(teams) {
+            const container = document.getElementById('team-tier-list-container');
+            container.innerHTML = '';
+
+            const grouped = {};
+            for (const tier of TIER_ORDER) grouped[tier] = [];
+            for (const team of teams) {
+                if (grouped[team.tier]) grouped[team.tier].push(team);
+            }
+
+            for (const tier of TIER_ORDER) {
+                const tierTeams = grouped[tier];
+                if (tierTeams.length === 0) continue;
+
+                const meta    = TIER_META[tier];
+                const section = document.createElement('div');
+                section.className = 'tier-section';
+
+                const row = document.createElement('div');
+                row.className = 'tier-row-team';
+
+                const label = document.createElement('div');
+                label.className = `tier-label ${meta.cssClass}`;
+                label.innerHTML = `<span class="tier-name">${meta.label}</span><span class="tier-sub">${meta.sub}</span>`;
+
+                const cells = document.createElement('div');
+                cells.className = 'team-cells';
+
+                tierTeams.forEach(team => cells.appendChild(buildTeamCard(team)));
+
+                row.appendChild(label);
+                row.appendChild(cells);
+                section.appendChild(row);
+                container.appendChild(section);
+            }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────
+           FILTERS (General only)
         ───────────────────────────────────────────────────────────────── */
         function applyFilters() {
-            const cards = document.querySelectorAll('.char-card');
+            const cards   = document.querySelectorAll('.char-card');
             const catRows = document.querySelectorAll('.category-row');
 
             cards.forEach(card => {
-                const roleMatch = activeFilter === 'all' || card.dataset.role === activeFilter;
+                const roleMatch   = activeFilter === 'all' || card.dataset.role === activeFilter;
                 const searchMatch = !searchQuery || card.dataset.name.includes(searchQuery);
                 card.classList.toggle('hidden-card', !(roleMatch && searchMatch));
             });
 
-            // Hide category rows that are fully empty after filtering
             catRows.forEach(row => {
                 const visible = row.querySelectorAll('.char-card:not(.hidden-card)');
                 row.classList.toggle('hidden', visible.length === 0 && activeFilter !== 'all');
             });
         }
 
-        /* ─────────────────────────────────────────────────────────────────
-           FILTER BUTTONS
-        ───────────────────────────────────────────────────────────────── */
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => {
-                    b.className = 'filter-btn';
-                });
+                document.querySelectorAll('.filter-btn').forEach(b => { b.className = 'filter-btn'; });
                 const filter = btn.dataset.filter;
-                const ac = btn.dataset.activeClass || 'active-all';
+                const ac     = btn.dataset.activeClass || 'active-all';
                 btn.classList.add(ac);
                 activeFilter = filter;
                 applyFilters();
@@ -1013,24 +1789,73 @@
         });
 
         /* ─────────────────────────────────────────────────────────────────
-           INIT — try Supabase, fall back to static data
+           VIEW TABS
+        ───────────────────────────────────────────────────────────────── */
+        document.querySelectorAll('.view-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('view-' + tab.dataset.view).classList.add('active');
+            });
+        });
+
+        /* ─────────────────────────────────────────────────────────────────
+           ACCORDION
+        ───────────────────────────────────────────────────────────────── */
+        document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+            trigger.addEventListener('click', () => {
+                const key  = trigger.dataset.acc;
+                const body = document.getElementById('acc-' + key);
+                const open = body.classList.contains('open');
+                body.classList.toggle('open', !open);
+                trigger.classList.toggle('open', !open);
+            });
+        });
+
+        /* ─────────────────────────────────────────────────────────────────
+           INIT
         ───────────────────────────────────────────────────────────────── */
         async function init() {
             setStatus('loading', 'Connecting to database…');
 
             if (!SUPABASE_CONFIG.url || SUPABASE_CONFIG.url === 'YOUR_SUPABASE_URL') {
-                // Not configured — use fallback
                 setStatus('', 'Using local data  ·  Connect Supabase to go live');
                 document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
                 allChars = FALLBACK_DATA.characters;
+                allTeams = FALLBACK_DATA.teams;
+                charMap  = buildCharMap(allChars);
                 renderTierList(allChars);
+                renderTeamTierList(allTeams);
                 return;
             }
 
             try {
-                const [chars, meta] = await Promise.all([db.fetchCharacters(), db.fetchMeta()]);
+                const [chars, teams, meta] = await Promise.all([
+                    db.fetchCharacters(),
+                    db.fetchTeams(),
+                    db.fetchMeta(),
+                ]);
 
                 allChars = chars;
+                charMap  = buildCharMap(allChars);
+
+                // Normalise Supabase team_members → memberGroups
+                allTeams = (teams || []).map(team => {
+                    const members = (team.team_members || [])
+                        .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+                    const groups  = {};
+                    for (const m of members) {
+                        const gi = m.group_index || 0;
+                        if (!groups[gi]) groups[gi] = [];
+                        const char = allChars.find(c => c.slug === m.character_slug);
+                        if (char) groups[gi].push(char.name);
+                    }
+                    team.memberGroups = Object.keys(groups)
+                        .sort((a, b) => a - b)
+                        .map(k => groups[k]);
+                    return team;
+                });
 
                 if (meta && meta.length > 0) {
                     const d = new Date(meta[0].last_updated);
@@ -1040,12 +1865,16 @@
 
                 setStatus('connected', `Supabase · ${chars.length} records loaded`);
                 renderTierList(allChars);
+                renderTeamTierList(allTeams);
             } catch (err) {
                 console.error('Supabase fetch failed:', err);
                 setStatus('error', 'DB error — using local fallback');
                 document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
                 allChars = FALLBACK_DATA.characters;
+                allTeams = FALLBACK_DATA.teams;
+                charMap  = buildCharMap(allChars);
                 renderTierList(allChars);
+                renderTeamTierList(allTeams);
             }
         }
 
@@ -1053,9 +1882,7 @@
     </script>
     <script src="js/NavBar.js"></script>
     <script>
-        NavBar.init({
-            sections: []
-        });
+        NavBar.init({ sections: [] });
     </script>
 </body>
 
