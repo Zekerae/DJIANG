@@ -39,6 +39,17 @@
 
     --cs-green: #14ff72cb;
     --cs-dark:  #2c2c2ccb;
+
+    /* Whole-list fade (v1): sync FADE_MS in js/OperatorSlide.js */
+    --cs-list-fade-duration: 0.6s;
+    --cs-list-fade-ease: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-root {
+        --cs-list-fade-duration: 0.14s;
+        --cs-list-fade-ease: ease-out;
+    }
 }
 
 /* ── CAROUSEL ─────────────────────────────────────────────────── */
@@ -47,6 +58,19 @@
     height: 100%;
     overflow: hidden;
     position: relative;
+}
+
+.cs-root .carousel .list {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    opacity: 1;
+    transition: opacity var(--cs-list-fade-duration) var(--cs-list-fade-ease);
+}
+
+.cs-root .carousel.cs-is-fading .list {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .cs-root .carousel .list .item {
@@ -61,7 +85,11 @@
     background-position: 50% 50%;
     background-size: cover;
     z-index: 100;
-    transition: 1s;
+}
+
+/* Thumbnail strip: smooth horizontal shift when order changes. */
+.cs-root .carousel .list .item:nth-child(n+3) {
+    transition: left var(--cs-list-fade-duration) var(--cs-list-fade-ease);
 }
 
 .cs-root .carousel .list .item:nth-child(1),
@@ -232,33 +260,6 @@
 @keyframes cs-runningTime {
     from { width: 0%; }
     to   { width: 100%; }
-}
-
-/* ── CAROUSEL TRANSITION STATES ───────────────────────────────── */
-/*
-  These were on .carousel in the original — kept as-is since
-  they're already scoped via .cs-root .carousel above when
-  the JS adds/removes .next/.prev on the carousel element.
-  Adding .cs-root prefix here for full safety.
-*/
-.cs-root .carousel.next .list .item:nth-child(1) {
-    width: 180px;
-    height: 250px;
-    position: absolute;
-    top: 80%;
-    left: 70%;
-    border-radius: 20px;
-    transform: translateY(-70%);
-    transition: 1s;
-}
-
-.cs-root .carousel.prev .list .item:nth-child(2) {
-    z-index: 2;
-}
-
-.cs-root .carousel.next .list .item:nth-child(2),
-.cs-root .carousel.prev .list .item:nth-child(2) {
-    z-index: 2;
 }
 
 /* ── RESPONSIVE ───────────────────────────────────────────────── */
