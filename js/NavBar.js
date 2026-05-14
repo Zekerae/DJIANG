@@ -29,7 +29,7 @@ const NavBar = (() => {
     navLinks: [],   // Empty by default — pass navLinks in init() to show the top nav strip
     sidebarItems: [
       { label: ['HOME'],                  target: 'index.html',           page: '001' },
-      { label: ['WEAPONS'],               target: 'footer',               page: '002' },
+      { label: ['WEAPONS'],               target: 'WeaponList.html',               page: '002' },
       { label: ['OPERATORS'],             target: 'OperatorList.html',    page: '003' },
       { label: ['TIER LIST'],             target: 'Tierlist.html',        page: '004' },
       { label: ['HEADHUNT', 'TRACKER'],   target: 'HeadhuntTracker.html', page: '005' },
