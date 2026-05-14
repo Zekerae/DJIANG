@@ -1785,6 +1785,170 @@ init();
     <script>
         NavBar.init({ sections: [] });
     </script>
+    <script>
+        /*
+        !!!
+        
+        SUPABASE PROMPT, WAITING FOR APROVAL
+        
+        !!!
+        */
+        /*
+        -- Add columns to existing characters table
+        alter table characters add column if not exists tier text;
+        alter table characters add column if not exists role text;
+        alter table characters add column if not exists is_new boolean default false;
+        alter table characters add column if not exists is_expert boolean default false;
+        alter table characters add column if not exists watchlist text;
+
+        -- Populate tier and role for all characters
+        update characters set tier = 'T0',   role = 'damage'  where slug = 'laevatain';
+        update characters set tier = 'T0',   role = 'damage'  where slug = 'rossi';
+        update characters set tier = 'T0',   role = 'damage'  where slug = 'yvonne';
+        update characters set tier = 'T0',   role = 'damage',  is_new = true, watchlist = 'up' where slug = 'zhuang-fangyi';
+        update characters set tier = 'T0',   role = 'enabler' where slug = 'tangtang';
+        update characters set tier = 'T0',   role = 'buffer'  where slug = 'gilberta';
+        update characters set tier = 'T0',   role = 'buffer'  where slug = 'pogranichnik';
+        update characters set tier = 'T0.5', role = 'damage'  where slug = 'last-rite';
+        update characters set tier = 'T0.5', role = 'enabler' where slug = 'chen-qianyu';
+        update characters set tier = 'T0.5', role = 'enabler' where slug = 'lifeng';
+        update characters set tier = 'T0.5', role = 'enabler' where slug = 'wulfgard';
+        update characters set tier = 'T0.5', role = 'buffer'  where slug = 'akekuri';
+        update characters set tier = 'T0.5', role = 'buffer'  where slug = 'ardelia';
+        update characters set tier = 'T0.5', role = 'buffer'  where slug = 'perlica';
+        update characters set tier = 'T0.5', role = 'buffer'  where slug = 'xaihi';
+        update characters set tier = 'T1',   role = 'damage',  is_expert = true where slug = 'avywenna';
+        update characters set tier = 'T1',   role = 'damage'  where slug = 'da-pan';
+        update characters set tier = 'T1',   role = 'damage'  where slug = 'endministrator';
+        update characters set tier = 'T1',   role = 'enabler' where slug = 'alesh';
+        update characters set tier = 'T1',   role = 'enabler', is_expert = true where slug = 'arclight';
+        update characters set tier = 'T1',   role = 'enabler' where slug = 'ember';
+        update characters set tier = 'T1',   role = 'enabler' where slug = 'snowshine';
+        update characters set tier = 'T1',   role = 'buffer'  where slug = 'antal';
+        update characters set tier = 'T1.5', role = 'enabler' where slug = 'estella';
+        update characters set tier = 'T1.5', role = 'enabler' where slug = 'fluorite';
+        update characters set tier = 'T2',   role = 'enabler' where slug = 'catcher';
+
+        -- Teams table
+        create table if not exists teams (
+        id serial primary key,
+        name text not null,
+        tier text not null,
+        is_expert boolean default false,
+        sort_order int default 0
+        );
+
+        -- Team members table
+        create table if not exists team_members (
+        id serial primary key,
+        team_id int references teams(id) on delete cascade,
+        character_slug text not null,
+        group_index int default 0,
+        sort_order int default 0
+        );
+
+        -- Tier meta table
+        create table if not exists tier_meta (
+        id serial primary key,
+        last_updated date not null
+        );
+        insert into tier_meta (last_updated) values ('2026-04-17');
+
+        -- Insert teams
+        insert into teams (name, tier, is_expert, sort_order) values
+        ('Laevatain Hyper',       'T0',   false, 1),
+        ('Last Rite Hyper',       'T0.5', false, 2),
+        ('Physical Sustainless',  'T0.5', true,  3),
+        ('Endmin Physical',       'T1',   false, 4),
+        ('Da Pan Physical',       'T1',   false, 5),
+        ('Avywenna Electric',     'T1',   true,  6),
+        ('Yvonne Hyper',          'T1',   false, 7),
+        ('Wulfgard DPS',          'T1.5', false, 8),
+        ('Cryo / Physical Hybrid','T1.5', false, 9);
+
+        -- Insert team members
+        -- Laevatain Hyper (id=1)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (1, 'laevatain',   0, 1),
+        (1, 'wulfgard',    1, 1),
+        (1, 'akekuri',     1, 2),
+        (1, 'antal',       2, 1),
+        (1, 'akekuri',     2, 2),
+        (1, 'ardelia',     3, 1),
+        (1, 'gilberta',    3, 2);
+
+        -- Last Rite Hyper (id=2)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (2, 'last-rite',   0, 1),
+        (2, 'xaihi',       1, 1),
+        (2, 'ardelia',     2, 1),
+        (2, 'perlica',     3, 1),
+        (2, 'fluorite',    3, 2),
+        (2, 'akekuri',     3, 3);
+
+        -- Physical Sustainless (id=3)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (3, 'pogranichnik', 0, 1),
+        (3, 'chen-qianyu',  1, 1),
+        (3, 'endministrator',2,1),
+        (3, 'da-pan',       2, 2),
+        (3, 'lifeng',       3, 1);
+
+        -- Endmin Physical (id=4)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (4, 'endministrator',0, 1),
+        (4, 'chen-qianyu',   1, 1),
+        (4, 'pogranichnik',  2, 1),
+        (4, 'lifeng',        2, 2),
+        (4, 'ardelia',       3, 1);
+
+        -- Da Pan Physical (id=5)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (5, 'da-pan',       0, 1),
+        (5, 'chen-qianyu',  1, 1),
+        (5, 'ardelia',      2, 1),
+        (5, 'pogranichnik', 3, 1),
+        (5, 'lifeng',       3, 2),
+        (5, 'endministrator',3,3);
+
+        -- Avywenna Electric (id=6)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (6, 'avywenna',  0, 1),
+        (6, 'arclight',  1, 1),
+        (6, 'akekuri',   1, 2),
+        (6, 'perlica',   2, 1),
+        (6, 'antal',     3, 1),
+        (6, 'gilberta',  3, 2);
+
+        -- Yvonne Hyper (id=7)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (7, 'yvonne',    0, 1),
+        (7, 'xaihi',     1, 1),
+        (7, 'gilberta',  2, 1),
+        (7, 'last-rite', 3, 1),
+        (7, 'fluorite',  3, 2),
+        (7, 'snowshine', 3, 3),
+        (7, 'estella',   3, 4);
+
+        -- Wulfgard DPS (id=8)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (8, 'wulfgard',  0, 1),
+        (8, 'perlica',   1, 1),
+        (8, 'antal',     2, 1),
+        (8, 'arclight',  3, 1),
+        (8, 'gilberta',  3, 2),
+        (8, 'akekuri',   3, 3);
+
+        -- Cryo / Physical Hybrid (id=9)
+        insert into team_members (team_id, character_slug, group_index, sort_order) values
+        (9, 'estella',       0, 1),
+        (9, 'alesh',         1, 1),
+        (9, 'ardelia',       2, 1),
+        (9, 'chen-qianyu',   2, 2),
+        (9, 'endministrator',3, 1);
+        */
+
+    </script>
 </body>
 
 </html>
