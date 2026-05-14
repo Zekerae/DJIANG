@@ -11,7 +11,6 @@
         rel="stylesheet" />
     <link rel="stylesheet" href="css/WipeHover.css">
     <link rel="stylesheet" href="css/NavBar.css">
-    <!-- Supabase SDK — same version as CharacterIntroduction -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* ─── TOKENS ──────────────────────────────────────────────────────── */
@@ -91,6 +90,7 @@
             align-items: flex-end;
             gap: 20px;
             background: linear-gradient(180deg, #0a0c13 0%, transparent 100%);
+            flex-wrap: wrap;
         }
 
         .page-header .eyebrow {
@@ -104,7 +104,7 @@
 
         .page-header h1 {
             font-family: var(--font-head);
-            font-size: 32px;
+            font-size: clamp(22px, 4vw, 32px);
             font-weight: 700;
             letter-spacing: .04em;
             line-height: 1;
@@ -144,7 +144,6 @@
             transition: background .4s, border-color .4s;
         }
 
-        /* Colored left accent stripe — shifts per state */
         #status-bar::before {
             content: '';
             position: absolute;
@@ -154,7 +153,6 @@
             transition: background .4s;
         }
 
-        /* Sweeping progress bar — only visible while loading */
         #status-bar::after {
             content: '';
             position: absolute;
@@ -194,30 +192,9 @@
         }
 
         .status-indicator { display: flex; align-items: center; gap: 8px; }
-
-        .status-icon {
-            font-size: 13px;
-            line-height: 1;
-            flex-shrink: 0;
-        }
-
-        .status-text {
-            letter-spacing: .12em;
-            text-transform: uppercase;
-            font-size: 10px;
-        }
-
-        /* small dimmed record count shown after load */
-        .status-count {
-            font-size: 10px;
-            opacity: .55;
-            letter-spacing: .08em;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1 }
-            50%       { opacity: .3 }
-        }
+        .status-icon { font-size: 13px; line-height: 1; flex-shrink: 0; }
+        .status-text { letter-spacing: .12em; text-transform: uppercase; font-size: 10px; }
+        .status-count { font-size: 10px; opacity: .55; letter-spacing: .08em; }
 
         /* ─── MAIN LAYOUT ────────────────────────────────────────────────── */
         .main-wrap {
@@ -234,7 +211,10 @@
             gap: 0;
             margin-bottom: 28px;
             border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            scrollbar-width: none;
         }
+        .view-tabs::-webkit-scrollbar { display: none; }
 
         .view-tab {
             font-family: var(--font-head);
@@ -250,6 +230,7 @@
             border-bottom: 2px solid transparent;
             margin-bottom: -1px;
             transition: color .15s, border-color .15s;
+            white-space: nowrap;
         }
 
         .view-tab:hover { color: var(--text-mid); }
@@ -271,10 +252,12 @@
         .intro-section-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 10px;
             padding: 10px 18px;
             background: var(--surface);
             border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
         }
 
         .intro-section-header .section-title {
@@ -284,6 +267,24 @@
             text-transform: uppercase;
             color: var(--t0-color);
         }
+
+        /* ── Edit button in header ── */
+        .edit-intro-btn {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border: 1px solid var(--border-hi);
+            border-radius: var(--radius);
+            background: transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: color .15s, border-color .15s;
+        }
+        .edit-intro-btn:hover { color: var(--text-bright); border-color: var(--t0-color); }
+        .edit-intro-btn.saving { color: var(--t0-color); border-color: var(--t0-color); }
+        .edit-intro-btn.saved  { color: var(--t15-color); border-color: var(--t15-color); }
 
         .accordion { display: flex; flex-direction: column; }
         .accordion-item { border-bottom: 1px solid var(--border); }
@@ -341,6 +342,7 @@
             font-size: 15px;
             color: var(--text-mid);
             line-height: 1.7;
+            position: relative;
         }
 
         .accordion-body.open { display: block; }
@@ -381,16 +383,45 @@
         }
         .changelog-entry li strong { color: var(--text-bright); }
 
+        /* ── Editable accordion content overlay ── */
+        .accordion-body.editing-mode .acc-display-content { display: none; }
+        .accordion-body .acc-editor {
+            display: none;
+            width: 100%;
+            min-height: 180px;
+            background: var(--panel);
+            border: 1px solid var(--border-hi);
+            color: var(--text-bright);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            line-height: 1.6;
+            padding: 12px;
+            border-radius: var(--radius);
+            resize: vertical;
+            outline: none;
+            margin-top: 4px;
+        }
+        .accordion-body.editing-mode .acc-editor { display: block; }
+        .acc-editor-note {
+            display: none;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--text-dim);
+            letter-spacing: .1em;
+            margin-top: 6px;
+        }
+        .accordion-body.editing-mode .acc-editor-note { display: block; }
+
         /* ─── FILTERS ────────────────────────────────────────────────────── */
         .filters-bar {
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 16px;
             margin-bottom: 28px;
             flex-wrap: wrap;
         }
 
-        .filter-group { display: flex; align-items: center; gap: 8px; }
+        .filter-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
         .filter-label {
             font-family: var(--font-mono);
@@ -420,7 +451,7 @@
         .filter-btn.active-buf { border-color: var(--buf-color); color: var(--buf-color); background: rgba(90,156,232,.08); }
         .filter-btn.active-all { border-color: var(--border-hi); color: var(--text-bright); }
 
-        .search-box { margin-left: auto; position: relative; }
+        .search-box { position: relative; }
 
         .search-box input {
             background: var(--panel);
@@ -431,6 +462,7 @@
             padding: 6px 12px 6px 30px;
             border-radius: var(--radius);
             width: 200px;
+            max-width: 100%;
             outline: none;
             transition: border-color .15s;
         }
@@ -480,7 +512,6 @@
         .tier-col-header.col-ena { color: var(--ena-color); border-right: 1px solid var(--border); }
         .tier-col-header.col-buf { color: var(--buf-color); }
 
-        /* Hidden when filtered to a single role */
         .tier-col-headers.hidden { display: none; }
 
         /* ─── TIER ROW ───────────────────────────────────────────────────── */
@@ -495,7 +526,6 @@
             transition: opacity .2s;
         }
 
-        /* Single-column filtered mode */
         .tier-row.filtered-mode {
             grid-template-columns: 72px 1fr;
         }
@@ -551,7 +581,6 @@
             position: relative;
         }
 
-        /* Side pill label — only shown in filtered mode */
         .cat-side-label {
             display: none;
             font-family: var(--font-mono);
@@ -584,8 +613,6 @@
         }
 
         .category-col.hidden { display: none; }
-
-        /* In filtered mode, show the side pill */
         .category-col.filtered-col .cat-side-label { display: inline-block; }
 
         .chars-wrap {
@@ -746,9 +773,9 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 10px 14px 12px;
-            min-width: 260px;
+            min-width: 220px;
             max-width: 340px;
-            flex: 1 1 260px;
+            flex: 1 1 220px;
             transition: border-color .15s;
         }
 
@@ -879,16 +906,106 @@
             align-items: flex-start;
         }
 
-        /* ─── RESPONSIVE ─────────────────────────────────────────────────── */
-        @media (max-width: 700px) {
-            .page-header { padding: 20px; flex-direction: column; align-items: flex-start; }
-            .main-wrap { padding: 20px 16px 40px; }
+        /* ═══════════════════════════════════════════════════════════════════
+           RESPONSIVE — TABLET (≤900px)
+        ═══════════════════════════════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .main-wrap { padding: 24px 24px 50px; }
+            #status-bar { padding: 0 24px; }
+
+            /* Collapse 3 role columns → stacked single column on tier rows */
+            .tier-col-headers { display: none !important; }
+
+            .tier-row {
+                grid-template-columns: 60px 1fr !important;
+                grid-template-rows: auto;
+                grid-auto-rows: auto;
+            }
+
+            /* Label spans full height of the stacked rows */
+            .tier-label {
+                grid-row: 1 / span 3;
+                font-size: 22px;
+            }
+
+            /* Each category col becomes its own stacked block */
+            .category-col {
+                border-left: none;
+                border-top: 1px solid var(--border);
+            }
+
+            /* Always show role pill labels when stacked */
+            .category-col .cat-side-label { display: inline-block; }
+
+            .tier-row.filtered-mode {
+                grid-template-columns: 60px 1fr !important;
+            }
+
+            :root { --card-w: 80px; --card-h: 90px; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           RESPONSIVE — MOBILE (≤600px)
+        ═══════════════════════════════════════════════════════════════════ */
+        @media (max-width: 600px) {
+            :root {
+                --card-w: 72px;
+                --card-h: 82px;
+                --navbar-h: 44px;
+            }
+
+            .page-header {
+                padding: 16px 16px 14px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
             .header-meta { margin-left: 0; text-align: left; }
-            :root { --card-w: 76px; --card-h: 86px; }
-            .accordion-body { padding-left: 18px; }
-            .team-card { min-width: 100%; }
-            .tier-row { grid-template-columns: 72px 1fr; }
-            .tier-col-headers { display: none; }
+
+            .main-wrap { padding: 16px 12px 40px; }
+            #status-bar { padding: 0 16px; font-size: 10px; }
+
+            .view-tab { font-size: 12px; padding: 8px 14px; }
+
+            .filters-bar { gap: 10px; }
+            .filter-btn { font-size: 12px; padding: 4px 10px; }
+
+            .search-box { width: 100%; }
+            .search-box input { width: 100%; }
+
+            .accordion-title { font-size: 13px; }
+            .accordion-body { padding: 14px 14px 16px 14px; font-size: 14px; }
+
+            /* On very small screens, label is narrower */
+            .tier-label {
+                font-size: 18px;
+                min-width: 50px;
+            }
+
+            .tier-row {
+                grid-template-columns: 50px 1fr !important;
+            }
+
+            .tier-label .tier-sub { display: none; }
+
+            .chars-wrap { gap: 6px; }
+
+            .team-card { min-width: 100%; max-width: 100%; flex: 1 1 100%; }
+
+            .legend { gap: 12px; }
+            .legend-sep { display: none; }
+
+            .intro-section-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════
+           RESPONSIVE — VERY SMALL (≤380px)
+        ═══════════════════════════════════════════════════════════════════ */
+        @media (max-width: 380px) {
+            :root { --card-w: 64px; --card-h: 72px; }
+            .main-wrap { padding: 12px 8px 32px; }
+            .page-header { padding: 12px 10px; }
         }
     </style>
 </head>
@@ -932,169 +1049,15 @@
         <div class="view-panel active" id="view-general">
 
             <!-- Introduction accordion -->
-            <div class="intro-section">
+            <div class="intro-section" id="intro-general">
                 <div class="intro-section-header">
                     <span class="section-title">Tier List — Introduction</span>
+                    <button class="edit-intro-btn" id="edit-intro-btn" data-section="general">Edit</button>
                 </div>
-                <div class="accordion">
-
-                    <div class="accordion-item">
-                        <button class="accordion-trigger" data-acc="about">
-                            <span class="accordion-trigger-left">
-                                <span class="accordion-icon">01</span>
-                                <span class="accordion-title">About the Tier List</span>
-                            </span>
-                            <span class="accordion-caret">▼</span>
-                        </button>
-                        <div class="accordion-body" id="acc-about">
-                            <p>
-                                Arknights: Endfield is a game <strong>where team building matters immensely</strong>,
-                                but at the same time, one where many units are usable only within a single element or team archetype.
-                                As a result, there are two tier lists: a <strong>General Tier List</strong> (this page) and a
-                                <strong>Team Tier List</strong> (accessible via the tab above).
-                            </p>
-                            <p>
-                                Our general tier list <strong>ranks all characters within categories according to their role and
-                                contribution in teams</strong>, as well as how impactful they are to the game's meta.
-                                For the <strong>story and the lower difficulties of permanent game modes, there is no need to be
-                                concerned with ratings</strong>. Players should be able to comfortably clear such content so long
-                                as a team is built and played correctly.
-                            </p>
-                            <p>
-                                Instead, the tier list criteria are based on the current hardest content in the game —
-                                <strong>Umbral Monument</strong>. As new or harder content is released, the tier list and its
-                                criteria will be updated accordingly.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <button class="accordion-trigger" data-acc="categories">
-                            <span class="accordion-trigger-left">
-                                <span class="accordion-icon">02</span>
-                                <span class="accordion-title">Categories &amp; Tags</span>
-                            </span>
-                            <span class="accordion-caret">▼</span>
-                        </button>
-                        <div class="accordion-body" id="acc-categories">
-                            <p>
-                                In Endfield, many characters possess elements of multiple categories.
-                                To avoid cluttering the tier list, each character is placed in a single category —
-                                whichever they're strongest in.
-                            </p>
-                            <ul>
-                                <li><strong>Damage</strong> — Characters whose main purpose is to deal damage, working as hypercarries or driving a team's damage output.</li>
-                                <li><strong>Enabler</strong> — Characters whose main purpose is to assist others beyond buffs: Inflictions, SP generation, stagger build, Ultimate Energy, and more.</li>
-                                <li><strong>Buffer</strong> — Characters whose main purpose is to provide buffs or debuffs that multiply the overall damage output of the squad.</li>
-                            </ul>
-                            <p><strong>Special Tags</strong></p>
-                            <ul>
-                                <li><strong>[Expert]</strong> — Characters with this tag have an optimal playstyle that must be mastered. Without the necessary skills, performance may drop by at least one tier.</li>
-                                <li><strong>[Watchlist ▲/▼]</strong> — Characters marked as highly likely to move up or down a tier in a future update.</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <button class="accordion-trigger" data-acc="criteria">
-                            <span class="accordion-trigger-left">
-                                <span class="accordion-icon">03</span>
-                                <span class="accordion-title">Evaluation Criteria</span>
-                            </span>
-                            <span class="accordion-caret">▼</span>
-                        </button>
-                        <div class="accordion-body" id="acc-criteria">
-                            <p>The general criteria are structured around <strong>Umbral Monument</strong>. Assessment assumes:</p>
-                            <ul>
-                                <li>Operators at Level <strong>90</strong>, Skills at max Rank, all Talents fully levelled.</li>
-                                <li>Optimal Gear/Sets equipped.</li>
-                                <li>P0 for 6★ and 5★ Operators; P5 for 4★ and Endministrator.</li>
-                                <li>Best-in-slot weapon assumed (P0 6★ weapon; P5 5★/4★/3★ weapon) with optimal essences.</li>
-                                <li>All Operators start at <strong>zero Ultimate Energy</strong>; no pre-casting before combat.</li>
-                                <li>Usables (food, Tacticals) are not included. Evaluations are done around optimal team compositions.</li>
-                            </ul>
-                            <p>Characters are compared <strong>within their role</strong>, not between roles. If a category has no Operators who perform at a given level, some tiers for that category may be empty.</p>
-                            <div class="criteria-block">
-                                <div class="criteria-heading">Damage</div>
-                                <ul>
-                                    <li><strong>Primary:</strong> Personal damage contribution.</li>
-                                    <li><strong>Secondary:</strong> Ability to handle different encounter types (bosses, multiple targets, intermission phases).</li>
-                                </ul>
-                            </div>
-                            <div class="criteria-block">
-                                <div class="criteria-heading">Enabler</div>
-                                <ul>
-                                    <li><strong>Primary:</strong> Providing resources and support that enable stronger, more optimal rotations.</li>
-                                    <li><strong>Secondary:</strong> Personal damage contribution and increases to team damage.</li>
-                                </ul>
-                            </div>
-                            <div class="criteria-block">
-                                <div class="criteria-heading">Buffer</div>
-                                <ul>
-                                    <li><strong>Primary:</strong> Providing increases to team damage.</li>
-                                    <li><strong>Secondary:</strong> Providing resources and support to enable stronger rotations.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <button class="accordion-trigger" data-acc="changelog">
-                            <span class="accordion-trigger-left">
-                                <span class="accordion-icon">04</span>
-                                <span class="accordion-title">Changelog</span>
-                            </span>
-                            <span class="accordion-caret">▼</span>
-                        </button>
-                        <div class="accordion-body" id="acc-changelog">
-                            <div class="changelog-entry">
-                                <div class="changelog-date">17.04.2026</div>
-                                <ul>
-                                    <li><strong>Zhuang Fangyi</strong> (Damage) added at T0 with Watchlist ▲ — Debuts as an exorbitantly powerful unit with accessible teams, great range, and consistent damage output; however, long ramp-up periods and Sunderblade stacking hold back speedrun prospects. T0 with watchlist pending further community testing.</li>
-                                </ul>
-                            </div>
-                            <div class="changelog-entry">
-                                <div class="changelog-date">29.03.2026</div>
-                                <ul>
-                                    <li><strong>Rossi</strong> T0 (Damage) — Despite seemingly anti-synergistic teams, raw burst potential on Ultimate and high multipliers on Combo and Battle Skills make her a flexible, incredibly strong Operator deserving T0.</li>
-                                    <li><strong>Yvonne</strong> T0.5 → T0 (Damage) — Cryo team rotations further optimised; competitive even in 3-3 Umbral Monument stages. Proven strong and well-rounded across all content.</li>
-                                    <li><strong>Ardelia</strong> T0 → T0.5 (Buffer) — Still very strong, but steep SP costs and lower-rarity buffers (Perlica, Akekuri, Xaihi) have been more prominent. Not a core Operator when resources are tight.</li>
-                                    <li><strong>Last Rite</strong> remains T0.5 — Tangtang raises her ceiling but doesn't address pre-existing structural issues the same way as Yvonne.</li>
-                                </ul>
-                            </div>
-                            <div class="changelog-entry">
-                                <div class="changelog-date">15.03.2026</div>
-                                <ul>
-                                    <li><strong>Tangtang</strong> added at T0 (Enabler) — High personal damage, accessible Inflictions, utility on Ultimate, and wide AoE make her an all-around elite Enabler for Cryo teams.</li>
-                                </ul>
-                            </div>
-                            <div class="changelog-entry">
-                                <div class="changelog-date">03.03.2026</div>
-                                <ul>
-                                    <li>Tier list restructured: broad Damage / Enabler / Buffer categories introduced. Multiple characters repositioned accordingly (Gilberta T0, Pogranichnik T0, Chen Qianyu T0.5, Wulfgard T0.5, Perlica T0.5, Alesh T1, Antal T1, and others).</li>
-                                </ul>
-                            </div>
-                            <div class="changelog-entry">
-                                <div class="changelog-date">02.02.2026</div>
-                                <ul>
-                                    <li><strong>Yvonne</strong> added at T1 with Watchlist ▲.</li>
-                                    <li><strong>Fluorite</strong> T2 → T1.5 (major buff in 1.0 added Infliction to Ultimate).</li>
-                                    <li><strong>Xaihi</strong> T1 → T0.5 (mainstay in Last Rite and Yvonne teams, high flexibility).</li>
-                                    <li><strong>Gilberta</strong> T1 → T0.5 (strong niches in Electric and Yvonne teams confirmed).</li>
-                                    <li><strong>Akekuri</strong> T1 → T0.5 (flexible across archetypes despite nerfs).</li>
-                                </ul>
-                            </div>
-                            <div class="changelog-entry">
-                                <div class="changelog-date">20.01.2026</div>
-                                <ul>
-                                    <li>Initial release of the tier list.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                </div><!-- /accordion -->
-            </div><!-- /intro-section -->
+                <div class="accordion" id="accordion-general">
+                    <!-- Populated by JS (DB or fallback) -->
+                </div>
+            </div>
 
             <!-- Filters -->
             <div class="filters-bar">
@@ -1132,88 +1095,15 @@
         ══════════════════════════════════════════════════════════════════ -->
         <div class="view-panel" id="view-team">
 
-            <div class="intro-section">
+            <div class="intro-section" id="intro-team">
                 <div class="intro-section-header">
                     <span class="section-title">Team Tier List — Introduction</span>
+                    <button class="edit-intro-btn" id="edit-team-btn" data-section="team">Edit</button>
                 </div>
-                <div class="accordion">
-
-                    <div class="accordion-item">
-                        <button class="accordion-trigger" data-acc="team-about">
-                            <span class="accordion-trigger-left">
-                                <span class="accordion-icon">01</span>
-                                <span class="accordion-title">About the Team Tier List</span>
-                            </span>
-                            <span class="accordion-caret">▼</span>
-                        </button>
-                        <div class="accordion-body" id="acc-team-about">
-                            <p>
-                                The team tier list ranks the <strong>performance of full team compositions relative to one another</strong>,
-                                factoring in their peak potential in endgame content. For story and lower difficulties,
-                                there is no need to be concerned with ratings.
-                            </p>
-                            <p>
-                                The current hardest content, <strong>Umbral Monument</strong>, is the mode these ratings are built around.
-                                Team placements are determined by their overall efficacy across encounters, with higher teams being more
-                                capable of consistently clearing faster.
-                            </p>
-                            <p>
-                                The characters listed aren't the only viable compositions, but are the ones capable of the highest damage output.
-                                Lower-tier units and Survivalists are less likely to appear. All variations of a team's flex slots are listed
-                                where applicable.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <button class="accordion-trigger" data-acc="team-criteria">
-                            <span class="accordion-trigger-left">
-                                <span class="accordion-icon">02</span>
-                                <span class="accordion-title">Ratings &amp; Criteria</span>
-                            </span>
-                            <span class="accordion-caret">▼</span>
-                        </button>
-                        <div class="accordion-body" id="acc-team-criteria">
-                            <p>The team tier list aims to cover teams from two angles:</p>
-                            <ul>
-                                <li>Ensuring all <strong>meta-relevant teams</strong> are ranked.</li>
-                                <li>Including as many <strong>viable team archetypes</strong> as possible to encompass as much of the cast as possible.</li>
-                            </ul>
-                            <p>
-                                When assessing the power of a team for tier placement, only the <strong>best character combinations</strong> are
-                                considered. For character-specific criteria, refer to the General Tier List.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <button class="accordion-trigger" data-acc="team-changelog">
-                            <span class="accordion-trigger-left">
-                                <span class="accordion-icon">03</span>
-                                <span class="accordion-title">Changelog</span>
-                            </span>
-                            <span class="accordion-caret">▼</span>
-                        </button>
-                        <div class="accordion-body" id="acc-team-changelog">
-                            <div class="changelog-entry">
-                                <div class="changelog-date">02.02.2026</div>
-                                <ul>
-                                    <li>Added more synergy variations to top teams based on player discoveries.</li>
-                                    <li><strong>Yvonne Hyper</strong> added — Currently a tier below Last Rite; watchlisted for potential rise as the meta develops.</li>
-                                    <li><strong>Physical Sustainless</strong> added — Higher damage ceiling but riskier gameplay; requires precise Vulnerability alignment and no healing safety net.</li>
-                                </ul>
-                            </div>
-                            <div class="changelog-entry">
-                                <div class="changelog-date">20.01.2026</div>
-                                <ul>
-                                    <li>Initial release of the team tier list.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="accordion" id="accordion-team">
+                    <!-- Populated by JS (DB or fallback) -->
                 </div>
-            </div><!-- /team intro-section -->
+            </div>
 
             <div id="team-tier-list-container"></div>
 
@@ -1222,14 +1112,14 @@
     </div><!-- /main-wrap -->
 
 <script>
-    /* ═══════════════════════════════════════════════════════════════════
-   SUPABASE — same project as CharacterIntroduction.js
+/* ═══════════════════════════════════════════════════════════════════
+   SUPABASE
 ═══════════════════════════════════════════════════════════════════ */
 const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ── Tier display order & labels ─────────────────────────────────── */
+/* ── Tier / Role metadata ────────────────────────────────────────── */
 const TIER_ORDER = ['T0', 'T0.5', 'T1', 'T1.5', 'T2'];
 const TIER_META = {
     'T0':   { label: 'T0',   sub: 'APEX',        cssClass: 'tier-T0'  },
@@ -1245,9 +1135,186 @@ const ROLE_META = {
     buffer:  { label: 'Buffer',  sideClass: 'cat-buf' },
 };
 
-/* ─────────────────────────────────────────────────────────────────
-   FALLBACK DATA (used if Supabase is unreachable or data incomplete)
-───────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   FALLBACK ACCORDION CONTENT
+   Stored as HTML strings per section key — used if DB has no entry.
+═══════════════════════════════════════════════════════════════════ */
+const FALLBACK_ACCORDION = {
+    general: [
+        {
+            key: 'about', icon: '01', title: 'About the Tier List',
+            html: `<p>
+                Arknights: Endfield is a game <strong>where team building matters immensely</strong>,
+                but at the same time, one where many units are usable only within a single element or team archetype.
+                As a result, there are two tier lists: a <strong>General Tier List</strong> (this page) and a
+                <strong>Team Tier List</strong> (accessible via the tab above).
+            </p>
+            <p>
+                Our general tier list <strong>ranks all characters within categories according to their role and
+                contribution in teams</strong>, as well as how impactful they are to the game's meta.
+                For the <strong>story and the lower difficulties of permanent game modes, there is no need to be
+                concerned with ratings</strong>. Players should be able to comfortably clear such content so long
+                as a team is built and played correctly.
+            </p>
+            <p>
+                Instead, the tier list criteria are based on the current hardest content in the game —
+                <strong>Umbral Monument</strong>. As new or harder content is released, the tier list and its
+                criteria will be updated accordingly.
+            </p>`
+        },
+        {
+            key: 'categories', icon: '02', title: 'Categories &amp; Tags',
+            html: `<p>
+                In Endfield, many characters possess elements of multiple categories.
+                To avoid cluttering the tier list, each character is placed in a single category —
+                whichever they're strongest in.
+            </p>
+            <ul>
+                <li><strong>Damage</strong> — Characters whose main purpose is to deal damage, working as hypercarries or driving a team's damage output.</li>
+                <li><strong>Enabler</strong> — Characters whose main purpose is to assist others beyond buffs: Inflictions, SP generation, stagger build, Ultimate Energy, and more.</li>
+                <li><strong>Buffer</strong> — Characters whose main purpose is to provide buffs or debuffs that multiply the overall damage output of the squad.</li>
+            </ul>
+            <p><strong>Special Tags</strong></p>
+            <ul>
+                <li><strong>[Expert]</strong> — Characters with this tag have an optimal playstyle that must be mastered. Without the necessary skills, performance may drop by at least one tier.</li>
+                <li><strong>[Watchlist ▲/▼]</strong> — Characters marked as highly likely to move up or down a tier in a future update.</li>
+            </ul>`
+        },
+        {
+            key: 'criteria', icon: '03', title: 'Evaluation Criteria',
+            html: `<p>The general criteria are structured around <strong>Umbral Monument</strong>. Assessment assumes:</p>
+            <ul>
+                <li>Operators at Level <strong>90</strong>, Skills at max Rank, all Talents fully levelled.</li>
+                <li>Optimal Gear/Sets equipped.</li>
+                <li>P0 for 6★ and 5★ Operators; P5 for 4★ and Endministrator.</li>
+                <li>Best-in-slot weapon assumed (P0 6★ weapon; P5 5★/4★/3★ weapon) with optimal essences.</li>
+                <li>All Operators start at <strong>zero Ultimate Energy</strong>; no pre-casting before combat.</li>
+                <li>Usables (food, Tacticals) are not included. Evaluations are done around optimal team compositions.</li>
+            </ul>
+            <p>Characters are compared <strong>within their role</strong>, not between roles. If a category has no Operators who perform at a given level, some tiers for that category may be empty.</p>
+            <div class="criteria-block">
+                <div class="criteria-heading">Damage</div>
+                <ul>
+                    <li><strong>Primary:</strong> Personal damage contribution.</li>
+                    <li><strong>Secondary:</strong> Ability to handle different encounter types (bosses, multiple targets, intermission phases).</li>
+                </ul>
+            </div>
+            <div class="criteria-block">
+                <div class="criteria-heading">Enabler</div>
+                <ul>
+                    <li><strong>Primary:</strong> Providing resources and support that enable stronger, more optimal rotations.</li>
+                    <li><strong>Secondary:</strong> Personal damage contribution and increases to team damage.</li>
+                </ul>
+            </div>
+            <div class="criteria-block">
+                <div class="criteria-heading">Buffer</div>
+                <ul>
+                    <li><strong>Primary:</strong> Providing increases to team damage.</li>
+                    <li><strong>Secondary:</strong> Providing resources and support to enable stronger rotations.</li>
+                </ul>
+            </div>`
+        },
+        {
+            key: 'changelog', icon: '04', title: 'Changelog',
+            html: `<div class="changelog-entry">
+                <div class="changelog-date">17.04.2026</div>
+                <ul>
+                    <li><strong>Zhuang Fangyi</strong> (Damage) added at T0 with Watchlist ▲ — Debuts as an exorbitantly powerful unit with accessible teams, great range, and consistent damage output; however, long ramp-up periods and Sunderblade stacking hold back speedrun prospects. T0 with watchlist pending further community testing.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-date">29.03.2026</div>
+                <ul>
+                    <li><strong>Rossi</strong> T0 (Damage) — Despite seemingly anti-synergistic teams, raw burst potential on Ultimate and high multipliers on Combo and Battle Skills make her a flexible, incredibly strong Operator deserving T0.</li>
+                    <li><strong>Yvonne</strong> T0.5 → T0 (Damage) — Cryo team rotations further optimised; competitive even in 3-3 Umbral Monument stages. Proven strong and well-rounded across all content.</li>
+                    <li><strong>Ardelia</strong> T0 → T0.5 (Buffer) — Still very strong, but steep SP costs and lower-rarity buffers (Perlica, Akekuri, Xaihi) have been more prominent. Not a core Operator when resources are tight.</li>
+                    <li><strong>Last Rite</strong> remains T0.5 — Tangtang raises her ceiling but doesn't address pre-existing structural issues the same way as Yvonne.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-date">15.03.2026</div>
+                <ul>
+                    <li><strong>Tangtang</strong> added at T0 (Enabler) — High personal damage, accessible Inflictions, utility on Ultimate, and wide AoE make her an all-around elite Enabler for Cryo teams.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-date">03.03.2026</div>
+                <ul>
+                    <li>Tier list restructured: broad Damage / Enabler / Buffer categories introduced. Multiple characters repositioned accordingly (Gilberta T0, Pogranichnik T0, Chen Qianyu T0.5, Wulfgard T0.5, Perlica T0.5, Alesh T1, Antal T1, and others).</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-date">02.02.2026</div>
+                <ul>
+                    <li><strong>Yvonne</strong> added at T1 with Watchlist ▲.</li>
+                    <li><strong>Fluorite</strong> T2 → T1.5 (major buff in 1.0 added Infliction to Ultimate).</li>
+                    <li><strong>Xaihi</strong> T1 → T0.5 (mainstay in Last Rite and Yvonne teams, high flexibility).</li>
+                    <li><strong>Gilberta</strong> T1 → T0.5 (strong niches in Electric and Yvonne teams confirmed).</li>
+                    <li><strong>Akekuri</strong> T1 → T0.5 (flexible across archetypes despite nerfs).</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-date">20.01.2026</div>
+                <ul>
+                    <li>Initial release of the tier list.</li>
+                </ul>
+            </div>`
+        }
+    ],
+    team: [
+        {
+            key: 'team-about', icon: '01', title: 'About the Team Tier List',
+            html: `<p>
+                The team tier list ranks the <strong>performance of full team compositions relative to one another</strong>,
+                factoring in their peak potential in endgame content. For story and lower difficulties,
+                there is no need to be concerned with ratings.
+            </p>
+            <p>
+                The current hardest content, <strong>Umbral Monument</strong>, is the mode these ratings are built around.
+                Team placements are determined by their overall efficacy across encounters, with higher teams being more
+                capable of consistently clearing faster.
+            </p>
+            <p>
+                The characters listed aren't the only viable compositions, but are the ones capable of the highest damage output.
+                Lower-tier units and Survivalists are less likely to appear. All variations of a team's flex slots are listed
+                where applicable.
+            </p>`
+        },
+        {
+            key: 'team-criteria', icon: '02', title: 'Ratings &amp; Criteria',
+            html: `<p>The team tier list aims to cover teams from two angles:</p>
+            <ul>
+                <li>Ensuring all <strong>meta-relevant teams</strong> are ranked.</li>
+                <li>Including as many <strong>viable team archetypes</strong> as possible to encompass as much of the cast as possible.</li>
+            </ul>
+            <p>
+                When assessing the power of a team for tier placement, only the <strong>best character combinations</strong> are
+                considered. For character-specific criteria, refer to the General Tier List.
+            </p>`
+        },
+        {
+            key: 'team-changelog', icon: '03', title: 'Changelog',
+            html: `<div class="changelog-entry">
+                <div class="changelog-date">02.02.2026</div>
+                <ul>
+                    <li>Added more synergy variations to top teams based on player discoveries.</li>
+                    <li><strong>Yvonne Hyper</strong> added — Currently a tier below Last Rite; watchlisted for potential rise as the meta develops.</li>
+                    <li><strong>Physical Sustainless</strong> added — Higher damage ceiling but riskier gameplay; requires precise Vulnerability alignment and no healing safety net.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-date">20.01.2026</div>
+                <ul>
+                    <li>Initial release of the team tier list.</li>
+                </ul>
+            </div>`
+        }
+    ]
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   FALLBACK CHARACTER / TEAM DATA
+═══════════════════════════════════════════════════════════════════ */
 const FALLBACK_DATA = {
     lastUpdated: '17/04/2026',
     characters: [
@@ -1318,43 +1385,161 @@ const FALLBACK_DATA = {
     ],
 };
 
-/* Build name → char lookup for team portraits */
-function buildCharMap(chars) {
-    const map = {};
-    for (const c of chars) {
-        map[c.name.toLowerCase()] = c;
-        if (c.slug) map[c.slug] = c;
-    }
-    return map;
+/* ═══════════════════════════════════════════════════════════════════
+   ACCORDION RENDERING
+   Each item stores the current HTML in memory so edit-mode can
+   round-trip to Supabase.
+═══════════════════════════════════════════════════════════════════ */
+const accordionState = { general: [], team: [] }; // stores live item objects
+
+function renderAccordion(sectionKey, items) {
+    const container = document.getElementById(`accordion-${sectionKey}`);
+    container.innerHTML = '';
+    accordionState[sectionKey] = items;
+
+    items.forEach((item, idx) => {
+        const el = document.createElement('div');
+        el.className     = 'accordion-item';
+        el.dataset.key   = item.key;
+        el.dataset.index = idx;
+
+        el.innerHTML = `
+            <button class="accordion-trigger" data-acc="${sectionKey}-${item.key}">
+                <span class="accordion-trigger-left">
+                    <span class="accordion-icon">${item.icon}</span>
+                    <span class="accordion-title">${item.title}</span>
+                </span>
+                <span class="accordion-caret">▼</span>
+            </button>
+            <div class="accordion-body" id="acc-${sectionKey}-${item.key}">
+                <div class="acc-display-content">${item.html}</div>
+                <textarea class="acc-editor" spellcheck="false">${item.html.replace(/</g,'<').replace(/>/g,'>')}</textarea>
+                <div class="acc-editor-note">Editing raw HTML · Changes saved to database on "Save"</div>
+            </div>
+        `;
+        container.appendChild(el);
+    });
+
+    // Wire up accordion triggers
+    container.querySelectorAll('.accordion-trigger').forEach(trigger => {
+        trigger.addEventListener('click', () => {
+            const key  = trigger.dataset.acc;
+            const body = document.getElementById('acc-' + key);
+            const open = body.classList.contains('open');
+            body.classList.toggle('open', !open);
+            trigger.classList.toggle('open', !open);
+        });
+    });
 }
 
-/* ─────────────────────────────────────────────────────────────────
+/* ─── Edit / Save accordion section ─────────────────────────────── */
+let editingSections = {}; // sectionKey → bool
+
+function toggleEditSection(sectionKey) {
+    const btn     = document.getElementById(`edit-${sectionKey === 'general' ? 'intro' : 'team'}-btn`);
+    const editing = editingSections[sectionKey];
+
+    if (!editing) {
+        // Enter edit mode — expand all items, show editors
+        editingSections[sectionKey] = true;
+        btn.textContent = 'Save';
+        btn.classList.add('saving');
+
+        const bodies = document.querySelectorAll(`#accordion-${sectionKey} .accordion-body`);
+        bodies.forEach(body => {
+            body.classList.add('open', 'editing-mode');
+            body.previousElementSibling.classList.add('open');
+            // Sync textarea with current display html
+            const display  = body.querySelector('.acc-display-content');
+            const textarea = body.querySelector('.acc-editor');
+            textarea.value = display.innerHTML;
+        });
+
+    } else {
+        // Save mode — collect edits, persist to DB, exit edit mode
+        editingSections[sectionKey] = false;
+        btn.textContent = 'Saving…';
+        btn.disabled    = true;
+
+        const items   = [];
+        const itemEls = document.querySelectorAll(`#accordion-${sectionKey} .accordion-item`);
+        itemEls.forEach((el, idx) => {
+            const newHtml = el.querySelector('.acc-editor').value;
+            const display = el.querySelector('.acc-display-content');
+            display.innerHTML = newHtml;
+            // Update in-memory state
+            accordionState[sectionKey][idx].html = newHtml;
+            items.push({ key: accordionState[sectionKey][idx].key, html: newHtml });
+        });
+
+        // Exit editing mode
+        document.querySelectorAll(`#accordion-${sectionKey} .accordion-body`).forEach(body => {
+            body.classList.remove('editing-mode');
+        });
+
+        // Persist to Supabase tier_meta table
+        saveAccordionToDb(sectionKey, items, btn);
+    }
+}
+
+async function saveAccordionToDb(sectionKey, items, btn) {
+    try {
+        const payload = { key: `accordion_${sectionKey}`, value: JSON.stringify(items) };
+        const { error } = await db.from('tier_meta').upsert(payload, { onConflict: 'key' });
+        if (error) throw error;
+        btn.textContent = 'Saved ✓';
+        btn.classList.remove('saving');
+        btn.classList.add('saved');
+        setTimeout(() => {
+            btn.textContent = 'Edit';
+            btn.classList.remove('saved');
+            btn.disabled = false;
+        }, 2000);
+    } catch (err) {
+        console.warn('[Accordion] DB save failed:', err);
+        btn.textContent = 'Edit';
+        btn.classList.remove('saving');
+        btn.disabled = false;
+    }
+}
+
+document.getElementById('edit-intro-btn').addEventListener('click', () => toggleEditSection('general'));
+document.getElementById('edit-team-btn').addEventListener('click',  () => toggleEditSection('team'));
+
+/* ═══════════════════════════════════════════════════════════════════
    STATE
-───────────────────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════════════ */
 let allChars     = [];
 let allTeams     = [];
 let charMap      = {};
 let activeFilter = 'all';
 let searchQuery  = '';
 
-/* ─────────────────────────────────────────────────────────────────
-   STATUS BAR
-───────────────────────────────────────────────────────────────── */
+function buildCharMap(chars) {
+    const map = {};
+    for (const c of chars) {
+        map[c.name.toLowerCase()] = c;
+        if (c.slug) map[c.slug]   = c;
+    }
+    return map;
+}
+
+/* ─── Status bar ─────────────────────────────────────────────────── */
 function setStatus(state, msg, count) {
     const bar  = document.getElementById('status-bar');
     const icon = document.getElementById('db-icon');
     const text = document.getElementById('db-status');
     const cnt  = document.getElementById('db-count');
     bar.className = 'state-' + state;
-    const icons = { loading: '◌', connected: '✓', error: '✗', '': '◌' };
-    icon.textContent = icons[state] || '◌';
+    icon.textContent = { loading: '◌', connected: '✓', error: '✗' }[state] || '◌';
     text.textContent = msg;
     cnt.textContent  = count || '';
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   BUILD CHAR CARD
-───────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   CHARACTER CARD
+   FIX: uses window.location.href (same tab) instead of window.open
+═══════════════════════════════════════════════════════════════════ */
 function buildCard(char) {
     const div = document.createElement('div');
     div.className    = 'char-card';
@@ -1384,31 +1569,26 @@ function buildCard(char) {
     `;
 
     if (char.slug) {
+        div.style.cursor = 'pointer';
         div.addEventListener('click', () => {
-            window.open(`CharacterIntroduction.html?char=${char.slug}`, '_blank');
+            // FIX: navigate in the same tab
+            window.location.href = `CharacterIntroduction.html?char=${char.slug}`;
         });
     }
     return div;
 }
 
-/* ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════
    RENDER GENERAL TIER LIST
-───────────────────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════════════ */
 function renderTierList(characters) {
-
-    console.log('[DEBUG] renderTierList called with', characters.length, 'chars');
-    console.log('[DEBUG] first char:', characters[0]);
     const container = document.getElementById('tier-list-container');
     container.innerHTML = '';
 
     const grouped = {};
-    for (const tier of TIER_ORDER) {
-        grouped[tier] = { damage: [], enabler: [], buffer: [] };
-    }
+    for (const tier of TIER_ORDER) grouped[tier] = { damage: [], enabler: [], buffer: [] };
     for (const char of characters) {
-        if (grouped[char.tier] && grouped[char.tier][char.role]) {
-            grouped[char.tier][char.role].push(char);
-        }
+        if (grouped[char.tier]?.[char.role]) grouped[char.tier][char.role].push(char);
     }
 
     const headerRow = document.createElement('div');
@@ -1477,9 +1657,10 @@ function renderTierList(characters) {
     applyFilters();
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   BUILD TEAM MEMBER MINI-PORTRAIT
-───────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   TEAM MEMBER / TEAM CARD
+   FIX: uses window.location.href (same tab) instead of window.open
+═══════════════════════════════════════════════════════════════════ */
 function buildTeamMember(name) {
     const char     = charMap[name.toLowerCase()];
     const rarity   = char ? (char.rarity || 5) : 5;
@@ -1496,7 +1677,8 @@ function buildTeamMember(name) {
     if (slug) {
         el.style.cursor = 'pointer';
         el.addEventListener('click', () => {
-            window.open(`CharacterIntroduction.html?char=${slug}`, '_blank');
+            // FIX: navigate in the same tab
+            window.location.href = `CharacterIntroduction.html?char=${slug}`;
         });
     }
     el.innerHTML = `
@@ -1509,9 +1691,6 @@ function buildTeamMember(name) {
     return el;
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   BUILD TEAM CARD
-───────────────────────────────────────────────────────────────── */
 function buildTeamCard(team) {
     const card = document.createElement('div');
     card.className = 'team-card';
@@ -1549,9 +1728,6 @@ function buildTeamCard(team) {
     return card;
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   RENDER TEAM TIER LIST
-───────────────────────────────────────────────────────────────── */
 function renderTeamTierList(teams) {
     const container = document.getElementById('team-tier-list-container');
     container.innerHTML = '';
@@ -1588,9 +1764,9 @@ function renderTeamTierList(teams) {
     }
 }
 
-/* ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════
    FILTERS
-───────────────────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════════════ */
 function applyFilters() {
     const isFiltered = activeFilter !== 'all';
     const headerRow  = document.getElementById('tier-col-headers');
@@ -1631,9 +1807,7 @@ document.getElementById('search-input').addEventListener('input', e => {
     applyFilters();
 });
 
-/* ─────────────────────────────────────────────────────────────────
-   VIEW TABS
-───────────────────────────────────────────────────────────────── */
+/* ─── View Tabs ──────────────────────────────────────────────────── */
 document.querySelectorAll('.view-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         document.querySelectorAll('.view-tab').forEach(t  => t.classList.remove('active'));
@@ -1643,118 +1817,107 @@ document.querySelectorAll('.view-tab').forEach(tab => {
     });
 });
 
-/* ─────────────────────────────────────────────────────────────────
-   ACCORDION
-───────────────────────────────────────────────────────────────── */
-document.querySelectorAll('.accordion-trigger').forEach(trigger => {
-    trigger.addEventListener('click', () => {
-        const key  = trigger.dataset.acc;
-        const body = document.getElementById('acc-' + key);
-        const open = body.classList.contains('open');
-        body.classList.toggle('open', !open);
-        trigger.classList.toggle('open', !open);
-    });
-});
-
-/* ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════════════════
    INIT
-───────────────────────────────────────────────────────────────── */
+═══════════════════════════════════════════════════════════════════ */
 async function init() {
     setStatus('loading', 'Connecting to database…');
 
+    /* ── Load accordion content from DB (tier_meta table) ────────── */
+    async function loadAccordionContent(sectionKey) {
+        try {
+            const { data, error } = await db
+                .from('tier_meta')
+                .select('value')
+                .eq('key', `accordion_${sectionKey}`)
+                .single();
+            if (error || !data?.value) throw new Error('not found');
+            const items = JSON.parse(data.value);
+            // Merge fetched HTML with fallback structure (keeps icon/title from fallback)
+            const merged = FALLBACK_ACCORDION[sectionKey].map(fb => {
+                const live = items.find(i => i.key === fb.key);
+                return live ? { ...fb, html: live.html } : fb;
+            });
+            renderAccordion(sectionKey, merged);
+        } catch {
+            // Use fallback content
+            renderAccordion(sectionKey, FALLBACK_ACCORDION[sectionKey]);
+        }
+    }
+
+    await Promise.all([
+        loadAccordionContent('general'),
+        loadAccordionContent('team'),
+    ]);
+
+    /* ── Load characters & teams ─────────────────────────────────── */
     try {
-        /* Fetch characters */
         const { data: chars, error: charErr } = await db
             .from('characters')
             .select('*')
             .order('name');
         if (charErr) throw charErr;
 
-        /* Fetch teams with nested team_members */
         const { data: teamRows, error: teamErr } = await db
             .from('teams')
             .select('*, team_members(*)')
             .order('sort_order');
 
-        /* Fetch last-updated date */
         const { data: meta, error: metaErr } = await db
             .from('tier_meta')
-            .select('last_updated')
-            .limit(1)
+            .select('value')
+            .eq('key', 'last_updated')
             .single();
 
-        /* ── FALLBACK LOGIC ──────────────────────────────────────────
-           Use fallback for each piece independently if missing/errored
-        ─────────────────────────────────────────────────────────────── */
-
-        // Characters — fall back if empty or missing tier/role data
- const VALID_ROLES = ['damage', 'enabler', 'buffer'];
+        const VALID_ROLES = ['damage', 'enabler', 'buffer'];
         const VALID_TIERS = ['T0', 'T0.5', 'T1', 'T1.5', 'T2'];
 
         const hasValidChars = chars && chars.length > 0 &&
             chars.some(c => VALID_TIERS.includes(c.tier) && VALID_ROLES.includes(c.role));
 
         if (hasValidChars) {
-            // Supabase has full tier/role data — use it directly
             allChars = chars;
         } else if (chars && chars.length > 0) {
-            // Supabase has character data but no tier/role yet —
-            // merge fallback tier/role with Supabase images/slugs
             allChars = FALLBACK_DATA.characters.map(fb => {
                 const live = chars.find(c =>
-                    c.name.toLowerCase() === fb.name.toLowerCase() ||
-                    c.id === fb.slug
+                    c.name.toLowerCase() === fb.name.toLowerCase() || c.id === fb.slug
                 );
-                return live ? {
-                    ...fb,
-                    slug:     live.slug || live.id,
-                    img_path: live.img_path || null,
-                    rarity:   live.rarity  || fb.rarity,
-                } : fb;
+                return live ? { ...fb, slug: live.slug || live.id, img_path: live.img_path || null, rarity: live.rarity || fb.rarity } : fb;
             });
-            console.warn('[TierList] Using fallback tiers with live character images');
         } else {
-            // No Supabase data at all — pure fallback
             allChars = FALLBACK_DATA.characters;
-            console.warn('[TierList] No Supabase character data — using full fallback');
         }
 
-        // Teams — fall back if table missing or empty
         if (teamErr || !teamRows || teamRows.length === 0) {
-            console.warn('[TierList] Teams unavailable — using fallback teams');
             allTeams = FALLBACK_DATA.teams;
         } else {
             allTeams = teamRows.map(team => {
-                const members = (team.team_members || [])
-                    .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-                const groups = {};
+                const members = (team.team_members || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+                const groups  = {};
                 for (const m of members) {
                     const gi = m.group_index || 0;
                     if (!groups[gi]) groups[gi] = [];
                     const char = allChars.find(c => c.slug === m.character_slug);
                     if (char) groups[gi].push(char.name);
                 }
-                team.memberGroups = Object.keys(groups)
-                    .sort((a, b) => a - b)
-                    .map(k => groups[k]);
+                team.memberGroups = Object.keys(groups).sort((a, b) => a - b).map(k => groups[k]);
                 return team;
             });
         }
 
-        // Last updated — fall back if missing
-        if (metaErr || !meta?.last_updated) {
-            console.warn('[TierList] tier_meta unavailable — using fallback date');
-            document.getElementById('last-updated').textContent =
-                `Last updated: ${FALLBACK_DATA.lastUpdated}`;
+        if (metaErr || !meta?.value) {
+            document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
         } else {
-            const d = new Date(meta.last_updated);
-            document.getElementById('last-updated').textContent =
-                `Last updated: ${d.toLocaleDateString('en-GB')}`;
+            try {
+                const d = new Date(meta.value);
+                document.getElementById('last-updated').textContent = `Last updated: ${d.toLocaleDateString('en-GB')}`;
+            } catch {
+                document.getElementById('last-updated').textContent = `Last updated: ${meta.value}`;
+            }
         }
 
         charMap = buildCharMap(allChars);
 
-        // Status — warn if any fallback active
         const usingFallback = !hasValidChars || teamErr || !teamRows?.length || metaErr;
         if (usingFallback) {
             setStatus('error', 'Partial data — some fallbacks active', `${allChars.length} operators loaded`);
@@ -1766,11 +1929,9 @@ async function init() {
         renderTeamTierList(allTeams);
 
     } catch (err) {
-        // Full fallback — Supabase completely unreachable
         console.error('Supabase fetch failed:', err);
         setStatus('error', 'DB error — using local fallback', 'fallback data active');
-        document.getElementById('last-updated').textContent =
-            `Last updated: ${FALLBACK_DATA.lastUpdated}`;
+        document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
         allChars = FALLBACK_DATA.characters;
         allTeams = FALLBACK_DATA.teams;
         charMap  = buildCharMap(allChars);
@@ -1950,5 +2111,4 @@ init();
 
     </script>
 </body>
-
 </html>
