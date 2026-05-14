@@ -277,4 +277,4 @@ const NavBar = (() => {
   window.toggleSidebar = toggleSidebar;
 
   return { init, toggleSidebar };
-})();s
+})();
