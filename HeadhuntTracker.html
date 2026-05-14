@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Endfield — Headhunt Tracker</title>
     <link rel="stylesheet" href="css/WipeHover.css">
     <link rel="stylesheet" href="css/NavBar.css">
+    <title>Endfield — Headhunt Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box }
@@ -209,6 +209,86 @@
         .found-pill.p-special { background: rgba(176,126,248,0.15); color: var(--purple); border: 1px solid rgba(176,126,248,0.3); }
         .found-pill.p-standard { background: rgba(106,173,250,0.12); color: var(--blue); border: 1px solid rgba(106,173,250,0.25); }
         .found-pill.p-beginner { background: rgba(240,160,64,0.12); color: var(--gold); border: 1px solid rgba(240,160,64,0.25); }
+    
+        /* ─── DISCLAIMER ─── */
+        .disclaimer-box { background: rgba(240,160,64,0.06); border: 1px solid rgba(240,160,64,0.22); border-left: 2px solid var(--gold); padding: 10px 14px; margin-bottom: 20px; font-family: 'Share Tech Mono', monospace; font-size: 9.5px; color: #c8a060; border-radius: var(--radius-sm); line-height: 1.65; display: flex; gap: 10px; align-items: flex-start; }
+        .disclaimer-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+        /* ─── PLANNER SECTIONS ─── */
+        .planner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+        @media(max-width:680px){ .planner-grid { grid-template-columns: 1fr; } }
+        .planner-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+        .planner-title { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+        .planner-title::before { content: ''; display: inline-block; width: 2px; height: 12px; background: var(--accent); border-radius: 2px; }
+
+        /* Counter rows */
+        .ctr-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .ctr-row:last-child { margin-bottom: 0; }
+        .ctr-lbl { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; color: var(--text2); min-width: 110px; letter-spacing: 1px; }
+        .ctr-input { width: 80px; background: var(--bg); border: 1px solid var(--border2); color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 7px 10px; border-radius: var(--radius-sm); outline: none; text-align: right; transition: border-color 0.15s; }
+        .ctr-input:focus { border-color: var(--accent); }
+        .ctr-slider { flex: 1; -webkit-appearance: none; height: 4px; background: var(--border2); border-radius: 2px; outline: none; }
+        .ctr-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+        .ctr-slider::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; border: none; }
+
+        /* Result boxes */
+        .result-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .result-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text3); text-transform: uppercase; }
+        .result-value { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; color: var(--accent); line-height: 1; }
+        .result-sub { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); margin-top: 2px; }
+        .result-multi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 14px; }
+        .result-chip { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; text-align: center; }
+        .result-chip .rc-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; line-height: 1; }
+        .result-chip .rc-lbl { font-family: 'Share Tech Mono', monospace; font-size: 8px; color: var(--text3); margin-top: 3px; letter-spacing: 1px; }
+        .rc-gold { color: var(--gold); }
+        .rc-purple { color: var(--purple); }
+        .rc-accent { color: var(--accent); }
+
+        /* Probability bars */
+        .prob-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .prob-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text2); min-width: 68px; }
+        .prob-bar { flex: 1; height: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+        .prob-fill { height: 100%; border-radius: 5px; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); }
+        .prob-pct { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; min-width: 48px; text-align: right; }
+
+        /* Tally planner */
+        .date-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
+        .date-input { background: var(--bg); border: 1px solid var(--border2); color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 8px 12px; border-radius: var(--radius-sm); outline: none; transition: border-color 0.15s; }
+        .date-input:focus { border-color: var(--accent); }
+        .date-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); letter-spacing: 1px; min-width: 60px; }
+        .tally-breakdown { margin-top: 12px; }
+        .tally-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); }
+        .tally-row:last-child { border-bottom: none; }
+        .tally-name { font-family: 'Barlow', sans-serif; font-size: 12px; color: var(--text2); }
+        .tally-val { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); }
+        .tally-total-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--surface3); border-radius: var(--radius-sm); margin-top: 10px; }
+        .tally-total-label { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; letter-spacing: 2px; color: var(--text); text-transform: uppercase; }
+        .tally-total-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; color: var(--green); }
+        .tally-pulls-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: var(--accent); }
+
+        /* Shop / bundles */
+        .bundle-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-top: 14px; }
+        @media(max-width:600px){ .bundle-grid { grid-template-columns: 1fr 1fr; } }
+        .bundle-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; transition: all 0.15s; position: relative; }
+        .bundle-card.recommended { border-color: var(--accent); background: rgba(232,97,58,0.07); }
+        .bundle-card.recommended::before { content: 'BEST'; position: absolute; top: -1px; right: -1px; background: var(--accent); color: #fff; font-family: 'Share Tech Mono', monospace; font-size: 7px; padding: 2px 6px; border-radius: 0 var(--radius-sm) 0 var(--radius-sm); letter-spacing: 1px; }
+        .bundle-ori { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: var(--gold); line-height: 1; }
+        .bundle-price { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); margin: 3px 0; }
+        .bundle-oroberyls { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); }
+        .bundle-needed { font-family: 'Share Tech Mono', monospace; font-size: 8px; color: var(--accent); margin-top: 4px; letter-spacing: 0.5px; }
+        .shop-result { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 14px; }
+        .shop-result-title { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
+        .shop-combo { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        .shop-pill { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; background: var(--surface3); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 4px 10px; color: var(--text); }
+        .shop-pill span { color: var(--gold); font-weight: 700; }
+        .shop-total { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); }
+        .shop-total strong { color: var(--green); }
+
+        .calc-btn { background: var(--accent); border: none; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; padding: 9px 20px; cursor: pointer; text-transform: uppercase; transition: filter 0.15s; border-radius: var(--radius-sm); margin-top: 10px; }
+        .calc-btn:hover { filter: brightness(1.15); }
+        .sep { margin: 20px 0 6px; }
+        .full-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 6px; }
+
     </style>
 </head>
 <body>
@@ -397,11 +477,181 @@
                 <div class="pull-list" id="pullList"></div>
             </div>
         </div>
+    
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!-- PLANNER SECTIONS -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+
+        <!-- DISCLAIMER -->
+        <div class="sec-label sep">Data Notice</div>
+        <div class="disclaimer-box">
+            <span class="disclaimer-icon">⚠</span>
+            <div>
+                <strong style="color:#e8b060">Pull history is limited to the last 90 days.</strong>
+                The Endfield API only returns records within a 90-day rolling window, regardless of your total playtime.
+                Pulls older than 90 days are permanently excluded from this tracker. Pity counters and statistics shown here
+                reflect only visible history — if your last 6★ was pulled more than 90 days ago, your displayed pity count
+                may be understated. Source: <em>endfieldtools.dev/guides/gacha-rates-pity</em>
+            </div>
+        </div>
+
+        <!-- RESOURCE COUNTERS -->
+        <div class="sec-label">Resource Planner</div>
+        <div class="planner-grid">
+
+            <!-- LEFT: Counter inputs -->
+            <div class="planner-card">
+                <div class="planner-title">Current Inventory</div>
+                <div class="ctr-row">
+                    <div class="ctr-lbl">Oroberyl</div>
+                    <input class="ctr-input" id="ctr-oro" type="number" min="0" max="999999" value="0" oninput="syncSlider('ctr-oro','sl-oro');recalcPulls()">
+                    <input class="ctr-slider" id="sl-oro" type="range" min="0" max="60000" value="0" oninput="syncInput('sl-oro','ctr-oro');recalcPulls()">
+                </div>
+                <div class="ctr-row">
+                    <div class="ctr-lbl">HH Permits</div>
+                    <input class="ctr-input" id="ctr-permit" type="number" min="0" max="9999" value="0" oninput="syncSlider('ctr-permit','sl-permit');recalcPulls()">
+                    <input class="ctr-slider" id="sl-permit" type="range" min="0" max="200" value="0" oninput="syncInput('sl-permit','ctr-permit');recalcPulls()">
+                </div>
+                <div class="ctr-row">
+                    <div class="ctr-lbl">Origeometry</div>
+                    <input class="ctr-input" id="ctr-ori" type="number" min="0" max="9999" value="0" oninput="syncSlider('ctr-ori','sl-ori');recalcPulls()">
+                    <input class="ctr-slider" id="sl-ori" type="range" min="0" max="500" value="0" oninput="syncInput('sl-ori','ctr-ori');recalcPulls()">
+                </div>
+                <div class="result-box">
+                    <div>
+                        <div class="result-label">Total Pulls Available</div>
+                        <div class="result-value" id="total-pulls-val">0</div>
+                        <div class="result-sub" id="total-pulls-sub">0 Oroberyl · 0 Permits · 0 from Ori</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="result-label" style="margin-bottom:4px">Guarantees</div>
+                        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2)">Hard pity: <span id="hard-pity-count" style="color:var(--gold)">0×</span></div>
+                        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2)">Spark: <span id="spark-count" style="color:var(--purple)">0×</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Pull chance calculator -->
+            <div class="planner-card">
+                <div class="planner-title">Pull Chance Calculator</div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:12px;line-height:1.6;">
+                    Based on your total pulls above. Uses base rates + soft pity at pull 65 (+5% per pull).<br>
+                    Limited banner: 80-pull hard pity (6★), 120-pull spark (featured).
+                </div>
+                <div class="prob-row">
+                    <div class="prob-lbl">≥1× 6★</div>
+                    <div class="prob-bar"><div class="prob-fill" id="prob6-fill" style="width:0%;background:var(--gold)"></div></div>
+                    <div class="prob-pct rc-gold" id="prob6-pct">0%</div>
+                </div>
+                <div class="prob-row">
+                    <div class="prob-lbl">Featured 6★</div>
+                    <div class="prob-bar"><div class="prob-fill" id="prob6-feat-fill" style="width:0%;background:var(--purple)"></div></div>
+                    <div class="prob-pct rc-purple" id="prob6-feat-pct">0%</div>
+                </div>
+                <div class="prob-row">
+                    <div class="prob-lbl">≥1× 5★</div>
+                    <div class="prob-bar"><div class="prob-fill" id="prob5-fill" style="width:0%;background:var(--blue)"></div></div>
+                    <div class="prob-pct" style="color:var(--blue)" id="prob5-pct">0%</div>
+                </div>
+                <div style="margin-top:14px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);line-height:1.7;">
+                    BASE RATES: 0.8% 6★ · 8% 5★ · 15% 4★ · 76.2% 3★<br>
+                    SOFT PITY: Starts at pull #65, +5% per additional pull until #80<br>
+                    HARD PITY: Guaranteed 6★ at pull #80 · Spark at #120<br>
+                    5★ PITY: Guaranteed 5★ every 10 pulls
+                </div>
+            </div>
+        </div>
+
+        <!-- OROBERYL INCOME TALLY -->
+        <div class="sec-label sep">Income Forecast</div>
+        <div class="full-card">
+            <div class="planner-title">Oroberyl Accumulation Planner</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:14px;line-height:1.6;">
+                Estimate how much Oroberyl you'll accumulate from recurring income sources between today and a target date.
+                One-time rewards (story, exploration) are not included as they vary by progress.
+            </div>
+            <div class="date-row">
+                <span class="date-label">From</span>
+                <input class="date-input" id="tally-from" type="date">
+                <span class="date-label" style="margin-left:8px">To</span>
+                <input class="date-input" id="tally-to" type="date">
+                <button class="calc-btn" onclick="calcTally()" style="margin-top:0;margin-left:auto">Calculate ▶</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="tally-inputs">
+                <div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;margin-bottom:10px;text-transform:uppercase;">Daily Sources</div>
+                    <div class="ctr-row"><div class="ctr-lbl" style="font-size:12px">Daily Missions</div><input class="ctr-input" id="t-daily" type="number" value="200" min="0" max="200" style="width:70px"> <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">max 200</span></div>
+                    <div class="ctr-row"><div class="ctr-lbl" style="font-size:12px">Monthly Pass<br><span style="font-size:10px;color:var(--text3)">(if active)</span></div><input class="ctr-input" id="t-monthly" type="number" value="0" min="0" max="200" style="width:70px"> <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">+200/day</span></div>
+                </div>
+                <div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;margin-bottom:10px;text-transform:uppercase;">Weekly Sources</div>
+                    <div class="ctr-row"><div class="ctr-lbl" style="font-size:12px">Weekly Routine</div><input class="ctr-input" id="t-weekly" type="number" value="200" min="0" max="1000" style="width:70px"> <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">~200–400</span></div>
+                    <div class="ctr-row"><div class="ctr-lbl" style="font-size:12px">Protocol Pass<br><span style="font-size:10px;color:var(--text3)">(free track)</span></div><input class="ctr-input" id="t-pass" type="number" value="150" min="0" max="600" style="width:70px"> <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)">~150/wk</span></div>
+                </div>
+            </div>
+            <div class="ctr-row" style="margin-top:4px">
+                <div class="ctr-lbl" style="font-size:12px">Event Oroberyl<br><span style="font-size:10px;color:var(--text3)">(per patch est.)</span></div>
+                <input class="ctr-input" id="t-event" type="number" value="3000" min="0" max="20000" style="width:90px">
+                <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);flex:1">Typical patch events: ~3,000–8,000 Oroberyl · ~6 weeks per patch</span>
+            </div>
+
+            <div id="tally-result" style="display:none">
+                <div class="tally-breakdown" id="tally-breakdown"></div>
+                <div class="tally-total-row">
+                    <div>
+                        <div class="tally-total-label">Projected Total</div>
+                        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px" id="tally-date-range"></div>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="tally-total-val" id="tally-total-oro"></div>
+                        <div class="tally-pulls-val" id="tally-total-pulls"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ORIGEOMETRY SHOP ADVISOR -->
+        <div class="sec-label sep">Shop Advisor</div>
+        <div class="full-card">
+            <div class="planner-title">Origeometry Bundle Calculator</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:14px;line-height:1.6;">
+                Enter how many Oroberyl you need to buy, and the calculator will suggest the most cost-efficient
+                combination of official Origeometry bundles (1 Origeometry = 75 Oroberyl).
+                Prices shown are standard USD rates — first-purchase bonus doubles Origeometry on each tier's first buy.
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+                <div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase;">Oroberyl needed</div>
+                    <input class="ctr-input" id="shop-need" type="number" min="500" max="999999" value="5000" style="width:120px;text-align:left">
+                </div>
+                <div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase;">First purchase bonus</div>
+                    <select class="server-select" id="shop-firstbuy" style="min-width:100px">
+                        <option value="1">Yes (×2 bonus)</option>
+                        <option value="0">No (standard)</option>
+                    </select>
+                </div>
+                <button class="calc-btn" onclick="calcShop()" style="margin-top:0">Find Bundles ▶</button>
+            </div>
+
+            <!-- Bundle reference grid -->
+            <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;">Official Bundle Tiers (USD)</div>
+            <div class="bundle-grid" id="bundle-ref"></div>
+
+            <div class="shop-result" id="shop-result" style="display:none">
+                <div class="shop-result-title">Recommended Purchase</div>
+                <div class="shop-combo" id="shop-combo"></div>
+                <div class="shop-total" id="shop-total"></div>
+            </div>
+        </div>
+
+
     </main>
 
     <footer>
         <div class="footer-l">Data processed locally // No server transmission // Endfield Ops v2.0</div>
-        <div class="footer-r">ENDFIELD</div>
+        <div class="footer-r">DIJANG</div>
     </footer>
 
     <script>
@@ -786,6 +1036,205 @@
         box.style.display = 'flex';
     }
     function showLoading(msg) { setLoading(msg); }
+
+    
+    /* ═══════════════ PLANNER JS ═══════════════ */
+
+    /* Slider ↔ input sync */
+    function syncSlider(inputId, sliderId) {
+        const v = parseInt(document.getElementById(inputId).value) || 0;
+        document.getElementById(sliderId).value = Math.min(v, parseInt(document.getElementById(sliderId).max));
+    }
+    function syncInput(sliderId, inputId) {
+        document.getElementById(inputId).value = document.getElementById(sliderId).value;
+    }
+
+    /* Pull counter recalc */
+    function recalcPulls() {
+        const oro = parseInt(document.getElementById('ctr-oro').value) || 0;
+        const permits = parseInt(document.getElementById('ctr-permit').value) || 0;
+        const ori = parseInt(document.getElementById('ctr-ori').value) || 0;
+        const oriPulls = Math.floor((ori * 75) / 500);
+        const oroPulls = Math.floor(oro / 500);
+        const total = oroPulls + permits + oriPulls;
+
+        document.getElementById('total-pulls-val').textContent = total;
+        document.getElementById('total-pulls-sub').textContent =
+            `${oroPulls} from Oro · ${permits} Permits · ${oriPulls} from Ori`;
+        document.getElementById('hard-pity-count').textContent = Math.floor(total / 80) + '×';
+        document.getElementById('spark-count').textContent = Math.floor(total / 120) + '×';
+        recalcChances(total);
+    }
+
+    /* Pull probability (Monte Carlo approximation via formula) */
+    function pull6StarProb(n) {
+        // Probability of NOT getting a 6★ in n pulls, accounting for soft pity
+        // Base rate 0.8%, soft pity at pull 65 → +5% per pull
+        let pNoSix = 1.0;
+        for (let i = 1; i <= n; i++) {
+            const pullNum = ((i - 1) % 80) + 1;
+            let rate;
+            if (pullNum <= 64) rate = 0.008;
+            else if (pullNum <= 79) rate = 0.008 + 0.05 * (pullNum - 64);
+            else rate = 1.0; // pull 80 = guaranteed
+            pNoSix *= (1 - rate);
+            if (pNoSix <= 0) { pNoSix = 0; break; }
+        }
+        return 1 - pNoSix;
+    }
+
+    function pull5StarProb(n) {
+        // Guaranteed 5★ every 10 pulls → at least floor(n/10) guaranteed + chance on remainder
+        const guarantees = Math.floor(n / 10);
+        return guarantees >= 1 ? 1 : (1 - Math.pow(0.92, n));
+    }
+
+    function recalcChances(pulls) {
+        const p6 = Math.min(100, pull6StarProb(pulls) * 100);
+        const p5 = Math.min(100, pull5StarProb(pulls) * 100);
+        // Featured = 6★ chance × 50/50 factor, with safety net at 2nd 6★
+        const p6feat = Math.min(100, (1 - Math.pow(1 - pull6StarProb(Math.min(pulls, 80)), 1) * 0.5) * 100);
+
+        const fmtPct = v => (v >= 99.9 ? '100%' : v.toFixed(1) + '%');
+        document.getElementById('prob6-pct').textContent = fmtPct(p6);
+        document.getElementById('prob6-feat-pct').textContent = fmtPct(p6feat);
+        document.getElementById('prob5-pct').textContent = fmtPct(p5);
+        setTimeout(() => {
+            document.getElementById('prob6-fill').style.width = p6 + '%';
+            document.getElementById('prob6-feat-fill').style.width = p6feat + '%';
+            document.getElementById('prob5-fill').style.width = p5 + '%';
+        }, 80);
+    }
+
+    /* Tally calculator */
+    function calcTally() {
+        const fromVal = document.getElementById('tally-from').value;
+        const toVal = document.getElementById('tally-to').value;
+        if (!fromVal || !toVal) { alert('Please select both a start and end date.'); return; }
+        const from = new Date(fromVal);
+        const to = new Date(toVal);
+        if (to <= from) { alert('End date must be after start date.'); return; }
+
+        const days = Math.ceil((to - from) / 86400000);
+        const weeks = days / 7;
+
+        const daily = (parseInt(document.getElementById('t-daily').value) || 0)
+            + (parseInt(document.getElementById('t-monthly').value) || 0);
+        const weeklyRoutine = parseInt(document.getElementById('t-weekly').value) || 0;
+        const weeklyPass = parseInt(document.getElementById('t-pass').value) || 0;
+        const eventPerPatch = parseInt(document.getElementById('t-event').value) || 0;
+
+        const dailyTotal = daily * days;
+        const weeklyTotal = (weeklyRoutine + weeklyPass) * weeks;
+        const patches = days / 42; // ~6-week patch cycle
+        const eventTotal = Math.round(eventPerPatch * patches);
+        const grandTotal = Math.round(dailyTotal + weeklyTotal + eventTotal);
+        const totalPulls = Math.floor(grandTotal / 500);
+
+        const bd = document.getElementById('tally-breakdown');
+        bd.innerHTML = `
+            <div class="tally-row"><div class="tally-name">Daily Missions (${days} days)</div><div class="tally-val">+${dailyTotal.toLocaleString()}</div></div>
+            <div class="tally-row"><div class="tally-name">Weekly Routine (${weeks.toFixed(1)} weeks)</div><div class="tally-val">+${Math.round(weeklyRoutine * weeks).toLocaleString()}</div></div>
+            <div class="tally-row"><div class="tally-name">Protocol Pass free track</div><div class="tally-val">+${Math.round(weeklyPass * weeks).toLocaleString()}</div></div>
+            <div class="tally-row"><div class="tally-name">Events (est. ${patches.toFixed(1)} patches)</div><div class="tally-val">+${eventTotal.toLocaleString()}</div></div>`;
+
+        document.getElementById('tally-total-oro').textContent = grandTotal.toLocaleString() + ' Oroberyl';
+        document.getElementById('tally-total-pulls').textContent = '≈ ' + totalPulls + ' pulls';
+        const opts = { month: 'short', day: 'numeric', year: 'numeric' };
+        document.getElementById('tally-date-range').textContent =
+            from.toLocaleDateString('en-US', opts) + ' → ' + to.toLocaleDateString('en-US', opts) + ' (' + days + ' days)';
+        document.getElementById('tally-result').style.display = 'block';
+    }
+
+    /* Shop / bundle calculator */
+    const ORI_BUNDLES = [
+        { label: 'Shard',  usd: 0.99,  ori: 6,   firstOri: 12 },
+        { label: 'Chip',   usd: 4.99,  ori: 29,  firstOri: 58 },
+        { label: 'Crystal',usd: 14.99, ori: 92,  firstOri: 184 },
+        { label: 'Block',  usd: 29.99, ori: 194, firstOri: 388 },
+        { label: 'Crate',  usd: 49.99, ori: 328, firstOri: 656 },
+        { label: 'Cache',  usd: 99.99, ori: 680, firstOri: 1360 },
+    ];
+
+    function initBundleRef() {
+        const grid = document.getElementById('bundle-ref');
+        grid.innerHTML = ORI_BUNDLES.map(b => `
+            <div class="bundle-card">
+                <div class="bundle-ori">${b.ori} Ori</div>
+                <div class="bundle-price">$${b.usd.toFixed(2)} USD</div>
+                <div class="bundle-oroberyls">${(b.ori * 75).toLocaleString()} Oroberyl</div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text3);margin-top:2px">1st: ${b.firstOri} Ori (×2)</div>
+            </div>`).join('');
+    }
+
+    function calcShop() {
+        const need = parseInt(document.getElementById('shop-need').value) || 0;
+        const firstBuy = document.getElementById('shop-firstbuy').value === '1';
+        if (need <= 0) return;
+
+        // Convert Oroberyl needed → Origeometry needed
+        const oriNeeded = Math.ceil(need / 75);
+
+        // Greedy: pick bundles from largest to smallest
+        let rem = oriNeeded;
+        const combo = [];
+        const bundles = [...ORI_BUNDLES].reverse(); // largest first
+
+        for (const b of bundles) {
+            const effective = firstBuy ? b.firstOri : b.ori;
+            if (effective <= 0) continue;
+            if (effective >= rem) {
+                combo.push({ bundle: b, qty: 1, ori: effective });
+                rem = 0;
+                break;
+            }
+            const qty = Math.floor(rem / effective);
+            if (qty > 0) {
+                combo.push({ bundle: b, qty, ori: effective * qty });
+                rem -= effective * qty;
+            }
+        }
+        // Mop up remainder with smallest bundle
+        if (rem > 0) {
+            const smallest = ORI_BUNDLES[0];
+            const effective = firstBuy ? smallest.firstOri : smallest.ori;
+            combo.push({ bundle: smallest, qty: 1, ori: effective });
+            rem = Math.max(0, rem - effective);
+        }
+
+        // Compute totals
+        let totalUsd = combo.reduce((s, c) => s + c.bundle.usd * c.qty, 0);
+        let totalOri = combo.reduce((s, c) => s + c.ori, 0);
+        let totalOro = totalOri * 75;
+
+        const comboEl = document.getElementById('shop-combo');
+        comboEl.innerHTML = combo.map(c =>
+            `<div class="shop-pill">${c.qty}× ${c.bundle.label} <span>$${(c.bundle.usd * c.qty).toFixed(2)}</span></div>`
+        ).join('');
+
+        document.getElementById('shop-total').innerHTML =
+            `Total: <strong>$${totalUsd.toFixed(2)} USD</strong> → ${totalOri} Origeometry → ${totalOro.toLocaleString()} Oroberyl ≈ ${Math.floor(totalOro/500)} pulls`;
+
+        // Highlight recommended in bundle ref
+        document.querySelectorAll('.bundle-card').forEach((el, i) => {
+            el.classList.remove('recommended');
+            if (combo.some(c => c.bundle.label === ORI_BUNDLES[i].label)) {
+                el.classList.add('recommended');
+            }
+        });
+
+        document.getElementById('shop-result').style.display = 'block';
+    }
+
+    /* Init on load */
+    document.addEventListener('DOMContentLoaded', () => {
+        // Set today's date as default from/to
+        const today = new Date().toISOString().split('T')[0];
+        const nextMonth = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+        document.getElementById('tally-from').value = today;
+        document.getElementById('tally-to').value = nextMonth;
+        initBundleRef();
+    });
 
     </script>
     <script src="js/TextGlitch.js"></script>
