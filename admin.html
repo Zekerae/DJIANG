@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DJIANG — Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #07080b; --bg2: #0c0d12; --bg3: #10111a;
+    --teal: #00e5c0; --purple: #6b4fa0;
+    --gold: #d4943a; --gold2: #f0b866;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+    --text: #e4e0d8; --dim: #5a5868; --dim2: #8a8694;
+    --error: #e05a5a; --success: #6ddc9a;
+    --navbar-h: 52px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.025) 3px, rgba(0,0,0,0.025) 4px);
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-h);
+    background: rgba(7,8,11,0.97); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; z-index: 1000; backdrop-filter: blur(16px);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .topbar-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 4px; color: var(--teal); }
+  .topbar-sep { width: 1px; height: 20px; background: var(--border2); }
+  .topbar-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gold); padding: 3px 10px;
+    border: 1px solid rgba(212,148,58,0.35); border-radius: 2px; background: rgba(212,148,58,0.08);
+  }
+  .topbar-badge::before { content: '■'; font-size: 6px; opacity: 0.7; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-user { display: flex; align-items: center; gap: 10px; }
+  .user-avatar {
+    width: 30px; height: 30px; border-radius: 2px; background: var(--purple);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: #fff;
+    border: 1px solid rgba(107,79,160,0.5);
+  }
+  .user-info { display: flex; flex-direction: column; }
+  .user-name { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.5px; }
+  .user-role { font-family: 'Rajdhani', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+  .btn-signout {
+    padding: 7px 16px; background: transparent; border: 1px solid var(--border2);
+    border-radius: 2px; color: var(--dim2); font-family: 'Rajdhani', sans-serif;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-signout:hover { border-color: var(--error); color: var(--error); }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; padding-top: var(--navbar-h); min-height: 100vh; position: relative; z-index: 1; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px; flex-shrink: 0; border-right: 1px solid var(--border);
+    padding: 24px 0; position: sticky; top: var(--navbar-h); height: calc(100vh - var(--navbar-h));
+    overflow-y: auto; background: rgba(10,11,16,0.8);
+  }
+  .sidebar-section { margin-bottom: 24px; }
+  .sidebar-label { padding: 0 20px 10px; font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 20px;
+    color: var(--dim2); font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: all 0.15s; position: relative;
+  }
+  .sidebar-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .sidebar-item.active { color: var(--teal); background: rgba(0,229,192,0.05); }
+  .sidebar-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--teal); }
+  .sidebar-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .sidebar-badge {
+    margin-left: auto; font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700;
+    padding: 2px 7px; border-radius: 2px; background: rgba(0,229,192,0.12); color: var(--teal);
+    letter-spacing: 1px;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main { flex: 1; padding: 28px 32px; overflow-x: hidden; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { margin-bottom: 28px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .page-header h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
+  .page-header .sub { font-size: 12px; color: var(--dim2); letter-spacing: 1px; margin-top: 4px; }
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ── STATS GRID ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 20px 22px;
+    position: relative; overflow: hidden; transition: border-color 0.2s;
+  }
+  .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; }
+  .stat-card.teal::before  { background: linear-gradient(90deg, transparent, var(--teal), transparent); }
+  .stat-card.gold::before  { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .stat-card.purple::before{ background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+  .stat-card.red::before   { background: linear-gradient(90deg, transparent, var(--error), transparent); }
+  .stat-label { font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); margin-bottom: 10px; }
+  .stat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 700; color: #fff; line-height: 1; }
+  .stat-val.teal   { color: var(--teal); }
+  .stat-val.gold   { color: var(--gold2); }
+  .stat-val.purple { color: #b090ff; }
+  .stat-val.red    { color: #f07070; }
+  .stat-delta { font-size: 11px; color: var(--dim2); margin-top: 6px; }
+
+  /* ── PANEL ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── TABLE CARD ── */
+  .table-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .table-header {
+    padding: 18px 22px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .table-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim2); }
+  .table-search {
+    flex: 1; max-width: 280px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+    border-radius: 3px; padding: 8px 14px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; outline: none; transition: border-color 0.2s;
+  }
+  .table-search:focus { border-color: rgba(0,229,192,0.3); }
+  .table-search::placeholder { color: var(--dim); }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { border-bottom: 1px solid var(--border); }
+  th {
+    padding: 12px 16px; text-align: left;
+    font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--dim); cursor: pointer; user-select: none;
+    transition: color 0.2s;
+  }
+  th:hover { color: var(--dim2); }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(255,255,255,0.025); }
+  td { padding: 12px 16px; font-size: 13px; }
+
+  .user-cell { display: flex; align-items: center; gap: 10px; }
+  .mini-avatar {
+    width: 28px; height: 28px; border-radius: 2px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; color: #fff;
+  }
+  .mini-avatar.admin   { background: rgba(212,148,58,0.3); border: 1px solid rgba(212,148,58,0.4); }
+  .mini-avatar.user    { background: rgba(0,229,192,0.15); border: 1px solid rgba(0,229,192,0.3); }
+  .mini-avatar.banned  { background: rgba(224,90,90,0.2);  border: 1px solid rgba(224,90,90,0.35); }
+  .cell-name { font-weight: 500; color: var(--text); }
+  .cell-email { font-size: 11px; color: var(--dim2); }
+
+  .role-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 3px 9px; border-radius: 2px;
+  }
+  .role-badge.admin   { background: rgba(212,148,58,0.15); color: var(--gold2); border: 1px solid rgba(212,148,58,0.3); }
+  .role-badge.user    { background: rgba(0,229,192,0.08);  color: var(--teal);  border: 1px solid rgba(0,229,192,0.2); }
+  .role-badge.banned  { background: rgba(224,90,90,0.12);  color: #f07070;      border: 1px solid rgba(224,90,90,0.3); }
+
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.online  { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  .status-dot.offline { background: var(--dim); }
+
+  .action-row { display: flex; gap: 6px; }
+  .btn-action {
+    padding: 5px 12px; background: transparent; border: 1px solid var(--border2); border-radius: 2px;
+    color: var(--dim2); font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-action:hover       { border-color: rgba(255,255,255,0.3); color: var(--text); }
+  .btn-action.promote:hover { border-color: var(--gold);  color: var(--gold2); }
+  .btn-action.demote:hover  { border-color: var(--teal);  color: var(--teal); }
+  .btn-action.ban:hover     { border-color: var(--error); color: var(--error); }
+  .btn-action.unban:hover   { border-color: var(--success); color: var(--success); }
+  .btn-action.delete:hover  { border-color: var(--error); background: rgba(224,90,90,0.08); color: var(--error); }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+  .pagination-info { font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: 1px; color: var(--dim2); }
+  .pagination-btns { display: flex; gap: 4px; }
+  .page-btn {
+    width: 30px; height: 30px; background: transparent; border: 1px solid var(--border);
+    border-radius: 2px; color: var(--dim2); font-family: 'Rajdhani', sans-serif; font-size: 11px;
+    font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+  }
+  .page-btn:hover  { border-color: var(--border2); color: var(--text); }
+  .page-btn.active { border-color: var(--teal); color: var(--teal); background: rgba(0,229,192,0.06); }
+  .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Buttons */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; background: transparent; border: 1px solid var(--teal); border-radius: 3px;
+    color: var(--teal); font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::before { content: ''; position: absolute; inset: 0; background: var(--teal); transform: translateX(-101%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); z-index: 0; }
+  .btn-primary:hover::before { transform: translateX(0); } .btn-primary:hover { color: #000; }
+  .btn-primary > * { position: relative; z-index: 1; }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; background: rgba(255,255,255,0.04); border: 1px solid var(--border2); border-radius: 3px;
+    color: var(--dim2); font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--bg2); border: 1px solid var(--border2); border-radius: 4px;
+    padding: 32px 28px; width: 100%; max-width: 420px;
+    transform: translateY(12px); transition: transform 0.2s;
+    position: relative;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--teal), transparent); opacity: 0.5; }
+  .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #fff; margin-bottom: 8px; }
+  .modal-sub { font-size: 13px; color: var(--dim2); margin-bottom: 24px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+  .modal-field { margin-bottom: 16px; }
+  .modal-label { display: block; font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--dim2); margin-bottom: 8px; }
+  .modal-input {
+    width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 3px;
+    padding: 11px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+    transition: all 0.2s; outline: none;
+  }
+  .modal-input:focus { border-color: rgba(0,229,192,0.4); }
+  .modal-select {
+    width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 3px;
+    padding: 11px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; cursor: pointer;
+  }
+
+  /* ── TOAST ── */
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
+  .toast {
+    padding: 12px 18px; border-radius: 3px; font-size: 13px; color: #fff; font-weight: 500;
+    animation: toastIn 0.3s ease; max-width: 320px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+  .toast.success { background: rgba(109,220,154,0.15); border: 1px solid rgba(109,220,154,0.35); color: var(--success); }
+  .toast.error   { background: rgba(224,90,90,0.15);  border: 1px solid rgba(224,90,90,0.35);  color: #f4a0a0; }
+  .toast.info    { background: rgba(0,229,192,0.1);   border: 1px solid rgba(0,229,192,0.25);  color: var(--teal); }
+
+  /* ── LOADING / EMPTY ── */
+  .table-loading { padding: 40px; text-align: center; color: var(--dim2); font-size: 13px; }
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border2); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state { padding: 48px 20px; text-align: center; }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-text { font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); }
+
+  /* ── FILTER BAR ── */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .filter-pill {
+    padding: 5px 12px; background: transparent; border: 1px solid var(--border); border-radius: 2px;
+    color: var(--dim2); font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+  }
+  .filter-pill:hover { border-color: var(--border2); color: var(--text); }
+  .filter-pill.active { border-color: var(--teal); color: var(--teal); background: rgba(0,229,192,0.06); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { padding: 20px 16px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">DJIANG</div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-badge">Admin Console</div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-user">
+      <div class="user-avatar" id="topbar-avatar">A</div>
+      <div class="user-info">
+        <div class="user-name" id="topbar-name">Loading...</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+    <button class="btn-signout" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Dashboard</div>
+      <div class="sidebar-item active" onclick="showPanel('overview')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Overview
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Management</div>
+      <div class="sidebar-item" onclick="showPanel('users')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Users
+        <span class="sidebar-badge" id="sidebar-user-count">—</span>
+      </div>
+      <div class="sidebar-item" onclick="showPanel('admins')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Admins
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <div class="sidebar-item" onclick="window.location.href='index.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Main Site
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- OVERVIEW PANEL -->
+    <div class="panel active" id="panel-overview">
+      <div class="page-header">
+        <div>
+          <h1>Overview</h1>
+          <div class="sub">DJIANG Admin Console · System Status</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn-secondary" onclick="refreshAll()">↺ Refresh</button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card teal">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-val teal" id="stat-total">—</div>
+          <div class="stat-delta">All registered accounts</div>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-label">Admins</div>
+          <div class="stat-val gold" id="stat-admins">—</div>
+          <div class="stat-delta">Admin-role accounts</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-label">Regular Users</div>
+          <div class="stat-val purple" id="stat-users">—</div>
+          <div class="stat-delta">Standard access</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">Banned</div>
+          <div class="stat-val red" id="stat-banned">—</div>
+          <div class="stat-delta">Suspended accounts</div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Recent Registrations</div>
+        </div>
+        <div id="recent-users-container">
+          <div class="table-loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS PANEL -->
+    <div class="panel" id="panel-users">
+      <div class="page-header">
+        <div>
+          <h1>Users</h1>
+          <div class="sub">Manage all registered accounts</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" onclick="openInviteModal()"><span>+ Invite User</span></button>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">All Accounts</div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <div class="filter-bar" id="role-filter">
+              <button class="filter-pill active" data-role="all" onclick="setRoleFilter('all')">All</button>
+              <button class="filter-pill" data-role="admin" onclick="setRoleFilter('admin')">Admin</button>
+              <button class="filter-pill" data-role="user" onclick="setRoleFilter('user')">User</button>
+              <button class="filter-pill" data-role="banned" onclick="setRoleFilter('banned')">Banned</button>
+            </div>
+            <input type="text" class="table-search" id="user-search" placeholder="Search users..." oninput="filterUsers()">
+          </div>
+        </div>
+        <div id="users-table-container">
+          <div class="table-loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMINS PANEL -->
+    <div class="panel" id="panel-admins">
+      <div class="page-header">
+        <div>
+          <h1>Administrators</h1>
+          <div class="sub">Accounts with elevated privileges</div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Admin Accounts</div>
+        </div>
+        <div id="admins-table-container">
+          <div class="table-loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- INVITE MODAL -->
+<div class="modal-overlay" id="invite-modal" onclick="if(event.target===this) closeModal('invite-modal')">
+  <div class="modal">
+    <div class="modal-title">Invite User</div>
+    <div class="modal-sub">Send an invitation email. The user will receive a magic link to create their account.</div>
+    <div class="modal-field">
+      <label class="modal-label">Email Address</label>
+      <input type="email" class="modal-input" id="invite-email" placeholder="keeper@endfield.com">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Role</label>
+      <select class="modal-select" id="invite-role">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('invite-modal')">Cancel</button>
+      <button class="btn-primary" onclick="doInvite()"><span>Send Invite</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal" onclick="if(event.target===this) closeModal('confirm-modal')">
+  <div class="modal">
+    <div class="modal-title" id="confirm-title">Confirm Action</div>
+    <div class="modal-sub" id="confirm-sub">Are you sure?</div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('confirm-modal')">Cancel</button>
+      <button class="btn-primary" id="confirm-btn" onclick="confirmAction()"><span>Confirm</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let allUsers = [];
+let roleFilter = 'all';
+let pendingAction = null;
+let currentUser = null;
+
+// ── AUTH GUARD ────────────────────────────────────────────────────
+async function authGuard() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session?.user) { window.location.href = 'auth.html'; return null; }
+
+  const user = session.user;
+  const { data: profile } = await db.from('profiles').select('role,username,display_name').eq('id', user.id).single();
+  const role = profile?.role || user.user_metadata?.role || 'user';
+
+  if (role !== 'admin') {
+    toast('error', 'Access denied. Admin role required.');
+    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+    return null;
+  }
+
+  currentUser = { ...user, profile };
+  const displayName = profile?.display_name || profile?.username || user.email?.split('@')[0] || 'Admin';
+  document.getElementById('topbar-name').textContent = displayName;
+  document.getElementById('topbar-avatar').textContent = displayName[0].toUpperCase();
+  return user;
+}
+
+// ── SIGN OUT ──────────────────────────────────────────────────────
+async function signOut() {
+  await db.auth.signOut();
+  window.location.href = 'auth.html';
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────
+function toast(type, msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3000);
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openInviteModal() { document.getElementById('invite-email').value = ''; openModal('invite-modal'); }
+
+// ── PANEL NAVIGATION ──────────────────────────────────────────────
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById('panel-' + name)?.classList.add('active');
+
+  const items = document.querySelectorAll('.sidebar-item');
+  items.forEach(item => { if (item.textContent.trim().toLowerCase().startsWith(name)) item.classList.add('active'); });
+
+  if (name === 'users')    renderUsersTable();
+  if (name === 'admins')   renderAdminsTable();
+}
+
+// ── LOAD PROFILES ─────────────────────────────────────────────────
+async function loadProfiles() {
+  const { data, error } = await db.from('profiles').select('*').order('created_at', { ascending: false });
+  if (error) {
+    // Fallback: no profiles table yet — show auth users only
+    toast('info', 'Note: profiles table not found. Showing auth metadata only.');
+    return [];
+  }
+  return data || [];
+}
+
+// ── REFRESH ALL ───────────────────────────────────────────────────
+async function refreshAll() {
+  allUsers = await loadProfiles();
+  updateStats();
+  renderRecentUsers();
+  document.getElementById('sidebar-user-count').textContent = allUsers.length;
+}
+
+// ── STATS ─────────────────────────────────────────────────────────
+function updateStats() {
+  const total  = allUsers.length;
+  const admins = allUsers.filter(u => u.role === 'admin').length;
+  const banned = allUsers.filter(u => u.role === 'banned').length;
+  const users  = total - admins - banned;
+  document.getElementById('stat-total').textContent  = total;
+  document.getElementById('stat-admins').textContent = admins;
+  document.getElementById('stat-users').textContent  = users;
+  document.getElementById('stat-banned').textContent = banned;
+}
+
+// ── FORMAT DATE ───────────────────────────────────────────────────
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+// ── BUILD USER ROW ────────────────────────────────────────────────
+function userRow(u, showActions = true) {
+  const name  = u.display_name || u.username || u.email?.split('@')[0] || 'Unknown';
+  const email = u.email || '—';
+  const role  = u.role || 'user';
+  const roleClass = role === 'admin' ? 'admin' : role === 'banned' ? 'banned' : 'user';
+  const initial = name[0]?.toUpperCase() || '?';
+
+  const actions = showActions ? `
+    <td>
+      <div class="action-row">
+        ${role !== 'admin'  ? `<button class="btn-action promote" onclick="changeRole('${u.id}','admin','${name}')">Promote</button>` : ''}
+        ${role === 'admin'  ? `<button class="btn-action demote"  onclick="changeRole('${u.id}','user','${name}')">Demote</button>` : ''}
+        ${role !== 'banned' ? `<button class="btn-action ban"     onclick="banUser('${u.id}','${name}')">Ban</button>` : ''}
+        ${role === 'banned' ? `<button class="btn-action unban"   onclick="changeRole('${u.id}','user','${name}')">Unban</button>` : ''}
+        <button class="btn-action delete" onclick="deleteUser('${u.id}','${name}')">Delete</button>
+      </div>
+    </td>
+  ` : '<td>—</td>';
+
+  return `<tr>
+    <td>
+      <div class="user-cell">
+        <div class="mini-avatar ${roleClass}">${initial}</div>
+        <div>
+          <div class="cell-name">${name}</div>
+          <div class="cell-email">${email}</div>
+        </div>
+      </div>
+    </td>
+    <td><span class="role-badge ${roleClass}">${role.toUpperCase()}</span></td>
+    <td style="color:var(--dim2);font-size:12px">${fmtDate(u.created_at)}</td>
+    ${actions}
+  </tr>`;
+}
+
+// ── RENDER TABLES ─────────────────────────────────────────────────
+function renderRecentUsers() {
+  const recent = allUsers.slice(0, 8);
+  const html = recent.length === 0
+    ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No users found</div></div>`
+    : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${recent.map(u => userRow(u)).join('')}</tbody></table>
+       <div class="pagination"><div class="pagination-info">Showing ${recent.length} of ${allUsers.length} users</div><button class="btn-secondary" onclick="showPanel('users')">View All →</button></div>`;
+  document.getElementById('recent-users-container').innerHTML = html;
+}
+
+function renderUsersTable() {
+  const query  = (document.getElementById('user-search')?.value || '').toLowerCase();
+  let filtered = allUsers;
+  if (roleFilter !== 'all') filtered = filtered.filter(u => (u.role || 'user') === roleFilter);
+  if (query) filtered = filtered.filter(u =>
+    (u.display_name || '').toLowerCase().includes(query) ||
+    (u.username || '').toLowerCase().includes(query) ||
+    (u.email || '').toLowerCase().includes(query)
+  );
+
+  const html = filtered.length === 0
+    ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No matching users</div></div>`
+    : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${filtered.map(u => userRow(u)).join('')}</tbody></table>
+       <div class="pagination"><div class="pagination-info">Showing ${filtered.length} of ${allUsers.length} total</div></div>`;
+  document.getElementById('users-table-container').innerHTML = html;
+}
+
+function renderAdminsTable() {
+  const admins = allUsers.filter(u => u.role === 'admin');
+  const html = admins.length === 0
+    ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No admin accounts found</div></div>`
+    : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${admins.map(u => userRow(u)).join('')}</tbody></table>
+       <div class="pagination"><div class="pagination-info">${admins.length} admin(s)</div></div>`;
+  document.getElementById('admins-table-container').innerHTML = html;
+}
+
+// ── FILTER ────────────────────────────────────────────────────────
+function setRoleFilter(role) {
+  roleFilter = role;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.role === role));
+  renderUsersTable();
+}
+
+function filterUsers() { renderUsersTable(); }
+
+// ── CHANGE ROLE ───────────────────────────────────────────────────
+async function changeRole(id, newRole, name) {
+  const { error } = await db.from('profiles').update({ role: newRole }).eq('id', id);
+  if (error) { toast('error', 'Failed: ' + error.message); return; }
+  const u = allUsers.find(u => u.id === id);
+  if (u) u.role = newRole;
+  toast('success', `${name} → ${newRole.toUpperCase()}`);
+  updateStats();
+  renderRecentUsers();
+  renderUsersTable();
+  renderAdminsTable();
+}
+
+// ── BAN USER ──────────────────────────────────────────────────────
+function banUser(id, name) {
+  pendingAction = () => changeRole(id, 'banned', name);
+  document.getElementById('confirm-title').textContent = 'Ban User';
+  document.getElementById('confirm-sub').textContent = `Are you sure you want to ban "${name}"? They will lose access to the site.`;
+  openModal('confirm-modal');
+}
+
+// ── DELETE USER ───────────────────────────────────────────────────
+function deleteUser(id, name) {
+  pendingAction = async () => {
+    const { error } = await db.from('profiles').delete().eq('id', id);
+    if (error) { toast('error', 'Failed: ' + error.message); return; }
+    allUsers = allUsers.filter(u => u.id !== id);
+    toast('success', `${name} deleted.`);
+    updateStats();
+    refreshAll();
+  };
+  document.getElementById('confirm-title').textContent = 'Delete User';
+  document.getElementById('confirm-sub').textContent = `Permanently delete "${name}"? This cannot be undone.`;
+  openModal('confirm-modal');
+}
+
+function confirmAction() {
+  closeModal('confirm-modal');
+  if (pendingAction) { pendingAction(); pendingAction = null; }
+}
+
+// ── INVITE ────────────────────────────────────────────────────────
+async function doInvite() {
+  const email = document.getElementById('invite-email').value.trim();
+  const role  = document.getElementById('invite-role').value;
+  if (!email) { toast('error', 'Enter an email address.'); return; }
+  // Admin invite via Supabase Auth (requires service role key for full admin invite;
+  // using magic link as workaround with anon key)
+  const { error } = await db.auth.signInWithOtp({
+    email,
+    options: { data: { role }, emailRedirectTo: window.location.origin + '/auth.html' }
+  });
+  closeModal('invite-modal');
+  if (error) { toast('error', 'Failed: ' + error.message); return; }
+  toast('success', `Invite sent to ${email}`);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+(async () => {
+  const user = await authGuard();
+  if (!user) return;
+  await refreshAll();
+})();
+</script>
+</body>
+</html>

@@ -11,9 +11,10 @@
  *   active   (string)  — filename of the current page, e.g. 'OperatorList.html'
  *                        Defaults to auto-detect from window.location.pathname.
  *   sections (array)   — section IDs to track for scroll-based progress.
- *                        Defaults to ['landing-page','character-slide','carousel-3D','footer']
+ *                        Defaults to [].
  *   navLinks (array)   — buttons shown in the top centre navbar. Each: { label, target }
- *                        Defaults to the standard DJIANG set.
+ *                        OPTIONAL — if omitted or empty, the nav-links strip is not rendered.
+ *                        Example: [{ label: 'HOME', target: 'index.html' }]
  *   sidebarItems(array)— sidebar nav items. Each: { label, target, page }
  *                        Defaults to the standard DJIANG set.
  *   socials  (array)   — sidebar footer links. Each: { label }
@@ -25,19 +26,14 @@ const NavBar = (() => {
   /* ── Default config ──────────────────────────────────────────────── */
   const DEFAULTS = {
     sections: [],
-    navLinks: [
-      { label: 'HOME',      target: 'landing-page' },
-      { label: 'OPERATORS', target: 'character-slide' },
-      { label: 'WEAPONS',   target: 'carousel-3D' },
-      { label: 'ABOUT US',  target: 'footer' },
-    ],
+    navLinks: [],   // Empty by default — pass navLinks in init() to show the top nav strip
     sidebarItems: [
-      { label: ['HOME'],              target: 'index.html',       page: '001' },
-      { label: ['WEAPONS'],           target: 'WeaponList.html',  page: '002' },
-      { label: ['OPERATORS'],         target: 'OperatorList.html',page: '003' },
-      { label: ['TIER LIST'],         target: 'footer',           page: '004' },
-      { label: ['PULL', 'TRACKER'],   target: 'footer',           page: '005' },
-      { label: ['MATERIAL','TRACKER'],target: 'footer',           page: '006' },
+      { label: ['HOME'],                  target: 'index.html',           page: '001' },
+      { label: ['WEAPONS'],               target: 'WeaponList.html',      page: '002' },
+      { label: ['OPERATORS'],             target: 'OperatorList.html',    page: '003' },
+      { label: ['TIER LIST'],             target: 'footer',               page: '004' },
+      { label: ['HEADHUNT', 'TRACKER'],   target: 'HeadhuntTracker.html', page: '005' },
+      { label: ['MATERIAL','TRACKER'],    target: 'footer',               page: '006' },
     ],
     socials: ['FACEBOOK', 'DISCORD', 'INSTAGRAM'],
   };
@@ -71,6 +67,7 @@ const NavBar = (() => {
     const item = document.createElement('div');
     item.className = 'sidebar-item';
     item.dataset.target = target;
+    if (page) item.dataset.page = page;   // store page number for counter lookup
 
     const inner = document.createElement('div');
     inner.className = 'sidebar-item-inner';
@@ -103,19 +100,23 @@ const NavBar = (() => {
     ham.addEventListener('click', toggleSidebar);
     nav.appendChild(ham);
 
-    const navLinks = document.createElement('div');
-    navLinks.className = 'nav-links';
-    cfg.navLinks.forEach(({ label, target }) => {
-      const btn = document.createElement('div');
-      btn.className = 'nav-btn';
-      btn.dataset.target = target;
-      const wh = document.createElement('div');
-      wh.className = 'wipe-hover';
-      wh.appendChild(glitch(label, true));
-      btn.appendChild(wh);
-      navLinks.appendChild(btn);
-    });
-    nav.appendChild(navLinks);
+    // ── Nav links — only rendered if the caller passed at least one link ──
+    if (cfg.navLinks.length > 0) {
+      const navLinks = document.createElement('div');
+      navLinks.className = 'nav-links';
+      cfg.navLinks.forEach(({ label, target }) => {
+        const btn = document.createElement('div');
+        btn.className = 'nav-btn';
+        btn.dataset.target = target;
+        const wh = document.createElement('div');
+        wh.className = 'wipe-hover';
+        wh.appendChild(glitch(label, true));
+        btn.appendChild(wh);
+        navLinks.appendChild(btn);
+      });
+      nav.appendChild(navLinks);
+    }
+
     const spacer = document.createElement('div');
     spacer.className = 'nav-spacer';
     nav.appendChild(spacer);
@@ -164,6 +165,15 @@ const NavBar = (() => {
     body.insertBefore(sidebar, body.firstChild);
     body.insertBefore(overlay, body.firstChild);
     body.insertBefore(nav, body.firstChild);
+
+    // ── Wire up glitch on dynamically injected sidebar elements ──────
+    // TextGlitch.js runs its DOMContentLoaded pass before NavBar.init()
+    // injects the sidebar, so those elements are missed. Re-run init()
+    // scoped to just the sidebar — already-wired elements are skipped.
+    if (window.TextGlitch) {
+      window.TextGlitch.init(nav);
+      window.TextGlitch.init(sidebar);
+    }
   }
 
   /* ── Wire up click navigation ────────────────────────────────────── */
@@ -218,9 +228,14 @@ const NavBar = (() => {
         item.classList.toggle('active', isLink(target) && targetFile === file);
       });
 
-      // Bottom page counter
+      // Bottom page counter — prefer the active sidebar item's page number,
+      // fall back to section index on pages like index.html that use sections
       const counter = document.querySelector('.sidebar-page-count span:first-child');
-      if (counter) counter.textContent = 'PAGE ' + String(activeIdx + 1).padStart(3, '0');
+      if (counter) {
+        const activeItem = document.querySelector('.sidebar-item.active');
+        const pageNum = activeItem?.dataset.page ?? String(activeIdx + 1).padStart(3, '0');
+        counter.textContent = 'PAGE ' + pageNum;
+      }
     }
 
     window.addEventListener('scroll', update);
@@ -262,4 +277,4 @@ const NavBar = (() => {
   window.toggleSidebar = toggleSidebar;
 
   return { init, toggleSidebar };
-})();
+})();s

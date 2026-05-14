@@ -74,12 +74,12 @@
     </div>
     <div id="character-slide">
             <div class="cs-root">
-                <link rel="stylesheet" href="css/Character-slide.css">
+
                 <div class="carousel">
 
                     <div class="list">
 
-                        <div class="item" style="background-image: url(O1.jpg);">
+                        <div class="item" style="background-image: url(../assets/HomepageAssets/OperatorList/LaevatainBg.png);">
                             <div class="content">
                                 <div class="title">LAEVATAIN</div>
                                 <div class="name">LAEVATAIN</div>
@@ -91,7 +91,7 @@
                             </div>
                         </div>
 
-                        <div class="item" style="background-image: url(O2.jpg);">
+                        <div class="item" style="background-image: url(../assets/HomepageAssets/OperatorList/YvonneBg.png);">
                             <div class="content">
                                 <div class="title">YVONNE</div>
                                 <div class="name">YVONNE</div>
@@ -103,7 +103,7 @@
                             </div>
                         </div>
 
-                        <div class="item" style="background-image: url(O3.png);">
+                        <div class="item" style="background-image: url(../assets/HomepageAssets/OperatorList/ZhuangFangyiBg.png);">
                             <div class="content">
                                 <div class="title">ZHUANG FANGYI</div>
                                 <div class="name">ZHUANG FANGYI</div>
@@ -115,7 +115,7 @@
                             </div>
                         </div>
 
-                        <div class="item" style="background-image: url(O4.png);">
+                        <div class="item" style="background-image: url(../assets/HomepageAssets/OperatorList/TangTangBg.png);">
                             <div class="content">
                                 <div class="title">TANGTANG</div>
                                 <div class="name">TANGTANG</div>
@@ -127,7 +127,7 @@
                             </div>
                         </div>
 
-                        <div class="item" style="background-image: url(O5.jpg);">
+                        <div class="item" style="background-image: url(../assets/HomepageAssets/OperatorList/LastRiteBg.png);">
                             <div class="content">
                                 <div class="title">LAST RITE</div>
                                 <div class="name">LAST RITE</div>
@@ -139,14 +139,14 @@
                             </div>
                         </div>
 
-                        <div class="item" style="background-image: url(O6.png);">
+                        <div class="item" style="background-image: url(../assets/HomepageAssets/OperatorList/DannyBg.png);">
                             <div class="content">
-                                <div class="title">DANNY</div>
-                                <div class="name">CANTIKOL</div>
-                                <div class="des">Puro TIKOL</div>
+                                <div class="title">Da Pan</div>
+                                <div class="name">Da Pan</div>
+                                <div class="des">Just a Friendly Neighbor Panda</div>
                                 <div class="btn">
-                                    <button>See More</button>
-                                    <button>Subscribe</button>
+                                    <button>Profile</button>
+                                    <button>Track</button>
                                 </div>
                             </div>
                         </div>
@@ -259,13 +259,13 @@
             <div class="bottom">
                 <br><br><br>
                 <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">ASTERISK</div>
+                    <div class="tglitch-animation" data-speed="10" data-increment="5">ASTERISK</div>
                 </div><br>
                 <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">ZEKERAE</div>
+                    <div class="tglitch-animation" data-speed="10" data-increment="5">ZEKERAE</div>
                 </div><br>
                 <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">LEMELLON</div>
+                    <div class="tglitch-animation" data-speed="10" data-increment="5">LEMELLON</div>
                 </div><br>
             </div>
         </div>
@@ -276,13 +276,13 @@
             <div class="bottom">
                 <br><br><br>
                 <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">FACEBOOK</div>
+                    <div class="tglitch-animation" data-speed="10" data-increment="5">FACEBOOK</div>
                 </div><br>
                 <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">DISCORD</div>
+                    <div class="tglitch-animation" data-speed="10" data-increment="5">DISCORD</div>
                 </div><br>
                 <div class="wipe-hover">
-                    <div class="tglitch-animation swipe" data-speed="10" data-increment="5">INSTAGRAM</div>
+                    <div class="tglitch-animation" data-speed="10" data-increment="5">INSTAGRAM</div>
                 </div><br>
             </div>
         </div>
@@ -319,9 +319,15 @@
     <script src="js/OperatorSlide.js"></script>
     <script src="js/WeaponSpin.js"></script>
     <script>
-    NavBar.init({
-        sections: ['landing-page', 'character-slide', 'carousel-3D', 'footer']
-    });
+        NavBar.init({
+            sections: ['landing-page', 'character-slide', 'carousel-3D', 'footer'],
+            navLinks: [
+                { label: 'HOME',      target: 'landing-page' },
+                { label: 'OPERATORS', target: 'character-slide' },
+                { label: 'WEAPONS',   target: 'carousel-3D' },
+                { label: 'ABOUT US',  target: 'footer' },
+            ]
+        });
     </script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     --sidebar-notch: 16px;
     --sidebar-item-indent: 5%;
     --sidebar-font: 'Arial Black', Arial, sans-serif;
-    --sidebar-page-count-offset: 32px;
+    --sidebar-page-count-offset: 0px;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -132,6 +132,8 @@ body {
     padding-top: var(--navbar-height);
     transition: left 0.4s cubic-bezier(0.77, 0, 0.18, 1);
     overflow: hidden;
+
+    padding-bottom: env(safe-area-inset-bottom, 0px); 
 }
 
 .sidebar.open { left: 0; }
@@ -161,12 +163,14 @@ body {
     flex-direction: column;
     padding: 8px 0;
     border-bottom: var(--border);
+    overflow: hidden;
+    min-height: 0; 
 }
 
 .sidebar-item {
-    padding: 4px 0;
+    padding: 2px 0;                         
     color: rgba(135, 135, 135, 0.5);
-    font-size: clamp(22px, 3.2vw, 38px);
+    font-size: clamp(18px, 2.6vw, 30px);
     font-family: var(--sidebar-font);
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -263,7 +267,6 @@ body {
 /* ─── PAGE COUNTER ─── */
 .sidebar-page-count {
     padding: 12px 28px;
-    margin-bottom: var(--sidebar-page-count-offset);
     font-size: 9px;
     letter-spacing: 0.15em;
     color: rgb(255, 255, 255);
