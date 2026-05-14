@@ -1,1077 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Endfield — Headhunt Tracker</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/NavBar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box }
         :root {
-            --bg: #0d0d0f;
-            --bg2: #111114;
-            --surface: #18181c;
-            --surface2: #1e1e23;
-            --surface3: #242429;
-            --border: #2a2a32;
-            --border2: #35353f;
-            --border3: #444450;
-
-            /* accent — overwritten by JS on load */
-            --accent: #e8613a;
-            --accent-dim: #b84a27;
-            --accent-glow: rgba(232, 97, 58, 0.12);
-            --accent-soft: rgba(232, 97, 58, 0.06);
-
-            --gold: #f0a040;
-            --green: #4eca8b;
-            --purple: #b07ef8;
-            --blue: #6aadfa;
-            --red: #ef5050;
-            --text: #e8e8ee;
-            --text2: #9898aa;
-            --text3: #555560;
-            --text4: #33333d;
-
-            --radius: 10px;
-            --radius-sm: 6px;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Barlow', sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ─── TOP SPACER (replaces removed navbar) ─── */
-        .navbar-spacer {
-            height: 40px;
-        }
-
-        /* ─── CHAR BANNER ─── */
-        .char-banner {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-            min-height: 80px;
-        }
-
-        .char-banner-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px 28px 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .char-banner::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(-55deg,
-                    transparent,
-                    transparent 18px,
-                    rgba(var(--accent-rgb), 0.025) 18px,
-                    rgba(var(--accent-rgb), 0.025) 19px);
-            pointer-events: none;
-        }
-
-        .char-banner::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 40%;
-            background: linear-gradient(90deg, transparent, var(--accent-soft));
-            pointer-events: none;
-        }
-
-        .char-info {
-            flex: 1
-        }
-
-        .char-name {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 28px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--text);
-            line-height: 1;
-            margin-bottom: 6px;
-        }
-
-        .char-quote {
-            font-size: 12px;
-            color: var(--text3);
-            font-style: italic;
-        }
-
-        .char-right {
-            margin-left: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 6px;
-            position: relative;
-            z-index: 3;
-        }
-
-        .char-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 1px;
-            padding: 4px 12px;
-            background: var(--surface2);
-            border: 1px solid var(--border2);
-            border-radius: var(--radius-sm);
-            color: var(--text2);
-        }
-
-        .char-badge .dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-        }
-
-        .dot-accent {
-            background: var(--accent)
-        }
-
-        .dot-green {
-            background: var(--green)
-        }
-
-
-
-        /* ─── MAIN ─── */
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px 28px 48px;
-        }
-
-        /* Section label */
-        .sec-label {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 8px;
-            letter-spacing: 3px;
-            color: var(--text3);
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sec-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        /* ─── GUIDE ─── */
-        .guide-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-left: 2px solid var(--accent);
-            margin-bottom: 20px;
-            overflow: hidden;
-            border-radius: var(--radius);
-        }
-
-        .guide-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .guide-toggle-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .guide-tag-badge {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 8px;
-            letter-spacing: 2px;
-            padding: 2px 8px;
-            background: var(--accent);
-            color: #fff;
-            border-radius: var(--radius-sm);
-        }
-
-        .guide-heading {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 600;
-            font-size: 13px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--text2);
-        }
-
-        .guide-chev {
-            color: var(--text3);
-            transition: transform 0.3s;
-            font-size: 11px
-        }
-
-        .guide-chev.open {
-            transform: rotate(180deg)
-        }
-
-        .guide-body {
-            display: none;
-            padding: 0 18px 16px;
-        }
-
-        .guide-body.open {
-            display: block
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-        }
-
-        @media(max-width:720px) {
-            .steps-grid {
-                grid-template-columns: 1fr 1fr
-            }
-        }
-
-        @media(max-width:480px) {
-            .steps-grid {
-                grid-template-columns: 1fr
-            }
-        }
-
-        .step {
-            padding: 12px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            transition: background 0.15s;
-        }
-
-        .step:hover {
-            background: var(--surface3)
-        }
-
-        .step-n {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 800;
-            font-size: 20px;
-            color: var(--accent-dim);
-            line-height: 1;
-            min-width: 20px;
-        }
-
-        .step-t {
-            font-size: 12px;
-            color: var(--text2);
-            line-height: 1.6;
-        }
-
-        .step-t code {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 10px;
-            color: var(--accent);
-            background: var(--accent-soft);
-            padding: 1px 5px;
-            border: 1px solid rgba(var(--accent-rgb), 0.2);
-            border-radius: 3px;
-        }
-
-        .step-t strong {
-            color: var(--text)
-        }
-
-        /* ─── INPUT ─── */
-        .input-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-left: 2px solid var(--accent);
-            padding: 18px;
-            margin-bottom: 20px;
-            border-radius: var(--radius);
-        }
-
-        .input-head {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
-        }
-
-        .input-tag-badge {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 8px;
-            letter-spacing: 2px;
-            padding: 2px 8px;
-            background: var(--surface2);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            border-radius: var(--radius-sm);
-        }
-
-        .input-heading {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 600;
-            font-size: 13px;
-            letter-spacing: 2px;
-            color: var(--text2);
-            text-transform: uppercase;
-        }
-
-        .input-local {
-            margin-left: auto;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 8px;
-            letter-spacing: 1px;
-            color: var(--text3);
-        }
-
-        .url-row {
-            display: flex;
-            gap: 0;
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-        }
-
-        .url-input {
-            flex: 1;
-            background: var(--bg);
-            border: 1px solid var(--border2);
-            border-right: none;
-            color: var(--text);
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 11px;
-            padding: 10px 14px;
-            outline: none;
-            transition: border-color 0.15s;
-            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-        }
-
-        .url-input:focus {
-            border-color: var(--accent);
-        }
-
-        .url-input::placeholder {
-            color: var(--text4);
-            font-size: 10px
-        }
-
-        .scan-btn {
-            background: var(--accent);
-            border: none;
-            color: #fff;
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 13px;
-            letter-spacing: 2px;
-            padding: 0 24px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: background 0.15s;
-            white-space: nowrap;
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-        }
-
-        .scan-btn:hover {
-            filter: brightness(1.15)
-        }
-
-        .scan-btn:active {
-            filter: brightness(0.9)
-        }
-
-        .input-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-
-        .input-hint {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            color: var(--text3);
-        }
-
-        .input-hint span {
-            color: var(--accent)
-        }
-
-        .demo-btn {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 1px;
-            padding: 5px 12px;
-            border: 1px solid var(--border2);
-            background: transparent;
-            color: var(--text3);
-            cursor: pointer;
-            transition: all 0.15s;
-            text-transform: uppercase;
-            border-radius: var(--radius-sm);
-        }
-
-        .demo-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: var(--accent-soft)
-        }
-
-        .error-box {
-            background: rgba(239, 80, 80, 0.08);
-            border: 1px solid rgba(239, 80, 80, 0.25);
-            border-left: 2px solid var(--red);
-            padding: 9px 13px;
-            margin-top: 10px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 10px;
-            color: #fca5a5;
-            display: none;
-            border-radius: var(--radius-sm);
-        }
-
-        .loading-box {
-            display: none;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 0;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 10px;
-            color: var(--accent);
-            margin-top: 8px;
-        }
-
-        .loader {
-            width: 13px;
-            height: 13px;
-            border: 2px solid var(--border2);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg)
-            }
-        }
-
-        /* ─── STATS ─── */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        @media(max-width:560px) {
-            .stats-row {
-                grid-template-columns: repeat(2, 1fr)
-            }
-        }
-
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-top: 2px solid transparent;
-            padding: 16px;
-            border-radius: var(--radius);
-            position: relative;
-            overflow: hidden;
-            transition: background 0.15s, border-color 0.15s;
-        }
-
-        .stat-card:hover {
-            background: var(--surface2)
-        }
-
-        .stat-card.c-accent {
-            border-top-color: var(--accent)
-        }
-
-        .stat-card.c-gold {
-            border-top-color: var(--gold)
-        }
-
-        .stat-card.c-purple {
-            border-top-color: var(--purple)
-        }
-
-        .stat-card.c-green {
-            border-top-color: var(--green)
-        }
-
-        .stat-lbl {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 8px;
-            letter-spacing: 2px;
-            color: var(--text3);
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .stat-val {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 38px;
-            line-height: 1;
-            margin-bottom: 4px;
-        }
-
-        .c-accent .stat-val {
-            color: var(--accent)
-        }
-
-        .c-gold .stat-val {
-            color: var(--gold)
-        }
-
-        .c-purple .stat-val {
-            color: var(--purple)
-        }
-
-        .c-green .stat-val {
-            color: var(--green)
-        }
-
-        .stat-sub {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            color: var(--text3);
-        }
-
-        .stat-bg {
-            position: absolute;
-            right: -4px;
-            bottom: -8px;
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 800;
-            font-size: 60px;
-            line-height: 1;
-            opacity: 0.04;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .c-accent .stat-bg {
-            color: var(--accent)
-        }
-
-        .c-gold .stat-bg {
-            color: var(--gold)
-        }
-
-        .c-purple .stat-bg {
-            color: var(--purple)
-        }
-
-        .c-green .stat-bg {
-            color: var(--green)
-        }
-
-        /* ─── MID ROW ─── */
-        .mid-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 20px;
-        }
-
-        @media(max-width:640px) {
-            .mid-row {
-                grid-template-columns: 1fr
-            }
-        }
-
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 18px;
-            border-radius: var(--radius);
-        }
-
-        .panel-title {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 8px;
-            letter-spacing: 2px;
-            color: var(--text3);
-            text-transform: uppercase;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .panel-title::before {
-            content: '';
-            display: inline-block;
-            width: 2px;
-            height: 12px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-
-        /* Pity bars */
-        .pity-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .pity-row:last-child {
-            margin-bottom: 0
-        }
-
-        .pity-lbl {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            color: var(--text2);
-            min-width: 50px;
-        }
-
-        .pity-track {
-            flex: 1;
-            height: 8px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            border-radius: 4px;
-        }
-
-        .pity-fill {
-            height: 100%;
-            transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-            border-radius: 4px;
-        }
-
-        .pf-accent {
-            background: linear-gradient(90deg, var(--accent-dim), var(--accent))
-        }
-
-        .pf-purple {
-            background: linear-gradient(90deg, #7050c0, var(--purple))
-        }
-
-        .pity-num {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            min-width: 24px;
-            text-align: right;
-        }
-
-        .pn-accent {
-            color: var(--accent)
-        }
-
-        .pn-purple {
-            color: var(--purple)
-        }
-
-        .pity-cap {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            color: var(--text3);
-            min-width: 28px;
-        }
-
-        /* Dist bars */
-        .dist-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .dist-row:last-child {
-            margin-bottom: 0
-        }
-
-        .dist-lbl {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 10px;
-            min-width: 24px;
-            text-align: right;
-        }
-
-        .dist-bg {
-            flex: 1;
-            height: 20px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            border-radius: var(--radius-sm);
-        }
-
-        .dist-fill {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            padding-left: 8px;
-            transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1);
-            min-width: 0;
-            border-radius: var(--radius-sm);
-        }
-
-        .dist-fill span {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            color: rgba(0, 0, 0, 0.7);
-            white-space: nowrap;
-            font-weight: 600;
-        }
-
-        .dist-count {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 15px;
-            min-width: 30px;
-            text-align: right;
-        }
-
-        /* ─── BANNER SECTION ─── */
-        .banner-section {
-            display: none
-        }
-
-        .banner-section.visible {
-            display: block
-        }
-
-        .banner-tabs {
-            display: flex;
-            gap: 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 12px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .banner-tabs::-webkit-scrollbar {
-            display: none
-        }
-
-        .btab {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 600;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 10px 18px;
-            background: none;
-            border: none;
-            color: var(--text3);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            position: relative;
-            bottom: -1px;
-            transition: color 0.15s;
-            white-space: nowrap;
-        }
-
-        .btab.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent)
-        }
-
-        .btab:hover:not(.active) {
-            color: var(--text2)
-        }
-
-        .filter-strip {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .filt {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 1px;
-            padding: 4px 12px;
-            border: 1px solid var(--border2);
-            background: transparent;
-            color: var(--text3);
-            cursor: pointer;
-            transition: all 0.15s;
-            text-transform: uppercase;
-            border-radius: var(--radius-sm);
-        }
-
-        .filt.active,
-        .filt:hover {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent)
-        }
-
-        .filt.f5.active,
-        .filt.f5:hover {
-            background: var(--purple);
-            border-color: var(--purple)
-        }
-
-        .filt.f4.active,
-        .filt.f4:hover {
-            background: var(--blue);
-            border-color: var(--blue);
-            color: #000
-        }
-
-        /* Results */
-        .results-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-        }
-
-        .results-head {
-            padding: 10px 16px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 0;
-        }
-
-        .results-head-label {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 8px;
-            letter-spacing: 2px;
-            color: var(--text3);
-            text-transform: uppercase;
-            padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .results-head-label::before {
-            content: '';
-            width: 2px;
-            height: 10px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-
-        .pull-list {
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .pull-list::-webkit-scrollbar {
-            width: 3px
-        }
-
-        .pull-list::-webkit-scrollbar-track {
-            background: var(--bg)
-        }
-
-        .pull-list::-webkit-scrollbar-thumb {
-            background: var(--border2);
-            border-radius: 2px;
-        }
-
-        .pull-item {
-            display: grid;
-            grid-template-columns: 36px 1fr auto auto;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 12px;
-            background: var(--surface2);
-            border-left: 2px solid transparent;
-            border-radius: var(--radius-sm);
-            transition: background 0.1s;
-        }
-
-        .pull-item:hover {
-            background: var(--surface3)
-        }
-
-        .pull-item.s6 {
-            border-left-color: var(--gold);
-            background: rgba(240, 160, 64, 0.04)
-        }
-
-        .pull-item.s5 {
-            border-left-color: var(--purple);
-            background: rgba(176, 126, 248, 0.04)
-        }
-
-        .pull-item.s4 {
-            border-left-color: var(--blue);
-            background: rgba(106, 173, 250, 0.03)
-        }
-
-        .p-num {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 10px;
-            color: var(--text4);
-            text-align: center
-        }
-
-        .p-name {
-            font-family: 'Barlow', sans-serif;
-            font-weight: 500;
-            color: var(--text);
-            font-size: 13px
-        }
-
-        .p-stars {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 11px;
-            letter-spacing: -1px
-        }
-
-        .s6 .p-stars {
-            color: var(--gold)
-        }
-
-        .s5 .p-stars {
-            color: var(--purple)
-        }
-
-        .s4 .p-stars {
-            color: var(--blue)
-        }
-
-        .s3 .p-stars {
-            color: var(--text3)
-        }
-
-        .p-pity {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 10px;
-            color: var(--text3);
-            min-width: 48px;
-            text-align: right;
-        }
-
-        .p-pity.high {
-            color: var(--red)
-        }
-
-        .no-data {
-            padding: 40px;
-            text-align: center;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 11px;
-            color: var(--text3);
-        }
-
-        .no-data-icon {
-            font-size: 24px;
-            margin-bottom: 10px;
-            opacity: 0.2
-        }
-
-        /* ─── FOOTER ─── */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 12px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg2);
-        }
-
-        .footer-l {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            color: var(--text3);
-            letter-spacing: 1px
-        }
-
-        .footer-r {
-            font-family: 'Barlow Condensed', sans-serif;
-            font-weight: 700;
-            font-size: 12px;
-            letter-spacing: 3px;
-            color: var(--accent-dim);
-        }
-
-        /* ─── THEME INDICATOR ─── */
-        .theme-pip {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 8px;
-            letter-spacing: 1.5px;
-            color: var(--text3);
-            text-transform: uppercase;
-        }
-
-        .theme-swatch {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-        }
-
-        .fade-in {
-            animation: fadeIn 0.35s ease both
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(6px)
-            }
-
-            to {
-                opacity: 1;
-                transform: none
-            }
-        }
+            --bg: #0d0d0f; --bg2: #111114; --surface: #18181c; --surface2: #1e1e23; --surface3: #242429;
+            --border: #2a2a32; --border2: #35353f; --border3: #444450;
+            --accent: #e8613a; --accent-dim: #b84a27; --accent-glow: rgba(232,97,58,0.12); --accent-soft: rgba(232,97,58,0.06);
+            --gold: #f0a040; --green: #4eca8b; --purple: #b07ef8; --blue: #6aadfa; --red: #ef5050;
+            --text: #e8e8ee; --text2: #9898aa; --text3: #555560; --text4: #33333d;
+            --radius: 10px; --radius-sm: 6px;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; overflow-x: hidden; }
+        .navbar-spacer { height: 40px; }
+
+        /* CHAR BANNER */
+        .char-banner { background: var(--surface); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; min-height: 80px; }
+        .char-banner-inner { max-width: 1200px; margin: 0 auto; padding: 24px 28px 20px; display: flex; align-items: center; gap: 20px; position: relative; z-index: 2; }
+        .char-banner::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-55deg, transparent, transparent 18px, rgba(232,97,58,0.025) 18px, rgba(232,97,58,0.025) 19px); pointer-events: none; }
+        .char-banner::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, transparent, var(--accent-soft)); pointer-events: none; }
+        .char-info { flex: 1 }
+        .char-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 3px; text-transform: uppercase; color: var(--text); line-height: 1; margin-bottom: 6px; }
+        .char-quote { font-size: 12px; color: var(--text3); font-style: italic; }
+        .char-right { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; position: relative; z-index: 3; }
+        .char-badge { display: flex; align-items: center; gap: 6px; font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 4px 12px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text2); }
+        .char-badge .dot { width: 5px; height: 5px; border-radius: 50%; }
+        .dot-accent { background: var(--accent) }
+        .dot-green { background: var(--green) }
+        .theme-pip { display: flex; align-items: center; gap: 6px; font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 1.5px; color: var(--text3); text-transform: uppercase; }
+        .theme-swatch { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+        /* MAIN */
+        main { max-width: 1200px; margin: 0 auto; padding: 24px 28px 48px; }
+        .sec-label { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 3px; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        /* GUIDE */
+        .guide-card { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--accent); margin-bottom: 20px; overflow: hidden; border-radius: var(--radius); }
+        .guide-toggle { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; }
+        .guide-toggle-left { display: flex; align-items: center; gap: 10px; }
+        .guide-tag-badge { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 2px; padding: 2px 8px; background: var(--accent); color: #fff; border-radius: var(--radius-sm); }
+        .guide-heading { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text2); }
+        .guide-chev { color: var(--text3); transition: transform 0.3s; font-size: 11px }
+        .guide-chev.open { transform: rotate(180deg) }
+        .guide-body { display: none; padding: 0 18px 16px; }
+        .guide-body.open { display: block }
+        .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+        @media(max-width:720px){.steps-grid{grid-template-columns:1fr 1fr}}
+        @media(max-width:480px){.steps-grid{grid-template-columns:1fr}}
+        .step { padding: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; gap: 10px; align-items: flex-start; transition: background 0.15s; }
+        .step:hover { background: var(--surface3) }
+        .step-n { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px; color: var(--accent-dim); line-height: 1; min-width: 20px; }
+        .step-t { font-size: 12px; color: var(--text2); line-height: 1.6; }
+        .step-t code { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); background: var(--accent-soft); padding: 1px 5px; border: 1px solid rgba(232,97,58,0.2); border-radius: 3px; }
+        .step-t strong { color: var(--text) }
+        .method-tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+        .mtab { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 5px 14px; border: 1px solid var(--border2); background: transparent; color: var(--text3); cursor: pointer; text-transform: uppercase; border-radius: var(--radius-sm); transition: all 0.15s; }
+        .mtab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .method-panel { display: none; }
+        .method-panel.active { display: block; }
+
+        /* INPUT */
+        .input-card { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--accent); padding: 18px; margin-bottom: 20px; border-radius: var(--radius); }
+        .input-head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+        .input-tag-badge { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 2px; padding: 2px 8px; background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); border-radius: var(--radius-sm); }
+        .input-heading { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 2px; color: var(--text2); text-transform: uppercase; }
+        .input-local { margin-left: auto; font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 1px; color: var(--text3); }
+        .input-tabs { display: flex; gap: 0; margin-bottom: 14px; border-bottom: 1px solid var(--border); }
+        .itab { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 16px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; position: relative; bottom: -1px; transition: color 0.15s; white-space: nowrap; }
+        .itab.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .itab:hover:not(.active) { color: var(--text2); }
+        .imode { display: none; }
+        .imode.active { display: block; }
+        .url-row { display: flex; gap: 0; border-radius: var(--radius-sm); overflow: hidden; }
+        .url-input { flex: 1; background: var(--bg); border: 1px solid var(--border2); border-right: none; color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 10px 14px; outline: none; transition: border-color 0.15s; border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+        .url-input:focus { border-color: var(--accent); }
+        .url-input::placeholder { color: var(--text4); font-size: 10px }
+        .scan-btn { background: var(--accent); border: none; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; padding: 0 24px; cursor: pointer; text-transform: uppercase; transition: background 0.15s; white-space: nowrap; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+        .scan-btn:hover { filter: brightness(1.15) }
+        .scan-btn:active { filter: brightness(0.9) }
+        .token-row { display: flex; gap: 6px; margin-bottom: 10px; }
+        .token-input { flex: 1; background: var(--bg); border: 1px solid var(--border2); color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 10px 14px; outline: none; transition: border-color 0.15s; border-radius: var(--radius-sm); }
+        .token-input:focus { border-color: var(--accent); }
+        .token-input::placeholder { color: var(--text4); font-size: 10px }
+        .server-select { background: var(--bg); border: 1px solid var(--border2); color: var(--text2); font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 10px 10px; outline: none; border-radius: var(--radius-sm); cursor: pointer; min-width: 130px; }
+        .server-select:focus { border-color: var(--accent); }
+        .scan-btn-full { background: var(--accent); border: none; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; padding: 10px 24px; cursor: pointer; text-transform: uppercase; transition: background 0.15s; white-space: nowrap; border-radius: var(--radius-sm); width: 100%; margin-top: 6px; }
+        .scan-btn-full:hover { filter: brightness(1.15) }
+        .input-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+        .input-hint { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); }
+        .input-hint span { color: var(--accent) }
+
+        .error-box { background: rgba(239,80,80,0.08); border: 1px solid rgba(239,80,80,0.25); border-left: 2px solid var(--red); padding: 9px 13px; margin-top: 10px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: #fca5a5; display: none; border-radius: var(--radius-sm); line-height: 1.6; }
+        .loading-box { display: none; align-items: center; gap: 10px; padding: 10px 0; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); margin-top: 8px; }
+        .loader { width: 13px; height: 13px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg) } }
+
+        /* INFO BOX */
+        .info-box { background: rgba(106,173,250,0.06); border: 1px solid rgba(106,173,250,0.2); border-left: 2px solid var(--blue); padding: 9px 13px; margin-bottom: 14px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: #93c5fd; border-radius: var(--radius-sm); line-height: 1.6; }
+
+        /* STATS */
+        .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 20px; display: none; }
+        @media(max-width:560px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid transparent; padding: 16px; border-radius: var(--radius); position: relative; overflow: hidden; transition: background 0.15s; }
+        .stat-card:hover { background: var(--surface2) }
+        .stat-card.c-accent { border-top-color: var(--accent) }
+        .stat-card.c-gold { border-top-color: var(--gold) }
+        .stat-card.c-purple { border-top-color: var(--purple) }
+        .stat-card.c-green { border-top-color: var(--green) }
+        .stat-lbl { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 10px; }
+        .stat-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1; margin-bottom: 4px; }
+        .c-accent .stat-val { color: var(--accent) }
+        .c-gold .stat-val { color: var(--gold) }
+        .c-purple .stat-val { color: var(--purple) }
+        .c-green .stat-val { color: var(--green) }
+        .stat-sub { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); }
+        .stat-bg { position: absolute; right: -4px; bottom: -8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 60px; line-height: 1; opacity: 0.04; pointer-events: none; user-select: none; }
+        .c-accent .stat-bg { color: var(--accent) }
+        .c-gold .stat-bg { color: var(--gold) }
+        .c-purple .stat-bg { color: var(--purple) }
+        .c-green .stat-bg { color: var(--green) }
+
+        /* MID ROW */
+        .mid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 20px; }
+        @media(max-width:640px){.mid-row{grid-template-columns:1fr}}
+        .panel { background: var(--surface); border: 1px solid var(--border); padding: 18px; border-radius: var(--radius); }
+        .panel-title { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+        .panel-title::before { content: ''; display: inline-block; width: 2px; height: 12px; background: var(--accent); border-radius: 2px; }
+        .pity-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .pity-row:last-child { margin-bottom: 0 }
+        .pity-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text2); min-width: 50px; }
+        .pity-track { flex: 1; height: 8px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; border-radius: 4px; }
+        .pity-fill { height: 100%; transition: width 0.9s cubic-bezier(0.16,1,0.3,1); border-radius: 4px; }
+        .pf-accent { background: linear-gradient(90deg, var(--accent-dim), var(--accent)) }
+        .pf-purple { background: linear-gradient(90deg, #7050c0, var(--purple)) }
+        .pity-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; min-width: 24px; text-align: right; }
+        .pn-accent { color: var(--accent) }
+        .pn-purple { color: var(--purple) }
+        .pity-cap { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); min-width: 28px; }
+        .dist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .dist-row:last-child { margin-bottom: 0 }
+        .dist-lbl { font-family: 'Share Tech Mono', monospace; font-size: 10px; min-width: 24px; text-align: right; }
+        .dist-bg { flex: 1; height: 20px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; border-radius: var(--radius-sm); }
+        .dist-fill { height: 100%; display: flex; align-items: center; padding-left: 8px; transition: width 1.1s cubic-bezier(0.16,1,0.3,1); min-width: 0; border-radius: var(--radius-sm); }
+        .dist-fill span { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: rgba(0,0,0,0.7); white-space: nowrap; font-weight: 600; }
+        .dist-count { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; min-width: 30px; text-align: right; }
+
+        /* BANNER SECTION */
+        .banner-section { display: none }
+        .banner-section.visible { display: block }
+        .banner-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; }
+        .banner-tabs::-webkit-scrollbar { display: none }
+        .btab { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; padding: 10px 18px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; position: relative; bottom: -1px; transition: color 0.15s; white-space: nowrap; }
+        .btab.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .btab:hover:not(.active) { color: var(--text2) }
+        .filter-strip { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
+        .filt { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1px; padding: 4px 12px; border: 1px solid var(--border2); background: transparent; color: var(--text3); cursor: pointer; transition: all 0.15s; text-transform: uppercase; border-radius: var(--radius-sm); }
+        .filt.active, .filt:hover { background: var(--accent); color: #fff; border-color: var(--accent) }
+        .filt.f5.active, .filt.f5:hover { background: var(--purple); border-color: var(--purple) }
+        .filt.f4.active, .filt.f4:hover { background: var(--blue); border-color: var(--blue); color: #000 }
+        .results-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+        .results-head { padding: 10px 16px 0; border-bottom: 1px solid var(--border); }
+        .results-head-label { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; padding-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .results-head-label::before { content: ''; width: 2px; height: 10px; background: var(--accent); border-radius: 2px; }
+        .pull-list { max-height: 400px; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+        .pull-list::-webkit-scrollbar { width: 3px }
+        .pull-list::-webkit-scrollbar-track { background: var(--bg) }
+        .pull-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+        .pull-item { display: grid; grid-template-columns: 36px 1fr auto auto; align-items: center; gap: 12px; padding: 8px 12px; background: var(--surface2); border-left: 2px solid transparent; border-radius: var(--radius-sm); transition: background 0.1s; }
+        .pull-item:hover { background: var(--surface3) }
+        .pull-item.s6 { border-left-color: var(--gold); background: rgba(240,160,64,0.04) }
+        .pull-item.s5 { border-left-color: var(--purple); background: rgba(176,126,248,0.04) }
+        .pull-item.s4 { border-left-color: var(--blue); background: rgba(106,173,250,0.03) }
+        .p-num { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text4); text-align: center }
+        .p-name { font-family: 'Barlow', sans-serif; font-weight: 500; color: var(--text); font-size: 13px }
+        .p-stars { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: -1px; }
+        .s6 .p-stars { color: var(--gold) }
+        .s5 .p-stars { color: var(--purple) }
+        .s4 .p-stars { color: var(--blue) }
+        .s3 .p-stars { color: var(--text3) }
+        .p-pity { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); min-width: 48px; text-align: right; }
+        .p-pity.high { color: var(--red) }
+        .no-data { padding: 40px; text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text3); }
+        .no-data-icon { font-size: 24px; margin-bottom: 10px; opacity: 0.2 }
+
+        /* FOOTER */
+        footer { border-top: 1px solid var(--border); padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; background: var(--bg2); }
+        .footer-l { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); letter-spacing: 1px }
+        .footer-r { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: var(--accent-dim); }
+
+        .fade-in { animation: fadeIn 0.35s ease both }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:none } }
+
+        /* ─── FOUND BANNER ─── */
+        .found-banner { display: none; background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--green); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px; align-items: center; gap: 12px; }
+        .found-banner.visible { display: flex; }
+        .found-icon { font-size: 16px; color: var(--green); }
+        .found-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 2px; text-transform: uppercase; color: var(--text2); }
+        .found-count { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 18px; color: var(--green); margin-left: 4px; }
+        .found-breakdown { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+        .found-pill { font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 3px 10px; border-radius: var(--radius-sm); font-weight: 600; }
+        .found-pill.p-special { background: rgba(176,126,248,0.15); color: var(--purple); border: 1px solid rgba(176,126,248,0.3); }
+        .found-pill.p-standard { background: rgba(106,173,250,0.12); color: var(--blue); border: 1px solid rgba(106,173,250,0.25); }
+        .found-pill.p-beginner { background: rgba(240,160,64,0.12); color: var(--gold); border: 1px solid rgba(240,160,64,0.25); }
     </style>
 </head>
-
 <body>
-
-    <!-- ─── NAVBAR SPACER (navbar removed, space preserved) ─── -->
     <div class="navbar-spacer"></div>
 
-    <!-- ─── CHAR BANNER (simplified: just title + quote) ─── -->
     <div class="char-banner">
         <div class="char-banner-inner">
             <div class="char-info">
@@ -1086,48 +226,42 @@
         </div>
     </div>
 
-
-
-    <!-- ─── MAIN ─── -->
     <main>
-
         <!-- GUIDE -->
         <div class="sec-label">Extraction Protocol</div>
         <div class="guide-card">
             <div class="guide-toggle" onclick="toggleGuide()">
                 <div class="guide-toggle-left">
                     <span class="guide-tag-badge">GUIDE</span>
-                    <span class="guide-heading">How to extract your pull URL</span>
+                    <span class="guide-heading">How to get your pull data</span>
                 </div>
                 <span class="guide-chev" id="guideChev">▼</span>
             </div>
             <div class="guide-body" id="guideBody">
-                <div class="steps-grid">
-                    <div class="step">
-                        <div class="step-n">01</div>
-                        <div class="step-t">Open Endfield and visit <strong>pull history</strong> in-game.</div>
+                <div class="method-tabs">
+                    <button class="mtab active" onclick="switchMethod('url',this)">METHOD 1: Full URL</button>
+                    <button class="mtab" onclick="switchMethod('token',this)">METHOD 2: Token Only</button>
+                </div>
+
+                <div class="method-panel active" id="method-url">
+                    <div class="steps-grid">
+                        <div class="step"><div class="step-n">01</div><div class="step-t">Open Endfield and visit <strong>pull history</strong> in-game.</div></div>
+                        <div class="step"><div class="step-n">02</div><div class="step-t">Locate <code>HGWebview.log</code> in your game files.</div></div>
+                        <div class="step"><div class="step-n">03</div><div class="step-t">Search for the keyword <code>token</code> in the log.</div></div>
+                        <div class="step"><div class="step-n">04</div><div class="step-t">Go to the <strong>last line</strong> containing <code>token</code>.</div></div>
+                        <div class="step"><div class="step-n">05</div><div class="step-t">Find the URL starting with <code>https://ef-webview.gryphline.com/api/record/char?</code></div></div>
+                        <div class="step"><div class="step-n">06</div><div class="step-t">Copy the <strong>full link</strong> and paste it into the <strong>URL tab</strong> below.</div></div>
                     </div>
-                    <div class="step">
-                        <div class="step-n">02</div>
-                        <div class="step-t">Locate and open <code>HGWebview.log</code> from game files.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n">03</div>
-                        <div class="step-t">Search for the keyword <code>token</code> in the log file.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n">04</div>
-                        <div class="step-t">Scroll to the <strong>last line</strong> containing <code>token</code> —
-                            highest line number.</div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n">05</div>
-                        <div class="step-t">Find the URL starting with
-                            <code>https://ef-webview.gryphline.com/api/record/char?lang=en-us&…</code></div>
-                    </div>
-                    <div class="step">
-                        <div class="step-n">06</div>
-                        <div class="step-t">Copy the <strong>full link</strong> and paste it into the field below.</div>
+                </div>
+
+                <div class="method-panel" id="method-token">
+                    <div class="steps-grid">
+                        <div class="step"><div class="step-n">01</div><div class="step-t">Go to <strong>act.skport.com/endfield/recordBook</strong> and log in.</div></div>
+                        <div class="step"><div class="step-n">02</div><div class="step-t">Open browser DevTools (<code>F12</code>) → Application → Session Storage.</div></div>
+                        <div class="step"><div class="step-n">03</div><div class="step-t">Find the key starting with <code>APP_ROLE_U8_TOKEN:</code></div></div>
+                        <div class="step"><div class="step-n">04</div><div class="step-t">Copy the <strong>value</strong> (the token string before the colon separator).</div></div>
+                        <div class="step"><div class="step-n">05</div><div class="step-t">Or use the <strong>bookmarklet</strong> from <code>goyfield.moe/records/import</code> to auto-copy.</div></div>
+                        <div class="step"><div class="step-n">06</div><div class="step-t">Paste into the <strong>Token tab</strong> below and select your server region.</div></div>
                     </div>
                 </div>
             </div>
@@ -1138,22 +272,59 @@
         <div class="input-card">
             <div class="input-head">
                 <span class="input-tag-badge">INPUT</span>
-                <span class="input-heading">Webview API Link</span>
+                <span class="input-heading">Acquisition Data Source</span>
                 <span class="input-local">🔒 LOCAL ONLY</span>
             </div>
-            <div class="url-row">
-                <input class="url-input" id="urlInput" type="text"
-                    placeholder="https://ef-webview.gryphline.com/api/record/char?lang=en-us&…" />
-                <button class="scan-btn" onclick="loadData()">Scan ▶</button>
+
+            <div class="input-tabs">
+                <button class="itab active" onclick="switchInputMode('url',this)">Full URL</button>
+                <button class="itab" onclick="switchInputMode('token',this)">Token</button>
             </div>
-            <div class="input-meta">
-                <div class="input-hint">Paste the full URL extracted from <span>HGWebview.log</span></div>
-                <button class="demo-btn" onclick="loadDemoData()">◈ Load Demo Data</button>
+
+            <!-- URL MODE -->
+            <div class="imode active" id="imode-url">
+                <div class="info-box">
+                    ℹ The full URL is fetched via a CORS proxy. Your token is never stored — only used to retrieve pull data in your browser.
+                </div>
+                <div class="url-row">
+                    <input class="url-input" id="urlInput" type="text" placeholder="https://ef-webview.gryphline.com/api/record/char?lang=en-us&seq_id=…&token=…&server_id=2" />
+                    <button class="scan-btn" onclick="loadFromUrl()">Scan ▶</button>
+                </div>
+                <div class="input-meta">
+                    <div class="input-hint">Paste the full URL from <span>HGWebview.log</span></div>
+                </div>
             </div>
+
+            <!-- TOKEN MODE -->
+            <div class="imode" id="imode-token">
+                <div class="info-box">
+                    ℹ Your token is used directly to query the Endfield API. It is processed locally and never saved or transmitted to any third-party server.
+                </div>
+                <div class="token-row">
+                    <input class="token-input" id="tokenInput" type="text" placeholder="Paste your token here…" />
+                    <select class="server-select" id="serverSelect">
+                        <option value="1">Americas / Europe</option>
+                        <option value="2" selected>Asia</option>
+                    </select>
+                </div>
+                <button class="scan-btn-full" onclick="loadFromToken()">◈ Scan Token ▶</button>
+                <div class="input-meta" style="margin-top:10px">
+                    <div class="input-hint">Token from <span>act.skport.com/endfield/recordBook</span></div>
+                </div>
+            </div>
+
             <div class="error-box" id="errorBox"></div>
             <div class="loading-box" id="loadingBox">
-                <div class="loader"></div>Fetching operator acquisition data…
+                <div class="loader"></div><span id="loadingMsg">Fetching operator acquisition data…</span>
             </div>
+        </div>
+
+        <!-- FOUND BANNER -->
+        <div class="found-banner" id="foundBanner">
+            <span class="found-icon">⬇</span>
+            <span class="found-label">New records found</span>
+            <span class="found-count" id="foundTotal"></span>
+            <div class="found-breakdown" id="foundBreakdown"></div>
         </div>
 
         <!-- STATS -->
@@ -1190,17 +361,13 @@
                 <div class="panel-title">Pity Counter</div>
                 <div class="pity-row">
                     <div class="pity-lbl">6★ Pity</div>
-                    <div class="pity-track">
-                        <div class="pity-fill pf-accent" id="pity6Fill" style="width:0%"></div>
-                    </div>
+                    <div class="pity-track"><div class="pity-fill pf-accent" id="pity6Fill" style="width:0%"></div></div>
                     <div class="pity-num pn-accent" id="pity6Count">0</div>
                     <div class="pity-cap">/ 70</div>
                 </div>
                 <div class="pity-row">
                     <div class="pity-lbl">5★ Pity</div>
-                    <div class="pity-track">
-                        <div class="pity-fill pf-purple" id="pity5Fill" style="width:0%"></div>
-                    </div>
+                    <div class="pity-track"><div class="pity-fill pf-purple" id="pity5Fill" style="width:0%"></div></div>
                     <div class="pity-num pn-purple" id="pity5Count">0</div>
                     <div class="pity-cap">/ 10</div>
                 </div>
@@ -1228,296 +395,396 @@
                 <div class="pull-list" id="pullList"></div>
             </div>
         </div>
-
     </main>
 
-    <!-- ─── FOOTER ─── -->
     <footer>
-        <div class="footer-l">Data processed locally // No server transmission // Endfield Ops v1.0</div>
+        <div class="footer-l">Data processed locally // No server transmission // Endfield Ops v2.0</div>
         <div class="footer-r">ENDFIELD</div>
     </footer>
-    <script src="js/NavBar.js"></script>
+
     <script>
-        /* ─── THEME SYSTEM ─── */
-        const THEMES = [
-            {
-                name: 'FIERY RED',
-                accent: '#e8613a',
-                accentDim: '#b84a27',
-                accentRgb: '232,97,58',
-                accentGlow: 'rgba(232,97,58,0.12)',
-                accentSoft: 'rgba(232,97,58,0.06)',
-            },
-            {
-                name: 'NATURE GREEN',
-                accent: '#4db87a',
-                accentDim: '#2e8a54',
-                accentRgb: '77,184,122',
-                accentGlow: 'rgba(77,184,122,0.12)',
-                accentSoft: 'rgba(77,184,122,0.06)',
-            },
-            {
-                name: 'METALLIC',
-                accent: '#a8a8b8',
-                accentDim: '#6e6e80',
-                accentRgb: '168,168,184',
-                accentGlow: 'rgba(168,168,184,0.12)',
-                accentSoft: 'rgba(168,168,184,0.06)',
-            },
-            {
-                name: 'ICE BLUE',
-                accent: '#5bb8e8',
-                accentDim: '#2d7fad',
-                accentRgb: '91,184,232',
-                accentGlow: 'rgba(91,184,232,0.12)',
-                accentSoft: 'rgba(91,184,232,0.06)',
-            },
-        ];
+    /* ─── THEME SYSTEM ─── */
+    const THEMES = [
+        { name:'FIERY RED', accent:'#e8613a', accentDim:'#b84a27', accentRgb:'232,97,58', accentGlow:'rgba(232,97,58,0.12)', accentSoft:'rgba(232,97,58,0.06)' },
+        { name:'NATURE GREEN', accent:'#4db87a', accentDim:'#2e8a54', accentRgb:'77,184,122', accentGlow:'rgba(77,184,122,0.12)', accentSoft:'rgba(77,184,122,0.06)' },
+        { name:'METALLIC', accent:'#a8a8b8', accentDim:'#6e6e80', accentRgb:'168,168,184', accentGlow:'rgba(168,168,184,0.12)', accentSoft:'rgba(168,168,184,0.06)' },
+        { name:'ICE BLUE', accent:'#5bb8e8', accentDim:'#2d7fad', accentRgb:'91,184,232', accentGlow:'rgba(91,184,232,0.12)', accentSoft:'rgba(91,184,232,0.06)' },
+    ];
+    (function applyTheme() {
+        const t = THEMES[Math.floor(Math.random() * THEMES.length)];
+        const r = document.documentElement.style;
+        r.setProperty('--accent', t.accent);
+        r.setProperty('--accent-dim', t.accentDim);
+        r.setProperty('--accent-rgb', t.accentRgb);
+        r.setProperty('--accent-glow', t.accentGlow);
+        r.setProperty('--accent-soft', t.accentSoft);
+        document.addEventListener('DOMContentLoaded', () => {
+            const el = document.getElementById('themeName');
+            if (el) el.textContent = t.name;
+        });
+    })();
 
-        (function applyTheme() {
-            const t = THEMES[Math.floor(Math.random() * THEMES.length)];
-            const r = document.documentElement.style;
-            r.setProperty('--accent', t.accent);
-            r.setProperty('--accent-dim', t.accentDim);
-            r.setProperty('--accent-rgb', t.accentRgb);
-            r.setProperty('--accent-glow', t.accentGlow);
-            r.setProperty('--accent-soft', t.accentSoft);
-            document.addEventListener('DOMContentLoaded', () => {
-                const el = document.getElementById('themeName');
-                if (el) el.textContent = t.name;
-            });
-        })();
+    /* ─── STATE ─── */
+    let allPulls = [];
+    let currentBanner = null;
+    let currentFilter = 'all';
+    let bannerData = {};
 
-        /* ─── APP LOGIC ─── */
-        let allPulls = [];
-        let currentBanner = null;
-        let currentFilter = 'all';
-        let bannerData = {};
+    /* ─── POOL TYPE MAPPING ─── */
+    const POOL_NAMES = {
+        'E_CharacterGachaPoolType_Standard': 'Standard',
+        'E_CharacterGachaPoolType_Special': 'Special Headhunting',
+        'E_CharacterGachaPoolType_Beginner': 'Smelting Forge Issue',
+    };
+    const ALL_POOL_TYPES = Object.keys(POOL_NAMES);
 
-        function toggleGuide() {
-            const body = document.getElementById('guideBody');
-            const chev = document.getElementById('guideChev');
-            body.classList.toggle('open');
-            chev.classList.toggle('open');
-        }
+    function toggleGuide() {
+        const body = document.getElementById('guideBody');
+        const chev = document.getElementById('guideChev');
+        body.classList.toggle('open');
+        chev.classList.toggle('open');
+    }
 
-        async function loadData() {
-            const url = document.getElementById('urlInput').value.trim();
-            if (!url || !url.includes('ef-webview.gryphline.com')) {
-                showError('Invalid URL. Paste the full link from HGWebview.log starting with https://ef-webview.gryphline.com/...'); return;
-            }
-            showLoading(true); hideError();
+    function switchMethod(m, btn) {
+        document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('method-' + m).classList.add('active');
+    }
+
+    function switchInputMode(m, btn) {
+        document.querySelectorAll('.itab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.imode').forEach(p => p.classList.remove('active'));
+        document.getElementById('imode-' + m).classList.add('active');
+        hideError();
+    }
+
+    /* ─── CORS PROXIES (tried in order) ─── */
+    const CORS_PROXIES = [
+        url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+        url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+        url => `https://cors.eu.org/${url}`,
+        url => `https://thingproxy.freeboard.io/fetch/${url}`,
+    ];
+
+    async function fetchWithCorsProxy(apiUrl) {
+        let lastErr;
+        for (const makeProxy of CORS_PROXIES) {
             try {
-                const urls = collectPageUrls(url);
-                let records = [];
-                for (const u of urls) {
-                    const resp = await fetch(u);
-                    const data = await resp.json();
-                    if (data && data.data && data.data.list) records = records.concat(data.data.list);
-                }
-                if (records.length === 0) throw new Error('No records');
-                processData(records);
+                const proxyUrl = makeProxy(apiUrl);
+                const resp = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const text = await resp.text();
+                const json = JSON.parse(text);
+                return json;
             } catch (e) {
-                showError('Could not fetch data. The URL may have expired — re-open pull history in-game to get a fresh link.');
+                lastErr = e;
+                console.warn('Proxy failed, trying next…', e.message);
             }
-            showLoading(false);
         }
+        // Final attempt: direct (may work on some setups)
+        try {
+            const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(8000) });
+            const json = await resp.json();
+            return json;
+        } catch (e) {
+            throw lastErr || e;
+        }
+    }
 
-        function collectPageUrls(baseUrl) {
-            const urls = [];
-            for (let p = 1; p <= 5; p++) {
-                const u = new URL(baseUrl);
-                u.searchParams.set('page', p); u.searchParams.set('size', '20');
-                urls.push(u.toString());
+    /* ─── FETCH ALL PAGES (seq_id cursor pagination — 5 records per call) ─── */
+    async function fetchAllPages(token, serverId, poolType) {
+        const records = [];
+        let seqId = null;
+        const MAX_PAGES = 200;
+        let page = 1;
+
+        while (page <= MAX_PAGES) {
+            const u = new URL(`https://ef-webview.gryphline.com/api/record/char`);
+            u.searchParams.set('lang', 'en-us');
+            u.searchParams.set('pool_type', poolType);
+            u.searchParams.set('token', token);
+            u.searchParams.set('server_id', String(serverId));
+            if (seqId !== null) u.searchParams.set('seq_id', String(seqId));
+
+            const label = POOL_NAMES[poolType] || poolType;
+            setLoading(`Fetching ${label} — ${records.length} records so far…`);
+
+            try {
+                const data = await fetchWithCorsProxy(u.toString());
+                if (!data || !data.data || !data.data.list) break;
+                const list = data.data.list;
+                if (list.length === 0) break;
+                list.forEach(r => { r._poolType = poolType; });
+                records.push(...list);
+                if (list.length < 5) break;
+                seqId = list.at(-1).seqId ?? list.at(-1).seq_id ?? null;
+                if (seqId === null) break;
+                page++;
+            } catch (e) {
+                console.warn(`Failed page ${page} for ${poolType}:`, e);
+                break;
             }
-            return urls;
         }
+        return records;
+    }
 
-        function processData(records) {
-            allPulls = records;
-            const banners = {};
-            records.forEach(r => {
-                const b = r.gachaType || 'Standard';
-                if (!banners[b]) banners[b] = [];
-                banners[b].push(r);
-            });
-            bannerData = banners;
-            currentBanner = Object.keys(banners)[0];
-            buildBannerTabs(Object.keys(banners));
-            const pulls = bannerData[currentBanner];
-            renderStats(pulls); renderPityBars(pulls); renderDistribution(pulls); renderPullList();
-            document.getElementById('statsRow').style.display = 'grid';
-            document.getElementById('midRow').style.display = 'grid';
-            document.getElementById('bannerSection').classList.add('visible');
+    /* ─── LOAD FROM FULL URL ─── */
+    async function loadFromUrl() {
+        const urlStr = document.getElementById('urlInput').value.trim();
+        if (!urlStr || !urlStr.includes('ef-webview.gryphline.com')) {
+            showError('Invalid URL. Paste the full link from HGWebview.log starting with https://ef-webview.gryphline.com/...');
+            return;
         }
+        hideError();
+        showLoading('Parsing URL…');
 
-        function buildBannerTabs(names) {
-            const tabs = document.getElementById('bannerTabs');
-            tabs.innerHTML = '';
-            names.forEach((b, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'btab' + (i === 0 ? ' active' : '');
-                btn.textContent = b;
-                btn.onclick = () => {
-                    document.querySelectorAll('.btab').forEach(t => t.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentBanner = b;
-                    const p = bannerData[b];
-                    renderStats(p); renderPityBars(p); renderDistribution(p); renderPullList();
-                };
-                tabs.appendChild(btn);
-            });
-        }
+        try {
+            const parsed = new URL(urlStr);
+            const token = parsed.searchParams.get('token');
+            const serverId = parsed.searchParams.get('server_id') || '2';
+            const poolType = parsed.searchParams.get('pool_type') || 'E_CharacterGachaPoolType_Special';
 
-        function renderStats(pulls) {
-            const total = pulls.length;
-            const s6 = pulls.filter(p => String(p.rarity) === '6').length;
-            const s5 = pulls.filter(p => String(p.rarity) === '5').length;
-            let pity = 0; const sixPities = [];
-            [...pulls].reverse().forEach(p => {
-                pity++;
-                if (String(p.rarity) === '6') { sixPities.push(pity); pity = 0; }
-            });
-            const avg = sixPities.length ? Math.round(sixPities.reduce((a, b) => a + b, 0) / sixPities.length) : 0;
-            document.getElementById('statTotal').textContent = total;
-            document.getElementById('stat6').textContent = s6;
-            document.getElementById('stat5').textContent = s5;
-            document.getElementById('stat6Rate').textContent = total ? (s6 / total * 100).toFixed(2) + '% Rate' : '0.00% Rate';
-            document.getElementById('stat5Rate').textContent = total ? (s5 / total * 100).toFixed(2) + '% Rate' : '0.00% Rate';
-            document.getElementById('statAvgPity').textContent = avg;
-            document.getElementById('statTotalBg').textContent = total;
-            document.getElementById('stat6Bg').textContent = s6;
-            document.getElementById('stat5Bg').textContent = s5;
-            document.getElementById('statAvgBg').textContent = avg;
-        }
-
-        function renderPityBars(pulls) {
-            let p6 = 0, p5 = 0;
-            for (let i = pulls.length - 1; i >= 0; i--) {
-                const r = String(pulls[i].rarity);
-                if (r === '6') break; p6++;
-            }
-            for (let i = pulls.length - 1; i >= 0; i--) {
-                const r = String(pulls[i].rarity);
-                if (r === '6' || r === '5') break; p5++;
-            }
-            document.getElementById('pity6Count').textContent = p6;
-            document.getElementById('pity5Count').textContent = p5;
-            setTimeout(() => {
-                document.getElementById('pity6Fill').style.width = Math.min(100, p6 / 70 * 100) + '%';
-                document.getElementById('pity5Fill').style.width = Math.min(100, p5 / 10 * 100) + '%';
-            }, 120);
-        }
-
-        function renderDistribution(pulls) {
-            const counts = { 6: 0, 5: 0, 4: 0, 3: 0 };
-            pulls.forEach(p => { const r = String(p.rarity); if (counts[r] !== undefined) counts[r]++; });
-            const total = pulls.length || 1;
-            const bars = document.getElementById('distBars');
-            bars.innerHTML = '';
-            const cfg = {
-                6: { color: 'var(--gold)', label: '6★' },
-                5: { color: 'var(--purple)', label: '5★' },
-                4: { color: 'var(--blue)', label: '4★' },
-                3: { color: 'var(--text3)', label: '3★' }
-            };
-            [6, 5, 4, 3].forEach(r => {
-                const c = counts[r];
-                const pct = (c / total * 100).toFixed(1);
-                const row = document.createElement('div');
-                row.className = 'dist-row';
-                row.innerHTML = `
-      <div class="dist-lbl" style="color:${cfg[r].color}">${cfg[r].label}</div>
-      <div class="dist-bg">
-        <div class="dist-fill" id="df${r}" style="width:0%;background:${cfg[r].color}">
-          <span>${c} (${pct}%)</span>
-        </div>
-      </div>
-      <div class="dist-count" style="color:${cfg[r].color}">${c}</div>
-    `;
-                bars.appendChild(row);
-                setTimeout(() => { document.getElementById('df' + r).style.width = (c / total * 100) + '%'; }, 200);
-            });
-        }
-
-        function filterPulls(f, btn) {
-            currentFilter = f;
-            document.querySelectorAll('.filt').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderPullList();
-        }
-
-        function renderPullList() {
-            const list = document.getElementById('pullList');
-            list.innerHTML = '';
-            const pulls = currentBanner ? (bannerData[currentBanner] || []) : allPulls;
-            let pity = 0;
-            const withPity = [...pulls].reverse().map((p, i) => {
-                pity++;
-                const r = String(p.rarity);
-                const snap = pity;
-                if (r === '6' || r === '5') pity = 0;
-                return { ...p, pullNum: i + 1, pityCount: snap };
-            }).reverse();
-            const filtered = currentFilter === 'all' ? withPity : withPity.filter(p => String(p.rarity) === currentFilter);
-            if (filtered.length === 0) {
-                list.innerHTML = '<div class="no-data"><div class="no-data-icon">◈</div>No records match current filter.</div>';
+            if (!token) {
+                showError('Could not extract token from URL. Make sure you copied the full URL including the token parameter.');
+                showLoading(null);
                 return;
             }
-            filtered.forEach(p => {
-                const r = String(p.rarity);
-                const item = document.createElement('div');
-                item.className = `pull-item s${r}`;
-                const stars = '★'.repeat(parseInt(r));
-                const showPity = (r === '6' || r === '5');
-                const highPity = (r === '6' && p.pityCount >= 50) || (r === '5' && p.pityCount >= 8);
-                item.innerHTML = `
-      <div class="p-num">#${p.pullNum}</div>
-      <div class="p-name">${p.name || p.itemName || 'Unknown Operator'}</div>
-      <div class="p-stars">${stars}</div>
-      <div class="p-pity${highPity ? ' high' : ''}">${showPity ? '@' + p.pityCount : ''}</div>
-    `;
-                list.appendChild(item);
-            });
-        }
 
-        function showError(msg) {
-            const b = document.getElementById('errorBox'); b.textContent = '⚠ ' + msg; b.style.display = 'block';
+            // Fetch the specific pool from URL first, then try all pool types
+            await loadAllBanners(token, serverId);
+        } catch (e) {
+            showError(`Error: ${e.message}. The URL may have expired — re-open pull history in-game to get a fresh link.`);
+            showLoading(null);
         }
-        function hideError() { document.getElementById('errorBox').style.display = 'none'; }
-        function showLoading(v) { document.getElementById('loadingBox').style.display = v ? 'flex' : 'none'; }
+    }
 
-        function loadDemoData() {
-            const n6 = ['Logos', 'Ebenholz', 'Skadi the Corrupting Heart', 'Saria', 'Eyjafjalla', 'Saga', 'Muelsyse'];
-            const n5 = ['Lumen', 'Kafka', 'Thorns', 'Goldenglow', 'Silence the Paradigmatic', 'Kal\'tsit'];
-            const n4 = ['Steward', 'Gravel', 'Cuora', 'Ethan', 'Vigil', 'Haze'];
-            const n3 = ['Fang', 'Plume', 'Beehunter', 'Midnight', 'Rangers', 'Adnachiel'];
-            const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-            const demo = [];
-            let p6 = 0, p5 = 0;
-            for (let i = 0; i < 120; i++) {
-                p6++; p5++;
-                let r;
-                if (p6 >= 70) r = 6;
-                else if (p5 >= 10) r = 5;
-                else {
-                    const roll = Math.random();
-                    if (roll < 0.02) r = 6;
-                    else if (roll < 0.10) r = 5;
-                    else if (roll < 0.58) r = 4;
-                    else r = 3;
-                }
-                if (r === 6) p6 = 0;
-                if (r === 6 || r === 5) p5 = 0;
-                const names = r === 6 ? n6 : r === 5 ? n5 : r === 4 ? n4 : n3;
-                demo.push({ name: pick(names), rarity: r, gachaType: 'Standard Banner' });
+    /* ─── LOAD FROM TOKEN ─── */
+    async function loadFromToken() {
+        const token = document.getElementById('tokenInput').value.trim();
+        const serverId = document.getElementById('serverSelect').value;
+
+        if (!token) {
+            showError('Please enter your token.');
+            return;
+        }
+        hideError();
+        await loadAllBanners(token, serverId);
+    }
+
+    /* ─── LOAD ALL BANNER TYPES ─── */
+    async function loadAllBanners(token, serverId) {
+        showLoading('Initializing…');
+        let allRecords = [];
+
+        for (const poolType of ALL_POOL_TYPES) {
+            try {
+                const records = await fetchAllPages(token, serverId, poolType);
+                allRecords.push(...records);
+            } catch (e) {
+                console.warn('Skipping pool', poolType, e);
             }
-            processData(demo);
         }
-    </script>
-    <script>
-        NavBar.init({});
+
+        showLoading(null);
+
+        if (allRecords.length === 0) {
+            showError(
+                'No records found. Possible causes:\n' +
+                '• The token may have expired — re-open pull history in-game\n' +
+                '• All CORS proxies are temporarily unavailable\n' +
+                '• Try again in a few seconds, or use a different browser'
+            );
+            return;
+        }
+
+        processData(allRecords);
+    }
+
+    /* ─── PROCESS & RENDER ─── */
+    function processData(records) {
+        allPulls = records;
+        const banners = {};
+        records.forEach(r => {
+            const rawType = r._poolType || r.gachaType || r.pool_type || 'E_CharacterGachaPoolType_Standard';
+            const b = POOL_NAMES[rawType] || rawType;
+            if (!banners[b]) banners[b] = [];
+            banners[b].push(r);
+        });
+        bannerData = banners;
+        const keys = Object.keys(banners);
+        currentBanner = keys[0];
+        buildBannerTabs(keys);
+        const pulls = bannerData[currentBanner];
+        renderStats(pulls); renderPityBars(pulls); renderDistribution(pulls); renderPullList();
+        document.getElementById('statsRow').style.display = 'grid';
+        document.getElementById('midRow').style.display = 'grid';
+        document.getElementById('bannerSection').classList.add('visible');
+        renderFoundBanner(banners);
+    }
+
+    function renderFoundBanner(banners) {
+        const total = Object.values(banners).reduce((s, arr) => s + arr.length, 0);
+        document.getElementById('foundTotal').textContent = '+' + total;
+        const breakdown = document.getElementById('foundBreakdown');
+        breakdown.innerHTML = '';
+        const pillClass = {
+            'Special Headhunting': 'p-special',
+            'Standard': 'p-standard',
+            'Smelting Forge Issue': 'p-beginner',
+        };
+        Object.entries(banners).forEach(([name, arr]) => {
+            const pill = document.createElement('span');
+            pill.className = 'found-pill ' + (pillClass[name] || 'p-standard');
+            pill.textContent = name + '  +' + arr.length;
+            breakdown.appendChild(pill);
+        });
+        document.getElementById('foundBanner').classList.add('visible');
+    }
+
+    function buildBannerTabs(names) {
+        const tabs = document.getElementById('bannerTabs');
+        tabs.innerHTML = '';
+        names.forEach((b, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'btab' + (i === 0 ? ' active' : '');
+            const count = bannerData[b].length;
+            btn.textContent = `${b} (${count})`;
+            btn.onclick = () => {
+                document.querySelectorAll('.btab').forEach(t => t.classList.remove('active'));
+                btn.classList.add('active');
+                currentBanner = b;
+                const p = bannerData[b];
+                renderStats(p); renderPityBars(p); renderDistribution(p); renderPullList();
+            };
+            tabs.appendChild(btn);
+        });
+    }
+
+    function getNameField(p) {
+        return p.name || p.itemName || p.item_name || p.charName || p.char_name || 'Unknown Operator';
+    }
+
+    function getRarity(p) {
+        return String(p.rarity || p.star || p.stars || p.quality || '3');
+    }
+
+    function renderStats(pulls) {
+        const total = pulls.length;
+        const s6 = pulls.filter(p => getRarity(p) === '6').length;
+        const s5 = pulls.filter(p => getRarity(p) === '5').length;
+        let pity = 0; const sixPities = [];
+        [...pulls].reverse().forEach(p => {
+            pity++;
+            if (getRarity(p) === '6') { sixPities.push(pity); pity = 0; }
+        });
+        const avg = sixPities.length ? Math.round(sixPities.reduce((a, b) => a + b, 0) / sixPities.length) : 0;
+        document.getElementById('statTotal').textContent = total;
+        document.getElementById('stat6').textContent = s6;
+        document.getElementById('stat5').textContent = s5;
+        document.getElementById('stat6Rate').textContent = total ? (s6/total*100).toFixed(2) + '% Rate' : '0.00% Rate';
+        document.getElementById('stat5Rate').textContent = total ? (s5/total*100).toFixed(2) + '% Rate' : '0.00% Rate';
+        document.getElementById('statAvgPity').textContent = avg;
+        document.getElementById('statTotalBg').textContent = total;
+        document.getElementById('stat6Bg').textContent = s6;
+        document.getElementById('stat5Bg').textContent = s5;
+        document.getElementById('statAvgBg').textContent = avg;
+    }
+
+    function renderPityBars(pulls) {
+        let p6 = 0, p5 = 0;
+        for (let i = pulls.length - 1; i >= 0; i--) {
+            const r = getRarity(pulls[i]);
+            if (r === '6') break; p6++;
+        }
+        for (let i = pulls.length - 1; i >= 0; i--) {
+            const r = getRarity(pulls[i]);
+            if (r === '6' || r === '5') break; p5++;
+        }
+        document.getElementById('pity6Count').textContent = p6;
+        document.getElementById('pity5Count').textContent = p5;
+        setTimeout(() => {
+            document.getElementById('pity6Fill').style.width = Math.min(100, p6/70*100) + '%';
+            document.getElementById('pity5Fill').style.width = Math.min(100, p5/10*100) + '%';
+        }, 120);
+    }
+
+    function renderDistribution(pulls) {
+        const counts = { 6:0, 5:0, 4:0, 3:0 };
+        pulls.forEach(p => { const r = getRarity(p); if (counts[r] !== undefined) counts[r]++; });
+        const total = pulls.length || 1;
+        const bars = document.getElementById('distBars');
+        bars.innerHTML = '';
+        const cfg = { 6:{color:'var(--gold)',label:'6★'}, 5:{color:'var(--purple)',label:'5★'}, 4:{color:'var(--blue)',label:'4★'}, 3:{color:'var(--text3)',label:'3★'} };
+        [6,5,4,3].forEach(r => {
+            const c = counts[r];
+            const pct = (c/total*100).toFixed(1);
+            const row = document.createElement('div');
+            row.className = 'dist-row';
+            row.innerHTML = `
+                <div class="dist-lbl" style="color:${cfg[r].color}">${cfg[r].label}</div>
+                <div class="dist-bg"><div class="dist-fill" id="df${r}" style="width:0%;background:${cfg[r].color}"><span>${c} (${pct}%)</span></div></div>
+                <div class="dist-count" style="color:${cfg[r].color}">${c}</div>`;
+            bars.appendChild(row);
+            setTimeout(() => { document.getElementById('df'+r).style.width = (c/total*100) + '%'; }, 200);
+        });
+    }
+
+    function filterPulls(f, btn) {
+        currentFilter = f;
+        document.querySelectorAll('.filt').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderPullList();
+    }
+
+    function renderPullList() {
+        const list = document.getElementById('pullList');
+        list.innerHTML = '';
+        const pulls = currentBanner ? (bannerData[currentBanner] || []) : allPulls;
+        let pity = 0;
+        const withPity = [...pulls].reverse().map((p, i) => {
+            pity++;
+            const r = getRarity(p);
+            const snap = pity;
+            if (r === '6' || r === '5') pity = 0;
+            return { ...p, pullNum: i + 1, pityCount: snap };
+        }).reverse();
+        const filtered = currentFilter === 'all' ? withPity : withPity.filter(p => getRarity(p) === currentFilter);
+        if (filtered.length === 0) {
+            list.innerHTML = '<div class="no-data"><div class="no-data-icon">◈</div>No records match current filter.</div>';
+            return;
+        }
+        filtered.forEach(p => {
+            const r = getRarity(p);
+            const item = document.createElement('div');
+            item.className = `pull-item s${r}`;
+            const stars = '★'.repeat(parseInt(r));
+            const showPity = (r === '6' || r === '5');
+            const highPity = (r === '6' && p.pityCount >= 50) || (r === '5' && p.pityCount >= 8);
+            item.innerHTML = `
+                <div class="p-num">#${p.pullNum}</div>
+                <div class="p-name">${getNameField(p)}</div>
+                <div class="p-stars">${stars}</div>
+                <div class="p-pity${highPity?' high':''}">${showPity ? '@'+p.pityCount : ''}</div>`;
+            list.appendChild(item);
+        });
+    }
+
+    function showError(msg) {
+        const b = document.getElementById('errorBox');
+        b.innerHTML = '⚠ ' + msg.replace(/\n/g, '<br>');
+        b.style.display = 'block';
+    }
+    function hideError() { document.getElementById('errorBox').style.display = 'none'; }
+    function setLoading(msg) {
+        const box = document.getElementById('loadingBox');
+        if (!msg) { box.style.display = 'none'; return; }
+        document.getElementById('loadingMsg').textContent = msg;
+        box.style.display = 'flex';
+    }
+    function showLoading(msg) { setLoading(msg); }
+
     </script>
 </body>
-
 </html>
