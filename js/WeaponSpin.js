@@ -1,3 +1,4 @@
+
 /* =============================================================================
    CAROUSEL — JAVASCRIPT
    Call initCarousel() after the carousel HTML has been injected into the DOM.
@@ -6,9 +7,29 @@
 const EASE_FACTOR              = 0.14;
 const WAVE_LIFT_PX             = -46;
 const WAVE_LIFT_SPREAD_DEG     = 80;
-const FRONT_SCALE_BOOST        = 0.17;
+const FRONT_SCALE_BOOST        = 0.27;
 const BACK_TILT_MAX_DEG        = 40;
 const AUTO_ADVANCE_INTERVAL_MS = 4000;
+
+/* -----------------------------------------------------------------------------
+   [CARD SIZE]
+   Base multiplier applied on top of the auto-calculated card size.
+     1.0  = default (no change)
+     1.3  = 30% bigger
+     0.7  = 30% smaller
+----------------------------------------------------------------------------- */
+const CARD_SIZE_MULTIPLIER = 2.2;
+
+/* -----------------------------------------------------------------------------
+   [RING RADIUS]
+   Flat pixel offset added to the auto-calculated ring radius.
+   Positive values push cards further from center; negative pulls them in.
+     0    = default auto-radius
+     80   = push cards 80 px further out
+    -60   = pull cards 60 px closer in
+----------------------------------------------------------------------------- */
+const RING_RADIUS_OFFSET_PX = 200;
+
 
 function initCarousel() {
 
@@ -41,7 +62,8 @@ function initCarousel() {
        CARD SIZING
     ------------------------------------------------------------------------- */
     function calculateCardSize() {
-        return Math.max(48, Math.min(120, Math.round(520 / Math.sqrt(state.totalCardCount))));
+        const base = Math.max(48, Math.min(120, Math.round(520 / Math.sqrt(state.totalCardCount))));
+        return Math.round(base * CARD_SIZE_MULTIPLIER);
     }
 
     function calculateRingRadius() {
@@ -49,7 +71,7 @@ function initCarousel() {
         const minimumRadius     = 160;
         const spacingMultiplier = 1.38;
         const circumference     = state.totalCardCount * cardSize * spacingMultiplier;
-        return Math.max(minimumRadius, circumference / (2 * Math.PI));
+        return Math.max(minimumRadius, circumference / (2 * Math.PI)) + RING_RADIUS_OFFSET_PX;
     }
 
     /* -------------------------------------------------------------------------
