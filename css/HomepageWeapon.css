@@ -16,7 +16,7 @@
 ----------------------------------------------------------------------------- */
 :root {
     --carousel-height:         100vh;
-    --carousel-perspective:    1000px;
+    --carousel-perspective:    100px;
     --carousel-perspective-y:  44%;
     --weapon-section-background-image: url(../assets/HomepageAssets/ArknightsEndfieldLogoMesh.png);
     
