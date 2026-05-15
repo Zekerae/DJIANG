@@ -5,7 +5,7 @@
    ============================================================================= */
 
 const EASE_FACTOR              = 0.14;
-const WAVE_LIFT_PX             = -46;
+const WAVE_LIFT_PX             = -40;
 const WAVE_LIFT_SPREAD_DEG     = 80;
 const FRONT_SCALE_BOOST        = 0.27;
 const BACK_TILT_MAX_DEG        = 40;
@@ -18,7 +18,7 @@ const AUTO_ADVANCE_INTERVAL_MS = 4000;
      1.3  = 30% bigger
      0.7  = 30% smaller
 ----------------------------------------------------------------------------- */
-const CARD_SIZE_MULTIPLIER = 2.2;
+const CARD_SIZE_MULTIPLIER = 1.7;
 
 /* -----------------------------------------------------------------------------
    [RING RADIUS]
@@ -28,7 +28,7 @@ const CARD_SIZE_MULTIPLIER = 2.2;
      80   = push cards 80 px further out
     -60   = pull cards 60 px closer in
 ----------------------------------------------------------------------------- */
-const RING_RADIUS_OFFSET_PX = 200;
+const RING_RADIUS_OFFSET_PX = 150;
 
 
 function initCarousel() {

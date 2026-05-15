@@ -16,8 +16,8 @@
 ----------------------------------------------------------------------------- */
 :root {
     --carousel-height:         100vh;
-    --carousel-perspective:    100px;
-    --carousel-perspective-y:  44%;
+    --carousel-perspective:    1000px;
+    --carousel-perspective-y:  50%;
     --weapon-section-background-image: url(../assets/HomepageAssets/ArknightsEndfieldLogoMesh.png);
     
 }
@@ -135,9 +135,9 @@
      * every frame, no matter how long the carousel has been running.
      */
     width:           100%;
-    height:          137.5%;
+    height:          120%;
 
-    border-radius:   12px;
+    border-radius:   25px;
 
 
     display:         flex;
@@ -279,5 +279,6 @@
 .carousel-card-content img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    display: block;
 }
