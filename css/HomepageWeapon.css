@@ -17,9 +17,29 @@
 :root {
     --carousel-height:         100vh;
     --carousel-perspective:    1000px;
-    --carousel-perspective-y:  44%;
+    --carousel-perspective-y:  50%;
+    --weapon-section-background-image: url(../assets/HomepageAssets/ArknightsEndfieldLogoMesh.png);
+    
 }
 /* [END CAROUSEL SIZE] */
+
+/* -----------------------------------------------------------------------------
+   SECTION BACKDROP — #carousel-3D (nav) + inner .carousel-3D (weapon carousel)
+----------------------------------------------------------------------------- */
+#carousel-3D,
+#carousel-3D > .carousel-3D {
+    background-image: var(--weapon-section-background-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+#carousel-3D {
+    background-color: #12121a;
+}
+#carousel-3D > .carousel-3D {
+    min-height: 100%;
+}
+
 
 
 /* -----------------------------------------------------------------------------
@@ -115,9 +135,9 @@
      * every frame, no matter how long the carousel has been running.
      */
     width:           100%;
-    height:          100%;
+    height:          120%;
 
-    border-radius:   12px;
+    border-radius:   25px;
 
 
     display:         flex;
@@ -256,3 +276,9 @@
     color:       var(--color-text-primary, #000000);
 }
 /* [END OPTIONAL UI — ITEM COUNT SLIDER] */
+.carousel-card-content img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}

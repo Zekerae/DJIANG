@@ -1,6 +1,7 @@
 :root{
-    --myColor:rgb(99, 99, 99);
+    --myColor: rgb(99, 99, 99);
 }
+
 .selector {
     width: 100%;
     height: 100%;
@@ -8,61 +9,65 @@
 }
 
 .selector .parralax {
-    background-image: url('./Assets/image.png');
-    background-attachment: fixed;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 100%;
-    height: 100%;
-
     animation: indexer linear forwards;
     animation-range: entry 0% exit 100%;
     animation-timeline: --selector;
 }
 
+/* ── SUB-FOOTER (The Info Panels) ──────────────────────────── */
 .sub-footer {
-    
     font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Console', monospace;
-    
     width: 100%;
     height: 45%;
     background-color: black;
     border-bottom: 0.01vw solid var(--myColor);
     display: flex;
     flex-direction: row;
-    gap:5%;
+    /* Removed the hardcoded gap: 5% so flex can distribute space dynamically */
 }
-    .subFooter-container{
-        width: 20%;
-        height: 100%;
-        border-left: 0.01vw solid var(--myColor);
-        display: flex;
-        flex-direction: column;
-        color: white;
-    }
 
-        .subFooter-container .top{
-            font-size: 0.7vw;
-            margin-top: 10%;
-            margin-left: 10%;
-            width: 80%;
-            height: 35%;
-        }
-        .subFooter-container .bottom{
-            font-size: 1vw;
-            margin-left: 10%;
-            width: 80%;
-            height: 45%;
-        }
-        .subFooter-container#sfc1 {
-            border-left: none;
-            color: var(--myColor);
-            font-size: 3vw;
-        }
-        .subFooter-container#sfc1 .bottom{
-            font-size: 0.75vw;
-        }
+.subFooter-container {
+    flex: 1; /* This tells all 4 columns to equally share the width of the screen */
+    height: 100%;
+    border-left: 0.01vw solid var(--myColor);
+    display: flex;
+    flex-direction: column;
+    color: white;
+    
+    /* Use padding instead of margin to keep text away from the borders safely */
+    padding-left: 2%; 
+    padding-right: 2%;
+    box-sizing: border-box; 
+}
+
+.subFooter-container .top {
+    font-size: 0.7vw;
+    margin-top: 10%;
+    height: 35%;
+    /* Removed width: 80% to stop the text from getting cut off */
+}
+
+.subFooter-container .bottom {
+    font-size: 1vw;
+    height: 45%;
+    /* Removed width: 80% to stop the text from getting cut off */
+}
+
+/* ── First Column Specifics ── */
+.subFooter-container#sfc1 {
+    border-left: none;
+    color: var(--myColor);
+    flex: 1.5; /* Gives this specific column a little extra room for the long codes */
+}
+
+.subFooter-container#sfc1 .bottom {
+    font-size: 0.75vw;
+    /* This forces those super long JPG/WAV text strings to drop to the next line instead of clipping */
+    word-wrap: break-word; 
+    white-space: normal;
+}
+
+/* ── MAIN FOOTER (Where the Canvas Lives) ──────────────────── */
 .footer {
     view-timeline-name: --footer;
     width: 100%;
@@ -71,12 +76,59 @@
 
 .footer .parralax {
     z-index: -2;
-    top:0;
-    background-color: black;
-
+    top: 0;
+    /* IMPORTANT: Made this transparent so the canvas isn't blocked */
+    background-color: transparent; 
     position: fixed;
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0; 
+    padding: 0; 
+    border: none;
+}
+
+.footer-container {
+    height: 100%;
+    width: 100%;
+    font-size: 40vw;
+    color: white;
+    /* CHANGE HERE: Force this container to be black instead of transparent */
+    background-color: #000; 
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── PERLIN NOISE CANVAS INTEGRATION ───────────────────────── */
+#res-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; 
+    pointer-events: auto; 
+    display: block; 
+    /* CHANGE HERE: Paint the canvas background black just to be absolutely foolproof */
+    background-color: #000; 
+}
+
+/* ── THE TEXT ON TOP OF THE CANVAS ─────────────────────────── */
+.footer-content {
+    position: relative;
+    z-index: 1; /* Puts the text on top of the canvas */
+    pointer-events: none; /* Lets your mouse "click through" the text to warp the canvas */
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer .brand {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
 @keyframes indexer {
@@ -93,13 +145,3 @@
         z-index: -3;
     }
 }
-
-
-.footer-container{
-    height: 100%;
-    width: 100%;
-    font-size: 40vw;
-    color: white;
-    background-color: black;
-}
-
