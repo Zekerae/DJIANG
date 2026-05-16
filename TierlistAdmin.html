@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* ─── TOKENS ──────────────────────────────────────────────────── */
         :root {
             --bg:          #08090d;
             --surface:     #0e1018;
@@ -53,7 +52,6 @@
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         html { scroll-behavior: smooth; }
 
         body {
@@ -65,7 +63,6 @@
             min-height: 100vh;
         }
 
-        /* scanline */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -74,7 +71,7 @@
             z-index: 9999;
         }
 
-        /* ─── TOP BAR ─────────────────────────────────────────────────── */
+        /* ── TOP BAR ── */
         .topbar {
             position: fixed; top: 0; left: 0; right: 0;
             height: var(--nav-h);
@@ -86,444 +83,108 @@
             gap: 16px;
             z-index: 100;
         }
-
-        .topbar-logo {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: .2em;
-            color: var(--gold);
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .topbar-title {
-            font-family: var(--font-head);
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: .06em;
-            color: var(--text-bright);
-        }
-
+        .topbar-logo { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; color: var(--gold); text-transform: uppercase; white-space: nowrap; }
+        .topbar-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; letter-spacing: .06em; color: var(--text-bright); }
         .topbar-divider { width: 1px; height: 20px; background: var(--border); }
-
-        .topbar-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: .1em;
-            color: var(--text-dim);
-            text-transform: uppercase;
-        }
-
-        .status-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: var(--text-dim);
-            transition: background .3s;
-            flex-shrink: 0;
-        }
+        .topbar-status { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; color: var(--text-dim); text-transform: uppercase; }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); transition: background .3s; flex-shrink: 0; }
         .status-dot.ok   { background: var(--ok);   box-shadow: 0 0 6px var(--ok); }
         .status-dot.err  { background: var(--err);  box-shadow: 0 0 6px var(--err); }
         .status-dot.busy { background: var(--warn); animation: pulse .8s ease-in-out infinite; }
-
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
         .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+        .topbar-warning { font-family: var(--font-mono); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--err); border: 1px solid rgba(232,90,90,.3); background: rgba(232,90,90,.06); padding: 3px 10px; border-radius: var(--r); }
 
-        .topbar-warning {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .12em;
-            text-transform: uppercase;
-            color: var(--err);
-            border: 1px solid rgba(232,90,90,.3);
-            background: rgba(232,90,90,.06);
-            padding: 3px 10px;
-            border-radius: var(--r);
-        }
+        /* ── LAYOUT ── */
+        .shell { display: flex; padding-top: var(--nav-h); min-height: 100vh; }
 
-        /* ─── LAYOUT ──────────────────────────────────────────────────── */
-        .shell {
-            display: flex;
-            padding-top: var(--nav-h);
-            min-height: 100vh;
-        }
-
-        /* ─── SIDEBAR ─────────────────────────────────────────────────── */
-        .sidebar {
-            width: var(--sidebar-w);
-            min-width: var(--sidebar-w);
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: 20px 0;
-            position: sticky;
-            top: var(--nav-h);
-            height: calc(100vh - var(--nav-h));
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .sidebar-section-label {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .22em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            padding: 12px 18px 6px;
-        }
-
-        .sidebar-btn {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 18px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            text-align: left;
-            color: var(--text-mid);
-            font-family: var(--font-head);
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: .04em;
-            transition: background .12s, color .12s;
-            border-left: 2px solid transparent;
-            width: 100%;
-        }
-
+        /* ── SIDEBAR ── */
+        .sidebar { width: var(--sidebar-w); min-width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+        .sidebar-section-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em; text-transform: uppercase; color: var(--text-dim); padding: 12px 18px 6px; }
+        .sidebar-btn { display: flex; align-items: center; gap: 10px; padding: 9px 18px; background: none; border: none; cursor: pointer; text-align: left; color: var(--text-mid); font-family: var(--font-head); font-size: 14px; font-weight: 600; letter-spacing: .04em; transition: background .12s, color .12s; border-left: 2px solid transparent; width: 100%; }
         .sidebar-btn:hover { background: var(--panel); color: var(--text-bright); }
+        .sidebar-btn.active { background: var(--gold-glow); color: var(--gold); border-left-color: var(--gold); }
+        .sidebar-btn .sb-icon { font-size: 12px; width: 16px; text-align: center; flex-shrink: 0; opacity: .7; }
+        .sidebar-count { margin-left: auto; font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); background: var(--panel); border: 1px solid var(--border); border-radius: 2px; padding: 1px 5px; }
 
-        .sidebar-btn.active {
-            background: var(--gold-glow);
-            color: var(--gold);
-            border-left-color: var(--gold);
-        }
+        /* ── MAIN ── */
+        .main { flex: 1; padding: 28px 32px 60px; min-width: 0; }
 
-        .sidebar-btn .sb-icon {
-            font-size: 12px;
-            width: 16px;
-            text-align: center;
-            flex-shrink: 0;
-            opacity: .7;
-        }
-
-        .sidebar-count {
-            margin-left: auto;
-            font-family: var(--font-mono);
-            font-size: 9px;
-            color: var(--text-dim);
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            padding: 1px 5px;
-        }
-
-        /* ─── MAIN CONTENT ────────────────────────────────────────────── */
-        .main {
-            flex: 1;
-            padding: 28px 32px 60px;
-            min-width: 0;
-        }
-
-        /* ─── PANELS ──────────────────────────────────────────────────── */
+        /* ── PANELS ── */
         .panel { display: none; }
         .panel.active { display: block; }
-
-        .panel-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
-        }
-
-        .panel-title {
-            font-family: var(--font-head);
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: .04em;
-        }
-
-        .panel-eyebrow {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .2em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 4px;
-        }
-
+        .panel-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+        .panel-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; letter-spacing: .04em; }
+        .panel-eyebrow { font-family: var(--font-mono); font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
         .panel-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
 
-        /* ─── BUTTONS ─────────────────────────────────────────────────── */
-        .btn {
-            font-family: var(--font-head);
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: .06em;
-            text-transform: uppercase;
-            padding: 7px 16px;
-            border-radius: var(--r);
-            border: 1px solid var(--border-hi);
-            background: var(--panel);
-            color: var(--text-mid);
-            cursor: pointer;
-            transition: all .15s;
-            white-space: nowrap;
-        }
-
+        /* ── BUTTONS ── */
+        .btn { font-family: var(--font-head); font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 7px 16px; border-radius: var(--r); border: 1px solid var(--border-hi); background: var(--panel); color: var(--text-mid); cursor: pointer; transition: all .15s; white-space: nowrap; }
         .btn:hover { border-color: var(--border-act); color: var(--text-bright); }
-
-        .btn.primary {
-            background: var(--gold-dim);
-            border-color: rgba(232,200,90,.4);
-            color: var(--gold);
-        }
+        .btn.primary { background: var(--gold-dim); border-color: rgba(232,200,90,.4); color: var(--gold); }
         .btn.primary:hover { background: rgba(232,200,90,.22); border-color: var(--gold); }
-
-        .btn.danger {
-            background: var(--dmg-dim);
-            border-color: rgba(232,90,90,.3);
-            color: var(--err);
-        }
+        .btn.danger { background: var(--dmg-dim); border-color: rgba(232,90,90,.3); color: var(--err); }
         .btn.danger:hover { background: rgba(232,90,90,.2); border-color: var(--err); }
-
-        .btn.ok-btn {
-            background: rgba(78,198,154,.12);
-            border-color: rgba(78,198,154,.3);
-            color: var(--ok);
-        }
-        .btn.ok-btn:hover { background: rgba(78,198,154,.2); }
-
         .btn:disabled { opacity: .4; cursor: not-allowed; }
-        .btn.saving { opacity: .7; }
-
         .btn-icon { font-size: 11px; margin-right: 4px; }
 
-        /* ─── TOAST ───────────────────────────────────────────────────── */
-        #toast-wrap {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 9000;
-            pointer-events: none;
-        }
-
-        .toast {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: .08em;
-            padding: 10px 16px;
+        /* ── SCHEMA NOTE ── */
+        .schema-note {
+            background: rgba(232,164,90,.06);
+            border: 1px solid rgba(232,164,90,.25);
             border-radius: var(--r);
-            border-left: 3px solid;
-            background: var(--panel);
-            pointer-events: auto;
-            animation: slideIn .2s ease-out, fadeOut .3s ease-in 3s forwards;
-            max-width: 320px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--warn);
+            letter-spacing: .06em;
+            line-height: 1.7;
         }
+        .schema-note strong { color: var(--text-bright); }
+        .schema-note code { background: var(--panel); padding: 1px 6px; border-radius: 2px; font-size: 10px; color: var(--gold); }
 
+        /* ── TOAST ── */
+        #toast-wrap { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 9000; pointer-events: none; }
+        .toast { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; padding: 10px 16px; border-radius: var(--r); border-left: 3px solid; background: var(--panel); pointer-events: auto; animation: slideIn .2s ease-out, fadeOut .3s ease-in 3s forwards; max-width: 320px; }
         .toast.ok   { border-color: var(--ok);   color: var(--ok); }
         .toast.err  { border-color: var(--err);  color: var(--err); }
         .toast.warn { border-color: var(--warn); color: var(--warn); }
+        @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateX(10px); } }
 
-        @keyframes slideIn  { from { transform: translateX(20px); opacity: 0; } to { transform: none; opacity: 1; } }
-        @keyframes fadeOut  { to { opacity: 0; transform: translateX(10px); } }
-
-        /* ─── SEARCH / FILTER ROW ─────────────────────────────────────── */
-        .filter-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
-
-        .filter-row input[type=text], .filter-row select {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            padding: 6px 12px;
-            border-radius: var(--r);
-            outline: none;
-            transition: border-color .15s;
-        }
-
+        /* ── FILTER ROW ── */
+        .filter-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+        .filter-row input[type=text], .filter-row select { background: var(--panel); border: 1px solid var(--border); color: var(--text-bright); font-family: var(--font-mono); font-size: 12px; padding: 6px 12px; border-radius: var(--r); outline: none; transition: border-color .15s; }
         .filter-row input[type=text] { width: 220px; }
         .filter-row select { width: 140px; }
-        .filter-row input[type=text]:focus,
-        .filter-row select:focus { border-color: var(--border-act); }
-
-        .filter-chip {
-            font-family: var(--font-head);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: .05em;
-            padding: 4px 11px;
-            border-radius: var(--r);
-            border: 1px solid var(--border);
-            background: var(--panel);
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: all .12s;
-        }
-
+        .filter-row input[type=text]:focus, .filter-row select:focus { border-color: var(--border-act); }
+        .filter-chip { font-family: var(--font-head); font-size: 12px; font-weight: 600; letter-spacing: .05em; padding: 4px 11px; border-radius: var(--r); border: 1px solid var(--border); background: var(--panel); color: var(--text-dim); cursor: pointer; transition: all .12s; }
         .filter-chip:hover { color: var(--text-bright); border-color: var(--border-hi); }
         .filter-chip.sel { border-color: var(--gold); color: var(--gold); background: var(--gold-glow); }
 
-        /* ─── CHARACTER TABLE ─────────────────────────────────────────── */
-        .char-table-wrap {
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            overflow: hidden;
-        }
-
+        /* ── CHARACTER TABLE ── */
+        .char-table-wrap { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-
-        thead tr {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .18em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            padding: 10px 14px;
-            text-align: left;
-            white-space: nowrap;
-            font-weight: 400;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid var(--border);
-            background: var(--panel);
-            transition: background .1s;
-        }
-
+        thead tr { background: var(--surface); border-bottom: 1px solid var(--border); }
+        th { font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--text-dim); padding: 10px 14px; text-align: left; white-space: nowrap; font-weight: 400; }
+        tbody tr { border-bottom: 1px solid var(--border); background: var(--panel); transition: background .1s; }
         tbody tr:last-child { border-bottom: none; }
         tbody tr:hover { background: var(--panel-hi); }
         tbody tr.dirty { background: rgba(232,200,90,.04); }
-
-        td {
-            padding: 9px 14px;
-            font-size: 13px;
-            vertical-align: middle;
-        }
-
-        td.char-name-cell {
-            font-family: var(--font-head);
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-bright);
-        }
-
-        td.slug-cell {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-dim);
-        }
-
-        /* inline select/toggle cells */
-        td select, td input[type=text] {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font-mono);
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: var(--r);
-            outline: none;
-            transition: border-color .15s;
-            width: 100%;
-        }
-
+        td { padding: 9px 14px; font-size: 13px; vertical-align: middle; }
+        td.char-name-cell { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text-bright); }
+        td.slug-cell { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); }
+        td.id-cell { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); opacity: .5; }
+        td select, td input[type=text] { background: var(--surface); border: 1px solid var(--border); color: var(--text-bright); font-family: var(--font-mono); font-size: 11px; padding: 4px 8px; border-radius: var(--r); outline: none; transition: border-color .15s; width: 100%; }
         td select:focus, td input[type=text]:focus { border-color: var(--border-act); }
 
-        .tier-badge {
-            display: inline-block;
-            font-family: var(--font-head);
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .06em;
-            padding: 2px 8px;
-            border-radius: 2px;
-            border: 1px solid;
-        }
-
-        .tier-T0   { color: var(--t0);  border-color: rgba(232,200,90,.3);  background: rgba(232,200,90,.06); }
-        .tier-T05  { color: var(--t05); border-color: rgba(160,111,232,.3); background: rgba(160,111,232,.06); }
-        .tier-T1   { color: var(--t1);  border-color: rgba(91,160,232,.3);  background: rgba(91,160,232,.06); }
-        .tier-T15  { color: var(--t15); border-color: rgba(78,198,154,.3);  background: rgba(78,198,154,.06); }
-        .tier-T2   { color: var(--t2);  border-color: rgba(139,143,168,.3); background: rgba(139,143,168,.06); }
-
-        .role-badge {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-            padding: 2px 7px;
-            border-radius: 2px;
-            border: 1px solid;
-        }
-
-        .role-damage  { color: var(--dmg); border-color: rgba(232,90,90,.3);  background: var(--dmg-dim); }
-        .role-enabler { color: var(--ena); border-color: rgba(90,232,200,.25); background: var(--ena-dim); }
-        .role-buffer  { color: var(--buf); border-color: rgba(90,156,232,.25); background: var(--buf-dim); }
-
-        .tag-pill {
-            display: inline-block;
-            font-family: var(--font-mono);
-            font-size: 8px;
-            padding: 2px 5px;
-            border-radius: 2px;
-            text-transform: uppercase;
-            letter-spacing: .05em;
-            margin-right: 3px;
-        }
-
-        .tag-new     { background: rgba(232,200,90,.85); color: #1a1400; }
-        .tag-expert  { background: rgba(232,90,90,.80);  color: #fff; }
-        .tag-watchup { background: rgba(90,232,200,.80); color: #001a15; }
-        .tag-watchdn { background: rgba(232,90,90,.65);  color: #fff; }
-
-        /* toggle checkbox */
-        .tog {
-            appearance: none;
-            width: 32px; height: 18px;
-            background: var(--border);
-            border-radius: 9px;
-            position: relative;
-            cursor: pointer;
-            transition: background .2s;
-            flex-shrink: 0;
-        }
-
-        .tog::after {
-            content: '';
-            position: absolute;
-            top: 2px; left: 2px;
-            width: 14px; height: 14px;
-            border-radius: 50%;
-            background: var(--text-dim);
-            transition: transform .2s, background .2s;
-        }
-
-        .tog:checked { background: rgba(232,200,90,.25); }
-        .tog:checked::after { transform: translateX(14px); background: var(--gold); }
+        .tier-badge { display: inline-block; font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: .06em; padding: 2px 8px; border-radius: 2px; border: 1px solid; }
+        .tier-T0  { color: var(--t0);  border-color: rgba(232,200,90,.3);  background: rgba(232,200,90,.06); }
+        .tier-T05 { color: var(--t05); border-color: rgba(160,111,232,.3); background: rgba(160,111,232,.06); }
+        .tier-T1  { color: var(--t1);  border-color: rgba(91,160,232,.3);  background: rgba(91,160,232,.06); }
+        .tier-T15 { color: var(--t15); border-color: rgba(78,198,154,.3);  background: rgba(78,198,154,.06); }
+        .tier-T2  { color: var(--t2);  border-color: rgba(139,143,168,.3); background: rgba(139,143,168,.06); }
 
         .tag-tog { appearance: none; width: 28px; height: 16px; background: var(--border); border-radius: 8px; position: relative; cursor: pointer; transition: background .15s; flex-shrink: 0; }
         .tag-tog::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--text-dim); transition: transform .15s, background .15s; }
@@ -532,616 +193,115 @@
         .tag-tog.is-expert:checked { background: rgba(232,90,90,.3); }
         .tag-tog.is-expert:checked::after { transform: translateX(12px); background: var(--err); }
 
-        .watchlist-sel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font-mono);
-            font-size: 10px;
-            padding: 3px 6px;
-            border-radius: var(--r);
-            outline: none;
-        }
+        .watchlist-sel { background: var(--surface); border: 1px solid var(--border); color: var(--text-bright); font-family: var(--font-mono); font-size: 10px; padding: 3px 6px; border-radius: var(--r); outline: none; }
 
-        td .save-row-btn {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border: 1px solid var(--border-hi);
-            border-radius: var(--r);
-            background: transparent;
-            color: var(--text-dim);
-            cursor: pointer;
-            transition: all .12s;
-            white-space: nowrap;
-        }
-
+        td .save-row-btn { font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; padding: 4px 10px; border: 1px solid var(--border-hi); border-radius: var(--r); background: transparent; color: var(--text-dim); cursor: pointer; transition: all .12s; white-space: nowrap; }
         td .save-row-btn:hover { color: var(--gold); border-color: var(--gold); }
         td .save-row-btn.saved { color: var(--ok); border-color: var(--ok); }
         td .save-row-btn.saving { opacity: .5; }
-
-        td .remove-btn {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            padding: 4px 8px;
-            border: 1px solid rgba(232,90,90,.2);
-            border-radius: var(--r);
-            background: transparent;
-            color: var(--err);
-            cursor: pointer;
-            transition: all .12s;
-            opacity: .6;
-        }
-
+        td .remove-btn { font-family: var(--font-mono); font-size: 9px; padding: 4px 8px; border: 1px solid rgba(232,90,90,.2); border-radius: var(--r); background: transparent; color: var(--err); cursor: pointer; transition: all .12s; opacity: .6; }
         td .remove-btn:hover { opacity: 1; background: var(--dmg-dim); }
 
-        /* ─── CHARACTER COMBOBOX ─────────────────────────────────────── */
-        .char-picker {
-            position: relative;
-            width: 280px;
-        }
-
-        .char-picker-input-wrap {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            transition: border-color .15s;
-            overflow: hidden;
-        }
-
-        .char-picker-input-wrap:focus-within {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 2px rgba(232,200,90,.08);
-        }
-
-        .char-picker-preview {
-            width: 32px;
-            height: 36px;
-            flex-shrink: 0;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .char-picker-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top center;
-        }
-
-        .char-picker-preview .preview-initials {
-            font-family: var(--font-head);
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-dim);
-        }
-
-        .char-picker-preview .preview-rarity-bar {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 2px;
-        }
-
-        .char-picker-text {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-bright);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            padding: 6px 10px;
-            outline: none;
-            min-width: 0;
-        }
-
+        /* ── CHARACTER COMBOBOX ── */
+        .char-picker { position: relative; width: 280px; }
+        .char-picker-input-wrap { display: flex; align-items: center; background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); transition: border-color .15s; overflow: hidden; }
+        .char-picker-input-wrap:focus-within { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(232,200,90,.08); }
+        .char-picker-preview { width: 32px; height: 36px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .char-picker-preview img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+        .char-picker-preview .preview-initials { font-family: var(--font-head); font-size: 11px; font-weight: 700; color: var(--text-dim); }
+        .char-picker-preview .preview-rarity-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
+        .char-picker-text { flex: 1; background: transparent; border: none; color: var(--text-bright); font-family: var(--font-mono); font-size: 12px; padding: 6px 10px; outline: none; min-width: 0; }
         .char-picker-text::placeholder { color: var(--text-dim); }
-
-        .char-picker-clear {
-            width: 28px;
-            height: 36px;
-            flex-shrink: 0;
-            background: none;
-            border: none;
-            border-left: 1px solid var(--border);
-            color: var(--text-dim);
-            cursor: pointer;
-            font-size: 12px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: color .12s;
-        }
-
+        .char-picker-clear { width: 28px; height: 36px; flex-shrink: 0; background: none; border: none; border-left: 1px solid var(--border); color: var(--text-dim); cursor: pointer; font-size: 12px; display: none; align-items: center; justify-content: center; transition: color .12s; }
         .char-picker-clear:hover { color: var(--err); }
         .char-picker-clear.visible { display: flex; }
-
-        .char-picker-dropdown {
-            position: absolute;
-            top: calc(100% + 4px);
-            left: 0;
-            right: 0;
-            background: var(--panel);
-            border: 1px solid var(--border-hi);
-            border-radius: var(--r);
-            overflow: hidden;
-            z-index: 200;
-            display: none;
-            box-shadow: 0 8px 24px rgba(0,0,0,.5);
-            max-height: 280px;
-            overflow-y: auto;
-        }
-
+        .char-picker-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--panel); border: 1px solid var(--border-hi); border-radius: var(--r); overflow: hidden; z-index: 200; display: none; box-shadow: 0 8px 24px rgba(0,0,0,.5); max-height: 280px; overflow-y: auto; }
         .char-picker-dropdown.open { display: block; }
-
         .char-picker-dropdown::-webkit-scrollbar { width: 4px; }
         .char-picker-dropdown::-webkit-scrollbar-track { background: var(--panel); }
         .char-picker-dropdown::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
-
-        .char-picker-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 6px 10px;
-            cursor: pointer;
-            transition: background .1s;
-            border-bottom: 1px solid var(--border);
-        }
-
+        .char-picker-item { display: flex; align-items: center; gap: 10px; padding: 6px 10px; cursor: pointer; transition: background .1s; border-bottom: 1px solid var(--border); }
         .char-picker-item:last-child { border-bottom: none; }
         .char-picker-item:hover { background: var(--panel-hi); }
         .char-picker-item.selected { background: var(--gold-glow); }
-
-        .char-picker-item.already-added {
-            opacity: .45;
-            cursor: not-allowed;
-        }
-
-        .char-picker-item.already-added:hover { background: transparent; }
-
-        .picker-item-portrait {
-            width: 30px;
-            height: 34px;
-            border-radius: 2px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            flex-shrink: 0;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .picker-item-portrait img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top center;
-        }
-
-        .picker-item-portrait .picker-initials {
-            font-family: var(--font-head);
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-dim);
-        }
-
-        .picker-item-portrait .picker-rarity-bar {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 2px;
-        }
-
+        .picker-item-portrait { width: 30px; height: 34px; border-radius: 2px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; flex-shrink: 0; position: relative; display: flex; align-items: center; justify-content: center; }
+        .picker-item-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+        .picker-item-portrait .picker-initials { font-family: var(--font-head); font-size: 10px; font-weight: 700; color: var(--text-dim); }
+        .picker-item-portrait .picker-rarity-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
         .picker-item-info { flex: 1; min-width: 0; }
-
-        .picker-item-name {
-            font-family: var(--font-head);
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-bright);
-            letter-spacing: .03em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .picker-item-slug {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            color: var(--text-dim);
-            letter-spacing: .06em;
-        }
-
-        .picker-item-badge {
-            font-family: var(--font-mono);
-            font-size: 8px;
-            padding: 1px 5px;
-            border-radius: 2px;
-            text-transform: uppercase;
-            letter-spacing: .06em;
-            flex-shrink: 0;
-        }
-
-        .picker-badge-added {
-            background: rgba(78,198,154,.12);
-            color: var(--ok);
-            border: 1px solid rgba(78,198,154,.25);
-        }
-
-        .picker-no-results {
-            padding: 14px 12px;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-dim);
-            letter-spacing: .1em;
-            text-align: center;
-        }
+        .picker-item-name { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--text-bright); letter-spacing: .03em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .picker-item-slug { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: .06em; }
+        .picker-no-results { padding: 14px 12px; font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); letter-spacing: .1em; text-align: center; }
 
         .rarity-6 { background: linear-gradient(90deg, #e8a45a, #e8d25a); }
         .rarity-5 { background: linear-gradient(90deg, #b0b0d8, #d8c0ff); }
         .rarity-4 { background: linear-gradient(90deg, #5a8ad8, #5abde8); }
 
-        /* ─── ADD CHARACTER FORM ──────────────────────────────────────── */
-        .add-form {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            padding: 18px 20px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
+        /* ── ADD FORM ── */
+        .add-form { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 18px 20px; margin-bottom: 20px; display: none; }
         .add-form.visible { display: block; }
-
-        .add-form-title {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: .18em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 14px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-        }
-
-        .form-field {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .form-label {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-        }
-
-        .form-field input, .form-field select {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            padding: 6px 10px;
-            border-radius: var(--r);
-            outline: none;
-            transition: border-color .15s;
-        }
-
+        .add-form-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+        .form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+        .form-field { display: flex; flex-direction: column; gap: 4px; }
+        .form-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--text-dim); }
+        .form-field input, .form-field select { background: var(--panel); border: 1px solid var(--border); color: var(--text-bright); font-family: var(--font-mono); font-size: 12px; padding: 6px 10px; border-radius: var(--r); outline: none; transition: border-color .15s; }
         .form-field input:focus, .form-field select:focus { border-color: var(--border-act); }
 
-        /* ─── TEAM EDITOR ─────────────────────────────────────────────── */
-        .teams-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 14px;
-        }
+        /* toggle */
+        .tog { appearance: none; width: 32px; height: 18px; background: var(--border); border-radius: 9px; position: relative; cursor: pointer; transition: background .2s; flex-shrink: 0; }
+        .tog::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--text-dim); transition: transform .2s, background .2s; }
+        .tog:checked { background: rgba(232,200,90,.25); }
+        .tog:checked::after { transform: translateX(14px); background: var(--gold); }
 
-        .team-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            overflow: hidden;
-            transition: border-color .15s;
-        }
-
+        /* ── TEAMS ── */
+        .teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+        .team-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; transition: border-color .15s; }
         .team-card:hover { border-color: var(--border-hi); }
-
-        .team-card-head {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 14px;
-            background: var(--panel);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .team-card-name {
-            font-family: var(--font-head);
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: .04em;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .team-card-name input {
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font-head);
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: .04em;
-            outline: none;
-            width: 100%;
-            padding-bottom: 2px;
-        }
-
+        .team-card-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--panel); border-bottom: 1px solid var(--border); }
+        .team-card-name { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: .04em; flex: 1; min-width: 0; }
+        .team-card-name input { background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--text-bright); font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: .04em; outline: none; width: 100%; padding-bottom: 2px; }
         .team-card-name input:focus { border-bottom-color: var(--gold); }
-
         .team-card-body { padding: 12px 14px; }
-
-        .team-field-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .team-field-label {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .15em;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            width: 64px;
-            flex-shrink: 0;
-        }
-
-        .team-field-row select {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font-mono);
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: var(--r);
-            outline: none;
-        }
-
-        /* member groups */
+        .team-field-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .team-field-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em; color: var(--text-dim); text-transform: uppercase; width: 64px; flex-shrink: 0; }
+        .team-field-row select { background: var(--panel); border: 1px solid var(--border); color: var(--text-bright); font-family: var(--font-mono); font-size: 11px; padding: 4px 8px; border-radius: var(--r); outline: none; }
         .member-groups { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-
-        .member-group {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            padding: 6px 8px;
-        }
-
-        .group-label {
-            font-family: var(--font-mono);
-            font-size: 8px;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
+        .member-group { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); padding: 6px 8px; }
+        .group-label { font-family: var(--font-mono); font-size: 8px; letter-spacing: .15em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
         .group-members { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
-
-        .member-chip {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--surface);
-            border: 1px solid var(--border-hi);
-            border-radius: 2px;
-            padding: 3px 7px;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            color: var(--text-mid);
-        }
-
-        .member-chip-remove {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            cursor: pointer;
-            padding: 0;
-            font-size: 11px;
-            line-height: 1;
-            transition: color .1s;
-        }
-
+        .member-chip { display: flex; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--border-hi); border-radius: 2px; padding: 3px 7px; font-family: var(--font-mono); font-size: 10px; color: var(--text-mid); }
+        .member-chip-remove { background: none; border: none; color: var(--text-dim); cursor: pointer; padding: 0; font-size: 11px; line-height: 1; transition: color .1s; }
         .member-chip-remove:hover { color: var(--err); }
-
-        .add-member-row {
-            display: flex;
-            gap: 4px;
-            margin-top: 4px;
-        }
-
-        .add-member-row select {
-            flex: 1;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font-mono);
-            font-size: 10px;
-            padding: 3px 6px;
-            border-radius: var(--r);
-            outline: none;
-        }
-
-        .add-member-row button {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            padding: 3px 8px;
-            border: 1px solid var(--border-hi);
-            border-radius: var(--r);
-            background: transparent;
-            color: var(--text-mid);
-            cursor: pointer;
-            transition: all .1s;
-        }
-
+        .add-member-row { display: flex; gap: 4px; margin-top: 4px; }
+        .add-member-row select { flex: 1; background: var(--surface); border: 1px solid var(--border); color: var(--text-bright); font-family: var(--font-mono); font-size: 10px; padding: 3px 6px; border-radius: var(--r); outline: none; }
+        .add-member-row button { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border: 1px solid var(--border-hi); border-radius: var(--r); background: transparent; color: var(--text-mid); cursor: pointer; transition: all .1s; }
         .add-member-row button:hover { color: var(--gold); border-color: var(--gold); }
+        .team-card-footer { display: flex; gap: 6px; padding: 8px 14px 10px; border-top: 1px solid var(--border); justify-content: flex-end; }
 
-        .team-card-footer {
-            display: flex;
-            gap: 6px;
-            padding: 8px 14px 10px;
-            border-top: 1px solid var(--border);
-            justify-content: flex-end;
-        }
-
-        /* ─── META PANEL ──────────────────────────────────────────────── */
-        .meta-section {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            padding: 20px;
-            margin-bottom: 16px;
-            max-width: 600px;
-        }
-
-        .meta-section-title {
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: .18em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 14px;
-        }
-
-        .meta-field {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-bottom: 14px;
-        }
-
+        /* ── META ── */
+        .meta-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; margin-bottom: 16px; max-width: 600px; }
+        .meta-section-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+        .meta-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
         .meta-field:last-child { margin-bottom: 0; }
-
-        .meta-field label {
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-            color: var(--text-dim);
-        }
-
-        .meta-field input[type=date],
-        .meta-field input[type=text] {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            color: var(--text-bright);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            padding: 7px 12px;
-            border-radius: var(--r);
-            outline: none;
-            transition: border-color .15s;
-            width: 200px;
-        }
-
+        .meta-field label { font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--text-dim); }
+        .meta-field input[type=date], .meta-field input[type=text] { background: var(--panel); border: 1px solid var(--border); color: var(--text-bright); font-family: var(--font-mono); font-size: 12px; padding: 7px 12px; border-radius: var(--r); outline: none; transition: border-color .15s; width: 200px; }
         .meta-field input:focus { border-color: var(--border-act); }
 
-        /* ─── LOADING SKELETON ────────────────────────────────────────── */
-        .skeleton-row td {
-            padding: 10px 14px;
-        }
-
-        .skeleton-block {
-            height: 14px;
-            border-radius: 2px;
-            background: linear-gradient(90deg, var(--panel) 25%, var(--border) 50%, var(--panel) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.4s infinite;
-        }
-
+        /* ── SKELETON ── */
+        .skeleton-row td { padding: 10px 14px; }
+        .skeleton-block { height: 14px; border-radius: 2px; background: linear-gradient(90deg, var(--panel) 25%, var(--border) 50%, var(--panel) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
         @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-        /* ─── EMPTY STATE ─────────────────────────────────────────────── */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-dim);
-            letter-spacing: .1em;
-        }
+        .empty-state { text-align: center; padding: 40px 20px; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: .1em; }
 
-        /* ─── CONFIRM MODAL ───────────────────────────────────────────── */
-        .modal-backdrop {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,.7);
-            z-index: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            display: none;
-        }
-
+        /* ── MODAL ── */
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 500; display: none; align-items: center; justify-content: center; }
         .modal-backdrop.open { display: flex; }
-
-        .modal {
-            background: var(--surface);
-            border: 1px solid var(--border-hi);
-            border-radius: var(--r);
-            padding: 24px 28px;
-            max-width: 420px;
-            width: 90%;
-        }
-
-        .modal-title {
-            font-family: var(--font-head);
-            font-size: 17px;
-            font-weight: 700;
-            letter-spacing: .04em;
-            margin-bottom: 10px;
-        }
-
-        .modal-body {
-            font-size: 14px;
-            color: var(--text-mid);
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
+        .modal { background: var(--surface); border: 1px solid var(--border-hi); border-radius: var(--r); padding: 24px 28px; max-width: 420px; width: 90%; }
+        .modal-title { font-family: var(--font-head); font-size: 17px; font-weight: 700; letter-spacing: .04em; margin-bottom: 10px; }
+        .modal-body { font-size: 14px; color: var(--text-mid); margin-bottom: 20px; line-height: 1.6; }
         .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
-        /* ─── SORT ORDER ──────────────────────────────────────────────── */
-        .sort-input {
-            width: 52px !important;
-            text-align: center;
-        }
-
-        /* ─── RESPONSIVE ──────────────────────────────────────────────── */
         @media (max-width: 860px) {
             .sidebar { display: none; }
             .main { padding: 20px 16px 48px; }
@@ -1150,7 +310,6 @@
 </head>
 <body>
 
-<!-- ── TOP BAR ─────────────────────────────────────────────────── -->
 <header class="topbar">
     <span class="topbar-logo">AK:EF</span>
     <div class="topbar-divider"></div>
@@ -1164,10 +323,7 @@
     </div>
 </header>
 
-<!-- ── SHELL ───────────────────────────────────────────────────── -->
 <div class="shell">
-
-    <!-- ── SIDEBAR ──────────────────────────────────────────────── -->
     <nav class="sidebar">
         <div class="sidebar-section-label">Tier Data</div>
         <button class="sidebar-btn active" data-panel="chars">
@@ -1178,17 +334,15 @@
             <span class="sb-icon">◉</span> Teams
             <span class="sidebar-count" id="count-teams">—</span>
         </button>
-
         <div class="sidebar-section-label" style="margin-top:10px">Settings</div>
         <button class="sidebar-btn" data-panel="meta">
             <span class="sb-icon">◇</span> Metadata
         </button>
     </nav>
 
-    <!-- ── MAIN ─────────────────────────────────────────────────── -->
     <main class="main">
 
-        <!-- ══ CHARACTERS PANEL ════════════════════════════════════ -->
+        <!-- ══ CHARACTERS PANEL ══ -->
         <div class="panel active" id="panel-chars">
             <div class="panel-header">
                 <div>
@@ -1202,11 +356,26 @@
                 </div>
             </div>
 
+            <!--
+                IMPORTANT: To allow the same character multiple times (different roles/tiers),
+                your character_tier_info table needs an auto-increment id as primary key.
+                Run this once in Supabase SQL editor if you haven't already:
+
+                ALTER TABLE character_tier_info DROP CONSTRAINT character_tier_info_pkey;
+                ALTER TABLE character_tier_info ADD COLUMN id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY;
+            -->
+            <div class="schema-note">
+                <strong>Schema requirement for duplicate characters:</strong>
+                <code>character_tier_info</code> must have an auto-increment <code>id</code> column as primary key
+                (not <code>character_slug</code>). Run once in Supabase SQL editor:<br><br>
+                <code>ALTER TABLE character_tier_info DROP CONSTRAINT character_tier_info_pkey;</code><br>
+                <code>ALTER TABLE character_tier_info ADD COLUMN id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY;</code>
+            </div>
+
             <!-- Add form -->
             <div class="add-form" id="add-char-form">
                 <div class="add-form-title">Add character to tier list</div>
                 <div class="form-row">
-                    <!-- Character combobox -->
                     <div class="form-field">
                         <span class="form-label">Character</span>
                         <div class="char-picker" id="char-picker">
@@ -1214,13 +383,7 @@
                                 <div class="char-picker-preview" id="picker-preview">
                                     <span class="preview-initials" id="picker-preview-initials">?</span>
                                 </div>
-                                <input
-                                    type="text"
-                                    class="char-picker-text"
-                                    id="picker-search"
-                                    placeholder="Search character…"
-                                    autocomplete="off"
-                                />
+                                <input type="text" class="char-picker-text" id="picker-search" placeholder="Search character…" autocomplete="off" />
                                 <button class="char-picker-clear" id="picker-clear" title="Clear">✕</button>
                             </div>
                             <div class="char-picker-dropdown" id="picker-dropdown"></div>
@@ -1280,9 +443,9 @@
                 <span class="filter-chip" data-tier-filter="T2">T2</span>
                 <div style="width:1px;height:20px;background:var(--border);margin:0 4px"></div>
                 <span class="filter-chip" data-role-filter="all" style="border-color:var(--border-hi);color:var(--text-mid)">All Roles</span>
-                <span class="filter-chip" data-role-filter="damage" style="color:var(--dmg)">Damage</span>
+                <span class="filter-chip" data-role-filter="damage"  style="color:var(--dmg)">Damage</span>
                 <span class="filter-chip" data-role-filter="enabler" style="color:var(--ena)">Enabler</span>
-                <span class="filter-chip" data-role-filter="buffer" style="color:var(--buf)">Buffer</span>
+                <span class="filter-chip" data-role-filter="buffer"  style="color:var(--buf)">Buffer</span>
             </div>
 
             <!-- Table -->
@@ -1290,6 +453,7 @@
                 <table id="chars-table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Slug</th>
                             <th>Tier</th>
@@ -1301,13 +465,13 @@
                         </tr>
                     </thead>
                     <tbody id="chars-tbody">
-                        <tr class="skeleton-row"><td colspan="8"><div class="skeleton-block"></div></td></tr>
+                        <tr class="skeleton-row"><td colspan="9"><div class="skeleton-block"></div></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- ══ TEAMS PANEL ═════════════════════════════════════════ -->
+        <!-- ══ TEAMS PANEL ══ -->
         <div class="panel" id="panel-teams">
             <div class="panel-header">
                 <div>
@@ -1325,7 +489,7 @@
             </div>
         </div>
 
-        <!-- ══ META PANEL ══════════════════════════════════════════ -->
+        <!-- ══ META PANEL ══ -->
         <div class="panel" id="panel-meta">
             <div class="panel-header">
                 <div>
@@ -1333,7 +497,6 @@
                     <div class="panel-title">Metadata</div>
                 </div>
             </div>
-
             <div class="meta-section">
                 <div class="meta-section-title">Last Updated Date</div>
                 <div class="meta-field">
@@ -1347,11 +510,11 @@
     </main>
 </div>
 
-<!-- ── CONFIRM MODAL ────────────────────────────────────────────── -->
+<!-- CONFIRM MODAL -->
 <div class="modal-backdrop" id="confirm-modal">
     <div class="modal">
         <div class="modal-title" id="modal-title">Are you sure?</div>
-        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-body"  id="modal-body"></div>
         <div class="modal-actions">
             <button class="btn" id="modal-cancel">Cancel</button>
             <button class="btn danger" id="modal-confirm">Remove</button>
@@ -1359,58 +522,53 @@
     </div>
 </div>
 
-<!-- ── TOAST ────────────────────────────────────────────────────── -->
 <div id="toast-wrap"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    SUPABASE
-═══════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════ */
 const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODQ5NTcxMiwiZXhwIjoyMDk0MDcxNzEyfQ.W0j6nc4221j6Pm-qKerKgMUCkG4kSLLt9MCaeRM-VrM';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
 
-/* ─── Constants ──────────────────────────────────────────────────── */
 const TIERS    = ['T0','T0.5','T1','T1.5','T2'];
 const ROLES    = ['damage','enabler','buffer'];
 const TIER_CSS = { 'T0':'tier-T0','T0.5':'tier-T05','T1':'tier-T1','T1.5':'tier-T15','T2':'tier-T2' };
 
-/* ═══════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    STATE
-═══════════════════════════════════════════════════════════════════ */
-let charData           = [];   // full character_tier_info + characters join
-let teamsData          = [];   // teams with nested member groups
+═══════════════════════════════════════════════════════════ */
+let charData           = [];   // rows from character_tier_info (each has a unique id)
+let teamsData          = [];
 let charNames          = {};   // slug → name
 let charImgs           = {};   // slug → img_path
 let charRarities       = {};   // slug → rarity
-let allSlugs           = [];   // all slugs for team member pickers
+let allSlugs           = [];   // all slugs from characters table (for team pickers)
 let allCharsRaw        = [];   // full characters table rows
-let pickerSelectedSlug = null; // selected slug in add-char combobox
+let pickerSelectedSlug = null;
 
 let tierFilter = 'all';
 let roleFilter = 'all';
 let searchQ    = '';
 
-/* ═══════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    UTILITIES
-═══════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════ */
 function setStatus(state, msg) {
-    const dot  = document.getElementById('status-dot');
-    const text = document.getElementById('status-text');
-    dot.className = 'status-dot ' + state;
-    text.textContent = msg;
+    document.getElementById('status-dot').className = 'status-dot ' + state;
+    document.getElementById('status-text').textContent = msg;
 }
 
 function toast(msg, type = 'ok') {
-    const wrap = document.getElementById('toast-wrap');
-    const el   = document.createElement('div');
-    el.className = 'toast ' + type;
+    const el = document.createElement('div');
+    el.className   = 'toast ' + type;
     el.textContent = msg;
-    wrap.appendChild(el);
+    document.getElementById('toast-wrap').appendChild(el);
     setTimeout(() => el.remove(), 3500);
 }
 
-function confirm(title, body, onConfirm) {
+function confirmModal(title, body, onConfirm) {
     const modal = document.getElementById('confirm-modal');
     document.getElementById('modal-title').textContent = title;
     document.getElementById('modal-body').textContent  = body;
@@ -1422,27 +580,9 @@ function confirm(title, body, onConfirm) {
     no.onclick  = close;
 }
 
-function tierBadge(tier) {
-    return `<span class="tier-badge ${TIER_CSS[tier] || ''}">${tier}</span>`;
-}
-
-function roleBadge(role) {
-    return `<span class="role-badge role-${role}">${role}</span>`;
-}
-
-function makeSel(options, value, cls = '') {
-    return `<select class="${cls}">${
-        options.map(o => {
-            const val   = typeof o === 'object' ? o.value : o;
-            const label = typeof o === 'object' ? o.label : o;
-            return `<option value="${val}" ${val === value ? 'selected' : ''}>${label}</option>`;
-        }).join('')
-    }</select>`;
-}
-
-/* ═══════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    SIDEBAR NAV
-═══════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════ */
 document.querySelectorAll('.sidebar-btn[data-panel]').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
@@ -1452,40 +592,55 @@ document.querySelectorAll('.sidebar-btn[data-panel]').forEach(btn => {
     });
 });
 
-/* ═══════════════════════════════════════════════════════════════════
-   CHARACTERS PANEL
-═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   LOAD CHARACTERS
+   Each row in character_tier_info must have its own `id`
+   (auto-increment bigint) so the same slug can appear
+   multiple times with different tier/role combos.
+═══════════════════════════════════════════════════════════ */
 async function loadChars() {
-    const { data, error } = await db
+    /* Try the view first */
+    const { data: viewData, error: viewErr } = await db
         .from('v_characters_tiered')
         .select('*')
         .order('name');
 
-    if (error) {
-        // fallback: try joining manually
-        const { data: cti, error: e2 } = await db
-            .from('character_tier_info')
-            .select('*, characters(name, img_path, rarity)')
-            .order('character_slug');
-        if (e2) { toast('Failed to load characters', 'err'); return; }
-        charData = cti.map(r => ({
-            slug: r.character_slug,
-            name: r.characters?.name || r.character_slug,
-            rarity: r.characters?.rarity,
-            img_path: r.characters?.img_path,
-            tier: r.tier,
-            role: r.role,
-            is_new: r.is_new,
-            is_expert: r.is_expert,
-            watchlist: r.watchlist,
+    if (!viewErr && viewData) {
+        charData = viewData.map(r => ({
+            id:        r.id,
+            slug:      r.slug      || r.character_slug,
+            name:      r.name,
+            rarity:    r.rarity,
+            img_path:  r.img_path  || null,
+            tier:      r.tier,
+            role:      r.role,
+            is_new:    r.is_new    || false,
+            is_expert: r.is_expert || false,
+            watchlist: r.watchlist || null,
         }));
     } else {
-        charData = data || [];
+        /* Fallback: direct join */
+        const { data: cti, error: ctiErr } = await db
+            .from('character_tier_info')
+            .select('id, character_slug, tier, role, is_new, is_expert, watchlist, characters(name, img_path, rarity)')
+            .order('character_slug');
+
+        if (ctiErr) { toast('Failed to load characters: ' + ctiErr.message, 'err'); return; }
+
+        charData = (cti || []).map(r => ({
+            id:        r.id,
+            slug:      r.character_slug,
+            name:      r.characters?.name     || r.character_slug,
+            rarity:    r.characters?.rarity   || 5,
+            img_path:  r.characters?.img_path || null,
+            tier:      r.tier,
+            role:      r.role,
+            is_new:    r.is_new    || false,
+            is_expert: r.is_expert || false,
+            watchlist: r.watchlist || null,
+        }));
     }
 
-    // populate slug lookup
-    charData.forEach(c => { charNames[c.slug] = c.name; });
-    allSlugs = charData.map(c => c.slug);
     document.getElementById('count-chars').textContent = charData.length;
     renderCharsTable();
 }
@@ -1507,14 +662,16 @@ function renderCharsTable() {
     const chars = filteredChars();
 
     if (chars.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state">No characters match filters</div></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">No characters match filters</div></td></tr>`;
         return;
     }
 
     tbody.innerHTML = chars.map(c => {
         const wl = c.watchlist || '';
+        /* Use data-id for all DB operations so duplicate slugs work correctly */
         return `
-        <tr data-slug="${c.slug}">
+        <tr data-id="${c.id}" data-slug="${c.slug}">
+            <td class="id-cell">${c.id ?? '—'}</td>
             <td class="char-name-cell">${c.name}</td>
             <td class="slug-cell">${c.slug}</td>
             <td>
@@ -1527,47 +684,50 @@ function renderCharsTable() {
                     ${ROLES.map(r => `<option value="${r}" ${r === c.role ? 'selected' : ''}>${r[0].toUpperCase()+r.slice(1)}</option>`).join('')}
                 </select>
             </td>
-            <td><input type="checkbox" class="tag-tog is-new" data-field="is_new" ${c.is_new ? 'checked' : ''} /></td>
+            <td><input type="checkbox" class="tag-tog is-new"    data-field="is_new"    ${c.is_new    ? 'checked' : ''} /></td>
             <td><input type="checkbox" class="tag-tog is-expert" data-field="is_expert" ${c.is_expert ? 'checked' : ''} /></td>
             <td>
                 <select class="watchlist-sel" data-field="watchlist">
-                    <option value="" ${!wl ? 'selected' : ''}>—</option>
-                    <option value="up" ${wl === 'up' ? 'selected' : ''}>▲ Up</option>
+                    <option value=""     ${!wl            ? 'selected' : ''}>—</option>
+                    <option value="up"   ${wl === 'up'   ? 'selected' : ''}>▲ Up</option>
                     <option value="down" ${wl === 'down' ? 'selected' : ''}>▼ Down</option>
                 </select>
             </td>
             <td style="display:flex;gap:6px;align-items:center">
-                <button class="save-row-btn" data-slug="${c.slug}">Save</button>
-                <button class="remove-btn"   data-slug="${c.slug}" title="Remove from tier list">✕</button>
+                <button class="save-row-btn" data-id="${c.id}">Save</button>
+                <button class="remove-btn"   data-id="${c.id}" data-name="${c.name}" title="Remove from tier list">✕</button>
             </td>
         </tr>`;
     }).join('');
 
-    // mark rows dirty on any change
+    /* Mark rows dirty on any change */
     tbody.querySelectorAll('tr').forEach(row => {
         row.querySelectorAll('select, input').forEach(el => {
             el.addEventListener('change', () => row.classList.add('dirty'));
         });
     });
 
-    // save individual row
+    /* Save individual row — uses id, not slug */
     tbody.querySelectorAll('.save-row-btn').forEach(btn => {
         btn.addEventListener('click', () => saveCharRow(btn));
     });
 
-    // remove from tier list
+    /* Remove row */
     tbody.querySelectorAll('.remove-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            const slug = btn.dataset.slug;
-            const char = charData.find(c => c.slug === slug);
-            confirm(
+            const id   = btn.dataset.id;
+            const name = btn.dataset.name;
+            confirmModal(
                 'Remove from tier list?',
-                `"${char?.name || slug}" will be removed from character_tier_info. The character itself in the characters table is untouched.`,
+                `"${name}" (row #${id}) will be removed from character_tier_info. The character itself is untouched.`,
                 async () => {
-                    const { error } = await db.from('character_tier_info').delete().eq('character_slug', slug);
+                    const { error } = await db
+                        .from('character_tier_info')
+                        .delete()
+                        .eq('id', id);
                     if (error) { toast('Delete failed: ' + error.message, 'err'); return; }
-                    toast(`${char?.name || slug} removed from tier list`, 'warn');
-                    charData = charData.filter(c => c.slug !== slug);
+                    toast(`${name} (row #${id}) removed`, 'warn');
+                    charData = charData.filter(c => String(c.id) !== String(id));
                     document.getElementById('count-chars').textContent = charData.length;
                     renderCharsTable();
                 }
@@ -1578,7 +738,7 @@ function renderCharsTable() {
 
 async function saveCharRow(btn) {
     const row  = btn.closest('tr');
-    const slug = btn.dataset.slug;
+    const id   = btn.dataset.id;
 
     const tier      = row.querySelector('[data-field="tier"]').value;
     const role      = row.querySelector('[data-field="role"]').value;
@@ -1593,7 +753,7 @@ async function saveCharRow(btn) {
     const { error } = await db
         .from('character_tier_info')
         .update({ tier, role, is_new, is_expert, watchlist, updated_at: new Date().toISOString() })
-        .eq('character_slug', slug);
+        .eq('id', id);   /* ← target by id, not slug */
 
     btn.classList.remove('saving');
     btn.disabled = false;
@@ -1604,28 +764,28 @@ async function saveCharRow(btn) {
         return;
     }
 
-    // update local state
-    const idx = charData.findIndex(c => c.slug === slug);
+    /* Update local state */
+    const idx = charData.findIndex(c => String(c.id) === String(id));
     if (idx !== -1) Object.assign(charData[idx], { tier, role, is_new, is_expert, watchlist });
 
     btn.textContent = 'Saved ✓';
     btn.classList.add('saved');
     row.classList.remove('dirty');
-    toast(`Saved ${charData.find(c=>c.slug===slug)?.name || slug}`, 'ok');
+    toast(`Saved row #${id}`, 'ok');
     setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('saved'); }, 2000);
 }
 
-/* ── Character Picker combobox ───────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   CHARACTER PICKER
+   - Shows ALL characters from the characters table
+   - No "already added" blocking — same character can be
+     added multiple times with different tier/role
+═══════════════════════════════════════════════════════════ */
 function initCharPicker() {
-    const searchEl   = document.getElementById('picker-search');
-    const dropdown   = document.getElementById('picker-dropdown');
-    const clearBtn   = document.getElementById('picker-clear');
-    const preview    = document.getElementById('picker-preview');
-    const previewIni = document.getElementById('picker-preview-initials');
-
-    function getAlreadyAdded() {
-        return new Set(charData.map(c => c.slug));
-    }
+    const searchEl = document.getElementById('picker-search');
+    const dropdown = document.getElementById('picker-dropdown');
+    const clearBtn = document.getElementById('picker-clear');
+    const preview  = document.getElementById('picker-preview');
 
     function rarityClass(r) {
         if (r >= 6) return 'rarity-6';
@@ -1634,12 +794,10 @@ function initCharPicker() {
     }
 
     function renderPreview(slug) {
-        // clear old content
         preview.innerHTML = '';
         if (!slug) {
             const ini = document.createElement('span');
             ini.className   = 'preview-initials';
-            ini.id          = 'picker-preview-initials';
             ini.textContent = '?';
             preview.appendChild(ini);
             return;
@@ -1654,8 +812,7 @@ function initCharPicker() {
         } else {
             const ini = document.createElement('span');
             ini.className   = 'preview-initials';
-            const name = charNames[slug] || slug;
-            ini.textContent = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+            ini.textContent = (charNames[slug] || slug).split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
             preview.appendChild(ini);
         }
         const bar = document.createElement('div');
@@ -1664,13 +821,10 @@ function initCharPicker() {
     }
 
     function renderDropdown(query) {
-        const q       = query.toLowerCase().trim();
-        const added   = getAlreadyAdded();
+        const q = query.toLowerCase().trim();
         const matches = allCharsRaw.filter(c =>
-            !q ||
-            c.name.toLowerCase().includes(q) ||
-            c.slug.toLowerCase().includes(q)
-        );
+            !q || c.name.toLowerCase().includes(q) || c.slug.toLowerCase().includes(q)
+        ).sort((a, b) => a.name.localeCompare(b.name));
 
         dropdown.innerHTML = '';
 
@@ -1680,64 +834,43 @@ function initCharPicker() {
             return;
         }
 
-        // sort: not-yet-added first, then alphabetical
-        matches.sort((a, b) => {
-            const aAdded = added.has(a.slug) ? 1 : 0;
-            const bAdded = added.has(b.slug) ? 1 : 0;
-            if (aAdded !== bAdded) return aAdded - bAdded;
-            return a.name.localeCompare(b.name);
-        });
-
         matches.forEach(c => {
-            const isAdded   = added.has(c.slug);
             const isSelected = c.slug === pickerSelectedSlug;
             const rarity     = c.rarity || 5;
 
             const item = document.createElement('div');
-            item.className = 'char-picker-item' +
-                (isAdded    ? ' already-added' : '') +
-                (isSelected ? ' selected'      : '');
+            item.className    = 'char-picker-item' + (isSelected ? ' selected' : '');
             item.dataset.slug = c.slug;
 
-            // portrait
+            /* Portrait */
             const portrait = document.createElement('div');
             portrait.className = 'picker-item-portrait';
             if (c.img_path) {
                 const img = document.createElement('img');
-                img.src = c.img_path;
-                img.alt = c.name;
+                img.src     = c.img_path;
+                img.alt     = c.name;
                 img.loading = 'lazy';
                 portrait.appendChild(img);
             } else {
                 const ini = document.createElement('span');
                 ini.className   = 'picker-initials';
-                ini.textContent = c.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+                ini.textContent = c.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
                 portrait.appendChild(ini);
             }
             const bar = document.createElement('div');
             bar.className = `picker-rarity-bar ${rarityClass(rarity)}`;
             portrait.appendChild(bar);
 
-            // info
+            /* Info */
             const info = document.createElement('div');
             info.className = 'picker-item-info';
-            info.innerHTML = `
-                <div class="picker-item-name">${c.name}</div>
-                <div class="picker-item-slug">${c.slug}</div>`;
+            info.innerHTML = `<div class="picker-item-name">${c.name}</div><div class="picker-item-slug">${c.slug}</div>`;
 
             item.appendChild(portrait);
             item.appendChild(info);
 
-            if (isAdded) {
-                const badge = document.createElement('span');
-                badge.className   = 'picker-item-badge picker-badge-added';
-                badge.textContent = 'added';
-                item.appendChild(badge);
-            }
-
-            if (!isAdded) {
-                item.addEventListener('click', () => selectChar(c));
-            }
+            /* Every character is always clickable — no "already added" blocking */
+            item.addEventListener('click', () => selectChar(c));
 
             dropdown.appendChild(item);
         });
@@ -1761,37 +894,29 @@ function initCharPicker() {
         dropdown.classList.remove('open');
     }
 
-    searchEl.addEventListener('focus', () => {
-        renderDropdown(searchEl.value);
-    });
-
+    searchEl.addEventListener('focus', () => renderDropdown(searchEl.value));
     searchEl.addEventListener('input', () => {
         pickerSelectedSlug = null;
         clearBtn.classList.toggle('visible', searchEl.value.length > 0);
         renderPreview(null);
         renderDropdown(searchEl.value);
     });
+    clearBtn.addEventListener('click', () => { clearPicker(); searchEl.focus(); });
 
-    clearBtn.addEventListener('click', () => {
-        clearPicker();
-        searchEl.focus();
-    });
-
-    // close dropdown on outside click
     document.addEventListener('click', e => {
         if (!document.getElementById('char-picker').contains(e.target)) {
             dropdown.classList.remove('open');
         }
     });
 
-    // expose reset for after form submit
     window._resetCharPicker = clearPicker;
 }
 
-/* ── Add character button + confirm ─────────────────────────────── */
+/* ── Add character ── */
 document.getElementById('btn-add-char').addEventListener('click', () => {
-    document.getElementById('add-char-form').classList.toggle('visible');
-    if (document.getElementById('add-char-form').classList.contains('visible')) {
+    const form = document.getElementById('add-char-form');
+    form.classList.toggle('visible');
+    if (form.classList.contains('visible')) {
         setTimeout(() => document.getElementById('picker-search').focus(), 50);
     }
 });
@@ -1809,26 +934,48 @@ document.getElementById('confirm-add-char').addEventListener('click', async () =
     const is_expert = document.getElementById('new-is-expert').checked;
     const watchlist = document.getElementById('new-watchlist').value || null;
 
-    if (!slug) { toast('Select a character first', 'warn'); document.getElementById('picker-search').focus(); return; }
+    if (!slug) {
+        toast('Select a character first', 'warn');
+        document.getElementById('picker-search').focus();
+        return;
+    }
 
-    const { error } = await db.from('character_tier_info').upsert({
-        character_slug: slug, tier, role, is_new, is_expert, watchlist,
-        updated_at: new Date().toISOString()
-    }, { onConflict: 'character_slug' });
+    /*
+      Use INSERT (not upsert) so the same character can appear
+      in multiple rows with different tier/role combinations.
+      The `id` column is auto-generated by the database.
+    */
+    const { data: inserted, error } = await db
+        .from('character_tier_info')
+        .insert({
+            character_slug: slug,
+            tier,
+            role,
+            is_new,
+            is_expert,
+            watchlist,
+            updated_at: new Date().toISOString()
+        })
+        .select()
+        .single();
 
-    if (error) { toast('Insert failed: ' + error.message, 'err'); return; }
+    if (error) {
+        toast('Insert failed: ' + error.message, 'err');
+        /* Common cause: character_slug is still the primary key.
+           Run the SQL in the schema note above to fix it. */
+        return;
+    }
 
-    toast(`Added ${charNames[slug] || slug} to tier list`, 'ok');
+    toast(`Added ${charNames[slug] || slug} → ${tier} / ${role}`, 'ok');
     document.getElementById('add-char-form').classList.remove('visible');
     if (window._resetCharPicker) window._resetCharPicker();
-    // reset toggles
     document.getElementById('new-is-new').checked    = false;
     document.getElementById('new-is-expert').checked = false;
     document.getElementById('new-watchlist').value   = '';
     await loadChars();
 });
 
-/* ── Filters ─────────────────────────────────────────────────────── */
+/* ── Filters ── */
 document.getElementById('char-search').addEventListener('input', e => {
     searchQ = e.target.value.trim();
     renderCharsTable();
@@ -1845,10 +992,7 @@ document.querySelectorAll('[data-tier-filter]').forEach(chip => {
 
 document.querySelectorAll('[data-role-filter]').forEach(chip => {
     chip.addEventListener('click', () => {
-        document.querySelectorAll('[data-role-filter]').forEach(c => {
-            c.style.borderColor = '';
-            c.style.background  = '';
-        });
+        document.querySelectorAll('[data-role-filter]').forEach(c => { c.style.borderColor = ''; c.style.background = ''; });
         chip.style.borderColor = 'var(--border-act)';
         chip.style.background  = 'var(--panel-hi)';
         roleFilter = chip.dataset.roleFilter;
@@ -1856,21 +1000,20 @@ document.querySelectorAll('[data-role-filter]').forEach(chip => {
     });
 });
 
-/* ═══════════════════════════════════════════════════════════════════
-   TEAMS PANEL
-═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   TEAMS
+═══════════════════════════════════════════════════════════ */
 async function loadTeams() {
-    const { data: teams, error: te } = await db
+    const { data: teams, error } = await db
         .from('teams')
         .select('*, team_members(*)')
         .order('sort_order');
 
-    if (te) { toast('Failed to load teams', 'err'); return; }
+    if (error) { toast('Failed to load teams', 'err'); return; }
 
     teamsData = (teams || []).map(team => {
-        const members = (team.team_members || [])
-            .sort((a,b) => (a.sort_order||0) - (b.sort_order||0));
-        const groups = {};
+        const members = (team.team_members || []).sort((a,b) => (a.sort_order||0) - (b.sort_order||0));
+        const groups  = {};
         for (const m of members) {
             const gi = m.group_index || 0;
             if (!groups[gi]) groups[gi] = [];
@@ -1878,7 +1021,7 @@ async function loadTeams() {
         }
         return {
             ...team,
-            groups: Object.keys(groups).sort((a,b)=>a-b).map(k => groups[k])
+            groups: Object.keys(groups).sort((a,b) => a-b).map(k => groups[k])
         };
     });
 
@@ -1908,13 +1051,13 @@ function buildTeamCard(team) {
             <div class="team-card-name">
                 <input type="text" class="team-name-input" value="${team.name}" placeholder="Team name" />
             </div>
-            <span class="tier-badge ${TIER_CSS[team.tier] || ''} team-tier-badge">${team.tier}</span>
+            <span class="tier-badge ${TIER_CSS[team.tier]||''} team-tier-badge">${team.tier}</span>
         </div>
         <div class="team-card-body">
             <div class="team-field-row">
                 <span class="team-field-label">Tier</span>
                 <select class="team-tier-sel">
-                    ${TIERS.map(t=>`<option value="${t}" ${t===team.tier?'selected':''}>${t}</option>`).join('')}
+                    ${TIERS.map(t => `<option value="${t}" ${t===team.tier?'selected':''}>${t}</option>`).join('')}
                 </select>
             </div>
             <div class="team-field-row">
@@ -1925,7 +1068,6 @@ function buildTeamCard(team) {
                 <span class="team-field-label">Sort</span>
                 <select class="team-sort-sel">${sortOpts}</select>
             </div>
-
             <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin:10px 0 6px">Member Slots (OR groups)</div>
             <div class="member-groups" id="groups-${team.id}">
                 ${buildGroupsHTML(team)}
@@ -1934,18 +1076,16 @@ function buildTeamCard(team) {
         </div>
         <div class="team-card-footer">
             <button class="btn danger team-delete-btn" data-tid="${team.id}">Delete Team</button>
-            <button class="btn primary team-save-btn" data-tid="${team.id}">Save</button>
+            <button class="btn primary team-save-btn"  data-tid="${team.id}">Save</button>
         </div>`;
 
-    // live update tier badge on select change
-    const tierSel   = card.querySelector('.team-tier-sel');
+    const tierSel     = card.querySelector('.team-tier-sel');
     const tierBadgeEl = card.querySelector('.team-tier-badge');
     tierSel.addEventListener('change', () => {
         tierBadgeEl.textContent = tierSel.value;
-        tierBadgeEl.className   = `tier-badge ${TIER_CSS[tierSel.value] || ''} team-tier-badge`;
+        tierBadgeEl.className   = `tier-badge ${TIER_CSS[tierSel.value]||''} team-tier-badge`;
     });
 
-    // add group slot
     card.querySelector(`[data-add-group="${team.id}"]`).addEventListener('click', () => {
         const container = card.querySelector(`#groups-${team.id}`);
         const gi        = container.querySelectorAll('.member-group').length;
@@ -1957,15 +1097,10 @@ function buildTeamCard(team) {
         wireGroupListeners(div, team.id);
     });
 
-    // wire existing groups
     card.querySelectorAll('.member-group').forEach(g => wireGroupListeners(g, team.id));
-
-    // save
     card.querySelector('.team-save-btn').addEventListener('click', () => saveTeam(card, team.id));
-
-    // delete
     card.querySelector('.team-delete-btn').addEventListener('click', () => {
-        confirm('Delete team?', `"${team.name}" and all its members will be permanently deleted.`, async () => {
+        confirmModal('Delete team?', `"${team.name}" and all its members will be permanently deleted.`, async () => {
             const { error } = await db.from('teams').delete().eq('id', team.id);
             if (error) { toast('Delete failed: ' + error.message, 'err'); return; }
             teamsData = teamsData.filter(t => t.id !== team.id);
@@ -2001,38 +1136,34 @@ function buildGroupHTML(gi, members) {
 }
 
 function buildChipHTML(slug, gi) {
-    const name = charNames[slug] || slug;
     return `<span class="member-chip" data-slug="${slug}" data-gi="${gi}">
-        ${name}
+        ${charNames[slug] || slug}
         <button class="member-chip-remove" data-remove="${slug}">✕</button>
     </span>`;
 }
 
 function wireGroupListeners(groupEl, teamId) {
-    // remove chip
     groupEl.querySelectorAll('[data-remove]').forEach(btn => {
         btn.addEventListener('click', () => btn.closest('.member-chip').remove());
     });
 
-    // add member
     const addBtn = groupEl.querySelector('.add-member-btn');
     if (addBtn) {
         addBtn.addEventListener('click', () => {
-            const sel   = groupEl.querySelector('.add-member-sel');
-            const slug  = sel.value;
-            const gi    = parseInt(groupEl.dataset.gi);
+            const sel  = groupEl.querySelector('.add-member-sel');
+            const slug = sel.value;
+            const gi   = parseInt(groupEl.dataset.gi);
             if (!slug) return;
-            const chip  = document.createElement('span');
-            chip.className = 'member-chip';
+            const chip = document.createElement('span');
+            chip.className    = 'member-chip';
             chip.dataset.slug = slug;
             chip.dataset.gi   = gi;
-            chip.innerHTML = `${charNames[slug]||slug}<button class="member-chip-remove" data-remove="${slug}">✕</button>`;
+            chip.innerHTML    = `${charNames[slug]||slug}<button class="member-chip-remove" data-remove="${slug}">✕</button>`;
             chip.querySelector('[data-remove]').addEventListener('click', () => chip.remove());
             groupEl.querySelector('.group-members').appendChild(chip);
         });
     }
 
-    // remove group slot
     const removeGroupBtn = groupEl.querySelector('.remove-group-btn');
     if (removeGroupBtn) {
         removeGroupBtn.addEventListener('click', () => {
@@ -2046,25 +1177,20 @@ function wireGroupListeners(groupEl, teamId) {
 }
 
 async function saveTeam(card, teamId) {
-    const saveBtn   = card.querySelector('.team-save-btn');
-    const name      = card.querySelector('.team-name-input').value.trim();
-    const tier      = card.querySelector('.team-tier-sel').value;
-    const is_expert = card.querySelector('.team-expert-tog').checked;
-    const sort_order= parseInt(card.querySelector('.team-sort-sel').value) || 0;
+    const saveBtn    = card.querySelector('.team-save-btn');
+    const name       = card.querySelector('.team-name-input').value.trim();
+    const tier       = card.querySelector('.team-tier-sel').value;
+    const is_expert  = card.querySelector('.team-expert-tog').checked;
+    const sort_order = parseInt(card.querySelector('.team-sort-sel').value) || 0;
 
     if (!name) { toast('Team name is required', 'warn'); return; }
 
     saveBtn.textContent = 'Saving…';
     saveBtn.disabled    = true;
 
-    // 1. Update team row
-    const { error: te } = await db.from('teams')
-        .update({ name, tier, is_expert, sort_order })
-        .eq('id', teamId);
-
+    const { error: te } = await db.from('teams').update({ name, tier, is_expert, sort_order }).eq('id', teamId);
     if (te) { toast('Save failed: ' + te.message, 'err'); saveBtn.textContent = 'Save'; saveBtn.disabled = false; return; }
 
-    // 2. Rebuild team_members — delete all then re-insert from UI state
     const { error: de } = await db.from('team_members').delete().eq('team_id', teamId);
     if (de) { toast('Member delete failed: ' + de.message, 'err'); saveBtn.textContent = 'Save'; saveBtn.disabled = false; return; }
 
@@ -2081,7 +1207,6 @@ async function saveTeam(card, teamId) {
         if (ie) { toast('Member insert failed: ' + ie.message, 'err'); saveBtn.textContent = 'Save'; saveBtn.disabled = false; return; }
     }
 
-    // 3. Update local state
     const idx = teamsData.findIndex(t => t.id === teamId);
     if (idx !== -1) Object.assign(teamsData[idx], { name, tier, is_expert, sort_order });
 
@@ -2090,9 +1215,9 @@ async function saveTeam(card, teamId) {
     setTimeout(() => { saveBtn.textContent = 'Save'; saveBtn.disabled = false; }, 2000);
 }
 
-/* ── New team ─────────────────────────────────────────────────────── */
 document.getElementById('btn-add-team').addEventListener('click', async () => {
-    const { data, error } = await db.from('teams')
+    const { data, error } = await db
+        .from('teams')
         .insert({ name: 'New Team', tier: 'T1', is_expert: false, sort_order: teamsData.length + 1 })
         .select()
         .single();
@@ -2103,18 +1228,16 @@ document.getElementById('btn-add-team').addEventListener('click', async () => {
     teamsData.push(newTeam);
     document.getElementById('count-teams').textContent = teamsData.length;
     renderTeams();
-    // scroll to bottom
     document.getElementById('teams-grid').lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     toast('New team created — edit and save', 'ok');
 });
 
-/* ═══════════════════════════════════════════════════════════════════
-   META PANEL
-═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   META
+═══════════════════════════════════════════════════════════ */
 async function loadMeta() {
     const { data } = await db.from('tier_meta').select('value').eq('key','last_updated').single();
     if (data?.value) {
-        // parse as date and format for input[type=date]
         try {
             const d = new Date(data.value);
             document.getElementById('meta-last-updated').value = d.toISOString().slice(0,10);
@@ -2127,36 +1250,37 @@ async function loadMeta() {
 document.getElementById('save-last-updated').addEventListener('click', async () => {
     const val = document.getElementById('meta-last-updated').value;
     if (!val) { toast('Select a date first', 'warn'); return; }
-    const { error } = await db.from('tier_meta')
-        .upsert({ key: 'last_updated', value: val }, { onConflict: 'key' });
+    const { error } = await db.from('tier_meta').upsert({ key: 'last_updated', value: val }, { onConflict: 'key' });
     if (error) { toast('Save failed: ' + error.message, 'err'); return; }
     toast('Last updated date saved', 'ok');
 });
 
-/* ═══════════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════
    INIT
-═══════════════════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════════════ */
 async function init() {
     setStatus('busy', 'Connecting…');
 
-    // load full characters table for slug picker (including portrait + rarity)
-    const { data: allChars } = await db
+    /* Load all characters from the characters table for the picker.
+       This is the source of truth for what can be added. */
+    const { data: allChars, error: charsErr } = await db
         .from('characters')
-        .select('slug, name, img_path, rarity')
+        .select('id, name, img_path, rarity')
         .order('name');
 
-    if (allChars) {
-        allCharsRaw = allChars;
-        allChars.forEach(c => {
-            charNames[c.slug]    = c.name;
-            charImgs[c.slug]     = c.img_path || null;
-            charRarities[c.slug] = c.rarity   || 5;
+    if (allChars && allChars.length > 0) {
+        allCharsRaw = allChars.map(c => ({ ...c, slug: c.id }));
+        allCharsRaw.forEach(c => {
+            charNames[c.id]    = c.name;
+            charImgs[c.id]     = c.img_path || null;
+            charRarities[c.id] = c.rarity   || 5;
         });
-        allSlugs = allChars.map(c => c.slug);
+        allSlugs = allCharsRaw.map(c => c.id);
+    } else {
+        toast('No characters found in characters table', 'warn');
     }
 
     await Promise.all([loadChars(), loadTeams(), loadMeta()]);
-
     initCharPicker();
     setStatus('ok', 'Connected');
 }
