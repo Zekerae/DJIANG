@@ -24,9 +24,10 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-html, body {
-  height: 100%;
-  overflow: hidden;
+html { height: 100%; }
+body {
+  min-height: 100%;
+  overflow-x: hidden;
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.022) 3px,rgba(0,0,0,.022) 4px);}
@@ -58,6 +59,87 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .save-badge.saved{color:#6ddc9a;border-color:rgba(109,220,154,.3);background:rgba(109,220,154,.07);}
 .save-badge.error{color:#ff6b6b;border-color:rgba(255,107,107,.3);background:rgba(255,107,107,.07);}
 
+/* ── HELP BUTTON ── */
+.help-btn{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.06);border:1px solid var(--bord2);
+  color:var(--dim2);font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:.2s;flex-shrink:0;
+  user-select:none;
+}
+.help-btn:hover{background:rgba(212,148,58,.18);border-color:var(--gold);color:var(--gold2);}
+
+/* ── GUIDED TOUR OVERLAY ── */
+.tour-overlay{
+  position:fixed;inset:0;z-index:9000;pointer-events:none;
+  opacity:0;transition:opacity .3s;
+}
+.tour-overlay.active{opacity:1;pointer-events:auto;}
+
+/* dark mask with cutout */
+.tour-mask{
+  position:absolute;inset:0;
+  background:rgba(4,3,10,.82);
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+}
+
+/* spotlight hole — drawn via box-shadow trick */
+.tour-spotlight{
+  position:absolute;
+  border-radius:8px;
+  box-shadow:0 0 0 9999px rgba(4,3,10,.82);
+  border:2px solid var(--gold);
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+  z-index:9001;
+}
+
+/* tour card */
+.tour-card{
+  position:absolute;
+  width:300px;
+  background:linear-gradient(145deg,#16121e,#0e0b16);
+  border:1px solid rgba(212,148,58,.35);
+  border-radius:10px;
+  padding:18px 20px 14px;
+  box-shadow:0 16px 40px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);
+  z-index:9002;
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+}
+.tour-step-label{
+  font-family:'Rajdhani',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:6px;
+  display:flex;align-items:center;gap:8px;
+}
+.tour-step-dots{display:flex;gap:4px;margin-left:auto;}
+.tour-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.15);}
+.tour-dot.active{background:var(--gold);}
+.tour-title{
+  font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;
+  color:#fff;margin-bottom:7px;line-height:1.1;
+}
+.tour-desc{
+  font-size:.73rem;color:var(--dim2);line-height:1.65;margin-bottom:14px;
+}
+.tour-desc b{color:var(--gold2);font-weight:600;}
+.tour-actions{display:flex;align-items:center;justify-content:space-between;}
+.tour-skip{
+  font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:var(--dim);cursor:pointer;transition:.2s;
+  background:transparent;border:none;
+}
+.tour-skip:hover{color:#e05a5a;}
+.tour-nav{display:flex;gap:8px;}
+.tour-btn{
+  font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;padding:6px 14px;border-radius:4px;cursor:pointer;transition:.2s;
+  border:1px solid var(--bord2);background:rgba(255,255,255,.05);color:var(--dim2);
+}
+.tour-btn:hover{background:rgba(255,255,255,.1);color:var(--text);}
+.tour-btn.primary{background:var(--accent-dim);border-color:var(--gold);color:var(--gold2);}
+.tour-btn.primary:hover{background:rgba(212,148,58,.3);}
+
 /* ── CUSTOM WEAPON DROPDOWN ── */
 .wpn-dropdown-wrap{position:relative;}
 
@@ -75,7 +157,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .wpn-trigger-arrow{flex-shrink:0;color:var(--dim2);font-size:0.6rem;transition:transform .2s;}
 .wpn-trigger.open .wpn-trigger-arrow{transform:rotate(180deg);}
 
-/* filter badge on trigger */
 .wpn-filter-badge{
   flex-shrink:0;background:var(--accent);color:#fff;
   font-family:'Rajdhani',sans-serif;font-size:.55rem;font-weight:700;letter-spacing:.5px;
@@ -97,7 +178,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 }
 .wpn-panel.open{display:flex;}
 
-/* search row inside panel */
 .wpn-panel-search{
   padding:10px 10px 8px;
   border-bottom:1px solid var(--bord);
@@ -111,7 +191,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .wpn-search-input:focus{border-color:var(--gold);background:rgba(255,255,255,.08);}
 .wpn-search-input::placeholder{color:var(--dim);}
 
-/* filter pills inside panel */
 .wpn-panel-filters{
   padding:8px 10px;border-bottom:1px solid var(--bord);
   display:flex;flex-direction:column;gap:6px;
@@ -137,7 +216,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .filter-clear-small{margin-left:auto;padding:3px 8px;border:1px solid var(--bord);border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);background:transparent;cursor:pointer;transition:.18s;flex-shrink:0;}
 .filter-clear-small:hover{color:#e05a5a;border-color:rgba(224,90,90,.4);background:rgba(224,90,90,.08);}
 
-/* weapon list inside panel */
 .wpn-list{
   overflow-y:auto;
   max-height:320px;
@@ -173,6 +251,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   display:flex;
   flex-direction:column;
   height:100vh;
+  height:100svh;
   overflow:hidden;
 }
 
@@ -380,15 +459,152 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .rec-row{display:flex;flex-wrap:wrap;gap:6px;}
 .rec-badge{font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:rgba(109,220,154,.1);border:1px solid rgba(109,220,154,.25);color:#6ddc9a;}
 
-@media(max-width:960px){.right-panel{width:320px;}}
-@media(max-width:720px){
-  .layout{flex-direction:column;}
-  .sidebar{flex-direction:row;width:100%;height:52px;padding:0 16px;border-right:none;border-bottom:1px solid var(--bord);}
-  .card-stage{min-height:320px;padding:20px 16px;flex:none;}
-  .card-3d-wrap{width:220px;height:330px;}
-  .right-panel{width:100%;border-left:none;border-top:1px solid var(--bord);flex:1;min-height:0;}
-  .wpn-trigger{min-width:160px;max-width:200px;}
-  .wpn-panel{width:calc(100vw - 24px);right:auto;left:50%;transform:translateX(-50%);}
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — full coverage
+   Breakpoints:
+     xs  : ≤ 480px   (phones portrait)
+     sm  : 481–768px (phones landscape / small tablet)
+     md  : 769–960px (tablet portrait / small laptop)
+     lg  : 961–1200px (tablet landscape / laptop)
+     xl+ : > 1200px  (desktop — base styles)
+   ═══════════════════════════════════════════════════ */
+
+/* ── LARGE TABLET (≤ 1200px) ── */
+@media(max-width:1200px){
+  .right-panel{ width:360px; }
+}
+
+/* ── MEDIUM / TABLET PORTRAIT (≤ 960px) ── */
+@media(max-width:960px){
+  .right-panel{ width:300px; }
+  .panel-head{ padding:20px 20px 16px; }
+  .panel-body{ padding:16px 20px; }
+  .wpn-name{ font-size:1.9rem; }
+}
+
+/* ── SMALL TABLET / LARGE PHONE LANDSCAPE (≤ 768px) ── */
+@media(max-width:768px){
+  /* allow page to scroll vertically */
+  html, body { height:auto; overflow-x:hidden; overflow-y:auto; }
+  .shell{ height:auto; min-height:100svh; overflow:visible; }
+
+  /* stack layout vertically */
+  .layout{ flex-direction:column; overflow:visible; }
+
+  /* topbar: compact */
+  .topbar{ padding:0 12px; height:52px; }
+  .breadcrumb{ font-size:.65rem; letter-spacing:1.5px; }
+  .breadcrumb .cur{ max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .save-badge{ display:none; }
+
+  /* weapon selector: shrink trigger */
+  .wpn-trigger{ min-width:0; max-width:180px; font-size:.72rem; padding:5px 8px 5px 10px; }
+  .wpn-trigger-label{ max-width:100px; }
+  /* panel: full-width from top bar */
+  .wpn-panel{
+    width:calc(100vw - 16px);
+    right:auto; left:50%;
+    transform:translateX(-50%);
+    max-height:60vh;
+  }
+  .wpn-panel-filters .wpn-filter-row{ flex-wrap:wrap; gap:4px; }
+
+  /* sidebar: horizontal bottom-of-topbar row */
+  .sidebar{
+    flex-direction:row; width:100%; height:48px;
+    padding:0 16px; gap:8px;
+    border-right:none; border-bottom:1px solid var(--bord);
+    justify-content:flex-start;
+  }
+  .sb-btn{ width:38px; height:38px; }
+  .sb-tip{ left:50%; top:calc(100% + 8px); transform:translateX(-50%); }
+
+  /* card stage: shrink, don't flex-grow to fill half the screen */
+  .card-stage{
+    flex:none; padding:24px 16px 20px;
+    min-height:280px; height:auto;
+  }
+  .card-3d-wrap{ width:200px; height:300px; }
+
+  /* right panel: full width, scrolls naturally */
+  .right-panel{
+    width:100%; flex:none;
+    border-left:none; border-top:1px solid var(--bord);
+    overflow-y:visible; max-height:none;
+  }
+  .panel-head{ padding:18px 16px 14px; position:relative; top:auto; }
+  .panel-body{ padding:14px 16px; gap:16px; }
+  .wpn-name{ font-size:1.7rem; }
+
+  /* modal: full width */
+  .modal-box{ padding:20px 16px; }
+  .mat-grid{ grid-template-columns:repeat(3,1fr); gap:8px; }
+
+  /* tour card: responsive width */
+  .tour-card{ width:calc(100vw - 32px); max-width:320px; }
+}
+
+/* ── PHONE PORTRAIT (≤ 480px) ── */
+@media(max-width:480px){
+  /* topbar: tighten further */
+  .topbar{ padding:0 10px; gap:8px; }
+  .logo-mark{ width:28px; height:28px; font-size:12px; }
+  .breadcrumb{ gap:5px; font-size:.6rem; }
+  .help-btn{ width:28px; height:28px; font-size:.75rem; }
+  .wpn-trigger{ max-width:140px; font-size:.68rem; padding:5px 8px; gap:5px; }
+  .wpn-trigger-label{ max-width:80px; }
+  .wpn-trigger-arrow{ font-size:.55rem; }
+  .wpn-filter-badge{ font-size:.5rem; padding:1px 5px; }
+
+  /* weapon panel: full viewport minus small margins */
+  .wpn-panel{ width:calc(100vw - 12px); max-height:70vh; }
+  .wpn-search-input{ font-size:.75rem; }
+  .fpill{ font-size:.58rem; padding:2px 7px; }
+  .filter-clear-small{ font-size:.55rem; padding:2px 6px; }
+
+  /* card stage */
+  .card-stage{ padding:16px 12px; min-height:240px; }
+  .card-3d-wrap{ width:175px; height:262px; }
+  .card-letter{ font-size:6rem; }
+  .card-wpn-name{ font-size:1.2rem; }
+  .card-star{ width:8px; height:8px; }
+  .card-level-badge{ font-size:.75rem; padding:2px 6px; }
+  .card-type-badge{ font-size:.52rem; padding:4px 8px; }
+
+  /* panel */
+  .panel-head{ padding:14px 14px 12px; }
+  .wpn-name{ font-size:1.5rem; letter-spacing:2px; }
+  .wpn-type-label{ font-size:.6rem; }
+  .wpn-star{ width:11px; height:11px; }
+  .panel-body{ padding:12px 14px; gap:14px; }
+
+  /* stats */
+  .stat-block{ padding:11px 13px; }
+  .stat-block-val{ font-size:1.4rem; }
+  .sub-stat{ padding:8px 10px; }
+  .sub-stat-val{ font-size:.78rem; }
+
+  /* level slider — bigger thumb for touch */
+  .slider-wrap{ height:8px; }
+  .slider-thumb{ width:18px; height:18px; }
+
+  /* notes */
+  .notes-block{ padding:12px 13px; }
+  .tag-add-wrap{ flex-direction:column; }
+  .tag-add-btn{ width:100%; text-align:center; padding:7px 12px; }
+
+  /* modal */
+  .modal-box{ padding:16px 14px; border-radius:10px; }
+  .modal-title{ font-size:1.1rem; }
+  .track-row{ flex-wrap:wrap; gap:10px; justify-content:center; }
+  .mat-grid{ grid-template-columns:repeat(2,1fr); gap:8px; }
+  .mat-card{ padding:10px 8px; }
+  .mat-icon{ width:32px; height:32px; }
+
+  /* tour card */
+  .tour-card{ width:calc(100vw - 24px); max-width:none; left:12px !important; padding:14px 16px 12px; }
+  .tour-title{ font-size:1rem; }
+  .tour-desc{ font-size:.68rem; }
 }
 </style>
 </head>
@@ -397,6 +613,26 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-ring"></div>
   <div class="loading-text">Loading Arsenal</div>
+</div>
+
+<!-- GUIDED TOUR OVERLAY -->
+<div class="tour-overlay" id="tourOverlay">
+  <div class="tour-spotlight" id="tourSpotlight"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-step-label">
+      <span id="tourStepNum">Step 1 of 7</span>
+      <div class="tour-step-dots" id="tourDots"></div>
+    </div>
+    <div class="tour-title" id="tourTitle">Weapon Selector</div>
+    <div class="tour-desc" id="tourDesc">Click here to open the full weapon list.</div>
+    <div class="tour-actions">
+      <button class="tour-skip" id="tourSkip" onclick="endTour()">Skip Tour</button>
+      <div class="tour-nav">
+        <button class="tour-btn" id="tourPrev" onclick="tourStep(-1)">← Back</button>
+        <button class="tour-btn primary" id="tourNext" onclick="tourStep(1)">Next →</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="shell">
@@ -414,6 +650,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     <div class="topbar-right">
       <div class="save-badge" id="saveBadge">● Saved</div>
 
+      <!-- HELP BUTTON -->
+      <div class="help-btn" id="helpBtn" title="Page tour" onclick="startTour()">?</div>
+
       <!-- FUSED WEAPON DROPDOWN -->
       <div class="wpn-dropdown-wrap" id="wpnDropdownWrap">
         <div class="wpn-trigger" id="wpnTrigger">
@@ -422,11 +661,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
           <span class="wpn-trigger-arrow">▾</span>
         </div>
         <div class="wpn-panel" id="wpnPanel">
-          <!-- Search -->
           <div class="wpn-panel-search">
             <input class="wpn-search-input" id="wpnSearch" type="text" placeholder="Search weapons…" autocomplete="off">
           </div>
-          <!-- Filters -->
           <div class="wpn-panel-filters">
             <div class="wpn-filter-row">
               <span class="wpn-filter-group-label">Rarity</span>
@@ -445,7 +682,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
               <button class="fpill" data-group="type" data-val="Arts Unit">Arts Unit</button>
             </div>
           </div>
-          <!-- Weapon list -->
           <div class="wpn-list" id="wpnList"></div>
         </div>
       </div>
@@ -507,7 +743,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       </div>
       <div class="panel-body">
 
-        <div class="level-block">
+        <div class="level-block" id="levelBlock">
           <div class="level-header">
             <span class="level-label">Weapon Level</span>
             <span class="level-val" id="lvDisplay">1<span>/ 90</span></span>
@@ -523,7 +759,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
           <div class="milestone-row" id="milestonePips"></div>
         </div>
 
-        <div class="stat-block">
+        <div class="stat-block" id="atkBlock">
           <div class="stat-block-left">
             <div class="stat-icon-wrap">
               <svg viewBox="0 0 14 14" fill="none"><path d="M2 12L12 2M9 2h3v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -545,7 +781,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 
         <div class="divider"></div>
 
-        <div class="notes-block">
+        <div class="notes-block" id="notesBlock">
           <div class="notes-label">
             Notes & Tags
             <span class="notes-autosave" id="notesAutosave">Auto-saved</span>
@@ -590,6 +826,168 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 </div>
 
 <script>
+/* =========================================================
+   GUIDED TOUR
+   ========================================================= */
+const TOUR_STEPS = [
+  {
+    targetId: 'wpnTrigger',
+    title: 'Weapon Selector',
+    desc: 'Click here to open the full weapon browser. You can <b>search by name</b>, filter by <b>rarity (3–6 ★)</b>, and filter by <b>weapon type</b> — all at once.',
+    cardPos: 'below-left',
+    pad: 8,
+  },
+  {
+    targetId: 'wpnDropdownWrap',
+    title: 'Search & Filters',
+    desc: 'Inside the dropdown, use the <b>search bar</b> to find weapons instantly. Click the <b>rarity</b> or <b>type pills</b> to narrow your list. A badge on the selector button shows how many filters are active.',
+    cardPos: 'below-left',
+    pad: 8,
+  },
+  {
+    targetId: 'card3d',
+    title: '3D Weapon Card',
+    desc: 'This is the live weapon card. <b>Hover over it</b> to trigger a slow 360° spin, or <b>click and drag</b> to grab it. The card color, stripe, and glow all change to match the weapon\'s type.',
+    cardPos: 'right',
+    pad: 16,
+  },
+  {
+    targetId: 'levelBlock',
+    title: 'Level Slider',
+    desc: '<b>Drag the slider</b> to set the weapon\'s current level. The Base ATK and all substats scale in real-time. Small <b>milestone pips</b> below the bar light up as you pass ascension breakpoints.',
+    cardPos: 'left',
+    pad: 12,
+  },
+  {
+    targetId: 'atkBlock',
+    title: 'Base ATK',
+    desc: 'Shows the weapon\'s <b>Base ATK at your chosen level</b>. The value flashes gold whenever it updates. Substats below this also scale with level.',
+    cardPos: 'left',
+    pad: 12,
+  },
+  {
+    targetId: 'sb-track',
+    title: 'Material Tracker',
+    desc: 'Click this sidebar button to open the <b>Materials Needed</b> panel. Set a current and target level to see exactly which upgrade materials — and how many — you\'ll need.',
+    cardPos: 'right',
+    pad: 12,
+  },
+  {
+    targetId: 'notesBlock',
+    title: 'Notes & Tags',
+    desc: 'Type personal <b>build notes</b> here — comparisons, to-do reminders, anything. Add <b>custom tags</b> (e.g. "BiS", "farming") and click them to remove. Everything <b>auto-saves</b> per weapon.',
+    cardPos: 'left',
+    pad: 12,
+  },
+];
+
+let tourStepIdx = 0;
+let tourActive  = false;
+
+function startTour() {
+  tourActive = true;
+  tourStepIdx = 0;
+  document.getElementById('tourOverlay').classList.add('active');
+  renderTourStep(tourStepIdx);
+}
+
+function endTour() {
+  tourActive = false;
+  document.getElementById('tourOverlay').classList.remove('active');
+}
+
+function tourStep(delta) {
+  tourStepIdx = Math.max(0, Math.min(TOUR_STEPS.length - 1, tourStepIdx + delta));
+  renderTourStep(tourStepIdx);
+}
+
+function renderTourStep(idx) {
+  const step   = TOUR_STEPS[idx];
+  const total  = TOUR_STEPS.length;
+  const target = document.getElementById(step.targetId);
+
+  // dots
+  let dots = '';
+  for (let i = 0; i < total; i++) dots += `<div class="tour-dot${i===idx?' active':''}"></div>`;
+  document.getElementById('tourDots').innerHTML = dots;
+  document.getElementById('tourStepNum').textContent = `Step ${idx+1} of ${total}`;
+  document.getElementById('tourTitle').textContent  = step.title;
+  document.getElementById('tourDesc').innerHTML     = step.desc;
+
+  // prev/next buttons
+  const prev = document.getElementById('tourPrev');
+  const next = document.getElementById('tourNext');
+  prev.style.display = idx === 0 ? 'none' : '';
+  next.textContent   = idx === total - 1 ? 'Finish ✓' : 'Next →';
+  next.onclick       = idx === total - 1 ? endTour : () => tourStep(1);
+
+  if (!target) return;
+
+  // position spotlight
+  const rect   = target.getBoundingClientRect();
+  const pad    = step.pad || 8;
+  const sp     = document.getElementById('tourSpotlight');
+  sp.style.top    = (rect.top    - pad) + 'px';
+  sp.style.left   = (rect.left   - pad) + 'px';
+  sp.style.width  = (rect.width  + pad*2) + 'px';
+  sp.style.height = (rect.height + pad*2) + 'px';
+
+  // position card
+  const card = document.getElementById('tourCard');
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const isMobile = vw <= 600;
+  const cardW = isMobile ? vw - 24 : 300;
+  const cardH = 200;
+
+  if (isMobile) {
+    // always pin to bottom on mobile
+    card.style.left   = '12px';
+    card.style.right  = '12px';
+    card.style.width  = '';
+    card.style.bottom = '16px';
+    card.style.top    = 'auto';
+    return;
+  }
+
+  card.style.bottom = '';
+  card.style.right  = '';
+  card.style.width  = '';
+
+  let cx, cy;
+  const pos = step.cardPos || 'below-left';
+  if (pos === 'below-left') {
+    cx = Math.min(rect.right - cardW, vw - cardW - 16);
+    cy = rect.bottom + pad + 12;
+  } else if (pos === 'below-right') {
+    cx = rect.left;
+    cy = rect.bottom + pad + 12;
+  } else if (pos === 'right') {
+    cx = rect.right + pad + 16;
+    cy = rect.top + rect.height/2 - cardH/2;
+  } else if (pos === 'left') {
+    cx = rect.left - cardW - pad - 16;
+    cy = rect.top + rect.height/2 - cardH/2;
+  }
+
+  cx = Math.max(12, Math.min(vw - cardW - 12, cx));
+  cy = Math.max(12, Math.min(vh - cardH - 12, cy));
+
+  card.style.left = cx + 'px';
+  card.style.top  = cy + 'px';
+}
+
+// Esc key closes tour
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && tourActive) endTour();
+});
+
+// re-position on resize
+window.addEventListener('resize', () => {
+  if (tourActive) renderTourStep(tourStepIdx);
+});
+
+
 /* =========================================================
    SUPABASE CONFIG
    ========================================================= */
@@ -638,9 +1036,6 @@ const MAX_LEVEL  = { 6:90, 5:80, 4:70, 3:60 };
 const ATK_MIN    = { 6:48, 5:38, 4:32, 3:27 };
 const MILESTONES = { 6:[20,40,60,80,90], 5:[20,40,60,80], 4:[20,40,60,70], 3:[20,40,60] };
 
-/* =========================================================
-   SUBSTAT SCALING
-   ========================================================= */
 const SUBSTAT_SCALE = {
   atk_pct:   { min:0.60, label:(v)=>`Attack +${v.toFixed(2)}%` },
   crit_rate: { min:0.60, label:(v)=>`Critical Rate +${v.toFixed(2)}%` },
@@ -699,99 +1094,16 @@ function scaledSubstat(parsed, level, maxLv) {
   return cfg.label(val);
 }
 
-/* =========================================================
-   SKILL RENDER FUNCTIONS
-   ========================================================= */
-function renderAttr(label, v) { return `${label} <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`; }
-function renderPct(label, v) { return `${label} <span class="hl">+${typeof v === 'number' ? v.toFixed(1) : v}%</span>`; }
-
 const SKILL_RENDERS = {
-  intellect:(v)=>renderAttr('Intellect',v), agility:(v)=>renderAttr('Agility',v), strength:(v)=>renderAttr('Strength',v),
-  will:(v)=>renderAttr('Willpower',v), mainattr:(v)=>renderAttr('Main Attribute',v), artsint:(v)=>renderAttr('Arts Intensity',v),
-  attack:(v)=>renderPct('Attack',v), physdmg:(v)=>renderPct('Physical DMG Bonus',v), artsdmg:(v)=>renderPct('Arts DMG Bonus',v),
-  heatdmg:(v)=>renderPct('Heat DMG Bonus',v), cryodmg:(v)=>renderPct('Cryo DMG Bonus',v), electdmg:(v)=>renderPct('Electric DMG Bonus',v),
-  natdmg:(v)=>renderPct('Nature DMG Bonus',v), hp:(v)=>renderPct('Max HP',v), ugeff:(v)=>renderPct('Ultimate Gain Efficiency',v),
-  trtbonus:(v)=>renderPct('Treatment Bonus',v), critrate:(v)=>renderPct('Critical Rate',v),
-  twilight_blazing_wail:(v)=>`Heat DMG Dealt <span class="hl">+${v.h}%</span>. When the wielder casts an ultimate, gains Basic Attack DMG Dealt <span class="hl-atk">+${v.u}%</span> for 20s.`,
-  twilight_azure_clouds:(v)=>`Battle skills and ultimates gain Physical DMG Dealt <span class="hl">+${v.p}%</span>. Against Staggered enemies, also gain DMG Dealt <span class="hl-atk">+${v.d}%</span>.`,
-  twilight_lingering_glow:(v)=>`ATK <span class="hl">+${v.a}%</span>. When skill applies Vulnerability, during next ultimate within 30s, gains DMG Dealt <span class="hl-atk">+${v.d}%</span>. Max 3 stacks.`,
-  twilight_humiliation:(v)=>`Critical Rate <span class="hl">+${v.c}%</span>. When casting ultimate, gains Arts DMG Dealt <span class="hl-atk">+${v.u}%</span> for 15s. Combo skill gains Arts DMG Dealt <span class="hl-atk">+${v.cs}%</span> for 15s.`,
-  twilight_lustrous_pyre:(v)=>`Max HP <span class="hl">+${v.h}%</span>. When casting ultimate, operators with different elements gain ATK <span class="hl-atk">+${v.a}%</span> for 20s.`,
-  twilight_imposing_peak:(v)=>`Ultimate DMG Dealt <span class="hl">+${v.u}%</span>. After applying Lifted, during next ultimate within 30s, gains Physical DMG Dealt <span class="hl-atk">+${v.p}%</span>. Max 3 stacks.`,
-  infliction_long_time_wish:(v)=>`Arts Intensity <span class="hl">+${v.ai}</span>. When applying Originium Crystals or Solidification, next battle skill/ultimate within 20s gains Physical DMG Dealt <span class="hl-atk">+${v.p}%</span>.`,
-  infliction_covetous_buildup:(v)=>`ATK <span class="hl">+${v.a}%</span>. Whenever Combustion or Corrosion is applied, gains Heat and Nature DMG Dealt <span class="hl-atk">+${v.d}%</span> for 20s. Max 2 stacks.`,
-  infliction_white_night_nova:(v)=>`Arts DMG Dealt <span class="hl">+${v.d}%</span>. After applying Combustion or Electrification, gains Arts DMG Dealt <span class="hl-atk">+${v.d}%</span> and Arts Intensity <span class="hl-atk">+${v.ai}</span> for 15s.`,
-  infliction_sincere_interrogation:(v)=>`Secondary Attribute <span class="hl">+${v.s}%</span>. After consuming an Arts Reaction, ATK <span class="hl-atk">+${v.a}%</span> for 20s. Max 2 stacks.`,
-  infliction_conquest_of_icy_peaks:(v)=>`DMG Dealt <span class="hl">+${v.d}%</span> against enemies with Cryo Infliction or Solidification. After consuming Solidification, ATK <span class="hl-atk">+${v.a}%</span> for 15s.`,
-  infliction_vicious_purge:(v)=>`Arts DMG <span class="hl">+${v.a}%</span>. After consuming an Arts Reaction, target suffers Arts DMG Taken <span class="hl-atk">+${v.d}%</span> for 15s. Once every 25s.`,
-  infliction_olden_moon:(v)=>`ATK <span class="hl">+${v.a}%</span>. For 20s after casting combo skill, next battle skill gains Cryo and Nature DMG Dealt <span class="hl-atk">+${v.d}%</span>. Max 2 stacks.`,
-  infliction_lone_distant_sail:(v)=>`Critical Rate <span class="hl">+${v.c}%</span>. When Solidification or Corrosion is applied, gains Cryo and Nature DMG Dealt <span class="hl-atk">+${v.d}%</span> and Critical Rate <span class="hl-atk">+${v.cr}%</span> for 15s.`,
-  infliction_wedge:(v)=>`Arts DMG Dealt <span class="hl">+${v.b}%</span>. Battle skill: Arts DMG Dealt <span class="hl-atk">+${v.s}%</span> for 15s. If Arts Reaction triggered: Arts DMG Dealt <span class="hl-atk">+${v.r}%</span> for 15s.`,
-  infliction_tidal_murmurs:(v)=>`Secondary Attribute <span class="hl">+${v.s}%</span>. After consuming Corrosion, target suffers Arts DMG Taken <span class="hl-atk">+${v.d}%</span> for 25s.`,
-  infliction_road_home:(v)=>`Critical Rate <span class="hl">+${v.c}%</span>. When applying an Arts Reaction, gains ATK <span class="hl-atk">+${v.a}%</span> for 20s. Max 2 stacks.`,
-  infliction_wilderness_cluster:(v)=>`Arts Intensity <span class="hl">+${v.ai}</span>. When applying Electrification, team gains Physical DMG Dealt and Electric DMG Dealt <span class="hl-atk">+${v.d}%</span> for 15s.`,
-  flow_reincarnation:(v)=>`Physical DMG Dealt <span class="hl">+${v.p}%</span>. After skill recovers SP, gains Physical DMG Dealt <span class="hl-atk">+${v.s}%</span> while others gain <span class="hl-atk">+${v.t}%</span> for 30s. Max 5 stacks.`,
-  flow_thermal_release:(v)=>`ATK <span class="hl">+${v.a}%</span>. After skill recovers SP or grants Link state, team gains ATK <span class="hl-atk">+${v.t}%</span> for 20s. Max 2 stacks.`,
-  flow_unbridled_edge:(v)=>`Secondary Attribute <span class="hl">+${v.s}%</span>. After skill recovers SP, team gains Heat DMG Dealt and Electric DMG Dealt <span class="hl-atk">+${v.d}%</span> for 20s. Max 3 stacks.`,
-  flow_overlapping:(v)=>`ATK <span class="hl">+${v.a}%</span>. When gaining Electric Amp, also gains Electric DMG Dealt <span class="hl-atk">+${v.e}%</span> for 30s. Max 3 stacks.`,
-  brutality_disciplinarian:(v)=>`ATK <span class="hl">+${v.a}%</span>. After consuming Vulnerability stacks, gains ATK <span class="hl-atk">+[${v.b}% + ${v.m}%×Stacks]</span> while others gain half for 20s.`,
-  brutality_cemented_fury:(v)=>`Critical Rate <span class="hl">+${v.c}%</span>. When applying Vulnerability to enemy with none, ATK <span class="hl-atk">+${v.a}%</span> for 15s.`,
-  brutality_lands_of_yore:(v)=>`Arts Intensity <span class="hl">+${v.ai}</span>. After consuming Vulnerability stacks, gains Physical DMG Dealt <span class="hl-atk">+[${v.p}%×Stacks]</span> for 20s.`,
-  suppression_emergency_boost:(v)=>`When battle skill hits enemy, gains ATK <span class="hl">+${v}%</span> for 20s.`,
-  suppression_fin_chaser_s_intent:(v)=>`ATK <span class="hl">+${v.a}%</span>. When battle skill applies Solidification, target suffers Cryo DMG Taken <span class="hl-atk">+${v.c}%</span> for 15s.`,
-  suppression_astrophysics:(v)=>`Arts DMG Dealt <span class="hl">+${v.b}%</span>. Battle skill: Arts DMG Dealt <span class="hl-atk">+${v.s}%</span> for 15s. Combo skill: Arts DMG Dealt <span class="hl-atk">+${v.c}%</span> for 15s.`,
-  suppression_stacked_hew:(v)=>`Physical DMG Dealt <span class="hl">+${v.b}%</span>. When battle skill or ultimate hits, gains Physical DMG Dealt <span class="hl-atk">+${v.s}%</span> for 30s. Max 3 stacks.`,
-  suppression_tillite_etchings:(v)=>`ATK <span class="hl">+${v.a}%</span>. When battle skill applies Nature Infliction, others gain Arts DMG Dealt <span class="hl-atk">+${v.t}%</span> for 15s. Per enemy: +${v.b}%.`,
-  suppression_concentric_circles:(v)=>`Combo Skill DMG Dealt <span class="hl">+${v.c}%</span>. After combo skill, next battle skill within 30s gains Electric DMG Dealt <span class="hl-atk">+${v.e}%</span>. Max 3 stacks.`,
-  suppression_streaming_blitz:(v)=>`Electric DMG Dealt <span class="hl">+${v.b}%</span>. When battle skill consumes Arts Reactions, gains Battle Skill Electric DMG Dealt <span class="hl-atk">+${v.s}%</span> for 20s (max 2). After ultimate: +${v.u}% for 25s.`,
-  suppression_weight_of_mountain:(v)=>`Against Vulnerable enemies, DMG Dealt <span class="hl">+${v.d}%</span>. Battle skill Vulnerability/Physical Susceptibility: All Attributes <span class="hl-atk">+${v.a}%</span> for 15s.`,
-  suppression_olden_moon:(v)=>`ATK <span class="hl">+${v.a}%</span>. For 20s after combo skill, next battle skill gains Cryo and Nature DMG Dealt <span class="hl-atk">+${v.d}%</span>. Max 2 stacks.`,
-  crusher_princely_deterrence:(v)=>`When performing Final Strike, gains ATK <span class="hl">+${v.a}%</span> for 8s. If also controlled operator, double ATK and Stagger <span class="hl-atk">+${v.sg}%</span>.`,
-  fracture_gnashing_wolves:(v)=>`ATK <span class="hl">+${v.a}%</span>. After Critical DMG, gains 1 stack Wolven Blood (Physical/Heat DMG Dealt <span class="hl-atk">+${v.s}%</span>/stack). At 16 stacks: <span class="hl-atk">+${v.b}%</span> for 20s.`,
-  fracture_artzy:(v)=>`Cryo DMG Dealt <span class="hl">+${v.b}%</span>. After critical hit with battle/combo skill, gains Cryo DMG Dealt <span class="hl-atk">+${v.s}%</span> for 30s. Max 3 stacks.`,
-  detonate_bonechilling:(v)=>`Skill DMG Dealt <span class="hl">+${v.s}%</span>. Battle skill Cryo Infliction: Cryo DMG Dealt <span class="hl-atk">+${v.c1}%</span> for 15s. Combo on enemy with Cryo: Cryo DMG Dealt <span class="hl-atk">+${v.c2}%</span> for 15s.`,
-  detonate_seeker:(v)=>`Main Attribute <span class="hl">+${v.m}%</span>. When applying Arts Burst, gains ATK <span class="hl-atk">+${v.a}%</span> for 30s. Max 3 stacks.`,
-  detonate_imposing_champ:(v)=>`Secondary Attribute <span class="hl">+${v.s}%</span>. When applying Arts Burst, target suffers Arts DMG Taken <span class="hl-atk">+${v.d}%</span> for 15s.`,
-  detonate_brigands_bane:(v)=>`Cryo DMG Dealt <span class="hl">+${v.b}%</span>. When applying Cryo Infliction via battle skill/ultimate, gains Cryo DMG Dealt <span class="hl-atk">+${v.c}%</span> for 20s. Arts Susceptibility: Arts DMG Taken <span class="hl-atk">+${v.a}%</span> for 20s.`,
-  detonate_rapid_strike:(v)=>`ATK <span class="hl">+${v.a}%</span>. After consuming Arts Infliction, gains Nature DMG Dealt <span class="hl-atk">+[${v.d}%×Stacks]</span> for 20s.`,
-  medicant_eye_of_talos:(v)=>`Shield applied <span class="hl">+${v.s}%</span>. After combo skill HP treatment, controlled operator gains Shield [<span class="hl-atk">${v.h}%</span>×Max HP] for 15s. Once every 15s.`,
-  medicant_mincing_therapy:(v)=>`Treatment Efficiency <span class="hl">+${v.t}%</span>. After Protected operator takes DMG, restores HP by [<span class="hl-atk">${v.h}</span> + Will×1.96]. Once every 15s.`,
-  medicant_glory:(v)=>`Secondary Attribute <span class="hl">+${v.s}%</span>. Combo skill HP treatment <span class="hl-atk">+${v.h}%</span>.`,
-  medicant_blight_fervor:(v)=>`Treatment Efficiency <span class="hl">+${v.t}%</span>. After skill HP treatment, team gains ATK <span class="hl-atk">+${v.a}%</span> for 15s.`,
-  medicant_redemption:(v)=>`Main Attribute <span class="hl">+${v.m}%</span>. When battle skill provides HP treatment, controlled operator restores [<span class="hl-atk">${v.h}</span> + Will×1.4] HP. Once every 15s.`,
-  efficacy_tenacious_will:(v)=>`Secondary Attribute <span class="hl">+${v.s}%</span>. When applying Knocked Down or Weakened, gains DEF <span class="hl-atk">+${v.d}%</span> for 15s.`,
-  inspiring_back_to_city:(v)=>`ATK <span class="hl">+${v.a}%</span>. Arts Intensity <span class="hl-atk">+${v.ai}</span>.`,
-  inspiring_start_of_saga:(v)=>`When HP is above 80%, ATK <span class="hl">+${v}%</span>.`,
-  inspiring_mortise:(v)=>`Main Attribute <span class="hl">+${v.m}%</span>. Arts Intensity <span class="hl-atk">+${v.ai}</span>.`,
-  pursuit_unending_cycle:(v)=>`When casting combo skill, gains ATK <span class="hl">+${v}%</span> for 20s.`,
-  pursuit_aid_from_past:(v)=>`Battle Skill DMG <span class="hl">+${v.b}%</span>. When combo skill applies Arts Burst or Combusted, gains ATK <span class="hl-atk">+${v.a}%</span> for 15s.`,
-  pursuit_transcendent_arts:(v)=>`Max HP <span class="hl">+${v.h}%</span>. When combo skill applies Arts Burst or Physical Status, team gains Heat DMG Dealt and Electric DMG Dealt <span class="hl-atk">+${v.d}%</span> for 15s.`,
-  pursuit_duty_fulfilled:(v)=>`Nature DMG Dealt <span class="hl">+${v.n}%</span>. After combo skill applies Lifted, team gains Arts DMG Dealt <span class="hl-atk">+${v.t}%</span> for 15s. Per Lifted: +${v.b}% (max +${v.mx}%).`,
-  combative_anthem:(v)=>`ATK <span class="hl">+${v.a}%</span>. When dealing Physical Status, gains ATK <span class="hl-atk">+${v.s}%</span> for 20s. Max 2 stacks.`,
-  combative_virtuous_gain:(v)=>`ATK <span class="hl">+${v.a}%</span>. After applying Physical Statuses, deals Physical DMG hit equal to <span class="hl-atk">${v.s}%</span> of ATK.`,
-  assault:(v)=>`ATK <span class="hl">+${v}</span>.`,
-};
-
-const SKILL_ID_ALIASES = {
-  'fracture_artzy':'fracture_artzy','detonate_brigands_bane':'detonate_brigands_bane',
-  'medicant_glory_of_knighthood':'medicant_glory','medicant_redemption_of_faith':'medicant_redemption',
-  'detonate_imposing_champion':'detonate_imposing_champ','detonate_seeker_of_the_esoteric':'detonate_seeker',
-  'infliction_lone_and_distant_sail':'infliction_lone_distant_sail','infliction_wedge_of_civilization':'infliction_wedge',
-  'infliction_road_home_for_all_life':'infliction_road_home','inspiring_back_to_the_broken_city':'inspiring_back_to_city',
-  'inspiring_start_of_a_saga':'inspiring_start_of_saga','inspiring_mortise_and_tenon_analysis':'inspiring_mortise',
-  'pursuit_aid_from_the_past':'pursuit_aid_from_past','combative_anthem_of_cinder':'combative_anthem',
-  'efficacy_overlapping_flickers':'flow_overlapping','efficacy_weight_of_mountain':'suppression_weight_of_mountain',
-  'efficacy_mincing_therapy':'medicant_mincing_therapy','suppression_olden_moon':'infliction_olden_moon',
+  intellect:(v)=>`Intellect <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`,
+  agility:(v)=>`Agility <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`,
+  strength:(v)=>`Strength <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`,
+  will:(v)=>`Willpower <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`,
+  attack:(v)=>`Attack <span class="hl">+${typeof v === 'number' ? v.toFixed(1) : v}%</span>`,
 };
 
 function resolveRenderFn(skillId, skillName, data) {
   if (SKILL_RENDERS[skillId]) return SKILL_RENDERS[skillId];
-  const alias = SKILL_ID_ALIASES[skillId];
-  if (alias && SKILL_RENDERS[alias]) return SKILL_RENDERS[alias];
-  const slug = (skillName||'').toLowerCase().replace(/['']/g,'_').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
-  if (SKILL_RENDERS[slug]) return SKILL_RENDERS[slug];
-  const aliasSlug = SKILL_ID_ALIASES[slug];
-  if (aliasSlug && SKILL_RENDERS[aliasSlug]) return SKILL_RENDERS[aliasSlug];
   const sample = Array.isArray(data) ? data[0] : null;
   if (sample !== null && typeof sample === 'object') {
     return (v) => Object.entries(v).map(([k,val])=>`${k.toUpperCase()}: <span class="hl">${typeof val==='number'?val.toFixed(1):val}</span>`).join(' · ');
@@ -872,22 +1184,17 @@ function weaponMatchesFilters(w) {
 function updateFilterBadge() {
   const count = activeFilters.rarity.size + activeFilters.type.size;
   const badge = document.getElementById('wpnFilterBadge');
-  if (count > 0) {
-    badge.textContent = count;
-    badge.classList.add('visible');
-  } else {
-    badge.classList.remove('visible');
-  }
+  if (count > 0) { badge.textContent = count; badge.classList.add('visible'); }
+  else badge.classList.remove('visible');
 }
 
 /* =========================================================
-   CUSTOM DROPDOWN — render weapon list
+   CUSTOM DROPDOWN
    ========================================================= */
 function renderWpnList() {
   const list = document.getElementById('wpnList');
   const groups = { 6:[], 5:[], 4:[], 3:[] };
   WEAPONS.filter(weaponMatchesFilters).forEach(w => groups[w.rarity]?.push(w));
-
   let html = '';
   let total = 0;
   [6,5,4,3].forEach(r => {
@@ -903,71 +1210,43 @@ function renderWpnList() {
       </div>`;
     });
   });
-
-  if (total === 0) {
-    html = '<div class="wpn-no-results">No weapons match</div>';
-  }
+  if (total === 0) html = '<div class="wpn-no-results">No weapons match</div>';
   list.innerHTML = html;
 }
 
-function selectWeapon(id) {
-  closeDropdown();
-  navigateWeapon(id);
-}
-
+function selectWeapon(id) { closeDropdown(); navigateWeapon(id); }
 function openDropdown() {
   document.getElementById('wpnPanel').classList.add('open');
   document.getElementById('wpnTrigger').classList.add('open');
-  // focus search
   setTimeout(() => document.getElementById('wpnSearch').focus(), 50);
   renderWpnList();
 }
-
 function closeDropdown() {
   document.getElementById('wpnPanel').classList.remove('open');
   document.getElementById('wpnTrigger').classList.remove('open');
 }
-
 function toggleDropdown() {
   const panel = document.getElementById('wpnPanel');
-  if (panel.classList.contains('open')) closeDropdown();
-  else openDropdown();
+  if (panel.classList.contains('open')) closeDropdown(); else openDropdown();
 }
 
-// close on outside click
 document.addEventListener('mousedown', e => {
   const wrap = document.getElementById('wpnDropdownWrap');
   if (!wrap.contains(e.target)) closeDropdown();
 });
 
 document.getElementById('wpnTrigger').addEventListener('click', toggleDropdown);
+document.getElementById('wpnSearch').addEventListener('input', e => { searchQuery = e.target.value; renderWpnList(); });
+document.getElementById('wpnSearch').addEventListener('keydown', e => { if(e.key==='Escape') closeDropdown(); });
 
-// search inside panel
-document.getElementById('wpnSearch').addEventListener('input', e => {
-  searchQuery = e.target.value;
-  renderWpnList();
-});
-document.getElementById('wpnSearch').addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeDropdown();
-});
-
-/* =========================================================
-   FILTER PILLS (inside panel)
-   ========================================================= */
 document.querySelectorAll('.fpill').forEach(pill => {
   pill.addEventListener('click', e => {
     e.stopPropagation();
     const group = pill.dataset.group;
     const val   = pill.dataset.val;
     const set   = activeFilters[group];
-    if (set.has(val)) {
-      set.delete(val);
-      pill.className = 'fpill';
-    } else {
-      set.add(val);
-      const cls = group==='rarity' ? `active-r${val}` : `active-${val.replace(/\s+/g,'')}`;
-      pill.classList.add(cls);
-    }
+    if (set.has(val)) { set.delete(val); pill.className = 'fpill'; }
+    else { set.add(val); pill.classList.add(group==='rarity'?`active-r${val}`:`active-${val.replace(/\s+/g,'')}`); }
     updateFilterBadge();
     renderWpnList();
   });
@@ -975,13 +1254,10 @@ document.querySelectorAll('.fpill').forEach(pill => {
 
 document.getElementById('filterClear').addEventListener('click', e => {
   e.stopPropagation();
-  activeFilters.rarity.clear();
-  activeFilters.type.clear();
-  searchQuery = '';
-  document.getElementById('wpnSearch').value = '';
+  activeFilters.rarity.clear(); activeFilters.type.clear();
+  searchQuery = ''; document.getElementById('wpnSearch').value = '';
   document.querySelectorAll('.fpill').forEach(p => { p.className = 'fpill'; });
-  updateFilterBadge();
-  renderWpnList();
+  updateFilterBadge(); renderWpnList();
 });
 
 /* =========================================================
@@ -990,16 +1266,12 @@ document.getElementById('filterClear').addEventListener('click', e => {
 async function loadWeapon(id) {
   const w = WEAPONS.find(x => x.id === id);
   if (!w) return;
-  curWeapon = w;
-  skillLevels = {};
-
+  curWeapon = w; skillLevels = {};
   const cfg   = TYPE_CFG[w.type] || TYPE_CFG['Sword'];
   const maxLv = MAX_LEVEL[w.rarity] || 90;
-
   document.documentElement.style.setProperty('--accent', cfg.accent);
   document.documentElement.style.setProperty('--accent-dim', cfg.dim);
   document.documentElement.style.setProperty('--accent-glow', cfg.glow);
-
   document.getElementById('cardBg').style.background    = cfg.card;
   document.getElementById('cardLetter').textContent     = w.name.charAt(0);
   document.getElementById('cardLetter').style.color     = cfg.accent;
@@ -1018,45 +1290,34 @@ async function loadWeapon(id) {
     `0 0 60px ${cfg.glow},0 0 120px rgba(0,0,0,.3)`;
   document.getElementById('backPattern').style.backgroundImage =
     `repeating-linear-gradient(45deg,${cfg.accent} 0,${cfg.accent} 1px,transparent 0,transparent 50%)`;
-
   document.getElementById('bc-name').textContent = w.name;
   document.title = `${w.name} — Arknights: Endfield`;
   document.getElementById('panelTypeLabel').textContent = w.type;
   document.getElementById('panelWpnName').textContent   = w.name;
   buildPanelStars(w.rarity);
-
-  // update trigger label
   document.getElementById('wpnTriggerLabel').textContent = w.name;
-
   document.getElementById('sliderMaxLabel').textContent = maxLv;
   document.getElementById('trackEnd').max   = maxLv;
   document.getElementById('trackEnd').value = maxLv;
-
   parsedStats.stat1 = parseStatString(w.stat1);
   parsedStats.stat2 = parseStatString(w.stat2);
   buildMilestonePips(w.rarity);
-
   const flav = document.getElementById('flavorText');
   flav.textContent   = w.flavor || '';
   flav.style.display = w.flavor ? '' : 'none';
-
   const recBlock = document.getElementById('recBlock');
   const recRow   = document.getElementById('recRow');
   const recs = Array.isArray(w.recommended_for) ? w.recommended_for.filter(Boolean) : [];
   if (recs.length) { recBlock.style.display = ''; recRow.innerHTML = recs.map(r=>`<span class="rec-badge">${r}</span>`).join(''); }
   else recBlock.style.display = 'none';
-
   const skills = DB_WEAPON_SKILLS[id] || [];
   skills.forEach((sk,i) => { skillLevels[i] = sk.defaultLv; });
-
   const progress   = await fetchProgress(id);
   const savedLevel = progress?.level ?? maxLv;
   curTags = progress?.tags ?? [];
   document.getElementById('notesArea').value = progress?.notes ?? '';
   renderTags();
-
   document.getElementById('rightPanel').scrollTop = 0;
-
   updateLevel(savedLevel);
 }
 
@@ -1282,7 +1543,6 @@ function navigateWeapon(id) {
   url.searchParams.set('weapon', id);
   window.history.replaceState({},'',url);
   loadWeapon(id);
-  // re-render list so selection highlight updates
   renderWpnList();
 }
 init();
