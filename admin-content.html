@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DJIANG — Content Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ── ROOT ── */
+:root {
+  --bg: #07080b; --bg2: #0c0d12; --bg3: #10111a;
+  --teal: #00e5c0; --purple: #6b4fa0;
+  --gold: #d4943a; --gold2: #f0b866;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+  --text: #e4e0d8; --dim: #5a5868; --dim2: #8a8694;
+  --error: #e05a5a; --success: #6ddc9a;
+  --navbar-h: 52px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.025) 3px, rgba(0,0,0,0.025) 4px);
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--navbar-h);
+  background: rgba(7,8,11,0.97); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; z-index: 1000; backdrop-filter: blur(16px);
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 4px; color: var(--teal); }
+.topbar-sep { width: 1px; height: 20px; background: var(--border2); }
+.topbar-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold); padding: 3px 10px;
+  border: 1px solid rgba(212,148,58,0.35); border-radius: 2px; background: rgba(212,148,58,0.08);
+}
+.topbar-badge::before { content: '■'; font-size: 6px; opacity: 0.7; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.user-avatar {
+  width: 30px; height: 30px; border-radius: 2px; background: var(--purple);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; color: #fff;
+  border: 1px solid rgba(107,79,160,0.5);
+}
+.user-info { display: flex; flex-direction: column; }
+.user-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.user-role { font-family: 'Rajdhani', sans-serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+.btn-signout {
+  padding: 7px 16px; background: transparent; border: 1px solid var(--border2);
+  border-radius: 2px; color: var(--dim2); font-family: 'Rajdhani', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-signout:hover { border-color: var(--error); color: var(--error); }
+
+/* ── LAYOUT ── */
+.layout { display: flex; padding-top: var(--navbar-h); min-height: 100vh; position: relative; z-index: 1; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px; flex-shrink: 0; border-right: 1px solid var(--border);
+  padding: 24px 0; position: sticky; top: var(--navbar-h); height: calc(100vh - var(--navbar-h));
+  overflow-y: auto; background: rgba(10,11,16,0.8);
+}
+.sidebar-section { margin-bottom: 24px; }
+.sidebar-label { padding: 0 20px 10px; font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); }
+.sidebar-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 20px;
+  color: var(--dim2); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; position: relative; user-select: none;
+}
+.sidebar-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.sidebar-item.active { color: var(--teal); background: rgba(0,229,192,0.05); }
+.sidebar-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--teal); }
+.sidebar-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+.sidebar-badge {
+  margin-left: auto; font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700;
+  padding: 2px 7px; border-radius: 2px; background: rgba(0,229,192,0.12); color: var(--teal); letter-spacing: 1px;
+}
+
+/* ── MAIN ── */
+.main { flex: 1; padding: 28px 32px; overflow-x: hidden; }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 28px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.page-header h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
+.page-header .sub { font-size: 12px; color: var(--dim2); letter-spacing: 1px; margin-top: 4px; }
+.header-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* ── PANEL ── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── STATS GRID ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 18px 20px;
+  position: relative; overflow: hidden;
+}
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; }
+.stat-card.teal::before   { background: linear-gradient(90deg, transparent, var(--teal), transparent); }
+.stat-card.gold::before   { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.stat-card.purple::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+.stat-card.red::before    { background: linear-gradient(90deg, transparent, var(--error), transparent); }
+.stat-label { font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+.stat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 700; color: #fff; line-height: 1; }
+.stat-val.teal   { color: var(--teal); }
+.stat-val.gold   { color: var(--gold2); }
+.stat-val.purple { color: #b090ff; }
+.stat-val.red    { color: #f07070; }
+.stat-delta { font-size: 11px; color: var(--dim2); margin-top: 5px; }
+
+/* ── TABLE CARD ── */
+.table-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+.table-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.table-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim2); flex-shrink: 0; }
+.table-search {
+  flex: 1; min-width: 160px; max-width: 260px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+  border-radius: 3px; padding: 8px 12px; color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; outline: none; transition: border-color 0.2s;
+}
+.table-search:focus { border-color: rgba(0,229,192,0.3); }
+.table-search::placeholder { color: var(--dim); }
+
+table { width: 100%; border-collapse: collapse; }
+thead tr { border-bottom: 1px solid var(--border); }
+th {
+  padding: 11px 14px; text-align: left;
+  font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--dim); cursor: pointer; user-select: none; white-space: nowrap;
+}
+th:hover { color: var(--dim2); }
+tbody tr { border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.15s; }
+tbody tr:hover { background: rgba(255,255,255,0.025); }
+td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
+
+.cell-main { font-weight: 600; color: var(--text); }
+.cell-sub  { font-size: 11px; color: var(--dim2); margin-top: 2px; }
+
+/* Rarity stars */
+.stars { color: var(--gold2); font-size: 11px; letter-spacing: 1px; }
+.stars.r6 { color: #f0a040; }
+.stars.r5 { color: #b8b0ff; }
+.stars.r4 { color: #a0c8e0; }
+.stars.r3 { color: var(--dim2); }
+
+/* Tag badge */
+.tag {
+  display: inline-block; padding: 2px 8px; border-radius: 2px; font-family: 'Rajdhani', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+}
+.tag-heat     { background: rgba(224,120,60,0.15); color: #f09060; border: 1px solid rgba(224,120,60,0.3); }
+.tag-cryo     { background: rgba(80,180,220,0.12); color: #80d4f0; border: 1px solid rgba(80,180,220,0.25); }
+.tag-electric { background: rgba(180,140,255,0.12); color: #c0a0ff; border: 1px solid rgba(180,140,255,0.25); }
+.tag-physical { background: rgba(160,160,160,0.1); color: #b0b0b0; border: 1px solid rgba(160,160,160,0.2); }
+.tag-nature   { background: rgba(80,200,120,0.12); color: #80d890; border: 1px solid rgba(80,200,120,0.25); }
+.tag-default  { background: rgba(255,255,255,0.06); color: var(--dim2); border: 1px solid var(--border); }
+
+/* Action buttons */
+.action-row { display: flex; gap: 6px; }
+.btn-action {
+  padding: 5px 12px; background: transparent; border: 1px solid var(--border2); border-radius: 2px;
+  color: var(--dim2); font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.btn-action:hover        { border-color: rgba(255,255,255,0.3); color: var(--text); }
+.btn-action.edit:hover   { border-color: var(--teal); color: var(--teal); }
+.btn-action.delete:hover { border-color: var(--error); background: rgba(224,90,90,0.08); color: var(--error); }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; background: transparent; border: 1px solid var(--teal); border-radius: 3px;
+  color: var(--teal); font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.btn-primary::before { content: ''; position: absolute; inset: 0; background: var(--teal); transform: translateX(-101%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); z-index: 0; }
+.btn-primary:hover::before { transform: translateX(0); }
+.btn-primary:hover { color: #000; }
+.btn-primary > * { position: relative; z-index: 1; }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; background: rgba(255,255,255,0.04); border: 1px solid var(--border2); border-radius: 3px;
+  color: var(--dim2); font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: rgba(255,255,255,0.25); color: var(--text); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000;
+  display: flex; align-items: flex-start; justify-content: center; padding: 60px 20px 20px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(4px);
+  overflow-y: auto;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: 4px;
+  padding: 32px 28px; width: 100%; max-width: 680px;
+  transform: translateY(12px); transition: transform 0.2s; position: relative;
+  flex-shrink: 0; margin: auto;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--teal), transparent); opacity: 0.5; }
+.modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+.modal-sub { font-size: 13px; color: var(--dim2); margin-bottom: 24px; line-height: 1.5; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
+.modal-close {
+  position: absolute; top: 16px; right: 16px; width: 28px; height: 28px;
+  background: transparent; border: 1px solid var(--border); border-radius: 2px;
+  color: var(--dim2); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.modal-close:hover { border-color: var(--border2); color: var(--text); }
+
+/* Form fields */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid.cols-1 { grid-template-columns: 1fr; }
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-label {
+  font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--dim2);
+}
+.form-label span { color: var(--error); margin-left: 2px; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 3px;
+  padding: 10px 13px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px;
+  transition: all 0.2s; outline: none;
+}
+.form-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: rgba(0,229,192,0.4); background: rgba(0,0,0,0.6); }
+.form-select { background-color: var(--bg2); cursor: pointer; }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--dim); }
+.form-hint { font-size: 11px; color: var(--dim); }
+
+/* Section divider inside modal */
+.form-section {
+  margin: 20px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  font-family: 'Rajdhani', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--dim);
+}
+
+/* Dynamic list inside modal (skills, potentials etc) */
+.dyn-list { display: flex; flex-direction: column; gap: 8px; }
+.dyn-item {
+  display: flex; gap: 8px; align-items: flex-start; background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border); border-radius: 3px; padding: 10px 12px;
+}
+.dyn-item .form-input, .dyn-item .form-textarea { background: rgba(0,0,0,0.3); }
+.dyn-remove {
+  flex-shrink: 0; padding: 6px 10px; background: transparent; border: 1px solid var(--border);
+  border-radius: 2px; color: var(--dim); font-size: 12px; cursor: pointer; transition: all 0.15s;
+  margin-top: 1px;
+}
+.dyn-remove:hover { border-color: var(--error); color: var(--error); }
+.btn-add-item {
+  margin-top: 6px; padding: 7px 14px; background: transparent; border: 1px dashed rgba(0,229,192,0.25);
+  border-radius: 3px; color: rgba(0,229,192,0.6); font-family: 'Rajdhani', sans-serif; font-size: 10px;
+  font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  width: 100%; text-align: center;
+}
+.btn-add-item:hover { border-color: var(--teal); color: var(--teal); }
+
+/* ── TOAST ── */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
+.toast {
+  padding: 12px 18px; border-radius: 3px; font-size: 13px; font-weight: 500;
+  animation: toastIn 0.3s ease; max-width: 340px; display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+@keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+.toast.success { background: rgba(109,220,154,0.15); border: 1px solid rgba(109,220,154,0.35); color: var(--success); }
+.toast.error   { background: rgba(224,90,90,0.15);  border: 1px solid rgba(224,90,90,0.35);  color: #f4a0a0; }
+.toast.info    { background: rgba(0,229,192,0.1);   border: 1px solid rgba(0,229,192,0.25);  color: var(--teal); }
+
+/* ── EMPTY / LOADING ── */
+.table-loading { padding: 40px; text-align: center; color: var(--dim2); font-size: 13px; }
+.spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border2); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty-state { padding: 52px 20px; text-align: center; }
+.empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.35; }
+.empty-text { font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); }
+
+/* Pagination */
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 12px; }
+.pagination-info { font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: 1px; color: var(--dim2); }
+
+/* Filter pills */
+.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.filter-pill {
+  padding: 5px 12px; background: transparent; border: 1px solid var(--border); border-radius: 2px;
+  color: var(--dim2); font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+}
+.filter-pill:hover { border-color: var(--border2); color: var(--text); }
+.filter-pill.active { border-color: var(--teal); color: var(--teal); background: rgba(0,229,192,0.06); }
+
+/* Confirm modal */
+.confirm-modal { max-width: 400px; }
+.confirm-icon { font-size: 32px; margin-bottom: 12px; }
+.confirm-icon.danger { color: var(--error); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { padding: 20px 16px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  table { font-size: 12px; }
+  td, th { padding: 9px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">DJIANG</div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-badge">Content Admin</div>
+  </div>
+  <div class="topbar-right">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="user-avatar" id="topbar-avatar">A</div>
+      <div class="user-info">
+        <div class="user-name" id="topbar-name">Loading...</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+    <button class="btn-signout" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Content</div>
+      <div class="sidebar-item active" onclick="showPanel('operators')" id="nav-operators">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>
+        Operators
+        <span class="sidebar-badge" id="sidebar-op-count">—</span>
+      </div>
+      <div class="sidebar-item" onclick="showPanel('weapons')" id="nav-weapons">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 2l20 20"/></svg>
+        Weapons
+        <span class="sidebar-badge" id="sidebar-wpn-count">—</span>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Navigation</div>
+      <div class="sidebar-item" onclick="window.location.href='admin.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        User Admin
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='index.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Main Site
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ══════════ OPERATORS PANEL ══════════ -->
+    <div class="panel active" id="panel-operators">
+      <div class="page-header">
+        <div>
+          <h1>Operators</h1>
+          <div class="sub">Manage character roster · Add, Edit, Remove</div>
+        </div>
+        <div class="header-actions">
+          <input type="text" class="table-search" id="op-search" placeholder="Search operators..." oninput="renderOperators()" style="max-width:220px">
+          <div class="filter-bar" id="op-rarity-filter">
+            <button class="filter-pill active" data-val="all" onclick="setOpFilter('rarity','all',this)">All</button>
+            <button class="filter-pill" data-val="6" onclick="setOpFilter('rarity','6',this)">6★</button>
+            <button class="filter-pill" data-val="5" onclick="setOpFilter('rarity','5',this)">5★</button>
+            <button class="filter-pill" data-val="4" onclick="setOpFilter('rarity','4',this)">4★</button>
+          </div>
+          <button class="btn-primary" onclick="openOpModal()"><span>+ Add Operator</span></button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card teal"><div class="stat-label">Total</div><div class="stat-val teal" id="op-stat-total">—</div></div>
+        <div class="stat-card gold"><div class="stat-label">6-Star</div><div class="stat-val gold" id="op-stat-6">—</div></div>
+        <div class="stat-card purple"><div class="stat-label">5-Star</div><div class="stat-val purple" id="op-stat-5">—</div></div>
+        <div class="stat-card red"><div class="stat-label">4-Star</div><div class="stat-val red" id="op-stat-4">—</div></div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Operator Roster</div>
+          <button class="btn-secondary" onclick="loadOperators()">↺ Refresh</button>
+        </div>
+        <div id="op-table-container">
+          <div class="table-loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ WEAPONS PANEL ══════════ -->
+    <div class="panel" id="panel-weapons">
+      <div class="page-header">
+        <div>
+          <h1>Weapons</h1>
+          <div class="sub">Manage weapon database · Add, Edit, Remove</div>
+        </div>
+        <div class="header-actions">
+          <input type="text" class="table-search" id="wpn-search" placeholder="Search weapons..." oninput="renderWeapons()" style="max-width:220px">
+          <div class="filter-bar" id="wpn-type-filter">
+            <button class="filter-pill active" data-val="all" onclick="setWpnFilter('type','all',this)">All</button>
+            <button class="filter-pill" data-val="Sword"     onclick="setWpnFilter('type','Sword',this)">Sword</button>
+            <button class="filter-pill" data-val="Greatsword" onclick="setWpnFilter('type','Greatsword',this)">Greatsword</button>
+            <button class="filter-pill" data-val="Polearm"   onclick="setWpnFilter('type','Polearm',this)">Polearm</button>
+            <button class="filter-pill" data-val="Handcannon" onclick="setWpnFilter('type','Handcannon',this)">Handcannon</button>
+            <button class="filter-pill" data-val="Arts Unit" onclick="setWpnFilter('type','Arts Unit',this)">Arts Unit</button>
+          </div>
+          <button class="btn-primary" onclick="openWpnModal()"><span>+ Add Weapon</span></button>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card teal"><div class="stat-label">Total</div><div class="stat-val teal" id="wpn-stat-total">—</div></div>
+        <div class="stat-card gold"><div class="stat-label">6-Star</div><div class="stat-val gold" id="wpn-stat-6">—</div></div>
+        <div class="stat-card purple"><div class="stat-label">5-Star</div><div class="stat-val purple" id="wpn-stat-5">—</div></div>
+        <div class="stat-card red"><div class="stat-label">4-Star &amp; Below</div><div class="stat-val red" id="wpn-stat-other">—</div></div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Weapon List</div>
+          <button class="btn-secondary" onclick="loadWeapons()">↺ Refresh</button>
+        </div>
+        <div id="wpn-table-container">
+          <div class="table-loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ══════════════════════════════════════════
+     OPERATOR MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="op-modal" onclick="if(event.target===this) closeModal('op-modal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('op-modal')">✕</button>
+    <div class="modal-title" id="op-modal-title">Add Operator</div>
+    <div class="modal-sub">Fill in the operator's core data. All fields marked <span style="color:var(--error)">*</span> are required.</div>
+
+    <div class="form-section">Core Identity</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Operator Name <span>*</span></label>
+        <input class="form-input" id="op-name" placeholder="e.g. Fiammetta">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Title / Subtitle</label>
+        <input class="form-input" id="op-title" placeholder="e.g. Flame of the Empire">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rarity <span>*</span></label>
+        <select class="form-select" id="op-rarity">
+          <option value="">Select rarity...</option>
+          <option value="6">6 ★</option>
+          <option value="5">5 ★</option>
+          <option value="4">4 ★</option>
+          <option value="3">3 ★</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Class <span>*</span></label>
+        <select class="form-select" id="op-class">
+          <option value="">Select class...</option>
+          <option>Striker</option><option>Guard</option><option>Vanguard</option>
+          <option>Caster</option><option>Defender</option><option>Supporter</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Element <span>*</span></label>
+        <select class="form-select" id="op-element">
+          <option value="">Select element...</option>
+          <option>Heat</option><option>Cryo</option><option>Electric</option>
+          <option>Physical</option><option>Nature</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Weapon Type <span>*</span></label>
+        <select class="form-select" id="op-weapon">
+          <option value="">Select weapon...</option>
+          <option value="Sword">Sword</option>
+          <option value="Great Sword">Greatsword</option>
+          <option value="Polearm">Polearm</option>
+          <option value="Hand Cannon">Hand Cannon</option>
+          <option value="Arts Unit">Arts Unit</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-section">Stats at Max Level</div>
+    <div class="form-grid cols-3">
+      <div class="form-group">
+        <label class="form-label">Base HP</label>
+        <input class="form-input" id="op-hp" type="number" placeholder="e.g. 8500">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Base ATK</label>
+        <input class="form-input" id="op-atk" type="number" placeholder="e.g. 720">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Base DEF</label>
+        <input class="form-input" id="op-def" type="number" placeholder="e.g. 440">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Primary Stat Type</label>
+        <select class="form-select" id="op-primary-type">
+          <option value="">None</option>
+          <option>AGI</option><option>INT</option><option>STR</option><option>WILL</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Primary Stat Value</label>
+        <input class="form-input" id="op-primary-val" type="number" placeholder="e.g. 177">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Crit Rate %</label>
+        <input class="form-input" id="op-crit" type="number" step="0.1" placeholder="e.g. 5.0">
+      </div>
+    </div>
+
+    <div class="form-section">Description & Media</div>
+    <div class="form-grid cols-1">
+      <div class="form-group">
+        <label class="form-label">Operator Quote / Flavor Text</label>
+        <input class="form-input" id="op-quote" placeholder="e.g. A veteran of the imperial forces...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Character Key (URL slug) <span>*</span></label>
+        <input class="form-input" id="op-key" placeholder="e.g. fiammetta (used in CharacterIntroduction.html?char=…)">
+        <div class="form-hint">Lowercase, no spaces. Must match JS data key in CharacterIntroduction.js.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Portrait Image URL</label>
+        <input class="form-input" id="op-img" placeholder="https://…/portrait.webp">
+      </div>
+      <div class="form-group">
+        <label class="form-label">YouTube Video Guide ID</label>
+        <input class="form-input" id="op-video" placeholder="e.g. dQw4w9WgXcQ">
+      </div>
+    </div>
+
+    <div class="form-section">Skills <span style="font-size:9px;font-weight:400;letter-spacing:1px;color:var(--dim)">(add up to 4)</span></div>
+    <div class="dyn-list" id="op-skills-list"></div>
+    <button class="btn-add-item" onclick="addSkillRow()">+ Add Skill</button>
+
+    <div class="form-section">Talents <span style="font-size:9px;font-weight:400;letter-spacing:1px;color:var(--dim)">(add up to 4)</span></div>
+    <div class="dyn-list" id="op-talents-list"></div>
+    <button class="btn-add-item" onclick="addTalentRow()">+ Add Talent</button>
+
+    <div class="form-section">Additional</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Tier Rating</label>
+        <select class="form-select" id="op-tier">
+          <option value="">Unrated</option>
+          <option value="S+">S+</option><option value="S">S</option><option value="A+">A+</option>
+          <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Available In Gacha?</label>
+        <select class="form-select" id="op-gacha">
+          <option value="true">Yes</option>
+          <option value="false">No (Event / Login)</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notes / Admin Remarks</label>
+        <textarea class="form-textarea" id="op-notes" placeholder="Internal notes..."></textarea>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('op-modal')">Cancel</button>
+      <button class="btn-primary" onclick="saveOperator()"><span id="op-save-txt">Save Operator</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     WEAPON MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="wpn-modal" onclick="if(event.target===this) closeModal('wpn-modal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('wpn-modal')">✕</button>
+    <div class="modal-title" id="wpn-modal-title">Add Weapon</div>
+    <div class="modal-sub">Fill in weapon details. Fields marked <span style="color:var(--error)">*</span> are required.</div>
+
+    <div class="form-section">Core Details</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Weapon Name <span>*</span></label>
+        <input class="form-input" id="wpn-name" placeholder="e.g. Blazing Sun">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rarity <span>*</span></label>
+        <select class="form-select" id="wpn-rarity">
+          <option value="">Select rarity...</option>
+          <option value="6">6 ★</option><option value="5">5 ★</option>
+          <option value="4">4 ★</option><option value="3">3 ★</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type <span>*</span></label>
+        <select class="form-select" id="wpn-type">
+          <option value="">Select type...</option>
+          <option value="Sword">Sword</option>
+          <option value="Greatsword">Greatsword</option>
+          <option value="Polearm">Polearm</option>
+          <option value="Handcannon">Handcannon</option>
+          <option value="Arts Unit">Arts Unit</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Base ATK</label>
+        <input class="form-input" id="wpn-atk" type="number" placeholder="e.g. 608">
+      </div>
+    </div>
+
+    <div class="form-section">Sub-stat</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Sub-stat Type</label>
+        <select class="form-select" id="wpn-substat-type">
+          <option value="">None</option>
+          <option value="ATK%">ATK%</option>
+          <option value="HP">Max HP</option>
+          <option value="Crit Rate">Crit Rate</option>
+          <option value="Main Attribute">Main Attribute</option>
+          <option value="AGI">Agility</option><option value="INT">Intellect</option>
+          <option value="STR">Strength</option><option value="WILL">Will</option>
+          <option value="Cryo DMG">Cryo DMG</option>
+          <option value="Electric DMG">Electric DMG</option>
+          <option value="Heat DMG">Heat DMG</option>
+          <option value="Nature DMG">Nature DMG</option>
+          <option value="Physical DMG">Physical DMG</option>
+          <option value="Arts DMG">Arts DMG</option>
+          <option value="Arts Intensity">Arts Intensity</option>
+          <option value="Ultimate Gain">Ult. Gain Eff.</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sub-stat Value</label>
+        <input class="form-input" id="wpn-substat-val" placeholder="e.g. 12.8% or 480">
+      </div>
+    </div>
+
+    <div class="form-section">Skill / Passive</div>
+    <div class="form-grid cols-1">
+      <div class="form-group">
+        <label class="form-label">Skill Name</label>
+        <input class="form-input" id="wpn-skill-name" placeholder="e.g. Emberflare">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Skill Description (at max refinement)</label>
+        <textarea class="form-textarea" id="wpn-skill-desc" placeholder="e.g. When the wielder uses a skill, gain 12% ATK for 6s. Stacks up to 3 times..."></textarea>
+      </div>
+    </div>
+
+    <div class="form-section">Refinements <span style="font-size:9px;font-weight:400;letter-spacing:1px;color:var(--dim)">(R1 → R5)</span></div>
+    <div class="dyn-list" id="wpn-refine-list"></div>
+    <button class="btn-add-item" onclick="addRefineRow()">+ Add Refinement Level</button>
+
+    <div class="form-section">Media & Notes</div>
+    <div class="form-grid cols-1">
+      <div class="form-group">
+        <label class="form-label">Icon / Image URL</label>
+        <input class="form-input" id="wpn-img" placeholder="https://…/weapon.webp">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes / Admin Remarks</label>
+        <textarea class="form-textarea" id="wpn-notes" placeholder="Internal notes, sourcing info..."></textarea>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('wpn-modal')">Cancel</button>
+      <button class="btn-primary" onclick="saveWeapon()"><span id="wpn-save-txt">Save Weapon</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal" onclick="if(event.target===this) closeModal('confirm-modal')">
+  <div class="modal confirm-modal">
+    <div class="confirm-icon danger" id="confirm-icon">⚠</div>
+    <div class="modal-title" id="confirm-title">Confirm Delete</div>
+    <div class="modal-sub"  id="confirm-sub">This action cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('confirm-modal')">Cancel</button>
+      <button class="btn-primary" id="confirm-btn" style="border-color:var(--error);color:var(--error)" onclick="confirmAction()">
+        <span>Delete</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════ -->
+<script>
+const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ── STATE ── */
+let allOperators = [];
+let allWeapons   = [];
+let pendingAction = null;
+let editingOpId   = null;
+let editingWpnId  = null;
+let opFilters  = { rarity: 'all' };
+let wpnFilters = { type: 'all' };
+
+/* ════════════════════════════════════
+   AUTH GUARD
+════════════════════════════════════ */
+async function authGuard() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session?.user) { window.location.href = 'auth.html'; return null; }
+  const { data: profile } = await db.from('profiles').select('role,username,display_name').eq('id', session.user.id).single();
+  const role = profile?.role || session.user.user_metadata?.role || 'user';
+  if (role !== 'admin') {
+    toast('error', 'Access denied. Admin role required.');
+    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+    return null;
+  }
+  const displayName = profile?.display_name || profile?.username || session.user.email?.split('@')[0] || 'Admin';
+  document.getElementById('topbar-name').textContent  = displayName;
+  document.getElementById('topbar-avatar').textContent = displayName[0]?.toUpperCase() || 'A';
+  return session.user;
+}
+
+async function signOut() {
+  await db.auth.signOut();
+  window.location.href = 'auth.html';
+}
+
+/* ════════════════════════════════════
+   PANEL NAVIGATION
+════════════════════════════════════ */
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById('panel-' + name)?.classList.add('active');
+  document.getElementById('nav-' + name)?.classList.add('active');
+}
+
+/* ════════════════════════════════════
+   TOAST
+════════════════════════════════════ */
+function toast(type, msg) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3500);
+}
+
+/* ════════════════════════════════════
+   MODAL
+════════════════════════════════════ */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function confirmAction() { closeModal('confirm-modal'); pendingAction?.(); pendingAction = null; }
+
+/* ════════════════════════════════════
+   HELPERS
+════════════════════════════════════ */
+function starsHTML(r) {
+  const n = parseInt(r) || 0;
+  const cls = n === 6 ? 'r6' : n === 5 ? 'r5' : n === 4 ? 'r4' : 'r3';
+  return `<span class="stars ${cls}">${'★'.repeat(n)}</span>`;
+}
+function elementTag(el) {
+  if (!el) return '';
+  const key = el.toLowerCase();
+  const cls = ['heat','cryo','electric','physical','nature'].includes(key) ? `tag-${key}` : 'tag-default';
+  return `<span class="tag ${cls}">${el}</span>`;
+}
+function classTag(cl) {
+  return cl ? `<span class="tag tag-default">${cl}</span>` : '';
+}
+function gv(id) { return document.getElementById(id)?.value?.trim() || ''; }
+function sv(id, val) { const el = document.getElementById(id); if (el) el.value = val ?? ''; }
+
+/* ════════════════════════════════════
+   FILTER HELPERS
+════════════════════════════════════ */
+function setOpFilter(key, val, btn) {
+  opFilters[key] = val;
+  btn.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderOperators();
+}
+function setWpnFilter(key, val, btn) {
+  wpnFilters[key] = val;
+  btn.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderWeapons();
+}
+
+/* ════════════════════════════════════
+   OPERATORS — LOAD & RENDER
+════════════════════════════════════ */
+async function loadOperators() {
+  document.getElementById('op-table-container').innerHTML = '<div class="table-loading"><div class="spinner"></div></div>';
+  const { data, error } = await db.from('characters').select('*').order('rarity', { ascending: false });
+  if (error) {
+    toast('error', 'Could not load characters: ' + error.message);
+    document.getElementById('op-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-text">Failed to load — check Supabase RLS policies</div></div>';
+    allOperators = [];
+  } else {
+    allOperators = data || [];
+  }
+  updateOpStats();
+  renderOperators();
+  document.getElementById('sidebar-op-count').textContent = allOperators.length;
+}
+
+function updateOpStats() {
+  document.getElementById('op-stat-total').textContent = allOperators.length;
+  document.getElementById('op-stat-6').textContent = allOperators.filter(o => String(o.rarity) === '6').length;
+  document.getElementById('op-stat-5').textContent = allOperators.filter(o => String(o.rarity) === '5').length;
+  document.getElementById('op-stat-4').textContent = allOperators.filter(o => String(o.rarity) === '4').length;
+}
+
+function renderOperators() {
+  const q = (document.getElementById('op-search')?.value || '').toLowerCase();
+  let list = allOperators;
+  if (opFilters.rarity !== 'all') list = list.filter(o => String(o.rarity) === opFilters.rarity);
+  if (q) list = list.filter(o => (o.name||'').toLowerCase().includes(q) || (o.class||'').toLowerCase().includes(q) || (o.element||'').toLowerCase().includes(q));
+
+  if (list.length === 0) {
+    document.getElementById('op-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No operators found</div></div>';
+    return;
+  }
+
+  const rows = list.map(o => `
+    <tr>
+      <td>
+        <div class="cell-main">${o.name || '—'}</div>
+        <div class="cell-sub">${o.character_key || ''}</div>
+      </td>
+      <td>${starsHTML(o.rarity)}</td>
+      <td>${classTag(o.class)}</td>
+      <td>${elementTag(o.element)}</td>
+      <td style="color:var(--dim2);font-size:12px">${o.weapon_type || '—'}</td>
+      <td>${o.tier ? `<span class="tag tag-default">${o.tier}</span>` : '<span style="color:var(--dim)">—</span>'}</td>
+      <td>
+        <div class="action-row">
+          <button class="btn-action edit"   onclick="editOperator('${o.id}')">Edit</button>
+          <button class="btn-action delete" onclick="deleteOperator('${o.id}','${(o.name||'').replace(/'/g,'&#39;')}')">Delete</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  document.getElementById('op-table-container').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Operator</th><th>Rarity</th><th>Class</th><th>Element</th><th>Weapon</th><th>Tier</th><th>Actions</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="pagination"><div class="pagination-info">Showing ${list.length} of ${allOperators.length} operators</div></div>`;
+}
+
+/* ── OPERATOR MODAL ── */
+function resetOpModal() {
+  ['op-name','op-title','op-rarity','op-class','op-element','op-weapon',
+   'op-hp','op-atk','op-def','op-primary-type','op-primary-val','op-crit',
+   'op-quote','op-key','op-img','op-video','op-tier','op-gacha','op-notes'].forEach(id => sv(id, ''));
+  document.getElementById('op-skills-list').innerHTML  = '';
+  document.getElementById('op-talents-list').innerHTML = '';
+  sv('op-gacha', 'true');
+  editingOpId = null;
+}
+
+function openOpModal(data = null) {
+  resetOpModal();
+  document.getElementById('op-modal-title').textContent = data ? 'Edit Operator' : 'Add Operator';
+  document.getElementById('op-save-txt').textContent    = data ? 'Save Changes' : 'Save Operator';
+
+  if (data) {
+    editingOpId = data.id;
+    sv('op-name',         data.name);
+    sv('op-title',        data.title);
+    sv('op-rarity',       data.rarity);
+    sv('op-class',        data.class);
+    sv('op-element',      data.element);
+    sv('op-weapon',       data.weapon_type);
+    sv('op-hp',           data.hp);
+    sv('op-atk',          data.atk);
+    sv('op-def',          data.def);
+    sv('op-primary-type', data.primary_stat);
+    sv('op-primary-val',  data.primary_val);
+    sv('op-crit',         data.crit_rate);
+    sv('op-quote',        data.quote);
+    sv('op-key',          data.character_key);
+    sv('op-img',          data.portrait_url);
+    sv('op-video',        data.video_id);
+    sv('op-tier',         data.tier);
+    sv('op-gacha',        data.in_gacha !== false ? 'true' : 'false');
+    sv('op-notes',        data.notes);
+    (data.skills || []).forEach(sk => addSkillRow(sk));
+    (data.talents || []).forEach(tl => addTalentRow(tl));
+  }
+  openModal('op-modal');
+}
+
+function editOperator(id) {
+  const op = allOperators.find(o => o.id === id);
+  if (op) openOpModal(op);
+}
+
+function addSkillRow(sk = {}) {
+  const list = document.getElementById('op-skills-list');
+  const idx  = list.children.length;
+  const div  = document.createElement('div');
+  div.className = 'dyn-item';
+  div.innerHTML = `
+    <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+      <input class="form-input" placeholder="Skill name" value="${sk.name||''}">
+      <textarea class="form-textarea" placeholder="Skill description / effect..." style="min-height:60px">${sk.desc||''}</textarea>
+      <input class="form-input" placeholder="Multiplier at max rank (e.g. 320%)" value="${sk.multiplier||''}">
+    </div>
+    <button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
+  list.appendChild(div);
+}
+
+function addTalentRow(tl = {}) {
+  const list = document.getElementById('op-talents-list');
+  const div  = document.createElement('div');
+  div.className = 'dyn-item';
+  div.innerHTML = `
+    <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+      <input class="form-input" placeholder="Talent name" value="${tl.name||''}">
+      <textarea class="form-textarea" placeholder="Talent description..." style="min-height:60px">${tl.desc||''}</textarea>
+    </div>
+    <button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
+  list.appendChild(div);
+}
+
+function collectSkills() {
+  return [...document.getElementById('op-skills-list').children].map(div => {
+    const inputs = div.querySelectorAll('input,textarea');
+    return { name: inputs[0].value.trim(), desc: inputs[1].value.trim(), multiplier: inputs[2].value.trim() };
+  }).filter(s => s.name);
+}
+
+function collectTalents() {
+  return [...document.getElementById('op-talents-list').children].map(div => {
+    const inputs = div.querySelectorAll('input,textarea');
+    return { name: inputs[0].value.trim(), desc: inputs[1].value.trim() };
+  }).filter(t => t.name);
+}
+
+async function saveOperator() {
+  const name = gv('op-name');
+  const key  = gv('op-key');
+  const rarity = gv('op-rarity');
+  const cls  = gv('op-class');
+  const elem = gv('op-element');
+  const wpn  = gv('op-weapon');
+
+  if (!name || !key || !rarity || !cls || !elem || !wpn) {
+    toast('error', 'Please fill in all required fields (*).');
+    return;
+  }
+
+  const payload = {
+    name,
+    title:         gv('op-title')        || null,
+    rarity:        parseInt(rarity),
+    class:         cls,
+    element:       elem,
+    weapon_type:   wpn,
+    hp:            gv('op-hp')           ? parseFloat(gv('op-hp'))  : null,
+    atk:           gv('op-atk')          ? parseFloat(gv('op-atk')) : null,
+    def:           gv('op-def')          ? parseFloat(gv('op-def')) : null,
+    primary_stat:  gv('op-primary-type') || null,
+    primary_val:   gv('op-primary-val')  ? parseFloat(gv('op-primary-val')) : null,
+    crit_rate:     gv('op-crit')         ? parseFloat(gv('op-crit')) : null,
+    quote:         gv('op-quote')        || null,
+    character_key: key,
+    portrait_url:  gv('op-img')          || null,
+    video_id:      gv('op-video')        || null,
+    tier:          gv('op-tier')         || null,
+    in_gacha:      gv('op-gacha') !== 'false',
+    notes:         gv('op-notes')        || null,
+    skills:        collectSkills(),
+    talents:       collectTalents(),
+  };
+
+  document.getElementById('op-save-txt').textContent = 'Saving…';
+
+  let error;
+  if (editingOpId) {
+    ({ error } = await db.from('characters').update(payload).eq('id', editingOpId));
+  } else {
+    ({ error } = await db.from('characters').insert(payload));
+  }
+
+  document.getElementById('op-save-txt').textContent = editingOpId ? 'Save Changes' : 'Save Operator';
+
+  if (error) { toast('error', 'Save failed: ' + error.message); return; }
+  toast('success', editingOpId ? `${name} updated.` : `${name} added to roster.`);
+  closeModal('op-modal');
+  await loadOperators();
+}
+
+function deleteOperator(id, name) {
+  pendingAction = async () => {
+    const { error } = await db.from('characters').delete().eq('id', id);
+    if (error) { toast('error', 'Delete failed: ' + error.message); return; }
+    allOperators = allOperators.filter(o => o.id !== id);
+    toast('success', `${name} removed.`);
+    updateOpStats();
+    renderOperators();
+    document.getElementById('sidebar-op-count').textContent = allOperators.length;
+  };
+  document.getElementById('confirm-title').textContent = 'Delete Operator';
+  document.getElementById('confirm-sub').textContent   = `Permanently delete "${name}"? All associated data will be lost.`;
+  openModal('confirm-modal');
+}
+
+/* ════════════════════════════════════
+   WEAPONS — LOAD & RENDER
+════════════════════════════════════ */
+async function loadWeapons() {
+  document.getElementById('wpn-table-container').innerHTML = '<div class="table-loading"><div class="spinner"></div></div>';
+  const { data, error } = await db.from('weapons').select('*').order('rarity', { ascending: false });
+  if (error) {
+    toast('error', 'Could not load weapons: ' + error.message);
+    document.getElementById('wpn-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠</div><div class="empty-text">Failed to load (check table name)</div></div>';
+    allWeapons = [];
+  } else {
+    allWeapons = data || [];
+  }
+  updateWpnStats();
+  renderWeapons();
+  document.getElementById('sidebar-wpn-count').textContent = allWeapons.length;
+}
+
+function updateWpnStats() {
+  document.getElementById('wpn-stat-total').textContent = allWeapons.length;
+  document.getElementById('wpn-stat-6').textContent     = allWeapons.filter(w => String(w.rarity) === '6').length;
+  document.getElementById('wpn-stat-5').textContent     = allWeapons.filter(w => String(w.rarity) === '5').length;
+  document.getElementById('wpn-stat-other').textContent = allWeapons.filter(w => parseInt(w.rarity) < 5).length;
+}
+
+function renderWeapons() {
+  const q = (document.getElementById('wpn-search')?.value || '').toLowerCase();
+  let list = allWeapons;
+  if (wpnFilters.type !== 'all') list = list.filter(w => (w.type||'').toLowerCase() === wpnFilters.type.toLowerCase());
+  if (q) list = list.filter(w => (w.name||'').toLowerCase().includes(q) || (w.type||'').toLowerCase().includes(q));
+
+  if (list.length === 0) {
+    document.getElementById('wpn-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No weapons found</div></div>';
+    return;
+  }
+
+  const rows = list.map(w => {
+    const sub = w.substat_type ? `${w.substat_type}: ${w.substat_value || '—'}` : '—';
+    return `
+    <tr>
+      <td>
+        <div class="cell-main">${w.name || '—'}</div>
+        <div class="cell-sub">${w.skill_name || ''}</div>
+      </td>
+      <td>${starsHTML(w.rarity)}</td>
+      <td><span class="tag tag-default">${w.type || '—'}</span></td>
+      <td style="color:var(--teal);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700">${w.base_atk || '—'}</td>
+      <td style="color:var(--dim2);font-size:12px">${sub}</td>
+      <td>
+        <div class="action-row">
+          <button class="btn-action edit"   onclick="editWeapon('${w.id}')">Edit</button>
+          <button class="btn-action delete" onclick="deleteWeapon('${w.id}','${(w.name||'').replace(/'/g,'&#39;')}')">Delete</button>
+        </div>
+      </td>
+    </tr>`}).join('');
+
+  document.getElementById('wpn-table-container').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Weapon</th><th>Rarity</th><th>Type</th><th>Base ATK</th><th>Sub-stat</th><th>Actions</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="pagination"><div class="pagination-info">Showing ${list.length} of ${allWeapons.length} weapons</div></div>`;
+}
+
+/* ── WEAPON MODAL ── */
+function resetWpnModal() {
+  ['wpn-name','wpn-rarity','wpn-type','wpn-atk','wpn-substat-type','wpn-substat-val',
+   'wpn-skill-name','wpn-skill-desc','wpn-img','wpn-notes'].forEach(id => sv(id, ''));
+  document.getElementById('wpn-refine-list').innerHTML = '';
+  editingWpnId = null;
+}
+
+function openWpnModal(data = null) {
+  resetWpnModal();
+  document.getElementById('wpn-modal-title').textContent = data ? 'Edit Weapon' : 'Add Weapon';
+  document.getElementById('wpn-save-txt').textContent    = data ? 'Save Changes' : 'Save Weapon';
+
+  if (data) {
+    editingWpnId = data.id;
+    sv('wpn-name',         data.name);
+    sv('wpn-rarity',       data.rarity);
+    sv('wpn-type',         data.type);
+    sv('wpn-atk',          data.base_atk);
+    sv('wpn-substat-type', data.substat_type);
+    sv('wpn-substat-val',  data.substat_value);
+    sv('wpn-skill-name',   data.skill_name);
+    sv('wpn-skill-desc',   data.skill_desc);
+    sv('wpn-img',          data.icon_url);
+    sv('wpn-notes',        data.notes);
+    (data.refinements || []).forEach((r, i) => addRefineRow(i + 1, r));
+  }
+  openModal('wpn-modal');
+}
+
+function editWeapon(id) {
+  const wpn = allWeapons.find(w => w.id === id);
+  if (wpn) openWpnModal(wpn);
+}
+
+function addRefineRow(level = null, val = '') {
+  const list = document.getElementById('wpn-refine-list');
+  const lvl  = level || (list.children.length + 1);
+  if (lvl > 5) { toast('info', 'Maximum 5 refinement levels.'); return; }
+  const div  = document.createElement('div');
+  div.className = 'dyn-item';
+  div.style.alignItems = 'center';
+  div.innerHTML = `
+    <span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--gold2);flex-shrink:0;width:28px">R${lvl}</span>
+    <input class="form-input" placeholder="Effect description at refinement ${lvl}..." value="${val}" style="flex:1">
+    <button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
+  list.appendChild(div);
+}
+
+function collectRefinements() {
+  return [...document.getElementById('wpn-refine-list').children].map(div => div.querySelector('input').value.trim());
+}
+
+async function saveWeapon() {
+  const name   = gv('wpn-name');
+  const rarity = gv('wpn-rarity');
+  const type   = gv('wpn-type');
+
+  if (!name || !rarity || !type) {
+    toast('error', 'Please fill in all required fields (*).');
+    return;
+  }
+
+  const payload = {
+    name,
+    rarity:        parseInt(rarity),
+    type,
+    base_atk:      gv('wpn-atk')          ? parseInt(gv('wpn-atk')) : null,
+    substat_type:  gv('wpn-substat-type') || null,
+    substat_value: gv('wpn-substat-val')  || null,
+    skill_name:    gv('wpn-skill-name')   || null,
+    skill_desc:    gv('wpn-skill-desc')   || null,
+    refinements:   collectRefinements(),
+    icon_url:      gv('wpn-img')          || null,
+    notes:         gv('wpn-notes')        || null,
+  };
+
+  document.getElementById('wpn-save-txt').textContent = 'Saving…';
+
+  let error;
+  if (editingWpnId) {
+    ({ error } = await db.from('weapons').update(payload).eq('id', editingWpnId));
+  } else {
+    ({ error } = await db.from('weapons').insert(payload));
+  }
+
+  document.getElementById('wpn-save-txt').textContent = editingWpnId ? 'Save Changes' : 'Save Weapon';
+
+  if (error) { toast('error', 'Save failed: ' + error.message); return; }
+  toast('success', editingWpnId ? `${name} updated.` : `${name} added.`);
+  closeModal('wpn-modal');
+  await loadWeapons();
+}
+
+function deleteWeapon(id, name) {
+  pendingAction = async () => {
+    const { error } = await db.from('weapons').delete().eq('id', id);
+    if (error) { toast('error', 'Delete failed: ' + error.message); return; }
+    allWeapons = allWeapons.filter(w => w.id !== id);
+    toast('success', `${name} removed.`);
+    updateWpnStats();
+    renderWeapons();
+    document.getElementById('sidebar-wpn-count').textContent = allWeapons.length;
+  };
+  document.getElementById('confirm-title').textContent = 'Delete Weapon';
+  document.getElementById('confirm-sub').textContent   = `Permanently delete "${name}"? This cannot be undone.`;
+  openModal('confirm-modal');
+}
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+(async () => {
+  const user = await authGuard();
+  if (!user) return;
+  await Promise.all([loadOperators(), loadWeapons()]);
+})();
+</script>
+</body>
+</html>

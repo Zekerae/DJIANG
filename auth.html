@@ -934,21 +934,19 @@ async function oauthLogin(provider) {
 }
 
 // ── REDIRECT BY ROLE ──────────────────────────────────────────────
-async function redirectByRole(user) {
-  if (!user) { window.location.href = 'index.html'; return; }
+// After successful sign in
+const { data: profile } = await db
+  .from('profiles')
+  .select('role')
+  .eq('id', session.user.id)
+  .single();
 
-  // Check profiles table for role
-  const { data: profile } = await db.from('profiles').select('role').eq('id', user.id).single();
-  const role = profile?.role || user.user_metadata?.role || 'user';
+const role = profile?.role || session.user.user_metadata?.role || 'user';
 
-  if (role === 'admin') {
-    window.location.href = 'admin.html';
-  } else {
-    // Check for intended destination
-    const dest = sessionStorage.getItem('auth_redirect') || 'index.html';
-    sessionStorage.removeItem('auth_redirect');
-    window.location.href = dest;
-  }
+if (role === 'admin') {
+  window.location.href = 'admin.html';
+} else {
+  window.location.href = 'index.html';
 }
 
 // ── HANDLE OAUTH CALLBACK & EXISTING SESSION ──────────────────────
