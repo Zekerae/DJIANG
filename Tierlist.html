@@ -1750,8 +1750,10 @@ async function init() {
                 for (const m of members) {
                     const gi = m.group_index || 0;
                     if (!groups[gi]) groups[gi] = [];
+                    // Try slug match first, then fall back to character_slug as name
                     const char = allChars.find(c => c.slug === m.character_slug);
-                    if (char) groups[gi].push(char.name);
+                    const displayName = char ? char.name : (charNames?.[m.character_slug] || m.character_slug);
+                    groups[gi].push(displayName);
                 }
                 team.memberGroups = Object.keys(groups).sort((a, b) => a - b).map(k => groups[k]);
                 return team;
@@ -1764,6 +1766,9 @@ async function init() {
     }
 
     renderTeamTierList(allTeams);
+    // After renderTeamTierList(allTeams); at the bottom of init()
+const totalLoaded = allChars.length + allTeams.length;
+setStatus('connected', 'DIJANG connected', `${allChars.length} operators · ${allTeams.length} teams loaded`);
 }
 
 init();
