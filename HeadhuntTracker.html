@@ -43,8 +43,23 @@
         .char-badge .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
         .dot-accent { background: var(--accent) }
         .dot-green { background: var(--green) }
-        .theme-pip { display: flex; align-items: center; gap: 6px; font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text3); text-transform: uppercase; }
-        .theme-swatch { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+        /* ─── TIP BOX ─── */
+        .tip-box { background: rgba(106,173,250,0.04); border: 1px solid rgba(106,173,250,0.18); border-left: 2px solid var(--blue); border-radius: var(--radius); margin-bottom: 14px; overflow: hidden; }
+        .tip-toggle { display: flex; align-items: center; gap: 9px; padding: 10px 14px; cursor: pointer; user-select: none; }
+        .tip-toggle:hover { background: rgba(106,173,250,0.04); }
+        .tip-icon { font-size: 11px; color: var(--blue); flex-shrink: 0; }
+        .tip-title { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--blue); flex: 1; }
+        .tip-chev { font-size: 10px; color: var(--text3); transition: transform 0.25s; flex-shrink: 0; }
+        .tip-chev.open { transform: rotate(180deg); }
+        .tip-body { display: none; padding: 0 14px 12px; }
+        .tip-body.open { display: block; }
+        .tip-body ul { padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; }
+        .tip-body ul li { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); line-height: 1.65; padding-left: 12px; position: relative; }
+        .tip-body ul li::before { content: '›'; position: absolute; left: 0; color: var(--blue); }
+        .tip-body ul li strong { color: var(--text); }
+        .tip-body ul li code { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--accent); background: var(--accent-soft); padding: 1px 5px; border: 1px solid rgba(232,97,58,0.2); border-radius: 3px; }
+        .tip-divider { height: 1px; background: rgba(106,173,250,0.12); margin: 0 14px 10px; }
 
         /* ─── LAYOUT ─── */
         main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
@@ -108,8 +123,6 @@
         .loading-box { display: none; align-items: center; gap: 10px; padding: 10px 0; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--accent); margin-top: 8px; }
         .loader { width: 12px; height: 12px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
         @keyframes spin { to { transform: rotate(360deg) } }
-
-        /* ─── INFO BOX ─── */
         .info-box { background: rgba(106,173,250,0.06); border: 1px solid rgba(106,173,250,0.2); border-left: 2px solid var(--blue); padding: 9px 12px; margin-bottom: 12px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: #93c5fd; border-radius: var(--radius-sm); line-height: 1.6; }
 
         /* ─── FOUND BANNER ─── */
@@ -123,11 +136,11 @@
         .found-pill.p-special { background: rgba(176,126,248,0.15); color: var(--purple); border: 1px solid rgba(176,126,248,0.3); }
         .found-pill.p-standard { background: rgba(106,173,250,0.12); color: var(--blue); border: 1px solid rgba(106,173,250,0.25); }
         .found-pill.p-beginner { background: rgba(240,160,64,0.12); color: var(--gold); border: 1px solid rgba(240,160,64,0.25); }
+        .found-pill.p-weapon { background: rgba(232,97,58,0.12); color: var(--accent); border: 1px solid rgba(232,97,58,0.25); }
 
         /* ─── STATS ─── */
         .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 16px; }
         @media(max-width: 680px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
-        @media(max-width: 340px) { .stats-row { grid-template-columns: 1fr; } }
         .stat-card { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid transparent; padding: 14px; border-radius: var(--radius); position: relative; overflow: hidden; }
         .stat-card.c-accent { border-top-color: var(--accent) }
         .stat-card.c-gold { border-top-color: var(--gold) }
@@ -135,16 +148,10 @@
         .stat-card.c-green { border-top-color: var(--green) }
         .stat-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
         .stat-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: clamp(28px, 6vw, 38px); line-height: 1; margin-bottom: 3px; }
-        .c-accent .stat-val { color: var(--accent) }
-        .c-gold .stat-val { color: var(--gold) }
-        .c-purple .stat-val { color: var(--purple) }
-        .c-green .stat-val { color: var(--green) }
+        .c-accent .stat-val { color: var(--accent) } .c-gold .stat-val { color: var(--gold) } .c-purple .stat-val { color: var(--purple) } .c-green .stat-val { color: var(--green) }
         .stat-sub { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); }
         .stat-bg { position: absolute; right: -4px; bottom: -8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 54px; line-height: 1; opacity: 0.04; pointer-events: none; user-select: none; }
-        .c-accent .stat-bg { color: var(--accent) }
-        .c-gold .stat-bg { color: var(--gold) }
-        .c-purple .stat-bg { color: var(--purple) }
-        .c-green .stat-bg { color: var(--green) }
+        .c-accent .stat-bg { color: var(--accent) } .c-gold .stat-bg { color: var(--gold) } .c-purple .stat-bg { color: var(--purple) } .c-green .stat-bg { color: var(--green) }
 
         /* ─── MID ROW ─── */
         .mid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; }
@@ -160,8 +167,7 @@
         .pf-accent { background: linear-gradient(90deg, var(--accent-dim), var(--accent)) }
         .pf-purple { background: linear-gradient(90deg, #7050c0, var(--purple)) }
         .pity-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; min-width: 22px; text-align: right; }
-        .pn-accent { color: var(--accent) }
-        .pn-purple { color: var(--purple) }
+        .pn-accent { color: var(--accent) } .pn-purple { color: var(--purple) }
         .pity-cap { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); min-width: 26px; }
         .dist-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
         .dist-row:last-child { margin-bottom: 0 }
@@ -171,28 +177,57 @@
         .dist-fill span { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: rgba(0,0,0,0.7); white-space: nowrap; font-weight: 600; }
         .dist-count { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; min-width: 28px; text-align: right; }
 
-        /* ─── BANNER SECTION ─── */
-        .banner-section { display: none }
-        .banner-section.visible { display: block }
-        .banner-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 10px; overflow-x: auto; scrollbar-width: none; }
-        .banner-tabs::-webkit-scrollbar { display: none }
-        .btab { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; padding: 9px 16px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; position: relative; bottom: -1px; transition: color 0.15s; white-space: nowrap; }
-        .btab.active { color: var(--accent); border-bottom-color: var(--accent); }
-        .btab:hover:not(.active) { color: var(--text2) }
+        /* ─── PULL LOG SECTION ─── */
+        .pull-log-section { display: none; }
+        .pull-log-section.visible { display: block; }
+
+        /* Banner tab bar */
+        .banner-tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; }
+        .banner-tab-bar::-webkit-scrollbar { display: none; }
+        .btab { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; padding: 10px 16px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; position: relative; bottom: -1px; transition: color 0.15s; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
+        .btab.active { color: var(--text); border-bottom-color: var(--accent); }
+        .btab:hover:not(.active) { color: var(--text2); }
+        .btab-count { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); background: var(--surface2); border: 1px solid var(--border2); padding: 1px 6px; border-radius: 20px; }
+        .btab.active .btab-count { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+
+        /* Banner type indicator pip */
+        .btab-pip { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .pip-special { background: var(--purple); }
+        .pip-standard { background: var(--blue); }
+        .pip-beginner { background: var(--gold); }
+        .pip-weapon { background: var(--accent); }
+        .pip-unknown { background: var(--text3); }
+
+        /* Per-banner stats strip */
+        .banner-stats-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 12px; }
+        @media(max-width:680px){ .banner-stats-strip { grid-template-columns: repeat(2,1fr); } }
+        .bstat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+        .bstat-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--text3); text-transform: uppercase; margin-bottom: 4px; }
+        .bstat-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; line-height: 1; }
+        .bstat-sub { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); margin-top: 2px; }
+
+        /* Per-banner pity + dist */
+        .banner-mid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+        @media(max-width:600px){ .banner-mid { grid-template-columns: 1fr; } }
+
+        /* Filter strip */
         .filter-strip { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
         .filt { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1px; padding: 4px 11px; border: 1px solid var(--border2); background: transparent; color: var(--text3); cursor: pointer; transition: all 0.15s; text-transform: uppercase; border-radius: var(--radius-sm); }
-        .filt.active, .filt:hover { background: var(--accent); color: #fff; border-color: var(--accent) }
-        .filt.f5.active, .filt.f5:hover { background: var(--purple); border-color: var(--purple) }
-        .filt.f4.active, .filt.f4:hover { background: var(--blue); border-color: var(--blue); color: #000 }
+        .filt:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .filt.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .filt.f5.active, .filt.f5:hover { background: var(--purple); border-color: var(--purple); color: #fff; }
+        .filt.f4.active, .filt.f4:hover { background: var(--blue); border-color: var(--blue); color: #000; }
+
+        /* Pull list */
         .results-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
         .results-head { padding: 10px 14px 0; border-bottom: 1px solid var(--border); }
         .results-head-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; padding-bottom: 10px; display: flex; align-items: center; gap: 6px; }
         .results-head-label::before { content: ''; width: 2px; height: 10px; background: var(--accent); border-radius: 2px; }
-        .pull-list { max-height: 380px; overflow-y: auto; padding: 6px; display: flex; flex-direction: column; gap: 2px; }
+        .pull-list { max-height: 420px; overflow-y: auto; padding: 6px; display: flex; flex-direction: column; gap: 2px; }
         .pull-list::-webkit-scrollbar { width: 3px }
         .pull-list::-webkit-scrollbar-track { background: var(--bg) }
         .pull-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-        .pull-item { display: grid; grid-template-columns: 32px 1fr auto auto; align-items: center; gap: 10px; padding: 7px 10px; background: var(--surface2); border-left: 2px solid transparent; border-radius: var(--radius-sm); transition: background 0.1s; }
+        .pull-item { display: grid; grid-template-columns: 36px 1fr auto auto; align-items: center; gap: 10px; padding: 7px 10px; background: var(--surface2); border-left: 2px solid transparent; border-radius: var(--radius-sm); transition: background 0.1s; }
         .pull-item:hover { background: var(--surface3) }
         .pull-item.s6 { border-left-color: var(--gold); background: rgba(240,160,64,0.04) }
         .pull-item.s5 { border-left-color: var(--purple); background: rgba(176,126,248,0.04) }
@@ -200,10 +235,7 @@
         .p-num { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text4); text-align: center }
         .p-name { font-family: 'Barlow', sans-serif; font-weight: 500; color: var(--text); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .p-stars { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: -1px; white-space: nowrap; }
-        .s6 .p-stars { color: var(--gold) }
-        .s5 .p-stars { color: var(--purple) }
-        .s4 .p-stars { color: var(--blue) }
-        .s3 .p-stars { color: var(--text3) }
+        .s6 .p-stars { color: var(--gold) } .s5 .p-stars { color: var(--purple) } .s4 .p-stars { color: var(--blue) } .s3 .p-stars { color: var(--text3) }
         .p-pity { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); min-width: 44px; text-align: right; }
         .p-pity.high { color: var(--red) }
         .no-data { padding: 36px; text-align: center; font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text3); }
@@ -213,71 +245,44 @@
         .disclaimer-box { background: rgba(240,160,64,0.06); border: 1px solid rgba(240,160,64,0.22); border-left: 2px solid var(--gold); padding: 10px 13px; margin-bottom: 16px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: #c8a060; border-radius: var(--radius-sm); line-height: 1.65; display: flex; gap: 9px; align-items: flex-start; }
         .disclaimer-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
 
-        /* ═══ WEAPON LOG ═══ */
-        .weapon-banner-section { display: none; margin-top: 16px; }
-        .weapon-banner-section.visible { display: block; }
-        .weapon-section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .weapon-badge { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 2px; padding: 2px 8px; background: rgba(240,160,64,0.12); border: 1px solid rgba(240,160,64,0.3); color: var(--gold); border-radius: var(--radius-sm); }
-        .weapon-filter-strip { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
-        .wfilt { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1px; padding: 4px 11px; border: 1px solid var(--border2); background: transparent; color: var(--text3); cursor: pointer; transition: all 0.15s; text-transform: uppercase; border-radius: var(--radius-sm); }
-        .wfilt.active, .wfilt:hover { background: var(--gold); color: #000; border-color: var(--gold) }
-        .wfilt.wf5.active, .wfilt.wf5:hover { background: var(--purple); color: #fff; border-color: var(--purple) }
-        .wfilt.wf4.active, .wfilt.wf4:hover { background: var(--blue); color: #000; border-color: var(--blue) }
-        .weapon-mid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-        @media(max-width: 600px) { .weapon-mid-row { grid-template-columns: 1fr; } }
-        .weapon-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
-        @media(max-width: 680px) { .weapon-stats-row { grid-template-columns: repeat(2, 1fr); } }
-
-        /* ═══ GOYFIELD STATS VIEW ═══ */
+        /* ─── GOY STATS ─── */
         .goy-section { display: none; }
         .goy-section.visible { display: block; }
         .goy-overview-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 12px; }
         @media(max-width:680px){ .goy-overview-grid { grid-template-columns: 1fr 1fr; } }
-        .goy-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; position: relative; overflow: hidden; }
+        .goy-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
         .goy-card-title { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 6px; }
         .goy-card-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 1; color: var(--text); }
         .goy-card-sub { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); margin-top: 4px; }
         .goy-banner-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 12px; }
-        @media(max-width:680px){ .goy-banner-cards { grid-template-columns: 1fr; } }
+        @media(max-width:760px){ .goy-banner-cards { grid-template-columns: 1fr 1fr; } }
+        @media(max-width:500px){ .goy-banner-cards { grid-template-columns: 1fr; } }
         .goy-banner-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
         .goy-banner-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-        .goy-banner-name.special { color: var(--purple); border-bottom-color: rgba(176,126,248,0.3); }
-        .goy-banner-name.standard { color: var(--blue); border-bottom-color: rgba(106,173,250,0.3); }
-        .goy-banner-name.beginner { color: var(--gold); border-bottom-color: rgba(240,160,64,0.3); }
-        .goy-banner-name.weapon { color: var(--accent); border-bottom-color: rgba(232,97,58,0.3); }
         .goy-stat-line { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; padding-bottom: 7px; border-bottom: 1px solid var(--border); }
         .goy-stat-line:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
         .goy-stat-key { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); }
         .goy-stat-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: var(--text2); }
         .goy-pity-bar { height: 5px; background: var(--bg); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px; }
         .goy-pity-fill { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
-        .goy-luck-chart { margin-top: 10px; }
-        .goy-luck-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); }
-        .goy-luck-bar { flex:1; height: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
-        .goy-luck-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: flex-end; padding-right: 5px; font-family:'Share Tech Mono',monospace; font-size:8px; font-weight:600; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
-        .goy-six-history { margin-top: 10px; }
         .goy-six-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); }
         .goy-six-item:last-child { border-bottom: none; }
         .goy-six-name { font-family: 'Barlow', sans-serif; font-size: 12px; color: var(--text); flex: 1; }
         .goy-six-pity { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; }
-        .goy-six-banner { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); }
 
-        /* ═══ MAIN PAGE TABS ═══ */
+        /* ─── TOOLS ─── */
         .page-tab-bar { display: flex; gap: 4px; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); padding: 6px; border-radius: var(--radius); flex-wrap: wrap; }
         .page-tab { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 16px; background: none; border: none; color: var(--text3); cursor: pointer; border-radius: var(--radius-sm); transition: all 0.15s; white-space: nowrap; flex: 1; min-width: 0; }
         .page-tab.active { background: var(--accent); color: #fff; }
         .page-tab:hover:not(.active) { background: var(--surface2); color: var(--text2); }
         .page-section { display: none; }
         .page-section.active { display: block; }
-
-        /* ─── PLANNER ─── */
         .planner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
         @media(max-width: 680px) { .planner-grid { grid-template-columns: 1fr; } }
         .planner-card { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: var(--radius); padding: 16px; }
         .planner-title { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
         .planner-title::before { content: ''; display: inline-block; width: 2px; height: 11px; background: var(--accent); border-radius: 2px; }
         .ctr-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-        .ctr-row:last-child { margin-bottom: 0; }
         .ctr-lbl { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; color: var(--text2); min-width: 100px; letter-spacing: 1px; }
         .ctr-input { width: 78px; background: var(--bg); border: 1px solid var(--border2); color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 12px; padding: 7px 10px; border-radius: var(--radius-sm); outline: none; text-align: right; transition: border-color 0.15s; }
         .ctr-input:focus { border-color: var(--accent); }
@@ -285,8 +290,6 @@
         .ctr-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; }
         .ctr-slider::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; border: none; }
         .pity-sync-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding: 8px 11px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); flex-wrap: wrap; }
-        .pity-sync-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); flex: 1; min-width: 120px; }
-        .pity-sync-label span { display: block; color: var(--text4); margin-top: 1px; font-size: 8px; }
         .pity-sync-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--accent); }
         .pity-sync-badge { font-family: 'Share Tech Mono', monospace; font-size: 9px; padding: 2px 7px; border-radius: var(--radius-sm); white-space: nowrap; }
         .pity-sync-badge.synced { background: rgba(78,202,139,0.1); border: 1px solid rgba(78,202,139,0.3); color: var(--green); }
@@ -308,9 +311,6 @@
         .ec-purple { border-top: 2px solid var(--purple); } .ec-purple .est-chip-val { color: var(--purple); }
         .ec-blue { border-top: 2px solid var(--blue); } .ec-blue .est-chip-val { color: var(--blue); }
         .rc-gold { color: var(--gold) } .rc-purple { color: var(--purple) } .rc-blue { color: var(--blue) } .rc-accent { color: var(--accent) }
-
-        /* ─── TALLY ─── */
-        .sep { margin: 16px 0 6px; }
         .full-card { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--accent); border-radius: var(--radius); padding: 16px; margin-bottom: 6px; }
         .date-row { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
         .date-input { background: var(--bg); border: 1px solid var(--border2); color: var(--text); font-family: 'Share Tech Mono', monospace; font-size: 11px; padding: 8px 11px; border-radius: var(--radius-sm); outline: none; transition: border-color 0.15s; min-width: 0; flex: 1; }
@@ -318,7 +318,6 @@
         .date-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 1px; white-space: nowrap; }
         .tally-sources-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         @media(max-width: 560px) { .tally-sources-grid { grid-template-columns: 1fr; } }
-        .tally-breakdown { margin-top: 12px; }
         .tally-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); }
         .tally-row:last-child { border-bottom: none; }
         .tally-name { font-family: 'Barlow', sans-serif; font-size: 12px; color: var(--text2); }
@@ -329,8 +328,6 @@
         .tally-pulls-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; color: var(--accent); }
         .calc-btn { background: var(--accent); border: none; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; padding: 9px 18px; cursor: pointer; text-transform: uppercase; transition: filter 0.15s; border-radius: var(--radius-sm); white-space: nowrap; }
         .calc-btn:hover { filter: brightness(1.15); }
-
-        /* ─── SHOP ─── */
         .shop-unit-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
         .sutab { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; padding: 8px 14px; background: none; border: none; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; position: relative; bottom: -1px; transition: color 0.15s; white-space: nowrap; }
         .sutab.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -354,21 +351,17 @@
         .shop-pill span { color: var(--gold); font-weight: 700; }
         .shop-total { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); }
         .shop-total strong { color: var(--green); }
-        .shop-converted { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text3); margin-top: 4px; }
 
         /* ─── FOOTER ─── */
         footer { border-top: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; background: var(--bg2); flex-wrap: wrap; gap: 8px; }
         .footer-l { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 1px }
         .footer-r { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 3px; color: var(--accent-dim); }
-
         .fade-in { animation: fadeIn 0.35s ease both }
         @keyframes fadeIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:none } }
+        .sep { margin: 16px 0 6px; }
 
         @media(max-width: 480px) {
             main { padding: 14px 12px 48px; }
-            .char-banner-inner { padding: 14px 12px; }
-            .input-card, .planner-card, .full-card { padding: 12px; }
-            .guide-body { padding: 0 12px 12px; }
             .char-right { display: none; }
             .result-box { flex-direction: column; align-items: flex-start; }
             .tally-total-row { flex-direction: column; align-items: flex-start; }
@@ -378,173 +371,166 @@
             .date-row { flex-direction: column; }
             .date-input { flex: none; width: 100%; }
             .page-tab { font-size: 11px; padding: 7px 10px; }
-            .goy-banner-cards { grid-template-columns: 1fr; }
-            .goy-overview-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media(max-width: 360px) {
-            .est-chips { grid-template-columns: 1fr 1fr; }
-            .bundle-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="navbar-inner">
-            <div class="navbar-brand">Endfield ◈</div>
-            <div class="navbar-sep"></div>
-            <div class="navbar-links">
-                <button class="nav-link" onclick="document.getElementById('sec-data').scrollIntoView({behavior:'smooth'})">Data Link</button>
-                <button class="nav-link" onclick="document.getElementById('sec-log').scrollIntoView({behavior:'smooth'})">Pull Log</button>
-                <button class="nav-link" onclick="document.getElementById('sec-stats').scrollIntoView({behavior:'smooth'})">Statistics</button>
-                <button class="nav-link" onclick="switchPageTab('tools');document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})">Tools</button>
-            </div>
+<nav class="navbar">
+    <div class="navbar-inner">
+        <div class="navbar-brand">Endfield ◈</div>
+        <div class="navbar-sep"></div>
+        <div class="navbar-links">
+            <button class="nav-link" onclick="document.getElementById('sec-data').scrollIntoView({behavior:'smooth'})">Data Link</button>
+            <button class="nav-link" onclick="document.getElementById('sec-log').scrollIntoView({behavior:'smooth'})">Pull Log</button>
+            <button class="nav-link" onclick="document.getElementById('sec-stats').scrollIntoView({behavior:'smooth'})">Statistics</button>
+            <button class="nav-link" onclick="switchPageTab('tools');document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})">Tools</button>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- CHAR BANNER -->
-    <div class="char-banner">
-        <div class="char-banner-inner">
-            <div class="char-info">
-                <div class="char-name">Headhunt Tracker</div>
-                <div class="char-quote">Track your pulls. Know your pity. Command your luck.</div>
+<div class="char-banner">
+    <div class="char-banner-inner">
+        <div class="char-info">
+            <div class="char-name">Headhunt Tracker</div>
+            <div class="char-quote">Track your pulls. Know your pity. Command your luck.</div>
+        </div>
+        <div class="char-right">
+            <div class="char-badge"><span class="dot dot-green"></span>LOCAL ONLY</div>
+            <div class="char-badge"><span class="dot dot-accent"></span>NO SERVER TRANSMISSION</div>
+        </div>
+    </div>
+</div>
+
+<main>
+
+    <!-- GUIDE -->
+    <div class="sec-label">Extraction Protocol</div>
+    <div class="guide-card">
+        <div class="guide-toggle" onclick="toggleGuide()">
+            <div class="guide-toggle-left">
+                <span class="guide-tag-badge">GUIDE</span>
+                <span class="guide-heading">How to get your pull data</span>
             </div>
-            <div class="char-right">
-                <div class="char-badge"><span class="dot dot-green"></span>LOCAL ONLY</div>
-                <div class="char-badge"><span class="dot dot-accent"></span>NO SERVER TRANSMISSION</div>
-                <div class="theme-pip"><span class="theme-swatch"></span><span id="themeName">THEME</span></div>
+            <span class="guide-chev" id="guideChev">▼</span>
+        </div>
+        <div class="guide-body" id="guideBody">
+            <div class="method-tabs">
+                <button class="mtab active" onclick="switchMethod('url',this)">Method 1: Full URL</button>
+                <button class="mtab" onclick="switchMethod('token',this)">Method 2: Token Only</button>
+            </div>
+            <div class="method-panel active" id="method-url">
+                <div class="steps-grid">
+                    <div class="step"><div class="step-n">01</div><div class="step-t">Open Endfield and visit <strong>pull history</strong> in-game.</div></div>
+                    <div class="step"><div class="step-n">02</div><div class="step-t">Locate <code>HGWebview.log</code> in your game files.</div></div>
+                    <div class="step"><div class="step-n">03</div><div class="step-t">Search for the keyword <code>token</code> in the log.</div></div>
+                    <div class="step"><div class="step-n">04</div><div class="step-t">Go to the <strong>last line</strong> containing <code>token</code>.</div></div>
+                    <div class="step"><div class="step-n">05</div><div class="step-t">Find the URL starting with <code>https://ef-webview.gryphline.com/api/record/char?</code></div></div>
+                    <div class="step"><div class="step-n">06</div><div class="step-t">Copy the <strong>full link</strong> and paste it into the URL tab below.</div></div>
+                </div>
+            </div>
+            <div class="method-panel" id="method-token">
+                <div class="steps-grid">
+                    <div class="step"><div class="step-n">01</div><div class="step-t">Go to <strong>act.skport.com/endfield/recordBook</strong> and log in.</div></div>
+                    <div class="step"><div class="step-n">02</div><div class="step-t">Open DevTools (<code>F12</code>) → Application → Session Storage.</div></div>
+                    <div class="step"><div class="step-n">03</div><div class="step-t">Find the key starting with <code>APP_ROLE_U8_TOKEN:</code></div></div>
+                    <div class="step"><div class="step-n">04</div><div class="step-t">Copy the <strong>value</strong> (the token string).</div></div>
+                    <div class="step"><div class="step-n">05</div><div class="step-t">Or use the <strong>bookmarklet</strong> from <code>goyfield.moe/records/import</code></div></div>
+                    <div class="step"><div class="step-n">06</div><div class="step-t">Paste into the <strong>Token tab</strong> and select your server.</div></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <main>
-
-        <!-- GUIDE -->
-        <div class="sec-label">Extraction Protocol</div>
-        <div class="guide-card">
-            <div class="guide-toggle" onclick="toggleGuide()">
-                <div class="guide-toggle-left">
-                    <span class="guide-tag-badge">GUIDE</span>
-                    <span class="guide-heading">How to get your pull data</span>
-                </div>
-                <span class="guide-chev" id="guideChev">▼</span>
+    <!-- INPUT -->
+    <div class="sec-label" id="sec-data">Data Link</div>
+    <div class="input-card">
+        <div class="input-head">
+            <span class="input-tag-badge">INPUT</span>
+            <span class="input-heading">Acquisition Data Source</span>
+            <span class="input-local">🔒 LOCAL ONLY</span>
+        </div>
+        <div class="input-tabs">
+            <button class="itab active" onclick="switchInputMode('url',this)">Full URL</button>
+            <button class="itab" onclick="switchInputMode('token',this)">Token</button>
+        </div>
+        <div class="imode active" id="imode-url">
+            <div class="info-box">ℹ The full URL is fetched via a CORS proxy. Your token is never stored — only used to retrieve pull data in your browser.</div>
+            <div class="url-row">
+                <input class="url-input" id="urlInput" type="text" placeholder="https://ef-webview.gryphline.com/api/record/char?lang=en-us&seq_id=…&token=…&server_id=2" />
+                <button class="scan-btn" onclick="loadFromUrl()">Scan ▶</button>
             </div>
-            <div class="guide-body" id="guideBody">
-                <div class="method-tabs">
-                    <button class="mtab active" onclick="switchMethod('url',this)">Method 1: Full URL</button>
-                    <button class="mtab" onclick="switchMethod('token',this)">Method 2: Token Only</button>
-                </div>
-                <div class="method-panel active" id="method-url">
-                    <div class="steps-grid">
-                        <div class="step"><div class="step-n">01</div><div class="step-t">Open Endfield and visit <strong>pull history</strong> in-game.</div></div>
-                        <div class="step"><div class="step-n">02</div><div class="step-t">Locate <code>HGWebview.log</code> in your game files.</div></div>
-                        <div class="step"><div class="step-n">03</div><div class="step-t">Search for the keyword <code>token</code> in the log.</div></div>
-                        <div class="step"><div class="step-n">04</div><div class="step-t">Go to the <strong>last line</strong> containing <code>token</code>.</div></div>
-                        <div class="step"><div class="step-n">05</div><div class="step-t">Find the URL starting with <code>https://ef-webview.gryphline.com/api/record/char?</code></div></div>
-                        <div class="step"><div class="step-n">06</div><div class="step-t">Copy the <strong>full link</strong> and paste it into the URL tab below.</div></div>
-                    </div>
-                </div>
-                <div class="method-panel" id="method-token">
-                    <div class="steps-grid">
-                        <div class="step"><div class="step-n">01</div><div class="step-t">Go to <strong>act.skport.com/endfield/recordBook</strong> and log in.</div></div>
-                        <div class="step"><div class="step-n">02</div><div class="step-t">Open DevTools (<code>F12</code>) → Application → Session Storage.</div></div>
-                        <div class="step"><div class="step-n">03</div><div class="step-t">Find the key starting with <code>APP_ROLE_U8_TOKEN:</code></div></div>
-                        <div class="step"><div class="step-n">04</div><div class="step-t">Copy the <strong>value</strong> (the token string).</div></div>
-                        <div class="step"><div class="step-n">05</div><div class="step-t">Or use the <strong>bookmarklet</strong> from <code>goyfield.moe/records/import</code></div></div>
-                        <div class="step"><div class="step-n">06</div><div class="step-t">Paste into the <strong>Token tab</strong> and select your server.</div></div>
-                    </div>
-                </div>
+            <div class="input-meta">
+                <div class="input-hint">Paste the full URL from <span>HGWebview.log</span></div>
+            </div>
+        </div>
+        <div class="imode" id="imode-token">
+            <div class="info-box">ℹ Your token is used directly to query the Endfield API. Processed locally, never saved or transmitted to any third-party server.</div>
+            <div class="token-row">
+                <input class="token-input" id="tokenInput" type="text" placeholder="Paste your token here…" />
+                <select class="server-select" id="serverSelect">
+                    <option value="1">Americas / EU</option>
+                    <option value="2" selected>Asia</option>
+                </select>
+            </div>
+            <button class="scan-btn-full" onclick="loadFromToken()">◈ Scan Token ▶</button>
+            <div class="input-meta" style="margin-top:10px">
+                <div class="input-hint">Token from <span>act.skport.com/endfield/recordBook</span> or <span>goyfield.moe/records/import</span></div>
+            </div>
+        </div>
+        <div class="error-box" id="errorBox"></div>
+        <div class="loading-box" id="loadingBox">
+            <div class="loader"></div><span id="loadingMsg">Fetching operator acquisition data…</span>
+        </div>
+    </div>
+
+    <!-- FOUND BANNER -->
+    <div class="found-banner" id="foundBanner">
+        <span class="found-icon">⬇</span>
+        <span class="found-label">Records loaded</span>
+        <span class="found-count" id="foundTotal"></span>
+        <div class="found-breakdown" id="foundBreakdown"></div>
+    </div>
+
+    <!-- ═══ PULL LOG ═══ -->
+    <div class="pull-log-section" id="pullLogSection">
+        <div class="sec-label" id="sec-log">Pull Log</div>
+
+        <!-- TIP BOX: Pull Log -->
+        <div class="tip-box">
+            <div class="tip-toggle" onclick="toggleTip('tip-pulllog')">
+                <span class="tip-icon">ℹ</span>
+                <span class="tip-title">Pull Log Tips</span>
+                <span class="tip-chev" id="tip-pulllog-chev">▼</span>
+            </div>
+            <div class="tip-body" id="tip-pulllog-body">
+                <div class="tip-divider"></div>
+                <ul>
+                    <li>Use the <strong>banner tabs</strong> above the pull list to switch between Special, Standard, Beginner, and any other banners you've pulled on.</li>
+                    <li>The <strong>@N</strong> number next to each 6★ or 5★ is the pity count — how many pulls it took to reach that item from the last one of that rarity.</li>
+                    <li><strong style="color:var(--red)">Red pity numbers</strong> (6★ ≥50, 5★ ≥8) indicate you were in or near soft pity when you got it.</li>
+                    <li>Use the <strong>filter buttons</strong> (All / 6★ / 5★ / 4★) to isolate high-rarity pulls quickly.</li>
+                    <li><strong>Pity counters reset</strong> to 0 every time you get a 6★ (for 6★ pity) or a 5★/6★ (for 5★ pity). The bars show your current streak since the last hit.</li>
+                    <li>Records only go back <strong>90 days</strong> — if your last 6★ was pulled before that window, your pity may display lower than the real value.</li>
+                </ul>
             </div>
         </div>
 
-        <!-- INPUT -->
-        <div class="sec-label" id="sec-data">Data Link</div>
-        <div class="input-card">
-            <div class="input-head">
-                <span class="input-tag-badge">INPUT</span>
-                <span class="input-heading">Acquisition Data Source</span>
-                <span class="input-local">🔒 LOCAL ONLY</span>
-            </div>
-            <div class="input-tabs">
-                <button class="itab active" onclick="switchInputMode('url',this)">Full URL</button>
-                <button class="itab" onclick="switchInputMode('token',this)">Token</button>
-            </div>
-            <div class="imode active" id="imode-url">
-                <div class="info-box">ℹ The full URL is fetched via a CORS proxy. Your token is never stored — only used to retrieve pull data in your browser.</div>
-                <div class="url-row">
-                    <input class="url-input" id="urlInput" type="text" placeholder="https://ef-webview.gryphline.com/api/record/char?lang=en-us&seq_id=…&token=…&server_id=2" />
-                    <button class="scan-btn" onclick="loadFromUrl()">Scan ▶</button>
-                </div>
-                <div class="input-meta">
-                    <div class="input-hint">Paste the full URL from <span>HGWebview.log</span></div>
-                </div>
-            </div>
-            <div class="imode" id="imode-token">
-                <div class="info-box">ℹ Your token is used directly to query the Endfield API. It is processed locally and never saved or transmitted to any third-party server.</div>
-                <div class="token-row">
-                    <input class="token-input" id="tokenInput" type="text" placeholder="Paste your token here…" />
-                    <select class="server-select" id="serverSelect">
-                        <option value="1">Americas / EU</option>
-                        <option value="2" selected>Asia</option>
-                    </select>
-                </div>
-                <button class="scan-btn-full" onclick="loadFromToken()">◈ Scan Token ▶</button>
-                <div class="input-meta" style="margin-top:10px">
-                    <div class="input-hint">Token from <span>act.skport.com/endfield/recordBook</span> or <span>goyfield.moe/records/import</span></div>
-                </div>
-            </div>
-            <div class="error-box" id="errorBox"></div>
-            <div class="loading-box" id="loadingBox">
-                <div class="loader"></div><span id="loadingMsg">Fetching operator acquisition data…</span>
-            </div>
-        </div>
+        <!-- Banner switcher tabs -->
+        <div class="banner-tab-bar" id="bannerTabBar"></div>
 
-        <!-- FOUND BANNER -->
-        <div class="found-banner" id="foundBanner">
-            <span class="found-icon">⬇</span>
-            <span class="found-label">New records found</span>
-            <span class="found-count" id="foundTotal"></span>
-            <div class="found-breakdown" id="foundBreakdown"></div>
-        </div>
+        <!-- Per-banner stats -->
+        <div class="banner-stats-strip fade-in" id="bannerStatsStrip"></div>
 
-        <!-- STATS -->
-        <div class="stats-row fade-in" id="statsRow" style="display:none">
-            <div class="stat-card c-accent">
-                <div class="stat-lbl">Total Pulls</div>
-                <div class="stat-val" id="statTotal">0</div>
-                <div class="stat-sub">Headhunts</div>
-                <div class="stat-bg" id="statTotalBg">0</div>
-            </div>
-            <div class="stat-card c-gold">
-                <div class="stat-lbl">6★ Acquired</div>
-                <div class="stat-val" id="stat6">0</div>
-                <div class="stat-sub" id="stat6Rate">0.00% Rate</div>
-                <div class="stat-bg" id="stat6Bg">0</div>
-            </div>
-            <div class="stat-card c-purple">
-                <div class="stat-lbl">5★ Acquired</div>
-                <div class="stat-val" id="stat5">0</div>
-                <div class="stat-sub" id="stat5Rate">0.00% Rate</div>
-                <div class="stat-bg" id="stat5Bg">0</div>
-            </div>
-            <div class="stat-card c-green">
-                <div class="stat-lbl">Avg Pity (6★)</div>
-                <div class="stat-val" id="statAvgPity">0</div>
-                <div class="stat-sub">Per 6★ Pull</div>
-                <div class="stat-bg" id="statAvgBg">0</div>
-            </div>
-        </div>
-
-        <!-- PITY + DIST -->
-        <div class="mid-row" id="midRow" style="display:none">
+        <!-- Per-banner pity + distribution -->
+        <div class="banner-mid" id="bannerMid">
             <div class="panel">
                 <div class="panel-title">Pity Counter</div>
                 <div class="pity-row">
                     <div class="pity-lbl">6★ Pity</div>
                     <div class="pity-track"><div class="pity-fill pf-accent" id="pity6Fill" style="width:0%"></div></div>
                     <div class="pity-num pn-accent" id="pity6Count">0</div>
-                    <div class="pity-cap">/ 80</div>
+                    <div class="pity-cap" id="pity6Cap">/ 80</div>
                 </div>
                 <div class="pity-row">
                     <div class="pity-lbl">5★ Pity</div>
@@ -559,1069 +545,1028 @@
             </div>
         </div>
 
-        <!-- ═══ OPERATOR ACQUISITION LOG ═══ -->
-        <div class="banner-section" id="bannerSection">
-            <div class="sec-label" id="sec-log">Operator Acquisition Log</div>
-            <div class="banner-tabs" id="bannerTabs"></div>
-            <div class="filter-strip">
-                <button class="filt active" onclick="filterPulls('all',this)">All</button>
-                <button class="filt f6" onclick="filterPulls('6',this)">6★ Only</button>
-                <button class="filt f5" onclick="filterPulls('5',this)">5★ Only</button>
-                <button class="filt f4" onclick="filterPulls('4',this)">4★ Only</button>
+        <!-- Filter strip -->
+        <div class="filter-strip">
+            <button class="filt active" onclick="filterPulls('all',this)">All</button>
+            <button class="filt f6" onclick="filterPulls('6',this)">6★ Only</button>
+            <button class="filt f5" onclick="filterPulls('5',this)">5★ Only</button>
+            <button class="filt f4" onclick="filterPulls('4',this)">4★ Only</button>
+        </div>
+
+        <!-- Pull list -->
+        <div class="results-panel">
+            <div class="results-head">
+                <div class="results-head-label" id="pullListLabel">Pull Log</div>
             </div>
-            <div class="results-panel">
-                <div class="results-head">
-                    <div class="results-head-label">Operator Acquisition Log</div>
-                </div>
-                <div class="pull-list" id="pullList"></div>
+            <div class="pull-list" id="pullList"></div>
+        </div>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <div class="sec-label sep">Data Notice</div>
+    <div class="disclaimer-box">
+        <span class="disclaimer-icon">⚠</span>
+        <div>
+            <strong style="color:#e8b060">Pull history is limited to the last 90 days.</strong>
+            The Endfield API only returns records within a 90-day rolling window. Pulls older than 90 days are excluded.
+            Pity counters may be understated if your last 6★ was over 90 days ago.
+        </div>
+    </div>
+
+    <!-- ═══ STATISTICS ═══ -->
+    <div class="sec-label sep" id="sec-stats">Detailed Statistics</div>
+
+    <!-- TIP BOX: Detailed Statistics -->
+    <div class="tip-box">
+        <div class="tip-toggle" onclick="toggleTip('tip-stats')">
+            <span class="tip-icon">ℹ</span>
+            <span class="tip-title">Reading the Statistics</span>
+            <span class="tip-chev" id="tip-stats-chev">▼</span>
+        </div>
+        <div class="tip-body" id="tip-stats-body">
+            <div class="tip-divider"></div>
+            <ul>
+                <li><strong>Total Headhunts</strong> counts all pulls across every banner within the 90-day window — use this as a gauge of overall activity, not lifetime spending.</li>
+                <li><strong>Oroberyl Spent</strong> is estimated at 500 per pull. If you used HH Permits directly, the actual Oroberyl cost is 0, but the pull still counts here.</li>
+                <li><strong>Spark Progress</strong> shows your position in the current 120-pull spark cycle. Each 120 pulls lets you select one featured operator directly.</li>
+                <li><strong>Lucky 6★ Pulls</strong> counts 6★ operators you received in 40 or fewer pulls — well before soft pity begins at pull #65.</li>
+                <li>The <strong>6★ Pull History</strong> at the bottom lists every 6★ in order of acquisition with its pity count. <strong style="color:var(--green)">Green = lucky (≤15)</strong>, <strong style="color:var(--red)">red = soft/hard pity (≥65)</strong>.</li>
+                <li>Stats are calculated from your loaded data only. If you haven't loaded data yet, all values will be zero or empty.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="goy-section" id="goySection">
+        <div class="goy-overview-grid" id="goyOverview"></div>
+
+        <!-- TIP BOX: Per-banner Breakdown -->
+        <div class="tip-box" style="margin-bottom:10px">
+            <div class="tip-toggle" onclick="toggleTip('tip-banner-breakdown')">
+                <span class="tip-icon">ℹ</span>
+                <span class="tip-title">Per-Banner Breakdown Tips</span>
+                <span class="tip-chev" id="tip-banner-breakdown-chev">▼</span>
+            </div>
+            <div class="tip-body" id="tip-banner-breakdown-body">
+                <div class="tip-divider"></div>
+                <ul>
+                    <li>Each card represents one banner pool. <strong>Special Headhunting</strong> (purple) is where limited and rate-up operators appear.</li>
+                    <li><strong>Avg 6★ Pity</strong> is the mean pulls-per-6★ across all your 6★ hits on that banner. Lower is luckier — global average with soft pity is roughly 50–60.</li>
+                    <li>The <strong>current pity bars</strong> (6★ / 5★) at the bottom of each card show how far you are into the next pity cycle right now.</li>
+                    <li>The <strong>Standard</strong> banner (blue) has no rate-up — 6★ drops are chosen randomly from the standard pool.</li>
+                    <li><strong>Beginner</strong> banner (gold) has a guaranteed 6★ within 20 pulls and can only be done 20 times total.</li>
+                    <li>If a banner shows <strong>0 pulls</strong>, it means no records were returned for that pool within the 90-day window.</li>
+                </ul>
             </div>
         </div>
 
-        <!-- ═══ WEAPON ACQUISITION LOG ═══ -->
-        <div class="weapon-banner-section" id="weaponSection">
-            <div class="sec-label" style="margin-top:16px">Weapon Acquisition Log</div>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-                <div class="weapon-badge">SMELTING FORGE</div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">Weapon banner pull records</div>
-            </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Per-Banner Breakdown</div>
+        <div class="goy-banner-cards" id="goyBannerCards"></div>
+        <div class="sec-label" style="margin-bottom:10px">6★ Pull History</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px" id="goy6History"></div>
+    </div>
+    <div id="goyNoData" style="padding:32px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text3)">
+        <div style="font-size:22px;margin-bottom:10px;opacity:0.2">◈</div>
+        Load pull data above to see detailed statistics.
+    </div>
 
-            <!-- Weapon stats row -->
-            <div class="weapon-stats-row fade-in" id="wStatsRow">
-                <div class="stat-card c-accent">
-                    <div class="stat-lbl">Total Pulls</div>
-                    <div class="stat-val" id="wStatTotal">0</div>
-                    <div class="stat-sub">Weapon Pulls</div>
-                    <div class="stat-bg" id="wStatTotalBg">0</div>
-                </div>
-                <div class="stat-card c-gold">
-                    <div class="stat-lbl">6★ Weapons</div>
-                    <div class="stat-val" id="wStat6">0</div>
-                    <div class="stat-sub" id="wStat6Rate">0.00%</div>
-                    <div class="stat-bg" id="wStat6Bg">0</div>
-                </div>
-                <div class="stat-card c-purple">
-                    <div class="stat-lbl">5★ Weapons</div>
-                    <div class="stat-val" id="wStat5">0</div>
-                    <div class="stat-sub" id="wStat5Rate">0.00%</div>
-                    <div class="stat-bg" id="wStat5Bg">0</div>
-                </div>
-                <div class="stat-card c-green">
-                    <div class="stat-lbl">Avg Pity (6★)</div>
-                    <div class="stat-val" id="wStatAvg">0</div>
-                    <div class="stat-sub">Per 6★ Pull</div>
-                    <div class="stat-bg" id="wStatAvgBg">0</div>
-                </div>
-            </div>
+    <!-- ═══ TOOLS ═══ -->
+    <div class="sec-label sep" id="sec-tools">Tools</div>
+    <div class="page-tab-bar">
+        <button class="page-tab active" onclick="switchPageTab('planner')">◈ Resource Planner</button>
+        <button class="page-tab" onclick="switchPageTab('income')">📈 Income Forecast</button>
+        <button class="page-tab" onclick="switchPageTab('shop')">🛒 Shop Advisor</button>
+    </div>
 
-            <!-- Weapon pity + dist -->
-            <div class="weapon-mid-row" id="wMidRow">
-                <div class="panel">
-                    <div class="panel-title">Weapon Pity Counter</div>
-                    <div class="pity-row">
-                        <div class="pity-lbl">6★ Pity</div>
-                        <div class="pity-track"><div class="pity-fill pf-accent" id="wpity6Fill" style="width:0%"></div></div>
-                        <div class="pity-num pn-accent" id="wpity6Count">0</div>
-                        <div class="pity-cap">/ 80</div>
-                    </div>
-                    <div class="pity-row">
-                        <div class="pity-lbl">5★ Pity</div>
-                        <div class="pity-track"><div class="pity-fill pf-purple" id="wpity5Fill" style="width:0%"></div></div>
-                        <div class="pity-num pn-purple" id="wpity5Count">0</div>
-                        <div class="pity-cap">/ 10</div>
-                    </div>
-                </div>
-                <div class="panel">
-                    <div class="panel-title">Weapon Rarity Distribution</div>
-                    <div id="wDistBars"></div>
-                </div>
-            </div>
+    <!-- TAB: RESOURCE PLANNER -->
+    <div class="page-section active" id="tab-planner">
 
-            <!-- Weapon filter + list -->
-            <div class="weapon-filter-strip">
-                <button class="wfilt active" onclick="filterWeapons('all',this)">All</button>
-                <button class="wfilt wf6" onclick="filterWeapons('6',this)">6★ Only</button>
-                <button class="wfilt wf5" onclick="filterWeapons('5',this)">5★ Only</button>
-                <button class="wfilt wf4" onclick="filterWeapons('4',this)">4★ Only</button>
+        <!-- TIP BOX: Resource Planner -->
+        <div class="tip-box" style="margin-bottom:14px">
+            <div class="tip-toggle" onclick="toggleTip('tip-planner')">
+                <span class="tip-icon">ℹ</span>
+                <span class="tip-title">Resource Planner Tips</span>
+                <span class="tip-chev" id="tip-planner-chev">▼</span>
             </div>
-            <div class="results-panel">
-                <div class="results-head">
-                    <div class="results-head-label" style="--accent:var(--gold)">Smelting Forge Issue — Weapon Acquisition Log</div>
-                </div>
-                <div class="pull-list" id="weaponPullList"></div>
+            <div class="tip-body" id="tip-planner-body">
+                <div class="tip-divider"></div>
+                <ul>
+                    <li><strong>500 Oroberyl</strong> = 1 pull. <strong>1 Origeometry</strong> = 75 Oroberyl. Enter your current stockpile and the tracker calculates total pulls automatically.</li>
+                    <li><strong>HH Permits</strong> are used directly as 1 pull each — no Oroberyl conversion needed.</li>
+                    <li><strong>Hard Pity</strong> (÷80) shows how many guaranteed 6★ operators you're carrying — every 80 pulls always yields at least one 6★.</li>
+                    <li><strong>Spark</strong> (÷120) tells you how many times you can guarantee-select a featured operator from the spark exchange shop.</li>
+                    <li>The <strong>Pull Chance Calculator</strong> on the right uses your loaded Special HH pity automatically. If no data is loaded it defaults to 0.</li>
+                    <li><strong>Soft pity</strong> begins at pull #65 — each pull past that adds +5% to the 6★ rate. Pull #80 is a guaranteed 6★ (hard pity).</li>
+                    <li>The <strong>Featured 6★</strong> probability assumes a 50/50 chance that a 6★ is the featured operator (standard 50/50 mechanic).</li>
+                </ul>
             </div>
         </div>
 
-        <!-- DISCLAIMER -->
-        <div class="sec-label sep">Data Notice</div>
-        <div class="disclaimer-box">
-            <span class="disclaimer-icon">⚠</span>
-            <div>
-                <strong style="color:#e8b060">Pull history is limited to the last 90 days.</strong>
-                The Endfield API only returns records within a 90-day rolling window. Pulls older than 90 days are permanently excluded.
-                Pity counters may be understated if your last 6★ was over 90 days ago.
-                Source: <em>endfieldtools.dev/guides/gacha-rates-pity</em>
-            </div>
-        </div>
-
-        <!-- ═══ STATISTICS (GOYFIELD-STYLE) ═══ -->
-        <div class="sec-label sep" id="sec-stats">Detailed Statistics</div>
-        <div class="goy-section" id="goySection">
-            <!-- Overview -->
-            <div class="goy-overview-grid" id="goyOverview"></div>
-            <!-- Per-banner cards -->
-            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Per-Banner Breakdown</div>
-            <div class="goy-banner-cards" id="goyBannerCards"></div>
-            <!-- 6★ History -->
-            <div class="sec-label" style="margin-bottom:10px">6★ Pull History</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px" id="goy6History"></div>
-        </div>
-        <div id="goyNoData" style="display:none;padding:32px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text3)">
-            <div style="font-size:22px;margin-bottom:10px;opacity:0.2">◈</div>
-            Load pull data above to see detailed statistics.
-        </div>
-
-        <!-- ═══ TOOLS SECTION (TABBED) ═══ -->
-        <div class="sec-label sep" id="sec-tools">Tools</div>
-        <div class="page-tab-bar">
-            <button class="page-tab active" onclick="switchPageTab('planner')">◈ Resource Planner</button>
-            <button class="page-tab" onclick="switchPageTab('income')">📈 Income Forecast</button>
-            <button class="page-tab" onclick="switchPageTab('shop')">🛒 Shop Advisor</button>
-        </div>
-
-        <!-- TAB: RESOURCE PLANNER -->
-        <div class="page-section active" id="tab-planner">
-            <div class="planner-grid">
-                <div class="planner-card">
-                    <div class="planner-title">Current Inventory</div>
-                    <div class="ctr-row">
-                        <div class="ctr-lbl">Oroberyl</div>
-                        <input class="ctr-input" id="ctr-oro" type="number" min="0" max="999999" value="0" oninput="syncSlider('ctr-oro','sl-oro');recalcPulls()">
-                        <input class="ctr-slider" id="sl-oro" type="range" min="0" max="60000" value="0" step="1" oninput="syncInput('sl-oro','ctr-oro');recalcPulls()">
-                    </div>
-                    <div class="ctr-row">
-                        <div class="ctr-lbl">HH Permits</div>
-                        <input class="ctr-input" id="ctr-permit" type="number" min="0" max="9999" value="0" oninput="syncSlider('ctr-permit','sl-permit');recalcPulls()">
-                        <input class="ctr-slider" id="sl-permit" type="range" min="0" max="200" value="0" step="1" oninput="syncInput('sl-permit','ctr-permit');recalcPulls()">
-                    </div>
-                    <div class="ctr-row">
-                        <div class="ctr-lbl">Origeometry</div>
-                        <input class="ctr-input" id="ctr-ori" type="number" min="0" max="9999" value="0" oninput="syncSlider('ctr-ori','sl-ori');recalcPulls()">
-                        <input class="ctr-slider" id="sl-ori" type="range" min="0" max="500" value="0" step="1" oninput="syncInput('sl-ori','ctr-ori');recalcPulls()">
-                    </div>
-                    <div class="result-box">
-                        <div>
-                            <div class="result-label">Total Pulls Available</div>
-                            <div class="result-value" id="total-pulls-val">0</div>
-                            <div class="result-sub" id="total-pulls-sub">0 from Oro · 0 Permits · 0 from Ori</div>
-                        </div>
-                        <div style="text-align:right">
-                            <div class="result-label" style="margin-bottom:4px">Guarantees</div>
-                            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2)">Hard pity: <span id="hard-pity-count" style="color:var(--gold)">0×</span></div>
-                            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2)">Spark: <span id="spark-count" style="color:var(--purple)">0×</span></div>
-                        </div>
-                    </div>
+        <div class="planner-grid">
+            <div class="planner-card">
+                <div class="planner-title">Current Inventory</div>
+                <div class="ctr-row">
+                    <div class="ctr-lbl">Oroberyl</div>
+                    <input class="ctr-input" id="ctr-oro" type="number" min="0" max="999999" value="0" oninput="syncSlider('ctr-oro','sl-oro');recalcPulls()">
+                    <input class="ctr-slider" id="sl-oro" type="range" min="0" max="60000" value="0" step="1" oninput="syncInput('sl-oro','ctr-oro');recalcPulls()">
                 </div>
-
-                <div class="planner-card">
-                    <div class="planner-title">Pull Chance Calculator</div>
-                    <div class="pity-sync-row">
-                        <div>
-                            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2)">Current 6★ pity</div>
-                            <div class="pity-sync-label"><span id="pity-source-hint">No pull data loaded — defaulting to 0</span></div>
-                        </div>
-                        <div class="pity-sync-val" id="pity-sync-display">0</div>
-                        <div class="pity-sync-badge no-data" id="pity-sync-badge">NO DATA</div>
-                    </div>
-                    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:10px;line-height:1.65">
-                        Pity offset auto-fills from your pull log. Uses base rates + soft pity at pull 65 (+5% per pull through #80).
-                        Limited banner: 80-pull hard pity · 120-pull spark.
-                    </div>
-                    <div class="prob-row">
-                        <div class="prob-lbl">≥1× 6★</div>
-                        <div class="prob-bar"><div class="prob-fill" id="prob6-fill" style="width:0%;background:var(--gold)"></div></div>
-                        <div class="prob-pct rc-gold" id="prob6-pct">0%</div>
-                    </div>
-                    <div class="prob-row">
-                        <div class="prob-lbl">Featured 6★</div>
-                        <div class="prob-bar"><div class="prob-fill" id="prob6-feat-fill" style="width:0%;background:var(--purple)"></div></div>
-                        <div class="prob-pct rc-purple" id="prob6-feat-pct">0%</div>
-                    </div>
-                    <div class="prob-row">
-                        <div class="prob-lbl">≥1× 5★</div>
-                        <div class="prob-bar"><div class="prob-fill" id="prob5-fill" style="width:0%;background:var(--blue)"></div></div>
-                        <div class="prob-pct rc-blue" id="prob5-pct">0%</div>
-                    </div>
-                    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin:12px 0 7px">Expected from Your Inventory</div>
-                    <div class="est-chips">
-                        <div class="est-chip ec-gold"><div class="est-chip-val" id="est-6star">0</div><div class="est-chip-lbl">6★ Operators</div></div>
-                        <div class="est-chip ec-purple"><div class="est-chip-val" id="est-5star">0</div><div class="est-chip-lbl">5★ Operators</div></div>
-                        <div class="est-chip ec-blue"><div class="est-chip-val" id="est-4star">0</div><div class="est-chip-lbl">4★ Operators</div></div>
-                    </div>
-                    <div style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);line-height:1.7">
-                        BASE: 0.8% 6★ · 8% 5★ · 15% 4★ · 76.2% 3★ &nbsp;|&nbsp; SOFT PITY: #65 (+5%/pull) &nbsp;|&nbsp; HARD: #80 &nbsp;|&nbsp; SPARK: #120
-                    </div>
+                <div class="ctr-row">
+                    <div class="ctr-lbl">HH Permits</div>
+                    <input class="ctr-input" id="ctr-permit" type="number" min="0" max="9999" value="0" oninput="syncSlider('ctr-permit','sl-permit');recalcPulls()">
+                    <input class="ctr-slider" id="sl-permit" type="range" min="0" max="200" value="0" step="1" oninput="syncInput('sl-permit','ctr-permit');recalcPulls()">
                 </div>
-            </div>
-        </div>
-
-        <!-- TAB: INCOME FORECAST -->
-        <div class="page-section" id="tab-income">
-            <div class="full-card">
-                <div class="planner-title">Oroberyl Accumulation Planner</div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:12px;line-height:1.65">
-                    Estimate Oroberyl accumulated from recurring sources between today and a target date.
-                    One-time rewards (story, exploration) are excluded as they vary by progress.
+                <div class="ctr-row">
+                    <div class="ctr-lbl">Origeometry</div>
+                    <input class="ctr-input" id="ctr-ori" type="number" min="0" max="9999" value="0" oninput="syncSlider('ctr-ori','sl-ori');recalcPulls()">
+                    <input class="ctr-slider" id="sl-ori" type="range" min="0" max="500" value="0" step="1" oninput="syncInput('sl-ori','ctr-ori');recalcPulls()">
                 </div>
-                <div class="date-row">
-                    <span class="date-label">From</span>
-                    <input class="date-input" id="tally-from" type="date">
-                    <span class="date-label">To</span>
-                    <input class="date-input" id="tally-to" type="date">
-                    <button class="calc-btn" onclick="calcTally()">Calculate ▶</button>
-                </div>
-                <div class="tally-sources-grid" id="tally-inputs">
+                <div class="result-box">
                     <div>
-                        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:10px;text-transform:uppercase">Daily Sources</div>
-                        <div class="ctr-row"><div class="ctr-lbl" style="font-size:13px">Daily Missions</div><input class="ctr-input" id="t-daily" type="number" value="200" min="0" max="200"> <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">max 200</span></div>
-                        <div class="ctr-row"><div class="ctr-lbl" style="font-size:13px">Monthly Pass</div><input class="ctr-input" id="t-monthly" type="number" value="0" min="0" max="200"> <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">+200/day</span></div>
+                        <div class="result-label">Total Pulls Available</div>
+                        <div class="result-value" id="total-pulls-val">0</div>
+                        <div class="result-sub" id="total-pulls-sub">0 from Oro · 0 Permits · 0 from Ori</div>
                     </div>
+                    <div style="text-align:right">
+                        <div class="result-label" style="margin-bottom:4px">Guarantees</div>
+                        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2)">Hard pity: <span id="hard-pity-count" style="color:var(--gold)">0×</span></div>
+                        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2)">Spark: <span id="spark-count" style="color:var(--purple)">0×</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="planner-card">
+                <div class="planner-title">Pull Chance Calculator</div>
+                <div class="pity-sync-row">
                     <div>
-                        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:10px;text-transform:uppercase">Weekly Sources</div>
-                        <div class="ctr-row"><div class="ctr-lbl" style="font-size:13px">Weekly Routine</div><input class="ctr-input" id="t-weekly" type="number" value="200" min="0" max="1000"> <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">~200–400</span></div>
-                        <div class="ctr-row"><div class="ctr-lbl" style="font-size:13px">Protocol Pass</div><input class="ctr-input" id="t-pass" type="number" value="150" min="0" max="600"> <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">~150/wk</span></div>
+                        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2)">Current 6★ pity (Special HH)</div>
+                        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--text4);margin-top:2px" id="pity-source-hint">No pull data loaded — defaulting to 0</div>
                     </div>
+                    <div class="pity-sync-val" id="pity-sync-display">0</div>
+                    <div class="pity-sync-badge no-data" id="pity-sync-badge">NO DATA</div>
                 </div>
-                <div class="ctr-row" style="margin-top:6px">
-                    <div class="ctr-lbl" style="font-size:13px">Event Oroberyl</div>
-                    <input class="ctr-input" id="t-event" type="number" value="3000" min="0" max="20000" style="width:90px">
-                    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);flex:1">per patch est. · ~3,000–8,000 · ~6 weeks/patch</span>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:10px;line-height:1.65">
+                    BASE: 0.8% 6★ · SOFT PITY: #65 (+5%/pull) · HARD: #80 · SPARK: #120
                 </div>
-                <div id="tally-result" style="display:none">
-                    <div class="tally-breakdown" id="tally-breakdown"></div>
-                    <div class="tally-total-row">
-                        <div>
-                            <div class="tally-total-label">Projected Total</div>
-                            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px" id="tally-date-range"></div>
-                        </div>
-                        <div style="text-align:right">
-                            <div class="tally-total-val" id="tally-total-oro"></div>
-                            <div class="tally-pulls-val" id="tally-total-pulls"></div>
-                        </div>
+                <div class="prob-row">
+                    <div class="prob-lbl">≥1× 6★</div>
+                    <div class="prob-bar"><div class="prob-fill" id="prob6-fill" style="width:0%;background:var(--gold)"></div></div>
+                    <div class="prob-pct rc-gold" id="prob6-pct">0%</div>
+                </div>
+                <div class="prob-row">
+                    <div class="prob-lbl">Featured 6★</div>
+                    <div class="prob-bar"><div class="prob-fill" id="prob6-feat-fill" style="width:0%;background:var(--purple)"></div></div>
+                    <div class="prob-pct rc-purple" id="prob6-feat-pct">0%</div>
+                </div>
+                <div class="prob-row">
+                    <div class="prob-lbl">≥1× 5★</div>
+                    <div class="prob-bar"><div class="prob-fill" id="prob5-fill" style="width:0%;background:var(--blue)"></div></div>
+                    <div class="prob-pct rc-blue" id="prob5-pct">0%</div>
+                </div>
+                <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin:12px 0 7px">Expected from Your Inventory</div>
+                <div class="est-chips">
+                    <div class="est-chip ec-gold"><div class="est-chip-val" id="est-6star">0</div><div class="est-chip-lbl">6★ Operators</div></div>
+                    <div class="est-chip ec-purple"><div class="est-chip-val" id="est-5star">0</div><div class="est-chip-lbl">5★ Operators</div></div>
+                    <div class="est-chip ec-blue"><div class="est-chip-val" id="est-4star">0</div><div class="est-chip-lbl">4★ Operators</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: INCOME FORECAST -->
+    <div class="page-section" id="tab-income">
+
+        <!-- TIP BOX: Income Forecast -->
+        <div class="tip-box" style="margin-bottom:14px">
+            <div class="tip-toggle" onclick="toggleTip('tip-income')">
+                <span class="tip-icon">ℹ</span>
+                <span class="tip-title">Income Forecast Tips</span>
+                <span class="tip-chev" id="tip-income-chev">▼</span>
+            </div>
+            <div class="tip-body" id="tip-income-body">
+                <div class="tip-divider"></div>
+                <ul>
+                    <li>Set your <strong>From</strong> date to today and your <strong>To</strong> date to the banner's estimated end date to see exactly how much you can farm in time.</li>
+                    <li><strong>Daily Missions</strong> cap at 200 Oroberyl/day. The Monthly Pass adds another 200/day if you're subscribed.</li>
+                    <li><strong>Weekly Routine</strong> rewards vary — 200 is a conservative baseline, 400 is the typical high-end if you clear all content.</li>
+                    <li><strong>Protocol Pass</strong> is the battle-pass-style reward track; ~150/week is a common estimate for free-to-play progression.</li>
+                    <li><strong>Event Oroberyl</strong> is spread across the patch cycle (~6 weeks / 42 days). Adjust upward for major events or downward for lighter patches.</li>
+                    <li>The forecast <strong>does not include</strong> one-time rewards, login bonuses, or compensation drops — add those manually to your Oroberyl count in the Resource Planner.</li>
+                    <li>Divide the projected Oroberyl total by <strong>500</strong> to get pull count, or read the "≈ N pulls" line in the result.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="full-card">
+            <div class="planner-title">Oroberyl Accumulation Planner</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:12px;line-height:1.65">
+                Estimate Oroberyl accumulated from recurring sources between today and a target date.
+            </div>
+            <div class="date-row">
+                <span class="date-label">From</span>
+                <input class="date-input" id="tally-from" type="date">
+                <span class="date-label">To</span>
+                <input class="date-input" id="tally-to" type="date">
+                <button class="calc-btn" onclick="calcTally()">Calculate ▶</button>
+            </div>
+            <div class="tally-sources-grid" id="tally-inputs">
+                <div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:10px;text-transform:uppercase">Daily Sources</div>
+                    <div class="ctr-row"><div class="ctr-lbl" style="font-size:13px">Daily Missions</div><input class="ctr-input" id="t-daily" type="number" value="200" min="0" max="200"> <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">max 200</span></div>
+                    <div class="ctr-row"><div class="ctr-lbl" style="font-size:13px">Monthly Pass</div><input class="ctr-input" id="t-monthly" type="number" value="0" min="0" max="200"> <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">+200/day</span></div>
+                </div>
+                <div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:10px;text-transform:uppercase">Weekly Sources</div>
+                    <div class="ctr-row"><div class="ctr-lbl" style="font-size:13px">Weekly Routine</div><input class="ctr-input" id="t-weekly" type="number" value="200" min="0" max="1000"> <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">~200–400</span></div>
+                    <div class="ctr-row"><div class="ctr-lbl" style="font-size:13px">Protocol Pass</div><input class="ctr-input" id="t-pass" type="number" value="150" min="0" max="600"> <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">~150/wk</span></div>
+                </div>
+            </div>
+            <div class="ctr-row" style="margin-top:6px">
+                <div class="ctr-lbl" style="font-size:13px">Event Oroberyl</div>
+                <input class="ctr-input" id="t-event" type="number" value="3000" min="0" max="20000" style="width:90px">
+                <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);flex:1">per patch est. · ~6 weeks/patch</span>
+            </div>
+            <div id="tally-result" style="display:none">
+                <div id="tally-breakdown"></div>
+                <div class="tally-total-row">
+                    <div>
+                        <div class="tally-total-label">Projected Total</div>
+                        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px" id="tally-date-range"></div>
+                    </div>
+                    <div style="text-align:right">
+                        <div class="tally-total-val" id="tally-total-oro"></div>
+                        <div class="tally-pulls-val" id="tally-total-pulls"></div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- TAB: SHOP ADVISOR -->
-        <div class="page-section" id="tab-shop">
-            <div class="full-card">
-                <div class="planner-title">Origeometry Bundle Calculator</div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:14px;line-height:1.65">
-                    Choose your target unit, enter the amount, and find the most efficient official bundle combination.
-                    1 Origeometry = 75 Oroberyl · 500 Oroberyl = 1 pull · First-purchase bonus doubles Origeometry on each tier's first buy.
-                </div>
-                <div class="shop-unit-tabs">
-                    <button class="sutab active" onclick="switchShopUnit('oro',this)">Oroberyl</button>
-                    <button class="sutab" onclick="switchShopUnit('pulls',this)">Pulls</button>
-                    <button class="sutab" onclick="switchShopUnit('ori',this)">Origeometry</button>
-                </div>
-                <div class="unit-hint-box" id="shop-unit-hint">
-                    Enter how many <strong style="color:var(--accent)">Oroberyl</strong> you need. 500 = 1 pull · 1 Origeometry = 75 Oroberyl.
-                </div>
-                <div class="shop-input-row">
-                    <div>
-                        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase" id="shop-input-label">Oroberyl needed</div>
-                        <input class="shop-input" id="shop-need" type="number" min="1" max="999999" value="5000">
-                    </div>
-                    <div>
-                        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase">First purchase bonus</div>
-                        <select class="server-select" id="shop-firstbuy">
-                            <option value="1">Yes (×2 bonus)</option>
-                            <option value="0">No (standard)</option>
-                        </select>
-                    </div>
-                    <button class="calc-btn" onclick="calcShop()">Find Bundles ▶</button>
-                </div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:7px;text-transform:uppercase">Official Bundle Tiers (USD)</div>
-                <div class="bundle-grid" id="bundle-ref"></div>
-                <div class="shop-result" id="shop-result" style="display:none">
-                    <div class="shop-result-title">Recommended Purchase</div>
-                    <div class="shop-converted" id="shop-converted-label" style="margin-bottom:8px"></div>
-                    <div class="shop-combo" id="shop-combo"></div>
-                    <div class="shop-total" id="shop-total"></div>
-                </div>
+    <!-- TAB: SHOP ADVISOR -->
+    <div class="page-section" id="tab-shop">
+
+        <!-- TIP BOX: Shop Advisor -->
+        <div class="tip-box" style="margin-bottom:14px">
+            <div class="tip-toggle" onclick="toggleTip('tip-shop')">
+                <span class="tip-icon">ℹ</span>
+                <span class="tip-title">Shop Advisor Tips</span>
+                <span class="tip-chev" id="tip-shop-chev">▼</span>
+            </div>
+            <div class="tip-body" id="tip-shop-body">
+                <div class="tip-divider"></div>
+                <ul>
+                    <li>The <strong>First Purchase Bonus</strong> doubles Origeometry on the first-ever purchase of each bundle tier. If you've never bought a tier before, enable this for the most accurate calculation.</li>
+                    <li>Switch the input unit between <strong>Oroberyl</strong>, <strong>Pulls</strong>, or <strong>Origeometry</strong> to match whatever target you're planning around — the advisor converts automatically.</li>
+                    <li>The <strong>BEST</strong> badge highlights the recommended bundle combination. It prioritizes larger bundles to minimize leftover Origeometry.</li>
+                    <li><strong>1 Origeometry = 75 Oroberyl = 0.15 pulls</strong>. You need ~667 Origeometry for a single pull if buying with no first-buy bonus.</li>
+                    <li>Bundles are in <strong>USD</strong>. Actual prices in your region may differ due to local currency adjustments.</li>
+                    <li>The advisor does not account for top-up bonuses or promotional events — check the in-game shop for active deals before purchasing.</li>
+                </ul>
             </div>
         </div>
 
-    </main>
+        <div class="full-card">
+            <div class="planner-title">Origeometry Bundle Calculator</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:14px;line-height:1.65">
+                1 Origeometry = 75 Oroberyl · 500 Oroberyl = 1 pull · First-purchase bonus doubles Origeometry.
+            </div>
+            <div class="shop-unit-tabs">
+                <button class="sutab active" onclick="switchShopUnit('oro',this)">Oroberyl</button>
+                <button class="sutab" onclick="switchShopUnit('pulls',this)">Pulls</button>
+                <button class="sutab" onclick="switchShopUnit('ori',this)">Origeometry</button>
+            </div>
+            <div class="unit-hint-box" id="shop-unit-hint">
+                Enter how many <strong style="color:var(--accent)">Oroberyl</strong> you need. 500 = 1 pull · 1 Origeometry = 75 Oroberyl.
+            </div>
+            <div class="shop-input-row">
+                <div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase" id="shop-input-label">Oroberyl needed</div>
+                    <input class="shop-input" id="shop-need" type="number" min="1" max="999999" value="5000">
+                </div>
+                <div>
+                    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase">First purchase bonus</div>
+                    <select class="server-select" id="shop-firstbuy">
+                        <option value="1">Yes (×2 bonus)</option>
+                        <option value="0">No (standard)</option>
+                    </select>
+                </div>
+                <button class="calc-btn" onclick="calcShop()">Find Bundles ▶</button>
+            </div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:7px;text-transform:uppercase">Official Bundle Tiers (USD)</div>
+            <div class="bundle-grid" id="bundle-ref"></div>
+            <div class="shop-result" id="shop-result" style="display:none">
+                <div class="shop-result-title">Recommended Purchase</div>
+                <div class="shop-converted" id="shop-converted-label" style="margin-bottom:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3)"></div>
+                <div class="shop-combo" id="shop-combo"></div>
+                <div class="shop-total" id="shop-total"></div>
+            </div>
+        </div>
+    </div>
 
-    <footer>
-        <div class="footer-l">Data processed locally // No server transmission // Endfield Ops v2.2</div>
-        <div class="footer-r">DIJANG</div>
-    </footer>
+</main>
 
-    <script>
-    /* ─── THEME ─── */
-    const THEMES = [
-        { name:'FIERY RED',    accent:'#e8613a', accentDim:'#b84a27', accentSoft:'rgba(232,97,58,0.06)' },
-        { name:'NATURE GREEN', accent:'#4db87a', accentDim:'#2e8a54', accentSoft:'rgba(77,184,122,0.06)' },
-        { name:'METALLIC',     accent:'#a8a8b8', accentDim:'#6e6e80', accentSoft:'rgba(168,168,184,0.06)' },
-        { name:'ICE BLUE',     accent:'#5bb8e8', accentDim:'#2d7fad', accentSoft:'rgba(91,184,232,0.06)' },
-    ];
-    (function applyTheme() {
-        const t = THEMES[Math.floor(Math.random() * THEMES.length)];
-        const r = document.documentElement.style;
-        r.setProperty('--accent', t.accent);
-        r.setProperty('--accent-dim', t.accentDim);
-        r.setProperty('--accent-soft', t.accentSoft);
-        document.addEventListener('DOMContentLoaded', () => {
-            const el = document.getElementById('themeName');
-            if (el) el.textContent = t.name;
-        });
-    })();
+<footer>
+    <div class="footer-l">Data processed locally // No server transmission // Endfield Ops v3.0</div>
+    <div class="footer-r">DIJANG</div>
+</footer>
 
-    /* ─── STATE ─── */
-    let allPulls = [];
-    let allWeaponPulls = [];
-    let currentBanner = null;
-    let currentFilter = 'all';
-    let currentWeaponFilter = 'all';
-    let bannerData = {};
-    let currentPity6 = 0;
-    let shopUnit = 'oro';
+<script>
+/* ════════════════════════════════════════════════════════════
+   TIP BOX TOGGLE
+════════════════════════════════════════════════════════════ */
+function toggleTip(id) {
+    const body = document.getElementById(id + '-body');
+    const chev = document.getElementById(id + '-chev');
+    body.classList.toggle('open');
+    chev.classList.toggle('open');
+}
 
-    const POOL_NAMES = {
-        'E_CharacterGachaPoolType_Standard': 'Standard',
-        'E_CharacterGachaPoolType_Special': 'Special Headhunting',
-        'E_CharacterGachaPoolType_Beginner': 'Smelting Forge Issue',
-    };
+/* ════════════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════════════ */
+let bannerData = {};
+let activeBannerName = null;
+let currentFilter = 'all';
+let currentPity6 = 0;
+let shopUnit = 'oro';
 
-    // Weapon pool types (Smelting Forge Issue is the beginner/weapon banner)
-    const WEAPON_POOL_KEYS = ['E_CharacterGachaPoolType_Beginner'];
-    const OP_POOL_KEYS = ['E_CharacterGachaPoolType_Standard', 'E_CharacterGachaPoolType_Special'];
-    const ALL_POOL_TYPES = Object.keys(POOL_NAMES);
+const PROBE_POOL_TYPES = [
+    'E_CharacterGachaPoolType_Special',
+    'E_CharacterGachaPoolType_Standard',
+    'E_CharacterGachaPoolType_Beginner',
+    'E_CharacterGachaPoolType_NewHorizon',
+    'E_CharacterGachaPoolType_Limited',
+];
 
-    /* ─── PAGE TABS ─── */
-    function switchPageTab(tab) {
-        document.querySelectorAll('.page-tab').forEach((b,i) => {
-            const tabs = ['planner','income','shop'];
-            b.classList.toggle('active', tabs[i] === tab);
-        });
-        document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-        document.getElementById('tab-'+tab).classList.add('active');
-    }
+const POOL_LABELS = {
+    'E_CharacterGachaPoolType_Special':   'Special Headhunting',
+    'E_CharacterGachaPoolType_Standard':  'Standard',
+    'E_CharacterGachaPoolType_Beginner':  'Beginner',
+    'E_CharacterGachaPoolType_NewHorizon':'New Horizons',
+    'E_CharacterGachaPoolType_Limited':   'Limited',
+};
 
-    /* ─── UI TOGGLES ─── */
-    function toggleGuide() {
-        document.getElementById('guideBody').classList.toggle('open');
-        document.getElementById('guideChev').classList.toggle('open');
-    }
-    function switchMethod(m, btn) {
-        document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
-        document.getElementById('method-' + m).classList.add('active');
-    }
-    function switchInputMode(m, btn) {
-        document.querySelectorAll('.itab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.imode').forEach(p => p.classList.remove('active'));
-        document.getElementById('imode-' + m).classList.add('active');
-        hideError();
-    }
+function classifyBanner(poolTypeKey) {
+    if (!poolTypeKey) return 'unknown';
+    const k = poolTypeKey.toLowerCase();
+    if (k.includes('special') || k.includes('limited')) return 'special';
+    if (k.includes('standard')) return 'standard';
+    if (k.includes('beginner')) return 'beginner';
+    if (k.includes('weapon') || k.includes('forge') || k.includes('raft')) return 'weapon';
+    if (k.includes('newhorizon') || k.includes('new_horizon')) return 'standard';
+    return 'unknown';
+}
 
-    /* ─── CORS PROXIES ─── */
-    const CORS_PROXIES = [
-        url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-        url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        url => `https://cors.eu.org/${url}`,
-        url => `https://thingproxy.freeboard.io/fetch/${url}`,
-    ];
+function resolveLabel(rawPoolType) {
+    if (!rawPoolType) return 'Unknown Banner';
+    if (POOL_LABELS[rawPoolType]) return POOL_LABELS[rawPoolType];
+    const stripped = rawPoolType.replace(/^E_[A-Za-z]+GachaPoolType_/, '');
+    return stripped.replace(/([a-z])([A-Z])/g, '$1 $2');
+}
 
-    async function fetchWithCorsProxy(apiUrl) {
-        let lastErr;
-        for (const makeProxy of CORS_PROXIES) {
-            try {
-                const resp = await fetch(makeProxy(apiUrl), { signal: AbortSignal.timeout(8000) });
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                return JSON.parse(await resp.text());
-            } catch (e) { lastErr = e; }
-        }
+/* ════════════════════════════════════════════════════════════
+   CORS PROXIES
+════════════════════════════════════════════════════════════ */
+const CORS_PROXIES = [
+    url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    url => `https://cors.eu.org/${url}`,
+    url => `https://thingproxy.freeboard.io/fetch/${url}`,
+];
+
+async function fetchWithProxy(apiUrl) {
+    let lastErr;
+    for (const makeProxy of CORS_PROXIES) {
         try {
-            const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(8000) });
-            return await resp.json();
-        } catch (e) { throw lastErr || e; }
+            const r = await fetch(makeProxy(apiUrl), { signal: AbortSignal.timeout(8000) });
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            return JSON.parse(await r.text());
+        } catch(e) { lastErr = e; }
     }
+    try {
+        const r = await fetch(apiUrl, { signal: AbortSignal.timeout(8000) });
+        return await r.json();
+    } catch(e) { throw lastErr || e; }
+}
 
-    async function fetchAllPages(token, serverId, poolType) {
-        const records = [];
-        let seqId = null;
-        for (let page = 1; page <= 200; page++) {
-            const u = new URL('https://ef-webview.gryphline.com/api/record/char');
-            u.searchParams.set('lang', 'en-us');
-            u.searchParams.set('pool_type', poolType);
-            u.searchParams.set('token', token);
-            u.searchParams.set('server_id', String(serverId));
-            if (seqId !== null) u.searchParams.set('seq_id', String(seqId));
-            setLoading(`Fetching ${POOL_NAMES[poolType] || poolType} — ${records.length} records…`);
-            try {
-                const data = await fetchWithCorsProxy(u.toString());
-                if (!data?.data?.list) break;
-                const list = data.data.list;
-                if (!list.length) break;
-                list.forEach(r => { r._poolType = poolType; });
-                records.push(...list);
-                if (list.length < 5) break;
-                seqId = list.at(-1).seqId ?? list.at(-1).seq_id ?? null;
-                if (!seqId) break;
-            } catch (e) { break; }
-        }
-        return records;
-    }
-
-    async function loadFromUrl() {
-        const urlStr = document.getElementById('urlInput').value.trim();
-        if (!urlStr || !urlStr.includes('ef-webview.gryphline.com')) {
-            showError('Invalid URL. Paste the full link from HGWebview.log starting with https://ef-webview.gryphline.com/...');
-            return;
-        }
-        hideError(); showLoading('Parsing URL…');
+/* ════════════════════════════════════════════════════════════
+   FETCH ALL PAGES FOR ONE POOL TYPE
+════════════════════════════════════════════════════════════ */
+async function fetchAllPages(token, serverId, poolType) {
+    const records = [];
+    let seqId = null;
+    for (let page = 1; page <= 200; page++) {
+        const u = new URL('https://ef-webview.gryphline.com/api/record/char');
+        u.searchParams.set('lang', 'en-us');
+        u.searchParams.set('pool_type', poolType);
+        u.searchParams.set('token', token);
+        u.searchParams.set('server_id', String(serverId));
+        if (seqId !== null) u.searchParams.set('seq_id', String(seqId));
+        setLoading(`Scanning ${resolveLabel(poolType)} — ${records.length} records…`);
         try {
-            const parsed = new URL(urlStr);
-            const token = parsed.searchParams.get('token');
-            const serverId = parsed.searchParams.get('server_id') || '2';
-            if (!token) { showError('Could not extract token from URL.'); showLoading(null); return; }
-            await loadAllBanners(token, serverId);
-        } catch (e) {
-            showError(`Error: ${e.message}. Re-open pull history in-game for a fresh link.`);
-            showLoading(null);
-        }
+            const data = await fetchWithProxy(u.toString());
+            if (!data?.data?.list) break;
+            const list = data.data.list;
+            if (!list.length) break;
+            list.forEach(r => { if (!r._probePoolType) r._probePoolType = poolType; });
+            records.push(...list);
+            if (list.length < 5) break;
+            seqId = list.at(-1).seqId ?? list.at(-1).seq_id ?? null;
+            if (!seqId) break;
+        } catch(e) { break; }
     }
+    return records;
+}
 
-    async function loadFromToken() {
-        const token = document.getElementById('tokenInput').value.trim();
-        const serverId = document.getElementById('serverSelect').value;
-        if (!token) { showError('Please enter your token.'); return; }
-        hideError();
+/* ════════════════════════════════════════════════════════════
+   ENTRY POINTS
+════════════════════════════════════════════════════════════ */
+async function loadFromUrl() {
+    const urlStr = document.getElementById('urlInput').value.trim();
+    if (!urlStr || !urlStr.includes('ef-webview.gryphline.com')) {
+        showError('Invalid URL. Paste the full link from HGWebview.log starting with https://ef-webview.gryphline.com/...');
+        return;
+    }
+    hideError(); setLoading('Parsing URL…');
+    try {
+        const parsed = new URL(urlStr);
+        const token = parsed.searchParams.get('token');
+        const serverId = parsed.searchParams.get('server_id') || '2';
+        if (!token) { showError('Could not extract token from URL.'); setLoading(null); return; }
         await loadAllBanners(token, serverId);
+    } catch(e) {
+        showError(`Error: ${e.message}. Re-open pull history in-game for a fresh link.`);
+        setLoading(null);
     }
+}
 
-    async function loadAllBanners(token, serverId) {
-        showLoading('Initializing…');
-        let allRecords = [];
-        for (const poolType of ALL_POOL_TYPES) {
-            try { allRecords.push(...await fetchAllPages(token, serverId, poolType)); } catch (e) {}
-        }
-        showLoading(null);
-        if (!allRecords.length) {
-            showError('No records found.\n• Token may have expired — re-open pull history in-game\n• All CORS proxies temporarily unavailable\n• Try again in a few seconds or use a different browser');
-            return;
-        }
-        processData(allRecords);
+async function loadFromToken() {
+    const token = document.getElementById('tokenInput').value.trim();
+    const serverId = document.getElementById('serverSelect').value;
+    if (!token) { showError('Please enter your token.'); return; }
+    hideError();
+    await loadAllBanners(token, serverId);
+}
+
+async function loadAllBanners(token, serverId) {
+    setLoading('Initializing…');
+    let allRecords = [];
+    for (const poolType of PROBE_POOL_TYPES) {
+        try { allRecords.push(...await fetchAllPages(token, serverId, poolType)); } catch(e) {}
     }
-
-    function processData(records) {
-        // Separate operator vs weapon pools
-        allWeaponPulls = records.filter(r => WEAPON_POOL_KEYS.includes(r._poolType));
-        allPulls = records.filter(r => OP_POOL_KEYS.includes(r._poolType));
-
-        // Operator banners
-        const banners = {};
-        allPulls.forEach(r => {
-            const b = POOL_NAMES[r._poolType] || 'Standard';
-            if (!banners[b]) banners[b] = [];
-            banners[b].push(r);
-        });
-        bannerData = banners;
-        const keys = Object.keys(banners);
-        currentBanner = keys[0];
-        buildBannerTabs(keys);
-
-        const pulls = bannerData[currentBanner] || [];
-        renderStats(pulls); renderPityBars(pulls); renderDistribution(pulls); renderPullList();
-
-        document.getElementById('statsRow').style.display = 'grid';
-        document.getElementById('midRow').style.display = 'grid';
-        document.getElementById('bannerSection').classList.add('visible');
-
-        // Weapon log
-        if (allWeaponPulls.length) {
-            renderWeaponLog(allWeaponPulls);
-            document.getElementById('weaponSection').classList.add('visible');
-        }
-
-        renderFoundBanner(banners, allWeaponPulls);
-        renderGoyStats(records, banners, allWeaponPulls);
+    setLoading(null);
+    if (!allRecords.length) {
+        showError('No records found.\n• Token may have expired — re-open pull history in-game\n• CORS proxies temporarily unavailable\n• Try again in a few seconds or use a different browser');
+        return;
     }
+    processData(allRecords);
+}
 
-    function renderFoundBanner(banners, weaponPulls) {
-        const opTotal = Object.values(banners).reduce((s, a) => s + a.length, 0);
-        const total = opTotal + weaponPulls.length;
-        document.getElementById('foundTotal').textContent = '+' + total;
-        const breakdown = document.getElementById('foundBreakdown');
-        breakdown.innerHTML = '';
-        const pillClass = { 'Special Headhunting':'p-special','Standard':'p-standard','Smelting Forge Issue':'p-beginner' };
-        Object.entries(banners).forEach(([name, arr]) => {
-            const pill = document.createElement('span');
-            pill.className = 'found-pill ' + (pillClass[name] || 'p-standard');
-            pill.textContent = `${name}  +${arr.length}`;
-            breakdown.appendChild(pill);
-        });
-        if (weaponPulls.length) {
-            const pill = document.createElement('span');
-            pill.className = 'found-pill p-beginner';
-            pill.textContent = `Weapon  +${weaponPulls.length}`;
-            breakdown.appendChild(pill);
-        }
-        document.getElementById('foundBanner').classList.add('visible');
-    }
+/* ════════════════════════════════════════════════════════════
+   PROCESS DATA
+════════════════════════════════════════════════════════════ */
+function getRecordPoolType(r) {
+    return r.poolType || r.pool_type || r.gachaType || r.gacha_type || r._probePoolType || 'Unknown';
+}
 
-    function buildBannerTabs(names) {
-        const tabs = document.getElementById('bannerTabs');
-        tabs.innerHTML = '';
-        names.forEach((b, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'btab' + (i === 0 ? ' active' : '');
-            btn.textContent = `${b} (${bannerData[b].length})`;
-            btn.onclick = () => {
-                document.querySelectorAll('.btab').forEach(t => t.classList.remove('active'));
-                btn.classList.add('active');
-                currentBanner = b;
-                const p = bannerData[b];
-                renderStats(p); renderPityBars(p); renderDistribution(p); renderPullList();
-            };
-            tabs.appendChild(btn);
-        });
-    }
-
-    function getNameField(p) { return p.name || p.itemName || p.item_name || p.charName || p.char_name || 'Unknown'; }
-    function getRarity(p) { return String(p.rarity || p.star || p.stars || p.quality || '3'); }
-
-    function renderStats(pulls) {
-        const total = pulls.length;
-        const s6 = pulls.filter(p => getRarity(p) === '6').length;
-        const s5 = pulls.filter(p => getRarity(p) === '5').length;
-        let pity = 0; const sixPities = [];
-        [...pulls].reverse().forEach(p => { pity++; if (getRarity(p) === '6') { sixPities.push(pity); pity = 0; } });
-        const avg = sixPities.length ? Math.round(sixPities.reduce((a, b) => a + b, 0) / sixPities.length) : 0;
-        document.getElementById('statTotal').textContent = total;
-        document.getElementById('stat6').textContent = s6;
-        document.getElementById('stat5').textContent = s5;
-        document.getElementById('stat6Rate').textContent = total ? (s6/total*100).toFixed(2) + '% Rate' : '0.00% Rate';
-        document.getElementById('stat5Rate').textContent = total ? (s5/total*100).toFixed(2) + '% Rate' : '0.00% Rate';
-        document.getElementById('statAvgPity').textContent = avg;
-        document.getElementById('statTotalBg').textContent = total;
-        document.getElementById('stat6Bg').textContent = s6;
-        document.getElementById('stat5Bg').textContent = s5;
-        document.getElementById('statAvgBg').textContent = avg;
-    }
-
-    function renderPityBars(pulls) {
-        let p6 = 0, p5 = 0;
-        for (let i = pulls.length - 1; i >= 0; i--) {
-            const r = getRarity(pulls[i]);
-            if (r === '6') break; p6++;
-        }
-        for (let i = pulls.length - 1; i >= 0; i--) {
-            const r = getRarity(pulls[i]);
-            if (r === '6' || r === '5') break; p5++;
-        }
-        document.getElementById('pity6Count').textContent = p6;
-        document.getElementById('pity5Count').textContent = p5;
-        setTimeout(() => {
-            document.getElementById('pity6Fill').style.width = Math.min(100, p6/80*100) + '%';
-            document.getElementById('pity5Fill').style.width = Math.min(100, p5/10*100) + '%';
-        }, 120);
-        currentPity6 = p6;
-        document.getElementById('pity-sync-display').textContent = p6;
-        document.getElementById('pity-source-hint').textContent = 'Auto-filled from your pull log';
-        const badge = document.getElementById('pity-sync-badge');
-        badge.textContent = 'SYNCED';
-        badge.classList.remove('no-data');
-        badge.classList.add('synced');
-        const totalPulls = getTotalPullsFromInputs();
-        recalcChances(totalPulls);
-    }
-
-    function renderDistribution(pulls) {
-        const counts = { 6:0, 5:0, 4:0, 3:0 };
-        pulls.forEach(p => { const r = getRarity(p); if (counts[r] !== undefined) counts[r]++; });
-        const total = pulls.length || 1;
-        const bars = document.getElementById('distBars');
-        bars.innerHTML = '';
-        const cfg = { 6:{color:'var(--gold)',label:'6★'}, 5:{color:'var(--purple)',label:'5★'}, 4:{color:'var(--blue)',label:'4★'}, 3:{color:'var(--text3)',label:'3★'} };
-        [6,5,4,3].forEach(r => {
-            const c = counts[r];
-            const pct = (c/total*100).toFixed(1);
-            const row = document.createElement('div');
-            row.className = 'dist-row';
-            row.innerHTML = `<div class="dist-lbl" style="color:${cfg[r].color}">${cfg[r].label}</div>
-                <div class="dist-bg"><div class="dist-fill" id="df${r}" style="width:0%;background:${cfg[r].color}"><span>${c} (${pct}%)</span></div></div>
-                <div class="dist-count" style="color:${cfg[r].color}">${c}</div>`;
-            bars.appendChild(row);
-            setTimeout(() => { document.getElementById('df'+r).style.width = (c/total*100) + '%'; }, 200);
-        });
-    }
-
-    /* ═══ WEAPON LOG ═══ */
-    function renderWeaponLog(pulls) {
-        // Stats
-        const total = pulls.length;
-        const s6 = pulls.filter(p => getRarity(p) === '6').length;
-        const s5 = pulls.filter(p => getRarity(p) === '5').length;
-        let pity = 0; const sixPities = [];
-        [...pulls].reverse().forEach(p => { pity++; if (getRarity(p) === '6') { sixPities.push(pity); pity = 0; } });
-        const avg = sixPities.length ? Math.round(sixPities.reduce((a,b) => a+b, 0) / sixPities.length) : 0;
-        document.getElementById('wStatTotal').textContent = total;
-        document.getElementById('wStatTotalBg').textContent = total;
-        document.getElementById('wStat6').textContent = s6;
-        document.getElementById('wStat6Bg').textContent = s6;
-        document.getElementById('wStat5').textContent = s5;
-        document.getElementById('wStat5Bg').textContent = s5;
-        document.getElementById('wStat6Rate').textContent = total ? (s6/total*100).toFixed(2)+'%' : '0.00%';
-        document.getElementById('wStat5Rate').textContent = total ? (s5/total*100).toFixed(2)+'%' : '0.00%';
-        document.getElementById('wStatAvg').textContent = avg;
-        document.getElementById('wStatAvgBg').textContent = avg;
-
-        // Pity bars
-        let wp6 = 0, wp5 = 0;
-        for (let i = pulls.length-1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r==='6') break; wp6++; }
-        for (let i = pulls.length-1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r==='6'||r==='5') break; wp5++; }
-        document.getElementById('wpity6Count').textContent = wp6;
-        document.getElementById('wpity5Count').textContent = wp5;
-        setTimeout(() => {
-            document.getElementById('wpity6Fill').style.width = Math.min(100, wp6/80*100)+'%';
-            document.getElementById('wpity5Fill').style.width = Math.min(100, wp5/10*100)+'%';
-        }, 150);
-
-        // Distribution
-        const wcounts = {6:0,5:0,4:0,3:0};
-        pulls.forEach(p => { const r = getRarity(p); if (wcounts[r]!==undefined) wcounts[r]++; });
-        const wtotal = pulls.length || 1;
-        const wbars = document.getElementById('wDistBars');
-        wbars.innerHTML = '';
-        const cfg = {6:{color:'var(--gold)',label:'6★'},5:{color:'var(--purple)',label:'5★'},4:{color:'var(--blue)',label:'4★'},3:{color:'var(--text3)',label:'3★'}};
-        [6,5,4,3].forEach(r => {
-            const c = wcounts[r];
-            const pct = (c/wtotal*100).toFixed(1);
-            const row = document.createElement('div');
-            row.className = 'dist-row';
-            row.innerHTML = `<div class="dist-lbl" style="color:${cfg[r].color}">${cfg[r].label}</div>
-                <div class="dist-bg"><div class="dist-fill" id="wdf${r}" style="width:0%;background:${cfg[r].color}"><span>${c} (${pct}%)</span></div></div>
-                <div class="dist-count" style="color:${cfg[r].color}">${c}</div>`;
-            wbars.appendChild(row);
-            setTimeout(() => { const el = document.getElementById('wdf'+r); if(el) el.style.width = (c/wtotal*100)+'%'; }, 250);
-        });
-
-        renderWeaponPullList(pulls);
-    }
-
-    function filterWeapons(f, btn) {
-        currentWeaponFilter = f;
-        document.querySelectorAll('.wfilt').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderWeaponPullList(allWeaponPulls);
-    }
-
-    function renderWeaponPullList(pulls) {
-        const list = document.getElementById('weaponPullList');
-        list.innerHTML = '';
-        let pity = 0;
-        const withPity = [...pulls].reverse().map((p, i) => {
-            pity++;
-            const r = getRarity(p);
-            const snap = pity;
-            if (r === '6' || r === '5') pity = 0;
-            return { ...p, pullNum: i+1, pityCount: snap };
-        }).reverse();
-        const filtered = currentWeaponFilter === 'all' ? withPity : withPity.filter(p => getRarity(p) === currentWeaponFilter);
-        if (!filtered.length) {
-            list.innerHTML = '<div class="no-data"><div class="no-data-icon">⚔</div>No weapon records match filter.</div>';
-            return;
-        }
-        filtered.forEach(p => {
-            const r = getRarity(p);
-            const item = document.createElement('div');
-            item.className = `pull-item s${r}`;
-            const stars = '★'.repeat(parseInt(r));
-            const showPity = r === '6' || r === '5';
-            const highPity = (r==='6' && p.pityCount >= 50)||(r==='5' && p.pityCount >= 8);
-            item.innerHTML = `<div class="p-num">#${p.pullNum}</div>
-                <div class="p-name">⚔ ${getNameField(p)}</div>
-                <div class="p-stars">${stars}</div>
-                <div class="p-pity${highPity?' high':''}">${showPity ? '@'+p.pityCount : ''}</div>`;
-            list.appendChild(item);
-        });
-    }
-
-    /* ═══ GOYFIELD-STYLE STATISTICS ═══ */
-    function renderGoyStats(allRecords, banners, weaponPulls) {
-        document.getElementById('goyNoData').style.display = 'none';
-        document.getElementById('goySection').classList.add('visible');
-
-        const totalOp = Object.values(banners).reduce((s,a) => s+a.length, 0);
-        const totalWep = weaponPulls.length;
-        const totalAll = totalOp + totalWep;
-
-        const all6 = allRecords.filter(p => getRarity(p)==='6');
-        const all5 = allRecords.filter(p => getRarity(p)==='5');
-
-        // Overview grid
-        const overviewData = [
-            { label:'Total Headhunts', val: totalAll.toLocaleString(), sub: `${totalOp} operator · ${totalWep} weapon` },
-            { label:'6★ Obtained', val: all6.length, sub: totalAll ? (all6.length/totalAll*100).toFixed(2)+'% rate' : '—' },
-            { label:'5★ Obtained', val: all5.length, sub: totalAll ? (all5.length/totalAll*100).toFixed(2)+'% rate' : '—' },
-            { label:'Oroberyl Spent', val: (totalAll*500).toLocaleString(), sub: `≈ ${(totalAll*500/75).toFixed(0)} Origeometry` },
-            { label:'Spark Progress', val: (totalAll%120)+'/120', sub: `${Math.floor(totalAll/120)} spark(s) used` },
-            { label:'Lucky Pulls', val: (() => { let lucky=0,cur=0; [...allRecords].reverse().forEach(p=>{cur++;if(getRarity(p)==='6'){if(cur<=40)lucky++;cur=0;}}); return lucky; })(), sub: 'pulled before pity midpoint' }
-        ];
-        document.getElementById('goyOverview').innerHTML = overviewData.map(d => `
-            <div class="goy-card fade-in">
-                <div class="goy-card-title">${d.label}</div>
-                <div class="goy-card-val">${d.val}</div>
-                <div class="goy-card-sub">${d.sub}</div>
-            </div>`).join('');
-
-        // Per-banner cards
-        const bannerCardsData = [
-            { name:'Special Headhunting', cls:'special', pulls: banners['Special Headhunting'] || [] },
-            { name:'Standard', cls:'standard', pulls: banners['Standard'] || [] },
-            { name:'Weapon (Smelting Forge)', cls:'weapon', pulls: weaponPulls },
-        ];
-        document.getElementById('goyBannerCards').innerHTML = bannerCardsData.map(b => {
-            const total = b.pulls.length;
-            const s6 = b.pulls.filter(p=>getRarity(p)==='6').length;
-            const s5 = b.pulls.filter(p=>getRarity(p)==='5').length;
-            let p6=0,p5=0;
-            for(let i=b.pulls.length-1;i>=0;i--){const r=getRarity(b.pulls[i]);if(r==='6')break;p6++;}
-            for(let i=b.pulls.length-1;i>=0;i--){const r=getRarity(b.pulls[i]);if(r==='6'||r==='5')break;p5++;}
-            let avgPity=0; { let pity=0;const sp=[]; [...b.pulls].reverse().forEach(p=>{pity++;if(getRarity(p)==='6'){sp.push(pity);pity=0;}}); avgPity=sp.length?Math.round(sp.reduce((a,x)=>a+x,0)/sp.length):0; }
-            const p6pct = Math.min(100, p6/80*100).toFixed(0);
-            const p5pct = Math.min(100, p5/10*100).toFixed(0);
-            const p6color = b.cls==='weapon'?'var(--accent)':'var(--accent)';
-            return `<div class="goy-banner-card fade-in">
-                <div class="goy-banner-name ${b.cls}">${b.name}</div>
-                <div class="goy-stat-line"><div class="goy-stat-key">Total Pulls</div><div class="goy-stat-val">${total}</div></div>
-                <div class="goy-stat-line"><div class="goy-stat-key">6★ Count</div><div class="goy-stat-val" style="color:var(--gold)">${s6} <span style="font-size:11px;color:var(--text3)">(${total?(s6/total*100).toFixed(1):'0'}%)</span></div></div>
-                <div class="goy-stat-line"><div class="goy-stat-key">5★ Count</div><div class="goy-stat-val" style="color:var(--purple)">${s5} <span style="font-size:11px;color:var(--text3)">(${total?(s5/total*100).toFixed(1):'0'}%)</span></div></div>
-                <div class="goy-stat-line"><div class="goy-stat-key">Avg 6★ Pity</div><div class="goy-stat-val">${avgPity || '—'}</div></div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:4px;margin-top:8px">CURRENT PITY</div>
-                <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
-                    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);min-width:32px">6★</span>
-                    <div class="goy-pity-bar" style="flex:1"><div class="goy-pity-fill" style="width:${p6pct}%;background:var(--gold)"></div></div>
-                    <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--gold)">${p6}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:6px">
-                    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);min-width:32px">5★</span>
-                    <div class="goy-pity-bar" style="flex:1"><div class="goy-pity-fill" style="width:${p5pct}%;background:var(--purple)"></div></div>
-                    <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--purple)">${p5}</span>
-                </div>
-            </div>`;
-        }).join('');
-
-        // 6★ history per banner
-        const histEl = document.getElementById('goy6History');
-        histEl.innerHTML = '';
-        [...Object.entries(banners), ['Weapon (Smelting Forge)', weaponPulls]].forEach(([bname, bpulls]) => {
-            if (!bpulls.length) return;
-            let pity = 0;
-            const sixes = [];
-            [...bpulls].reverse().forEach(p => {
-                pity++;
-                if (getRarity(p) === '6') {
-                    sixes.push({ name: getNameField(p), pity, banner: bname });
-                    pity = 0;
-                }
-            });
-            if (!sixes.length) return;
-            const card = document.createElement('div');
-            card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;';
-            card.innerHTML = `<div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border)">${bname} — 6★ Pulls</div>
-                <div>${sixes.slice(0,12).map(s => {
-                    const high = s.pity >= 70;
-                    const lucky = s.pity <= 20;
-                    const color = high ? 'var(--red)' : lucky ? 'var(--green)' : 'var(--gold)';
-                    return `<div class="goy-six-item">
-                        <div class="goy-six-name">${s.name}</div>
-                        <div class="goy-six-pity" style="color:${color}">@${s.pity}</div>
-                        ${s.pity >= 65 ? '<div style="font-family:\'Share Tech Mono\',monospace;font-size:8px;color:var(--red);padding:1px 5px;background:rgba(239,80,80,0.1);border-radius:3px">SOFT PITY</div>' : ''}
-                        ${s.pity <= 15 ? '<div style="font-family:\'Share Tech Mono\',monospace;font-size:8px;color:var(--green);padding:1px 5px;background:rgba(78,202,139,0.1);border-radius:3px">LUCKY</div>' : ''}
-                    </div>`;
-                }).join('')}</div>
-                ${sixes.length > 12 ? `<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:8px">+${sixes.length-12} more 6★ (scroll up in pull log)</div>` : ''}`;
-            histEl.appendChild(card);
-        });
-    }
-
-    /* ─── FILTER ─── */
-    function filterPulls(f, btn) {
-        currentFilter = f;
-        document.querySelectorAll('.filt').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderPullList();
-    }
-
-    function renderPullList() {
-        const list = document.getElementById('pullList');
-        list.innerHTML = '';
-        const pulls = currentBanner ? (bannerData[currentBanner] || []) : allPulls;
-        let pity = 0;
-        const withPity = [...pulls].reverse().map((p, i) => {
-            pity++;
-            const r = getRarity(p);
-            const snap = pity;
-            if (r === '6' || r === '5') pity = 0;
-            return { ...p, pullNum: i+1, pityCount: snap };
-        }).reverse();
-        const filtered = currentFilter === 'all' ? withPity : withPity.filter(p => getRarity(p) === currentFilter);
-        if (!filtered.length) {
-            list.innerHTML = '<div class="no-data"><div class="no-data-icon">◈</div>No records match current filter.</div>';
-            return;
-        }
-        filtered.forEach(p => {
-            const r = getRarity(p);
-            const item = document.createElement('div');
-            item.className = `pull-item s${r}`;
-            const stars = '★'.repeat(parseInt(r));
-            const showPity = r === '6' || r === '5';
-            const highPity = (r==='6' && p.pityCount >= 50)||(r==='5' && p.pityCount >= 8);
-            item.innerHTML = `<div class="p-num">#${p.pullNum}</div>
-                <div class="p-name">${getNameField(p)}</div>
-                <div class="p-stars">${stars}</div>
-                <div class="p-pity${highPity?' high':''}">${showPity ? '@'+p.pityCount : ''}</div>`;
-            list.appendChild(item);
-        });
-    }
-
-    /* ─── STATUS HELPERS ─── */
-    function showError(msg) {
-        const b = document.getElementById('errorBox');
-        b.innerHTML = '⚠ ' + msg.replace(/\n/g, '<br>');
-        b.style.display = 'block';
-    }
-    function hideError() { document.getElementById('errorBox').style.display = 'none'; }
-    function setLoading(msg) {
-        const box = document.getElementById('loadingBox');
-        if (!msg) { box.style.display = 'none'; return; }
-        document.getElementById('loadingMsg').textContent = msg;
-        box.style.display = 'flex';
-    }
-    function showLoading(msg) { setLoading(msg); }
-
-    /* ═══════════════ PLANNER ═══════════════ */
-    function syncSlider(inputId, sliderId) {
-        const v = parseInt(document.getElementById(inputId).value) || 0;
-        document.getElementById(sliderId).value = Math.min(v, parseInt(document.getElementById(sliderId).max));
-    }
-    function syncInput(sliderId, inputId) {
-        document.getElementById(inputId).value = document.getElementById(sliderId).value;
-    }
-    function getTotalPullsFromInputs() {
-        const oro = parseInt(document.getElementById('ctr-oro').value) || 0;
-        const permits = parseInt(document.getElementById('ctr-permit').value) || 0;
-        const ori = parseInt(document.getElementById('ctr-ori').value) || 0;
-        return Math.floor(oro/500) + permits + Math.floor((ori*75)/500);
-    }
-    function recalcPulls() {
-        const oro = parseInt(document.getElementById('ctr-oro').value) || 0;
-        const permits = parseInt(document.getElementById('ctr-permit').value) || 0;
-        const ori = parseInt(document.getElementById('ctr-ori').value) || 0;
-        const oriPulls = Math.floor((ori*75)/500);
-        const oroPulls = Math.floor(oro/500);
-        const total = oroPulls + permits + oriPulls;
-        document.getElementById('total-pulls-val').textContent = total;
-        document.getElementById('total-pulls-sub').textContent = `${oroPulls} from Oro · ${permits} Permits · ${oriPulls} from Ori`;
-        document.getElementById('hard-pity-count').textContent = Math.floor(total/80) + '×';
-        document.getElementById('spark-count').textContent = Math.floor(total/120) + '×';
-        recalcChances(total);
-    }
-
-    function pull6StarProb(n, startPity=0) {
-        let pNoSix = 1.0;
-        for (let i=1; i<=n; i++) {
-            const pullPos = startPity+i;
-            let rate;
-            if (pullPos<=64) rate=0.008;
-            else if (pullPos<=79) rate=0.008+0.05*(pullPos-64);
-            else rate=1.0;
-            pNoSix *= (1-rate);
-            if (pNoSix<=0) { pNoSix=0; break; }
-        }
-        return 1-pNoSix;
-    }
-    function pull5StarProb(n) {
-        return 1 - Math.pow(0.92, n);
-    }
-    function expectedCountsWithPity(pulls, startPity) {
-        if (pulls<=0) return {six:0,five:0,four:0};
-        let pNoSix=1.0, expSix=0;
-        for (let i=1; i<=pulls; i++) {
-            const pos=startPity+i;
-            let rate;
-            if (pos<=64) rate=0.008;
-            else if (pos<=79) rate=0.008+0.05*(pos-64);
-            else rate=1.0;
-            expSix += pNoSix*rate;
-            pNoSix *= (1-rate);
-        }
-        const estSix = Math.max(0, expSix);
-        const estFive = Math.floor(pulls/10);
-        const remaining = Math.max(0, pulls-Math.round(estSix)-estFive);
-        return {six:estSix, five:estFive, four:Math.round(remaining*0.15)};
-    }
-    function recalcChances(pulls) {
-        const pityOffset = currentPity6||0;
-        const p6 = Math.min(100, pull6StarProb(pulls, pityOffset)*100);
-        const p5 = Math.min(100, pull5StarProb(pulls)*100);
-        const p6feat = Math.min(100, (1-(1-pull6StarProb(pulls,pityOffset))*0.5)*100);
-        const fmt = v => v>=99.9 ? '100%' : v.toFixed(1)+'%';
-        document.getElementById('prob6-pct').textContent = fmt(p6);
-        document.getElementById('prob6-feat-pct').textContent = fmt(p6feat);
-        document.getElementById('prob5-pct').textContent = fmt(p5);
-        setTimeout(() => {
-            document.getElementById('prob6-fill').style.width = p6+'%';
-            document.getElementById('prob6-feat-fill').style.width = p6feat+'%';
-            document.getElementById('prob5-fill').style.width = p5+'%';
-        }, 80);
-        const est = expectedCountsWithPity(pulls, pityOffset);
-        document.getElementById('est-6star').textContent = est.six<1&&est.six>0 ? est.six.toFixed(1) : Math.round(est.six);
-        document.getElementById('est-5star').textContent = est.five;
-        document.getElementById('est-4star').textContent = est.four;
-    }
-
-    /* ─── TALLY ─── */
-    function calcTally() {
-        const fromVal = document.getElementById('tally-from').value;
-        const toVal = document.getElementById('tally-to').value;
-        if (!fromVal||!toVal) { alert('Please select both a start and end date.'); return; }
-        const from = new Date(fromVal), to = new Date(toVal);
-        if (to<=from) { alert('End date must be after start date.'); return; }
-        const days = Math.ceil((to-from)/86400000);
-        const weeks = days/7;
-        const daily = (parseInt(document.getElementById('t-daily').value)||0)+(parseInt(document.getElementById('t-monthly').value)||0);
-        const weeklyRoutine = parseInt(document.getElementById('t-weekly').value)||0;
-        const weeklyPass = parseInt(document.getElementById('t-pass').value)||0;
-        const eventPerPatch = parseInt(document.getElementById('t-event').value)||0;
-        const dailyTotal = daily*days;
-        const eventTotal = Math.round(eventPerPatch*(days/42));
-        const grandTotal = Math.round(dailyTotal+(weeklyRoutine+weeklyPass)*weeks+eventTotal);
-        document.getElementById('tally-breakdown').innerHTML = `
-            <div class="tally-row"><div class="tally-name">Daily Missions (${days} days)</div><div class="tally-val">+${dailyTotal.toLocaleString()}</div></div>
-            <div class="tally-row"><div class="tally-name">Weekly Routine (${weeks.toFixed(1)} weeks)</div><div class="tally-val">+${Math.round(weeklyRoutine*weeks).toLocaleString()}</div></div>
-            <div class="tally-row"><div class="tally-name">Protocol Pass free track</div><div class="tally-val">+${Math.round(weeklyPass*weeks).toLocaleString()}</div></div>
-            <div class="tally-row"><div class="tally-name">Events (est. ${(days/42).toFixed(1)} patches)</div><div class="tally-val">+${eventTotal.toLocaleString()}</div></div>`;
-        document.getElementById('tally-total-oro').textContent = grandTotal.toLocaleString()+' Oroberyl';
-        document.getElementById('tally-total-pulls').textContent = '≈ '+Math.floor(grandTotal/500)+' pulls';
-        const opts = {month:'short',day:'numeric',year:'numeric'};
-        document.getElementById('tally-date-range').textContent =
-            from.toLocaleDateString('en-US',opts)+' → '+to.toLocaleDateString('en-US',opts)+' ('+days+' days)';
-        document.getElementById('tally-result').style.display = 'block';
-    }
-
-    /* ─── SHOP ─── */
-    const ORI_BUNDLES = [
-        {label:'Shard',  usd:0.99,  ori:6,   firstOri:12},
-        {label:'Chip',   usd:4.99,  ori:29,  firstOri:58},
-        {label:'Crystal',usd:14.99, ori:92,  firstOri:184},
-        {label:'Block',  usd:29.99, ori:194, firstOri:388},
-        {label:'Crate',  usd:49.99, ori:328, firstOri:656},
-        {label:'Cache',  usd:99.99, ori:680, firstOri:1360},
-    ];
-    const UNIT_HINTS = {
-        oro:   'Enter how many <strong style="color:var(--accent)">Oroberyl</strong> you need. 500 = 1 pull · 1 Origeometry = 75 Oroberyl.',
-        pulls: 'Enter number of <strong style="color:var(--accent)">pulls</strong> you need. Each pull costs 500 Oroberyl.',
-        ori:   'Enter how many <strong style="color:var(--accent)">Origeometry</strong> you need. 1 Ori = 75 Oroberyl.',
-    };
-    const UNIT_LABELS = {oro:'Oroberyl needed',pulls:'Pulls needed',ori:'Origeometry needed'};
-    const UNIT_DEFAULTS = {oro:5000,pulls:10,ori:70};
-
-    function switchShopUnit(u, btn) {
-        shopUnit = u;
-        document.querySelectorAll('.sutab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('shop-unit-hint').innerHTML = UNIT_HINTS[u];
-        document.getElementById('shop-input-label').textContent = UNIT_LABELS[u];
-        document.getElementById('shop-need').value = UNIT_DEFAULTS[u];
-        document.getElementById('shop-result').style.display = 'none';
-        document.querySelectorAll('.bundle-card').forEach(c => c.classList.remove('recommended'));
-    }
-    function toOroberyl(val, unit) {
-        if (unit==='pulls') return val*500;
-        if (unit==='ori') return val*75;
-        return val;
-    }
-    function initBundleRef() {
-        document.getElementById('bundle-ref').innerHTML = ORI_BUNDLES.map(b => `
-            <div class="bundle-card">
-                <div class="bundle-ori">${b.ori} Ori</div>
-                <div class="bundle-price">$${b.usd.toFixed(2)} USD</div>
-                <div class="bundle-oroberyls">${(b.ori*75).toLocaleString()} Oroberyl</div>
-                <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">1st: ${b.firstOri} Ori (×2)</div>
-            </div>`).join('');
-    }
-    function calcShop() {
-        const rawVal = parseInt(document.getElementById('shop-need').value)||0;
-        if (rawVal<=0) return;
-        const firstBuy = document.getElementById('shop-firstbuy').value==='1';
-        const oroNeeded = toOroberyl(rawVal, shopUnit);
-        let rem = Math.ceil(oroNeeded/75);
-        const combo = [];
-        const bundles = [...ORI_BUNDLES].reverse();
-        for (const b of bundles) {
-            const eff = firstBuy ? b.firstOri : b.ori;
-            if (!eff) continue;
-            if (eff>=rem) { combo.push({bundle:b,qty:1,ori:eff}); rem=0; break; }
-            const qty = Math.floor(rem/eff);
-            if (qty>0) { combo.push({bundle:b,qty,ori:eff*qty}); rem-=eff*qty; }
-        }
-        if (rem>0) {
-            const sm = ORI_BUNDLES[0];
-            const eff = firstBuy ? sm.firstOri : sm.ori;
-            combo.push({bundle:sm,qty:1,ori:eff});
-        }
-        const totalUsd = combo.reduce((s,c) => s+c.bundle.usd*c.qty, 0);
-        const totalOri = combo.reduce((s,c) => s+c.ori, 0);
-        const totalOro = totalOri*75;
-        const totalPulls = Math.floor(totalOro/500);
-        const convLabel = {
-            oro:   `Target: ${rawVal.toLocaleString()} Oroberyl → ${Math.ceil(rawVal/75)} Origeometry needed`,
-            pulls: `Target: ${rawVal} pulls = ${(rawVal*500).toLocaleString()} Oroberyl → ${Math.ceil(rawVal*500/75)} Origeometry needed`,
-            ori:   `Target: ${rawVal} Origeometry = ${(rawVal*75).toLocaleString()} Oroberyl`,
-        };
-        document.getElementById('shop-converted-label').textContent = convLabel[shopUnit];
-        document.getElementById('shop-combo').innerHTML = combo.map(c =>
-            `<div class="shop-pill">${c.qty}× ${c.bundle.label} <span>$${(c.bundle.usd*c.qty).toFixed(2)}</span></div>`
-        ).join('');
-        document.getElementById('shop-total').innerHTML =
-            `Total: <strong>$${totalUsd.toFixed(2)} USD</strong> → ${totalOri} Origeometry → ${totalOro.toLocaleString()} Oroberyl ≈ ${totalPulls} pulls`;
-        document.querySelectorAll('#bundle-ref .bundle-card').forEach((el,i) => {
-            el.classList.toggle('recommended', combo.some(c => c.bundle.label===ORI_BUNDLES[i].label));
-        });
-        document.getElementById('shop-result').style.display = 'block';
-    }
-
-    /* ─── INIT ─── */
-    document.addEventListener('DOMContentLoaded', () => {
-        const today = new Date().toISOString().split('T')[0];
-        const nextMonth = new Date(Date.now()+30*86400000).toISOString().split('T')[0];
-        document.getElementById('tally-from').value = today;
-        document.getElementById('tally-to').value = nextMonth;
-        initBundleRef();
-        recalcPulls();
-        document.getElementById('goyNoData').style.display = 'block';
+function processData(allRecords) {
+    const grouped = {};
+    allRecords.forEach(r => {
+        const rawKey = getRecordPoolType(r);
+        if (!grouped[rawKey]) grouped[rawKey] = { rawKey, label: resolveLabel(rawKey), pulls: [] };
+        grouped[rawKey].pulls.push(r);
     });
-    </script>
+
+    const ORDER = ['E_CharacterGachaPoolType_Special','E_CharacterGachaPoolType_Standard','E_CharacterGachaPoolType_NewHorizon','E_CharacterGachaPoolType_Beginner'];
+    const sorted = Object.values(grouped).sort((a, b) => {
+        const ia = ORDER.indexOf(a.rawKey);
+        const ib = ORDER.indexOf(b.rawKey);
+        if (ia !== -1 && ib !== -1) return ia - ib;
+        if (ia !== -1) return -1;
+        if (ib !== -1) return 1;
+        return a.label.localeCompare(b.label);
+    });
+
+    bannerData = {};
+    sorted.forEach(b => { bannerData[b.label] = { rawKey: b.rawKey, pulls: b.pulls }; });
+
+    const labels = Object.keys(bannerData);
+    activeBannerName = labels[0] || null;
+
+    buildBannerTabs(labels);
+    renderActiveBanner();
+    renderFoundBanner(grouped);
+    renderGoyStats(allRecords, bannerData);
+    document.getElementById('pullLogSection').classList.add('visible');
+}
+
+/* ════════════════════════════════════════════════════════════
+   BANNER TABS
+════════════════════════════════════════════════════════════ */
+function buildBannerTabs(labels) {
+    const bar = document.getElementById('bannerTabBar');
+    bar.innerHTML = '';
+    labels.forEach((label, i) => {
+        const info = bannerData[label];
+        const cls = classifyBanner(info.rawKey);
+        const pipClass = `pip-${cls}`;
+        const btn = document.createElement('button');
+        btn.className = 'btab' + (i === 0 ? ' active' : '');
+        btn.dataset.label = label;
+        btn.innerHTML = `<span class="btab-pip ${pipClass}"></span>${label}<span class="btab-count">${info.pulls.length}</span>`;
+        btn.onclick = () => {
+            bar.querySelectorAll('.btab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeBannerName = label;
+            currentFilter = 'all';
+            document.querySelectorAll('.filt').forEach(f => f.classList.remove('active'));
+            document.querySelectorAll('.filt')[0].classList.add('active');
+            renderActiveBanner();
+        };
+        bar.appendChild(btn);
+    });
+}
+
+/* ════════════════════════════════════════════════════════════
+   RENDER ACTIVE BANNER
+════════════════════════════════════════════════════════════ */
+function renderActiveBanner() {
+    if (!activeBannerName || !bannerData[activeBannerName]) return;
+    const { pulls, rawKey } = bannerData[activeBannerName];
+    document.getElementById('pullListLabel').textContent = activeBannerName + ' — Pull Log';
+    renderBannerStats(pulls, rawKey);
+    renderPityBars(pulls, rawKey);
+    renderDistribution(pulls);
+    renderPullList(pulls);
+    if (rawKey === 'E_CharacterGachaPoolType_Special') {
+        syncPityToPlanner(pulls);
+    }
+}
+
+/* ════════════════════════════════════════════════════════════
+   BANNER STATS STRIP
+════════════════════════════════════════════════════════════ */
+function renderBannerStats(pulls, rawKey) {
+    const total = pulls.length;
+    const s6 = pulls.filter(p => getRarity(p) === '6').length;
+    const s5 = pulls.filter(p => getRarity(p) === '5').length;
+    let pity = 0; const sixPities = [];
+    [...pulls].reverse().forEach(p => { pity++; if (getRarity(p) === '6') { sixPities.push(pity); pity = 0; } });
+    const avg = sixPities.length ? Math.round(sixPities.reduce((a,b) => a+b,0)/sixPities.length) : 0;
+
+    document.getElementById('bannerStatsStrip').innerHTML = `
+        <div class="bstat" style="border-top:2px solid var(--accent)">
+            <div class="bstat-lbl">Total Pulls</div>
+            <div class="bstat-val" style="color:var(--accent)">${total}</div>
+            <div class="bstat-sub">Headhunts</div>
+        </div>
+        <div class="bstat" style="border-top:2px solid var(--gold)">
+            <div class="bstat-lbl">6★ Acquired</div>
+            <div class="bstat-val" style="color:var(--gold)">${s6}</div>
+            <div class="bstat-sub">${total ? (s6/total*100).toFixed(2)+'%' : '0.00%'} rate</div>
+        </div>
+        <div class="bstat" style="border-top:2px solid var(--purple)">
+            <div class="bstat-lbl">5★ Acquired</div>
+            <div class="bstat-val" style="color:var(--purple)">${s5}</div>
+            <div class="bstat-sub">${total ? (s5/total*100).toFixed(2)+'%' : '0.00%'} rate</div>
+        </div>
+        <div class="bstat" style="border-top:2px solid var(--green)">
+            <div class="bstat-lbl">Avg Pity (6★)</div>
+            <div class="bstat-val" style="color:var(--green)">${avg || '—'}</div>
+            <div class="bstat-sub">Per 6★ pull</div>
+        </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PITY BARS
+════════════════════════════════════════════════════════════ */
+function renderPityBars(pulls, rawKey) {
+    const isWeapon = rawKey && (rawKey.toLowerCase().includes('weapon') || rawKey.toLowerCase().includes('forge') || rawKey.toLowerCase().includes('raft'));
+    const hardPity6 = isWeapon ? 40 : 80;
+
+    let p6 = 0, p5 = 0;
+    for (let i = pulls.length-1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r==='6') break; p6++; }
+    for (let i = pulls.length-1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r==='6'||r==='5') break; p5++; }
+
+    document.getElementById('pity6Count').textContent = p6;
+    document.getElementById('pity5Count').textContent = p5;
+    document.getElementById('pity6Cap').textContent = '/ ' + hardPity6;
+    setTimeout(() => {
+        document.getElementById('pity6Fill').style.width = Math.min(100, p6/hardPity6*100) + '%';
+        document.getElementById('pity5Fill').style.width = Math.min(100, p5/10*100) + '%';
+    }, 120);
+}
+
+function syncPityToPlanner(pulls) {
+    let p6 = 0;
+    for (let i = pulls.length-1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r==='6') break; p6++; }
+    currentPity6 = p6;
+    document.getElementById('pity-sync-display').textContent = p6;
+    document.getElementById('pity-source-hint').textContent = 'Auto-filled from Special HH log';
+    const badge = document.getElementById('pity-sync-badge');
+    badge.textContent = 'SYNCED'; badge.className = 'pity-sync-badge synced';
+    recalcChances(getTotalPullsFromInputs());
+}
+
+/* ════════════════════════════════════════════════════════════
+   DISTRIBUTION
+════════════════════════════════════════════════════════════ */
+function renderDistribution(pulls) {
+    const counts = {6:0,5:0,4:0,3:0};
+    pulls.forEach(p => { const r = getRarity(p); if (counts[r]!==undefined) counts[r]++; });
+    const total = pulls.length || 1;
+    const bars = document.getElementById('distBars');
+    bars.innerHTML = '';
+    const cfg = {6:{color:'var(--gold)',label:'6★'},5:{color:'var(--purple)',label:'5★'},4:{color:'var(--blue)',label:'4★'},3:{color:'var(--text3)',label:'3★'}};
+    [6,5,4,3].forEach(r => {
+        const c = counts[r];
+        const pct = (c/total*100).toFixed(1);
+        const row = document.createElement('div');
+        row.className = 'dist-row';
+        row.innerHTML = `<div class="dist-lbl" style="color:${cfg[r].color}">${cfg[r].label}</div>
+            <div class="dist-bg"><div class="dist-fill" id="df${r}" style="width:0%;background:${cfg[r].color}"><span>${c} (${pct}%)</span></div></div>
+            <div class="dist-count" style="color:${cfg[r].color}">${c}</div>`;
+        bars.appendChild(row);
+        setTimeout(() => { const el=document.getElementById('df'+r); if(el) el.style.width=(c/total*100)+'%'; }, 200);
+    });
+}
+
+/* ════════════════════════════════════════════════════════════
+   PULL LIST
+════════════════════════════════════════════════════════════ */
+function filterPulls(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (activeBannerName && bannerData[activeBannerName]) {
+        renderPullList(bannerData[activeBannerName].pulls);
+    }
+}
+
+function renderPullList(pulls) {
+    const list = document.getElementById('pullList');
+    list.innerHTML = '';
+    let pity = 0;
+    const withPity = [...pulls].reverse().map((p, i) => {
+        pity++;
+        const r = getRarity(p);
+        const snap = pity;
+        if (r === '6' || r === '5') pity = 0;
+        return { ...p, pullNum: i+1, pityCount: snap };
+    }).reverse();
+    const filtered = currentFilter === 'all' ? withPity : withPity.filter(p => getRarity(p) === currentFilter);
+    if (!filtered.length) {
+        list.innerHTML = '<div class="no-data"><div class="no-data-icon">◈</div>No records match current filter.</div>';
+        return;
+    }
+    filtered.forEach(p => {
+        const r = getRarity(p);
+        const item = document.createElement('div');
+        item.className = `pull-item s${r}`;
+        const stars = '★'.repeat(parseInt(r));
+        const showPity = r === '6' || r === '5';
+        const highPity = (r==='6' && p.pityCount >= 50)||(r==='5' && p.pityCount >= 8);
+        item.innerHTML = `<div class="p-num">#${p.pullNum}</div>
+            <div class="p-name">${getNameField(p)}</div>
+            <div class="p-stars">${stars}</div>
+            <div class="p-pity${highPity?' high':''}">${showPity ? '@'+p.pityCount : ''}</div>`;
+        list.appendChild(item);
+    });
+}
+
+/* ════════════════════════════════════════════════════════════
+   FOUND BANNER
+════════════════════════════════════════════════════════════ */
+function renderFoundBanner(grouped) {
+    const total = Object.values(grouped).reduce((s,b) => s+b.pulls.length, 0);
+    document.getElementById('foundTotal').textContent = '+' + total;
+    const bd = document.getElementById('foundBreakdown');
+    bd.innerHTML = '';
+    Object.values(grouped).forEach(b => {
+        const cls = classifyBanner(b.rawKey);
+        const pill = document.createElement('span');
+        pill.className = `found-pill p-${cls}`;
+        pill.textContent = `${b.label}  +${b.pulls.length}`;
+        bd.appendChild(pill);
+    });
+    document.getElementById('foundBanner').classList.add('visible');
+}
+
+/* ════════════════════════════════════════════════════════════
+   GOY STATS
+════════════════════════════════════════════════════════════ */
+function renderGoyStats(allRecords, bannerDataMap) {
+    document.getElementById('goyNoData').style.display = 'none';
+    document.getElementById('goySection').classList.add('visible');
+
+    const total = allRecords.length;
+    const all6 = allRecords.filter(p => getRarity(p)==='6');
+    const all5 = allRecords.filter(p => getRarity(p)==='5');
+
+    document.getElementById('goyOverview').innerHTML = [
+        { label:'Total Headhunts', val: total.toLocaleString(), sub: `${Object.keys(bannerDataMap).length} banners` },
+        { label:'6★ Obtained', val: all6.length, sub: total ? (all6.length/total*100).toFixed(2)+'% rate' : '—' },
+        { label:'5★ Obtained', val: all5.length, sub: total ? (all5.length/total*100).toFixed(2)+'% rate' : '—' },
+        { label:'Oroberyl Spent', val: (total*500).toLocaleString(), sub: `≈${(total*500/75).toFixed(0)} Origeometry` },
+        { label:'Spark Progress', val: (total%120)+'/120', sub: `${Math.floor(total/120)} spark(s)` },
+        { label:'Lucky 6★ Pulls', val: (() => { let n=0,c=0; [...allRecords].reverse().forEach(p=>{c++;if(getRarity(p)==='6'){if(c<=40)n++;c=0;}}); return n; })(), sub: 'at ≤40 pity' }
+    ].map(d => `<div class="goy-card fade-in"><div class="goy-card-title">${d.label}</div><div class="goy-card-val">${d.val}</div><div class="goy-card-sub">${d.sub}</div></div>`).join('');
+
+    const gbc = document.getElementById('goyBannerCards');
+    gbc.innerHTML = '';
+    Object.entries(bannerDataMap).forEach(([label, { rawKey, pulls }]) => {
+        const cls = classifyBanner(rawKey);
+        const total = pulls.length;
+        const s6 = pulls.filter(p=>getRarity(p)==='6').length;
+        const s5 = pulls.filter(p=>getRarity(p)==='5').length;
+        let p6=0,p5=0;
+        for(let i=pulls.length-1;i>=0;i--){const r=getRarity(pulls[i]);if(r==='6')break;p6++;}
+        for(let i=pulls.length-1;i>=0;i--){const r=getRarity(pulls[i]);if(r==='6'||r==='5')break;p5++;}
+        let avgP=0;{let pt=0;const sp=[];[...pulls].reverse().forEach(p=>{pt++;if(getRarity(p)==='6'){sp.push(pt);pt=0;}});avgP=sp.length?Math.round(sp.reduce((a,x)=>a+x,0)/sp.length):0;}
+        const colMap = {special:'var(--purple)',standard:'var(--blue)',beginner:'var(--gold)',weapon:'var(--accent)',unknown:'var(--text2)'};
+        const col = colMap[cls] || 'var(--text2)';
+        const p6pct = Math.min(100,p6/80*100).toFixed(0);
+        const p5pct = Math.min(100,p5/10*100).toFixed(0);
+        const card = document.createElement('div');
+        card.className = 'goy-banner-card fade-in';
+        card.innerHTML = `
+            <div class="goy-banner-name" style="color:${col};border-bottom-color:${col}33">
+                <span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0"></span>${label}
+            </div>
+            <div class="goy-stat-line"><div class="goy-stat-key">Total Pulls</div><div class="goy-stat-val">${total}</div></div>
+            <div class="goy-stat-line"><div class="goy-stat-key">6★ Count</div><div class="goy-stat-val" style="color:var(--gold)">${s6} <span style="font-size:11px;color:var(--text3)">(${total?(s6/total*100).toFixed(1):'0'}%)</span></div></div>
+            <div class="goy-stat-line"><div class="goy-stat-key">5★ Count</div><div class="goy-stat-val" style="color:var(--purple)">${s5} <span style="font-size:11px;color:var(--text3)">(${total?(s5/total*100).toFixed(1):'0'}%)</span></div></div>
+            <div class="goy-stat-line"><div class="goy-stat-key">Avg 6★ Pity</div><div class="goy-stat-val">${avgP||'—'}</div></div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin:8px 0 4px">CURRENT PITY</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+                <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);min-width:28px">6★</span>
+                <div class="goy-pity-bar" style="flex:1"><div class="goy-pity-fill" style="width:${p6pct}%;background:var(--gold)"></div></div>
+                <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--gold)">${p6}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text2);min-width:28px">5★</span>
+                <div class="goy-pity-bar" style="flex:1"><div class="goy-pity-fill" style="width:${p5pct}%;background:var(--purple)"></div></div>
+                <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--purple)">${p5}</span>
+            </div>`;
+        gbc.appendChild(card);
+    });
+
+    const histEl = document.getElementById('goy6History');
+    histEl.innerHTML = '';
+    Object.entries(bannerDataMap).forEach(([label, { pulls }]) => {
+        let pity = 0;
+        const sixes = [];
+        [...pulls].reverse().forEach(p => { pity++; if (getRarity(p)==='6') { sixes.push({name:getNameField(p),pity}); pity=0; } });
+        if (!sixes.length) return;
+        const card = document.createElement('div');
+        card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;';
+        card.innerHTML = `<div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border)">${label} — 6★</div>
+            ${sixes.slice(0,14).map(s => {
+                const col = s.pity>=65?'var(--red)':s.pity<=15?'var(--green)':'var(--gold)';
+                return `<div class="goy-six-item"><div class="goy-six-name">${s.name}</div>
+                    <div class="goy-six-pity" style="color:${col}">@${s.pity}</div>
+                    ${s.pity>=65?'<span style="font-family:\'Share Tech Mono\',monospace;font-size:8px;color:var(--red);padding:1px 5px;background:rgba(239,80,80,0.1);border-radius:3px">SOFT PITY</span>':''}
+                    ${s.pity<=15?'<span style="font-family:\'Share Tech Mono\',monospace;font-size:8px;color:var(--green);padding:1px 5px;background:rgba(78,202,139,0.1);border-radius:3px">LUCKY</span>':''}
+                </div>`;
+            }).join('')}
+            ${sixes.length>14?`<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:8px">+${sixes.length-14} more 6★</div>`:''}`;
+        histEl.appendChild(card);
+    });
+}
+
+/* ════════════════════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════════════════════ */
+function getNameField(p) { return p.name||p.itemName||p.item_name||p.charName||p.char_name||'Unknown'; }
+function getRarity(p) { return String(p.rarity||p.star||p.stars||p.quality||'3'); }
+
+function showError(msg) {
+    const b = document.getElementById('errorBox');
+    b.innerHTML = '⚠ '+msg.replace(/\n/g,'<br>');
+    b.style.display = 'block';
+}
+function hideError() { document.getElementById('errorBox').style.display = 'none'; }
+function setLoading(msg) {
+    const box = document.getElementById('loadingBox');
+    if (!msg) { box.style.display = 'none'; return; }
+    document.getElementById('loadingMsg').textContent = msg;
+    box.style.display = 'flex';
+}
+
+/* ════════════════════════════════════════════════════════════
+   UI TOGGLES
+════════════════════════════════════════════════════════════ */
+function toggleGuide() {
+    document.getElementById('guideBody').classList.toggle('open');
+    document.getElementById('guideChev').classList.toggle('open');
+}
+function switchMethod(m, btn) {
+    document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('method-'+m).classList.add('active');
+}
+function switchInputMode(m, btn) {
+    document.querySelectorAll('.itab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.imode').forEach(p => p.classList.remove('active'));
+    document.getElementById('imode-'+m).classList.add('active');
+    hideError();
+}
+function switchPageTab(tab) {
+    document.querySelectorAll('.page-tab').forEach((b,i) => {
+        const tabs=['planner','income','shop'];
+        b.classList.toggle('active', tabs[i]===tab);
+    });
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+}
+
+/* ════════════════════════════════════════════════════════════
+   PLANNER
+════════════════════════════════════════════════════════════ */
+function syncSlider(inputId, sliderId) {
+    const v = parseInt(document.getElementById(inputId).value)||0;
+    document.getElementById(sliderId).value = Math.min(v, parseInt(document.getElementById(sliderId).max));
+}
+function syncInput(sliderId, inputId) { document.getElementById(inputId).value = document.getElementById(sliderId).value; }
+function getTotalPullsFromInputs() {
+    const oro = parseInt(document.getElementById('ctr-oro').value)||0;
+    const permits = parseInt(document.getElementById('ctr-permit').value)||0;
+    const ori = parseInt(document.getElementById('ctr-ori').value)||0;
+    return Math.floor(oro/500)+permits+Math.floor((ori*75)/500);
+}
+function recalcPulls() {
+    const oro=parseInt(document.getElementById('ctr-oro').value)||0;
+    const permits=parseInt(document.getElementById('ctr-permit').value)||0;
+    const ori=parseInt(document.getElementById('ctr-ori').value)||0;
+    const oriPulls=Math.floor((ori*75)/500);
+    const oroPulls=Math.floor(oro/500);
+    const total=oroPulls+permits+oriPulls;
+    document.getElementById('total-pulls-val').textContent=total;
+    document.getElementById('total-pulls-sub').textContent=`${oroPulls} from Oro · ${permits} Permits · ${oriPulls} from Ori`;
+    document.getElementById('hard-pity-count').textContent=Math.floor(total/80)+'×';
+    document.getElementById('spark-count').textContent=Math.floor(total/120)+'×';
+    recalcChances(total);
+}
+function pull6StarProb(n, startPity=0) {
+    let pNoSix=1.0;
+    for(let i=1;i<=n;i++){
+        const pos=startPity+i;
+        let rate=pos<=64?0.008:(pos<=79?0.008+0.05*(pos-64):1.0);
+        pNoSix*=(1-rate);
+        if(pNoSix<=0){pNoSix=0;break;}
+    }
+    return 1-pNoSix;
+}
+function pull5StarProb(n){return 1-Math.pow(0.92,n);}
+function expectedCountsWithPity(pulls,startPity){
+    if(pulls<=0) return{six:0,five:0,four:0};
+    let pNoSix=1.0,expSix=0;
+    for(let i=1;i<=pulls;i++){
+        const pos=startPity+i;
+        let rate=pos<=64?0.008:(pos<=79?0.008+0.05*(pos-64):1.0);
+        expSix+=pNoSix*rate; pNoSix*=(1-rate);
+    }
+    const estSix=Math.max(0,expSix);
+    const estFive=Math.floor(pulls/10);
+    return{six:estSix,five:estFive,four:Math.round(Math.max(0,pulls-Math.round(estSix)-estFive)*0.15)};
+}
+function recalcChances(pulls){
+    const pityOffset=currentPity6||0;
+    const p6=Math.min(100,pull6StarProb(pulls,pityOffset)*100);
+    const p5=Math.min(100,pull5StarProb(pulls)*100);
+    const p6feat=Math.min(100,(1-(1-pull6StarProb(pulls,pityOffset))*0.5)*100);
+    const fmt=v=>v>=99.9?'100%':v.toFixed(1)+'%';
+    document.getElementById('prob6-pct').textContent=fmt(p6);
+    document.getElementById('prob6-feat-pct').textContent=fmt(p6feat);
+    document.getElementById('prob5-pct').textContent=fmt(p5);
+    setTimeout(()=>{
+        document.getElementById('prob6-fill').style.width=p6+'%';
+        document.getElementById('prob6-feat-fill').style.width=p6feat+'%';
+        document.getElementById('prob5-fill').style.width=p5+'%';
+    },80);
+    const est=expectedCountsWithPity(pulls,pityOffset);
+    document.getElementById('est-6star').textContent=est.six<1&&est.six>0?est.six.toFixed(1):Math.round(est.six);
+    document.getElementById('est-5star').textContent=est.five;
+    document.getElementById('est-4star').textContent=est.four;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TALLY
+════════════════════════════════════════════════════════════ */
+function calcTally(){
+    const fromVal=document.getElementById('tally-from').value;
+    const toVal=document.getElementById('tally-to').value;
+    if(!fromVal||!toVal){alert('Please select both a start and end date.');return;}
+    const from=new Date(fromVal),to=new Date(toVal);
+    if(to<=from){alert('End date must be after start date.');return;}
+    const days=Math.ceil((to-from)/86400000);
+    const weeks=days/7;
+    const daily=(parseInt(document.getElementById('t-daily').value)||0)+(parseInt(document.getElementById('t-monthly').value)||0);
+    const weeklyRoutine=parseInt(document.getElementById('t-weekly').value)||0;
+    const weeklyPass=parseInt(document.getElementById('t-pass').value)||0;
+    const eventPerPatch=parseInt(document.getElementById('t-event').value)||0;
+    const dailyTotal=daily*days;
+    const eventTotal=Math.round(eventPerPatch*(days/42));
+    const grandTotal=Math.round(dailyTotal+(weeklyRoutine+weeklyPass)*weeks+eventTotal);
+    document.getElementById('tally-breakdown').innerHTML=`
+        <div class="tally-row"><div class="tally-name">Daily Missions (${days} days)</div><div class="tally-val">+${dailyTotal.toLocaleString()}</div></div>
+        <div class="tally-row"><div class="tally-name">Weekly Routine (${weeks.toFixed(1)} weeks)</div><div class="tally-val">+${Math.round(weeklyRoutine*weeks).toLocaleString()}</div></div>
+        <div class="tally-row"><div class="tally-name">Protocol Pass (${weeks.toFixed(1)} weeks)</div><div class="tally-val">+${Math.round(weeklyPass*weeks).toLocaleString()}</div></div>
+        <div class="tally-row"><div class="tally-name">Events (~${(days/42).toFixed(1)} patches)</div><div class="tally-val">+${eventTotal.toLocaleString()}</div></div>`;
+    document.getElementById('tally-total-oro').textContent=grandTotal.toLocaleString()+' Oroberyl';
+    document.getElementById('tally-total-pulls').textContent='≈ '+Math.floor(grandTotal/500)+' pulls';
+    const opts={month:'short',day:'numeric',year:'numeric'};
+    document.getElementById('tally-date-range').textContent=from.toLocaleDateString('en-US',opts)+' → '+to.toLocaleDateString('en-US',opts)+' ('+days+' days)';
+    document.getElementById('tally-result').style.display='block';
+}
+
+/* ════════════════════════════════════════════════════════════
+   SHOP
+════════════════════════════════════════════════════════════ */
+const ORI_BUNDLES=[
+    {label:'Shard',usd:0.99,ori:6,firstOri:12},
+    {label:'Chip',usd:4.99,ori:29,firstOri:58},
+    {label:'Crystal',usd:14.99,ori:92,firstOri:184},
+    {label:'Block',usd:29.99,ori:194,firstOri:388},
+    {label:'Crate',usd:49.99,ori:328,firstOri:656},
+    {label:'Cache',usd:99.99,ori:680,firstOri:1360},
+];
+const UNIT_HINTS={
+    oro:'Enter how many <strong style="color:var(--accent)">Oroberyl</strong> you need. 500 = 1 pull · 1 Origeometry = 75 Oroberyl.',
+    pulls:'Enter number of <strong style="color:var(--accent)">pulls</strong> you need. Each pull costs 500 Oroberyl.',
+    ori:'Enter how many <strong style="color:var(--accent)">Origeometry</strong> you need. 1 Ori = 75 Oroberyl.',
+};
+const UNIT_LABELS={oro:'Oroberyl needed',pulls:'Pulls needed',ori:'Origeometry needed'};
+const UNIT_DEFAULTS={oro:5000,pulls:10,ori:70};
+function switchShopUnit(u,btn){
+    shopUnit=u;
+    document.querySelectorAll('.sutab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('shop-unit-hint').innerHTML=UNIT_HINTS[u];
+    document.getElementById('shop-input-label').textContent=UNIT_LABELS[u];
+    document.getElementById('shop-need').value=UNIT_DEFAULTS[u];
+    document.getElementById('shop-result').style.display='none';
+    document.querySelectorAll('.bundle-card').forEach(c=>c.classList.remove('recommended'));
+}
+function toOroberyl(val,unit){if(unit==='pulls')return val*500;if(unit==='ori')return val*75;return val;}
+function initBundleRef(){
+    document.getElementById('bundle-ref').innerHTML=ORI_BUNDLES.map(b=>`
+        <div class="bundle-card">
+            <div class="bundle-ori">${b.ori} Ori</div>
+            <div class="bundle-price">$${b.usd.toFixed(2)} USD</div>
+            <div class="bundle-oroberyls">${(b.ori*75).toLocaleString()} Oroberyl</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">1st: ${b.firstOri} Ori (×2)</div>
+        </div>`).join('');
+}
+function calcShop(){
+    const rawVal=parseInt(document.getElementById('shop-need').value)||0;
+    if(rawVal<=0)return;
+    const firstBuy=document.getElementById('shop-firstbuy').value==='1';
+    const oroNeeded=toOroberyl(rawVal,shopUnit);
+    let rem=Math.ceil(oroNeeded/75);
+    const combo=[];
+    const bundles=[...ORI_BUNDLES].reverse();
+    for(const b of bundles){
+        const eff=firstBuy?b.firstOri:b.ori;
+        if(!eff)continue;
+        if(eff>=rem){combo.push({bundle:b,qty:1,ori:eff});rem=0;break;}
+        const qty=Math.floor(rem/eff);
+        if(qty>0){combo.push({bundle:b,qty,ori:eff*qty});rem-=eff*qty;}
+    }
+    if(rem>0){const sm=ORI_BUNDLES[0];const eff=firstBuy?sm.firstOri:sm.ori;combo.push({bundle:sm,qty:1,ori:eff});}
+    const totalUsd=combo.reduce((s,c)=>s+c.bundle.usd*c.qty,0);
+    const totalOri=combo.reduce((s,c)=>s+c.ori,0);
+    const totalOro=totalOri*75;
+    const totalPulls=Math.floor(totalOro/500);
+    const convLabel={
+        oro:`Target: ${rawVal.toLocaleString()} Oroberyl → ${Math.ceil(rawVal/75)} Origeometry needed`,
+        pulls:`Target: ${rawVal} pulls = ${(rawVal*500).toLocaleString()} Oroberyl → ${Math.ceil(rawVal*500/75)} Origeometry needed`,
+        ori:`Target: ${rawVal} Origeometry = ${(rawVal*75).toLocaleString()} Oroberyl`,
+    };
+    document.getElementById('shop-converted-label').textContent=convLabel[shopUnit];
+    document.getElementById('shop-combo').innerHTML=combo.map(c=>`<div class="shop-pill">${c.qty}× ${c.bundle.label} <span>$${(c.bundle.usd*c.qty).toFixed(2)}</span></div>`).join('');
+    document.getElementById('shop-total').innerHTML=`Total: <strong>$${totalUsd.toFixed(2)} USD</strong> → ${totalOri} Origeometry → ${totalOro.toLocaleString()} Oroberyl ≈ ${totalPulls} pulls`;
+    document.querySelectorAll('#bundle-ref .bundle-card').forEach((el,i)=>{
+        el.classList.toggle('recommended',combo.some(c=>c.bundle.label===ORI_BUNDLES[i].label));
+    });
+    document.getElementById('shop-result').style.display='block';
+}
+
+/* ════════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+    const today=new Date().toISOString().split('T')[0];
+    const nextMonth=new Date(Date.now()+30*86400000).toISOString().split('T')[0];
+    document.getElementById('tally-from').value=today;
+    document.getElementById('tally-to').value=nextMonth;
+    initBundleRef();
+    recalcPulls();
+});
+</script>
     <script src="js/TextGlitch.js"></script>
     <script src="js/NavBar.js"></script>
     <script>
         NavBar.init({ sections: [] });
-    </script>
-    <script>
-        /*
-        
-        https://ef-webview.gryphline.com/api/record/char?lang=en-us&seq_id=309&pool_type=E_CharacterGachaPoolType_Special&token=0IkFuHBGtJNAE6%2BGXizD%2BAaswSuxlMJaUJoqu7uVcZhUmN%2BLYlPpB1wCfZXH6AJ9dPBJ3uiUrfyg%2Bp8Zns9t6cy9kMBVPIBl6OsYQhvA1X7GR1qk9gdfZDBKCJ5J2gFzdpGqqwt6x%2FLT%2B93MtHlETw8aeirVWn2sDlaMnpUMYHE4sXZCgFfV1%2B7J6TQvCJBvfhw8%2Br0bcyspv2s2HUSVoTq0qcMktRSBMk86JgVFwmh8oqUOkLXqJELTcf%2BgWjTyqsCIWqdxgrVhvcD0BJSVissmV%2BrPsibCLVgRHx4FqBz8mrMY2zKVtarlSrD%2FmxvAluI%2Bp3FV9JqFTY23k3b7q2uJhyAZtlZ%2BRAcN1SmEOfW03LUfhYDG2gF7jMb4YA6H8dsD8bV17r3SGFSXw4crz6xV%2BlU6jqZH8GEs4IJUi6rggw6H4XDCOhVMaRKg3lRDVh7rkGZja4CFmCk6YLB%2FcBStjNxHnSlbGs22T1cqxKvmXabuB8r55AITiI8EV831JH1VipJUXMz6buNw%2Bqj4FBy%2FMTR8ADv8fVDEew62RPsJ13sKKCYK%2Bv7Q1dzwJ0TFRJcVF86tZjMRa0B%2FAl8gdPfrdbR%2FE88zOc2FoZ0%3D&server_id=2
-        
-        */
     </script>
 </body>
 </html>
