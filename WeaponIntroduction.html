@@ -250,7 +250,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
   <div class="topbar-right">
     <div class="save-badge" id="saveBadge">● Saved</div>
-    <select class="wpn-selector" id="wpnSelector" onchange="loadWeapon(this.value)">
+    <select class="wpn-selector" id="wpnSelector" onchange="navigateWeapon(this.value)">
       <option value="" disabled selected>Loading...</option>
     </select>
   </div>
@@ -1192,11 +1192,21 @@ async function init() {
   populateSelector();
   document.getElementById('loadingOverlay').classList.add('hide');
   if (WEAPONS.length > 0) {
-    const defaultId = WEAPONS.find(w => w.id === 'forgeborn-scathe')?.id || WEAPONS[0].id;
+    const params  = new URLSearchParams(window.location.search);
+    const urlId   = params.get('weapon');
+    const validId = urlId && WEAPONS.find(w => w.id === urlId) ? urlId : null;
+    const defaultId = validId
+      || WEAPONS.find(w => w.id === 'forgeborn-scathe')?.id
+      || WEAPONS[0].id;
     await loadWeapon(defaultId);
   }
 }
-
+function navigateWeapon(id) {
+  const url = new URL(window.location);
+  url.searchParams.set('weapon', id);
+  window.history.replaceState({}, '', url);
+  loadWeapon(id);
+}
 init();
 </script>
 </body>

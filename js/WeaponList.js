@@ -97,7 +97,7 @@ const WEAPONS = [
   { id:"obj-arts-identifier",      name:"OBJ Arts Identifier",      rarity:5, type:"Arts Unit",  base_atk:411, stat1:"Intellect +124",        stat2:"Arts Intensity +62",         passive:"After the wielder applies Arts Burst or Physical Status with their own Combo Skill, the entire team gains Heat DMG dealt and Electric DMG dealt +22.4% for 15s. Effects of the same name cannot stack.", img:"" },
   { id:"obj-edge-of-lightness",    name:"OBJ Edge of Lightness",    rarity:5, type:"Sword",      base_atk:411, stat1:"Agility +124",          stat2:"Attack +31.20%",             passive:"After the wielder recovers SP by their own skill, the entire team gains Heat DMG dealt and Electric DMG dealt +8.4% for 20s. Max stacks: 3. Duration per stack counted separately.", img:"" },
   { id:"obj-heavy-burden",         name:"OBJ Heavy Burden",         rarity:5, type:"Greatsword", base_atk:411, stat1:"Strength +124",         stat2:"Max HP +62.40%",             passive:"After the wielder applies Knocked Down or Weakened, DEF +50.4% for 15s. Effects of the same name cannot stack.", img:"" },
-  { id:"obj-razohorn",             name:"OBJ Razohorn",             rarity:5, type:"Polearm",    base_atk:411, stat1:"Will +124",             stat2:"Physical DMG Bonus +34.70%", passive:"To enemies with Cryo Infliction or Solidification, DMG dealt +22.4%. After consuming Solidification, ATK +33.6% for 15s. Effects of the same name cannot stack.", img:"" },
+  { id:"obj-razorhorn",             name:"OBJ Razorhorn",             rarity:5, type:"Polearm",    base_atk:411, stat1:"Will +124",             stat2:"Physical DMG Bonus +34.70%", passive:"To enemies with Cryo Infliction or Solidification, DMG dealt +22.4%. After consuming Solidification, ATK +33.6% for 15s. Effects of the same name cannot stack.", img:"" },
   { id:"obj-velocitous",           name:"OBJ Velocitous",           rarity:5, type:"Handcannon", base_atk:411, stat1:"Agility +124",          stat2:"Ultimate Gain Eff. +37.10%", passive:"After the wielder consumes an Arts Infliction, gains Nature DMG dealt +[14% x Stacks Consumed] for 20s. Effects of the same name cannot stack.", img:"" },
   { id:"opus-the-living",          name:"Opus: The Living",         rarity:5, type:"Handcannon", base_atk:411, stat1:"Agility +124",          stat2:"Arts DMG Bonus +34.70%",     passive:"After the wielder applies an Arts Reaction, ATK +21% for 20s. Max stacks: 2. Duration per stack counted separately. Triggers once every 0.1s.", img:"" },
   { id:"rational-farewell",        name:"Rational Farewell",        rarity:5, type:"Handcannon", base_atk:411, stat1:"Strength +124",         stat2:"Heat DMG Bonus +34.70%",     passive:"After the wielder's combo skill applies Arts Burst or Combustion, ATK +44.8% for 15s. Effects of the same name cannot stack.", img:"" },
@@ -142,10 +142,10 @@ let currentSort   = 'rarity';
 // CARD BUILDER (portrait style)
 // ==========================================
 function createCard(w) {
-  const stars  = Array(w.rarity).fill(`<img src="${STAR_IMAGE}" class="star-icon" alt="★">`).join('');
-  const typeKey = w.type.replace(/\s+/g, '-');
+  const stars      = Array(w.rarity).fill(`<img src="${STAR_IMAGE}" class="star-icon" alt="★">`).join('');
+  const typeKey    = w.type.replace(/\s+/g, '-');
   const typeIconPath = WEAPON_ASSETS.types[w.type] || '';
-  const atkDisplay   = w.base_atk ?? '—';
+  const atkDisplay = w.base_atk ?? '—';
 
   const imgTag = w.img
     ? `<img src="${w.img}" class="card-art" onerror="this.style.display='none'" alt="${w.name}">`
@@ -155,13 +155,15 @@ function createCard(w) {
     ? `<div class="stat-row"><span class="stat-label">S2</span><span class="stat-val">${w.stat2}</span></div>`
     : '';
 
+  // ── FIX: id is embedded directly in the card HTML so it's always available ──
   return `
     <div class="wpn-card rarity-${w.rarity} bg-${typeKey}"
          data-name="${w.name.toLowerCase()}"
          data-rarity="${w.rarity}"
          data-type="${w.type}"
          data-atk="${w.base_atk || 0}"
-         data-tags="${w._tags.join('|')}">
+         data-tags="${w._tags.join('|')}"
+         data-id="${w.id}">
 
       <div class="card-placeholder">${w.name.charAt(0)}</div>
       ${imgTag}
@@ -259,32 +261,31 @@ document.querySelectorAll('.filter-row .pill').forEach(pill => {
 });
 
 // ==========================================
-// PASSIVE DROPDOWN TOGGLE
+// CARD CLICK — passive toggle OR navigate
 // ==========================================
 grid.addEventListener('click', e => {
+  // Passive toggle button — open/close dropdown, do NOT navigate
   const btn = e.target.closest('.passive-btn');
   if (btn) {
     e.stopPropagation();
-    const card = btn.closest('.wpn-card');
+    const card  = btn.closest('.wpn-card');
     const isOpen = card.classList.contains('passive-open');
-    // Close all others
     document.querySelectorAll('.wpn-card.passive-open').forEach(c => c.classList.remove('passive-open'));
     if (!isOpen) card.classList.add('passive-open');
     return;
   }
-  // Click on card body navigates
+
+  // Clicks inside the open passive dropdown — don't navigate
+  if (e.target.closest('.passive-dropdown')) return;
+
+  // Everything else on a card — navigate to WeaponIntroduction
   const card = e.target.closest('.wpn-card');
-  if (card && !e.target.closest('.passive-dropdown')) {
-    window.location.href = `WeaponDetail.html?wpn=${card.dataset.id || ''}`;
+  if (card && card.dataset.id) {
+    window.location.href = `WeaponIntroduction.html?weapon=${card.dataset.id}`;
   }
 });
 
-// Store id on card element for nav
-document.querySelectorAll('.wpn-card').forEach((card, i) => {
-  card.dataset.id = WEAPONS[i]?.id || '';
-});
-
-// Close passive on outside click
+// Close passive dropdown on outside click
 document.addEventListener('click', e => {
   if (!e.target.closest('.wpn-card')) {
     document.querySelectorAll('.wpn-card.passive-open').forEach(c => c.classList.remove('passive-open'));
