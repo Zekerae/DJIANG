@@ -268,7 +268,6 @@
             color: var(--t0-color);
         }
 
-        /* ── Edit button in header ── */
         .edit-intro-btn {
             font-family: var(--font-mono);
             font-size: 9px;
@@ -383,7 +382,6 @@
         }
         .changelog-entry li strong { color: var(--text-bright); }
 
-        /* ── Editable accordion content overlay ── */
         .accordion-body.editing-mode .acc-display-content { display: none; }
         .accordion-body .acc-editor {
             display: none;
@@ -579,10 +577,15 @@
             padding: 10px 12px;
             border-left: 1px solid var(--border);
             position: relative;
+            /* Vertical separator between columns is handled by border-left */
         }
 
+        /* Column accent line at top */
+        .category-col[data-role="damage"]  { border-top: 2px solid rgba(232,90,90,.3); }
+        .category-col[data-role="enabler"] { border-top: 2px solid rgba(90,232,200,.25); }
+        .category-col[data-role="buffer"]  { border-top: 2px solid rgba(90,156,232,.25); }
+
         .cat-side-label {
-            display: none;
             font-family: var(--font-mono);
             font-size: 9px;
             letter-spacing: .15em;
@@ -592,6 +595,7 @@
             margin-bottom: 8px;
             white-space: nowrap;
             align-self: flex-start;
+            display: none;
         }
 
         .cat-side-label.cat-dmg {
@@ -913,7 +917,6 @@
             .main-wrap { padding: 24px 24px 50px; }
             #status-bar { padding: 0 24px; }
 
-            /* Collapse 3 role columns → stacked single column on tier rows */
             .tier-col-headers { display: none !important; }
 
             .tier-row {
@@ -922,19 +925,16 @@
                 grid-auto-rows: auto;
             }
 
-            /* Label spans full height of the stacked rows */
             .tier-label {
                 grid-row: 1 / span 3;
                 font-size: 22px;
             }
 
-            /* Each category col becomes its own stacked block */
             .category-col {
                 border-left: none;
                 border-top: 1px solid var(--border);
             }
 
-            /* Always show role pill labels when stacked */
             .category-col .cat-side-label { display: inline-block; }
 
             .tier-row.filtered-mode {
@@ -977,7 +977,6 @@
             .accordion-title { font-size: 13px; }
             .accordion-body { padding: 14px 14px 16px 14px; font-size: 14px; }
 
-            /* On very small screens, label is narrower */
             .tier-label {
                 font-size: 18px;
                 min-width: 50px;
@@ -1048,18 +1047,14 @@
         ══════════════════════════════════════════════════════════════════ -->
         <div class="view-panel active" id="view-general">
 
-            <!-- Introduction accordion -->
             <div class="intro-section" id="intro-general">
                 <div class="intro-section-header">
                     <span class="section-title">Tier List — Introduction</span>
                     <button class="edit-intro-btn" id="edit-intro-btn" data-section="general">Edit</button>
                 </div>
-                <div class="accordion" id="accordion-general">
-                    <!-- Populated by JS (DB or fallback) -->
-                </div>
+                <div class="accordion" id="accordion-general"></div>
             </div>
 
-            <!-- Filters -->
             <div class="filters-bar">
                 <div class="filter-group">
                     <span class="filter-label">Role</span>
@@ -1073,7 +1068,6 @@
                 </div>
             </div>
 
-            <!-- Legend -->
             <div class="legend">
                 <div class="legend-item"><div class="legend-dot" style="background:var(--dmg-color)"></div>Damage</div>
                 <div class="legend-item"><div class="legend-dot" style="background:var(--ena-color)"></div>Enabler</div>
@@ -1085,10 +1079,9 @@
                 <div class="legend-item"><span class="tag-pill tag-watchdn" style="font-size:8px">▼</span>Watchlist Down</div>
             </div>
 
-            <!-- Tier list container -->
             <div id="tier-list-container"></div>
 
-        </div><!-- /view-general -->
+        </div>
 
         <!-- ══════════════════════════════════════════════════════════════
              TEAM TIER LIST VIEW
@@ -1100,16 +1093,14 @@
                     <span class="section-title">Team Tier List — Introduction</span>
                     <button class="edit-intro-btn" id="edit-team-btn" data-section="team">Edit</button>
                 </div>
-                <div class="accordion" id="accordion-team">
-                    <!-- Populated by JS (DB or fallback) -->
-                </div>
+                <div class="accordion" id="accordion-team"></div>
             </div>
 
             <div id="team-tier-list-container"></div>
 
-        </div><!-- /view-team -->
+        </div>
 
-    </div><!-- /main-wrap -->
+    </div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════
@@ -1119,7 +1110,6 @@ const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ── Tier / Role metadata ────────────────────────────────────────── */
 const TIER_ORDER = ['T0', 'T0.5', 'T1', 'T1.5', 'T2'];
 const TIER_META = {
     'T0':   { label: 'T0',   sub: 'APEX',        cssClass: 'tier-T0'  },
@@ -1135,186 +1125,42 @@ const ROLE_META = {
     buffer:  { label: 'Buffer',  sideClass: 'cat-buf' },
 };
 
-/* ═══════════════════════════════════════════════════════════════════
-   FALLBACK ACCORDION CONTENT
-   Stored as HTML strings per section key — used if DB has no entry.
-═══════════════════════════════════════════════════════════════════ */
+/* ── Fallback accordion content ─────────────────────────────────── */
 const FALLBACK_ACCORDION = {
     general: [
         {
             key: 'about', icon: '01', title: 'About the Tier List',
-            html: `<p>
-                Arknights: Endfield is a game <strong>where team building matters immensely</strong>,
-                but at the same time, one where many units are usable only within a single element or team archetype.
-                As a result, there are two tier lists: a <strong>General Tier List</strong> (this page) and a
-                <strong>Team Tier List</strong> (accessible via the tab above).
-            </p>
-            <p>
-                Our general tier list <strong>ranks all characters within categories according to their role and
-                contribution in teams</strong>, as well as how impactful they are to the game's meta.
-                For the <strong>story and the lower difficulties of permanent game modes, there is no need to be
-                concerned with ratings</strong>. Players should be able to comfortably clear such content so long
-                as a team is built and played correctly.
-            </p>
-            <p>
-                Instead, the tier list criteria are based on the current hardest content in the game —
-                <strong>Umbral Monument</strong>. As new or harder content is released, the tier list and its
-                criteria will be updated accordingly.
-            </p>`
+            html: `<p>Arknights: Endfield is a game <strong>where team building matters immensely</strong>, but at the same time, one where many units are usable only within a single element or team archetype. As a result, there are two tier lists: a <strong>General Tier List</strong> (this page) and a <strong>Team Tier List</strong> (accessible via the tab above).</p><p>Our general tier list <strong>ranks all characters within categories according to their role and contribution in teams</strong>, as well as how impactful they are to the game's meta. For the <strong>story and the lower difficulties of permanent game modes, there is no need to be concerned with ratings</strong>. Players should be able to comfortably clear such content so long as a team is built and played correctly.</p><p>Instead, the tier list criteria are based on the current hardest content in the game — <strong>Umbral Monument</strong>. As new or harder content is released, the tier list and its criteria will be updated accordingly.</p>`
         },
         {
             key: 'categories', icon: '02', title: 'Categories &amp; Tags',
-            html: `<p>
-                In Endfield, many characters possess elements of multiple categories.
-                To avoid cluttering the tier list, each character is placed in a single category —
-                whichever they're strongest in.
-            </p>
-            <ul>
-                <li><strong>Damage</strong> — Characters whose main purpose is to deal damage, working as hypercarries or driving a team's damage output.</li>
-                <li><strong>Enabler</strong> — Characters whose main purpose is to assist others beyond buffs: Inflictions, SP generation, stagger build, Ultimate Energy, and more.</li>
-                <li><strong>Buffer</strong> — Characters whose main purpose is to provide buffs or debuffs that multiply the overall damage output of the squad.</li>
-            </ul>
-            <p><strong>Special Tags</strong></p>
-            <ul>
-                <li><strong>[Expert]</strong> — Characters with this tag have an optimal playstyle that must be mastered. Without the necessary skills, performance may drop by at least one tier.</li>
-                <li><strong>[Watchlist ▲/▼]</strong> — Characters marked as highly likely to move up or down a tier in a future update.</li>
-            </ul>`
+            html: `<p>In Endfield, many characters possess elements of multiple categories. To avoid cluttering the tier list, each character is placed in a single category — whichever they're strongest in.</p><ul><li><strong>Damage</strong> — Characters whose main purpose is to deal damage, working as hypercarries or driving a team's damage output.</li><li><strong>Enabler</strong> — Characters whose main purpose is to assist others beyond buffs: Inflictions, SP generation, stagger build, Ultimate Energy, and more.</li><li><strong>Buffer</strong> — Characters whose main purpose is to provide buffs or debuffs that multiply the overall damage output of the squad.</li></ul><p><strong>Special Tags</strong></p><ul><li><strong>[Expert]</strong> — Characters with this tag have an optimal playstyle that must be mastered. Without the necessary skills, performance may drop by at least one tier.</li><li><strong>[Watchlist ▲/▼]</strong> — Characters marked as highly likely to move up or down a tier in a future update.</li></ul>`
         },
         {
             key: 'criteria', icon: '03', title: 'Evaluation Criteria',
-            html: `<p>The general criteria are structured around <strong>Umbral Monument</strong>. Assessment assumes:</p>
-            <ul>
-                <li>Operators at Level <strong>90</strong>, Skills at max Rank, all Talents fully levelled.</li>
-                <li>Optimal Gear/Sets equipped.</li>
-                <li>P0 for 6★ and 5★ Operators; P5 for 4★ and Endministrator.</li>
-                <li>Best-in-slot weapon assumed (P0 6★ weapon; P5 5★/4★/3★ weapon) with optimal essences.</li>
-                <li>All Operators start at <strong>zero Ultimate Energy</strong>; no pre-casting before combat.</li>
-                <li>Usables (food, Tacticals) are not included. Evaluations are done around optimal team compositions.</li>
-            </ul>
-            <p>Characters are compared <strong>within their role</strong>, not between roles. If a category has no Operators who perform at a given level, some tiers for that category may be empty.</p>
-            <div class="criteria-block">
-                <div class="criteria-heading">Damage</div>
-                <ul>
-                    <li><strong>Primary:</strong> Personal damage contribution.</li>
-                    <li><strong>Secondary:</strong> Ability to handle different encounter types (bosses, multiple targets, intermission phases).</li>
-                </ul>
-            </div>
-            <div class="criteria-block">
-                <div class="criteria-heading">Enabler</div>
-                <ul>
-                    <li><strong>Primary:</strong> Providing resources and support that enable stronger, more optimal rotations.</li>
-                    <li><strong>Secondary:</strong> Personal damage contribution and increases to team damage.</li>
-                </ul>
-            </div>
-            <div class="criteria-block">
-                <div class="criteria-heading">Buffer</div>
-                <ul>
-                    <li><strong>Primary:</strong> Providing increases to team damage.</li>
-                    <li><strong>Secondary:</strong> Providing resources and support to enable stronger rotations.</li>
-                </ul>
-            </div>`
+            html: `<p>The general criteria are structured around <strong>Umbral Monument</strong>. Assessment assumes:</p><ul><li>Operators at Level <strong>90</strong>, Skills at max Rank, all Talents fully levelled.</li><li>Optimal Gear/Sets equipped.</li><li>P0 for 6★ and 5★ Operators; P5 for 4★ and Endministrator.</li><li>Best-in-slot weapon assumed (P0 6★ weapon; P5 5★/4★/3★ weapon) with optimal essences.</li><li>All Operators start at <strong>zero Ultimate Energy</strong>; no pre-casting before combat.</li><li>Usables (food, Tacticals) are not included. Evaluations are done around optimal team compositions.</li></ul><p>Characters are compared <strong>within their role</strong>, not between roles.</p>`
         },
         {
             key: 'changelog', icon: '04', title: 'Changelog',
-            html: `<div class="changelog-entry">
-                <div class="changelog-date">17.04.2026</div>
-                <ul>
-                    <li><strong>Zhuang Fangyi</strong> (Damage) added at T0 with Watchlist ▲ — Debuts as an exorbitantly powerful unit with accessible teams, great range, and consistent damage output; however, long ramp-up periods and Sunderblade stacking hold back speedrun prospects. T0 with watchlist pending further community testing.</li>
-                </ul>
-            </div>
-            <div class="changelog-entry">
-                <div class="changelog-date">29.03.2026</div>
-                <ul>
-                    <li><strong>Rossi</strong> T0 (Damage) — Despite seemingly anti-synergistic teams, raw burst potential on Ultimate and high multipliers on Combo and Battle Skills make her a flexible, incredibly strong Operator deserving T0.</li>
-                    <li><strong>Yvonne</strong> T0.5 → T0 (Damage) — Cryo team rotations further optimised; competitive even in 3-3 Umbral Monument stages. Proven strong and well-rounded across all content.</li>
-                    <li><strong>Ardelia</strong> T0 → T0.5 (Buffer) — Still very strong, but steep SP costs and lower-rarity buffers (Perlica, Akekuri, Xaihi) have been more prominent. Not a core Operator when resources are tight.</li>
-                    <li><strong>Last Rite</strong> remains T0.5 — Tangtang raises her ceiling but doesn't address pre-existing structural issues the same way as Yvonne.</li>
-                </ul>
-            </div>
-            <div class="changelog-entry">
-                <div class="changelog-date">15.03.2026</div>
-                <ul>
-                    <li><strong>Tangtang</strong> added at T0 (Enabler) — High personal damage, accessible Inflictions, utility on Ultimate, and wide AoE make her an all-around elite Enabler for Cryo teams.</li>
-                </ul>
-            </div>
-            <div class="changelog-entry">
-                <div class="changelog-date">03.03.2026</div>
-                <ul>
-                    <li>Tier list restructured: broad Damage / Enabler / Buffer categories introduced. Multiple characters repositioned accordingly (Gilberta T0, Pogranichnik T0, Chen Qianyu T0.5, Wulfgard T0.5, Perlica T0.5, Alesh T1, Antal T1, and others).</li>
-                </ul>
-            </div>
-            <div class="changelog-entry">
-                <div class="changelog-date">02.02.2026</div>
-                <ul>
-                    <li><strong>Yvonne</strong> added at T1 with Watchlist ▲.</li>
-                    <li><strong>Fluorite</strong> T2 → T1.5 (major buff in 1.0 added Infliction to Ultimate).</li>
-                    <li><strong>Xaihi</strong> T1 → T0.5 (mainstay in Last Rite and Yvonne teams, high flexibility).</li>
-                    <li><strong>Gilberta</strong> T1 → T0.5 (strong niches in Electric and Yvonne teams confirmed).</li>
-                    <li><strong>Akekuri</strong> T1 → T0.5 (flexible across archetypes despite nerfs).</li>
-                </ul>
-            </div>
-            <div class="changelog-entry">
-                <div class="changelog-date">20.01.2026</div>
-                <ul>
-                    <li>Initial release of the tier list.</li>
-                </ul>
-            </div>`
+            html: `<div class="changelog-entry"><div class="changelog-date">17.04.2026</div><ul><li><strong>Zhuang Fangyi</strong> (Damage) added at T0 with Watchlist ▲.</li></ul></div><div class="changelog-entry"><div class="changelog-date">20.01.2026</div><ul><li>Initial release of the tier list.</li></ul></div>`
         }
     ],
     team: [
         {
             key: 'team-about', icon: '01', title: 'About the Team Tier List',
-            html: `<p>
-                The team tier list ranks the <strong>performance of full team compositions relative to one another</strong>,
-                factoring in their peak potential in endgame content. For story and lower difficulties,
-                there is no need to be concerned with ratings.
-            </p>
-            <p>
-                The current hardest content, <strong>Umbral Monument</strong>, is the mode these ratings are built around.
-                Team placements are determined by their overall efficacy across encounters, with higher teams being more
-                capable of consistently clearing faster.
-            </p>
-            <p>
-                The characters listed aren't the only viable compositions, but are the ones capable of the highest damage output.
-                Lower-tier units and Survivalists are less likely to appear. All variations of a team's flex slots are listed
-                where applicable.
-            </p>`
+            html: `<p>The team tier list ranks the <strong>performance of full team compositions relative to one another</strong>, factoring in their peak potential in endgame content.</p>`
         },
         {
             key: 'team-criteria', icon: '02', title: 'Ratings &amp; Criteria',
-            html: `<p>The team tier list aims to cover teams from two angles:</p>
-            <ul>
-                <li>Ensuring all <strong>meta-relevant teams</strong> are ranked.</li>
-                <li>Including as many <strong>viable team archetypes</strong> as possible to encompass as much of the cast as possible.</li>
-            </ul>
-            <p>
-                When assessing the power of a team for tier placement, only the <strong>best character combinations</strong> are
-                considered. For character-specific criteria, refer to the General Tier List.
-            </p>`
+            html: `<p>When assessing the power of a team for tier placement, only the <strong>best character combinations</strong> are considered.</p>`
         },
         {
             key: 'team-changelog', icon: '03', title: 'Changelog',
-            html: `<div class="changelog-entry">
-                <div class="changelog-date">02.02.2026</div>
-                <ul>
-                    <li>Added more synergy variations to top teams based on player discoveries.</li>
-                    <li><strong>Yvonne Hyper</strong> added — Currently a tier below Last Rite; watchlisted for potential rise as the meta develops.</li>
-                    <li><strong>Physical Sustainless</strong> added — Higher damage ceiling but riskier gameplay; requires precise Vulnerability alignment and no healing safety net.</li>
-                </ul>
-            </div>
-            <div class="changelog-entry">
-                <div class="changelog-date">20.01.2026</div>
-                <ul>
-                    <li>Initial release of the team tier list.</li>
-                </ul>
-            </div>`
+            html: `<div class="changelog-entry"><div class="changelog-date">20.01.2026</div><ul><li>Initial release of the team tier list.</li></ul></div>`
         }
     ]
 };
 
-/* ═══════════════════════════════════════════════════════════════════
-   FALLBACK CHARACTER / TEAM DATA
-═══════════════════════════════════════════════════════════════════ */
 const FALLBACK_DATA = {
     lastUpdated: '17/04/2026',
     characters: [
@@ -1346,51 +1192,17 @@ const FALLBACK_DATA = {
         { name: 'Catcher',       tier: 'T2',   role: 'enabler', rarity: 4 },
     ],
     teams: [
-        {
-            name: 'Laevatain Hyper', tier: 'T0', is_expert: false,
-            memberGroups: [['Laevatain'],['Wulfgard','Akekuri'],['Antal','Akekuri'],['Ardelia','Gilberta']],
-        },
-        {
-            name: 'Last Rite Hyper', tier: 'T0.5', is_expert: false,
-            memberGroups: [['Last Rite'],['Xaihi'],['Ardelia'],['Perlica','Fluorite','Akekuri']],
-        },
-        {
-            name: 'Physical Sustainless', tier: 'T0.5', is_expert: true,
-            memberGroups: [['Pogranichnik'],['Chen Qianyu'],['Endministrator','Da Pan'],['Lifeng']],
-        },
-        {
-            name: 'Endmin Physical', tier: 'T1', is_expert: false,
-            memberGroups: [['Endministrator'],['Chen Qianyu'],['Pogranichnik','Lifeng'],['Ardelia']],
-        },
-        {
-            name: 'Da Pan Physical', tier: 'T1', is_expert: false,
-            memberGroups: [['Da Pan'],['Chen Qianyu'],['Ardelia'],['Pogranichnik','Lifeng','Endministrator']],
-        },
-        {
-            name: 'Avywenna Electric', tier: 'T1', is_expert: true,
-            memberGroups: [['Avywenna'],['Arclight','Akekuri'],['Perlica'],['Antal','Gilberta']],
-        },
-        {
-            name: 'Yvonne Hyper', tier: 'T1', is_expert: false,
-            memberGroups: [['Yvonne'],['Xaihi'],['Gilberta'],['Last Rite','Fluorite','Snowshine','Estella']],
-        },
-        {
-            name: 'Wulfgard DPS', tier: 'T1.5', is_expert: false,
-            memberGroups: [['Wulfgard'],['Perlica'],['Antal'],['Arclight','Gilberta','Akekuri']],
-        },
-        {
-            name: 'Cryo / Physical Hybrid', tier: 'T1.5', is_expert: false,
-            memberGroups: [['Estella'],['Alesh'],['Ardelia','Chen Qianyu'],['Endministrator']],
-        },
+        { name: 'Laevatain Hyper',     tier: 'T0',   is_expert: false, memberGroups: [['Laevatain'],['Wulfgard','Akekuri'],['Antal','Akekuri'],['Ardelia','Gilberta']] },
+        { name: 'Last Rite Hyper',     tier: 'T0.5', is_expert: false, memberGroups: [['Last Rite'],['Xaihi'],['Ardelia'],['Perlica','Fluorite','Akekuri']] },
+        { name: 'Physical Sustainless',tier: 'T0.5', is_expert: true,  memberGroups: [['Pogranichnik'],['Chen Qianyu'],['Endministrator','Da Pan'],['Lifeng']] },
+        { name: 'Endmin Physical',     tier: 'T1',   is_expert: false, memberGroups: [['Endministrator'],['Chen Qianyu'],['Pogranichnik','Lifeng'],['Ardelia']] },
+        { name: 'Yvonne Hyper',        tier: 'T1',   is_expert: false, memberGroups: [['Yvonne'],['Xaihi'],['Gilberta'],['Last Rite','Fluorite','Snowshine','Estella']] },
+        { name: 'Avywenna Electric',   tier: 'T1',   is_expert: true,  memberGroups: [['Avywenna'],['Arclight','Akekuri'],['Perlica'],['Antal','Gilberta']] },
     ],
 };
 
-/* ═══════════════════════════════════════════════════════════════════
-   ACCORDION RENDERING
-   Each item stores the current HTML in memory so edit-mode can
-   round-trip to Supabase.
-═══════════════════════════════════════════════════════════════════ */
-const accordionState = { general: [], team: [] }; // stores live item objects
+/* ─── Accordion ─────────────────────────────────────────────────── */
+const accordionState = { general: [], team: [] };
 
 function renderAccordion(sectionKey, items) {
     const container = document.getElementById(`accordion-${sectionKey}`);
@@ -1413,14 +1225,13 @@ function renderAccordion(sectionKey, items) {
             </button>
             <div class="accordion-body" id="acc-${sectionKey}-${item.key}">
                 <div class="acc-display-content">${item.html}</div>
-                <textarea class="acc-editor" spellcheck="false">${item.html.replace(/</g,'<').replace(/>/g,'>')}</textarea>
+                <textarea class="acc-editor" spellcheck="false"></textarea>
                 <div class="acc-editor-note">Editing raw HTML · Changes saved to database on "Save"</div>
             </div>
         `;
         container.appendChild(el);
     });
 
-    // Wire up accordion triggers
     container.querySelectorAll('.accordion-trigger').forEach(trigger => {
         trigger.addEventListener('click', () => {
             const key  = trigger.dataset.acc;
@@ -1432,15 +1243,13 @@ function renderAccordion(sectionKey, items) {
     });
 }
 
-/* ─── Edit / Save accordion section ─────────────────────────────── */
-let editingSections = {}; // sectionKey → bool
+let editingSections = {};
 
 function toggleEditSection(sectionKey) {
     const btn     = document.getElementById(`edit-${sectionKey === 'general' ? 'intro' : 'team'}-btn`);
     const editing = editingSections[sectionKey];
 
     if (!editing) {
-        // Enter edit mode — expand all items, show editors
         editingSections[sectionKey] = true;
         btn.textContent = 'Save';
         btn.classList.add('saving');
@@ -1449,14 +1258,12 @@ function toggleEditSection(sectionKey) {
         bodies.forEach(body => {
             body.classList.add('open', 'editing-mode');
             body.previousElementSibling.classList.add('open');
-            // Sync textarea with current display html
             const display  = body.querySelector('.acc-display-content');
             const textarea = body.querySelector('.acc-editor');
             textarea.value = display.innerHTML;
         });
 
     } else {
-        // Save mode — collect edits, persist to DB, exit edit mode
         editingSections[sectionKey] = false;
         btn.textContent = 'Saving…';
         btn.disabled    = true;
@@ -1467,17 +1274,14 @@ function toggleEditSection(sectionKey) {
             const newHtml = el.querySelector('.acc-editor').value;
             const display = el.querySelector('.acc-display-content');
             display.innerHTML = newHtml;
-            // Update in-memory state
             accordionState[sectionKey][idx].html = newHtml;
             items.push({ key: accordionState[sectionKey][idx].key, html: newHtml });
         });
 
-        // Exit editing mode
         document.querySelectorAll(`#accordion-${sectionKey} .accordion-body`).forEach(body => {
             body.classList.remove('editing-mode');
         });
 
-        // Persist to Supabase tier_meta table
         saveAccordionToDb(sectionKey, items, btn);
     }
 }
@@ -1506,9 +1310,7 @@ async function saveAccordionToDb(sectionKey, items, btn) {
 document.getElementById('edit-intro-btn').addEventListener('click', () => toggleEditSection('general'));
 document.getElementById('edit-team-btn').addEventListener('click',  () => toggleEditSection('team'));
 
-/* ═══════════════════════════════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════════════════════════════ */
+/* ─── State ─────────────────────────────────────────────────────── */
 let allChars     = [];
 let allTeams     = [];
 let charMap      = {};
@@ -1524,7 +1326,6 @@ function buildCharMap(chars) {
     return map;
 }
 
-/* ─── Status bar ─────────────────────────────────────────────────── */
 function setStatus(state, msg, count) {
     const bar  = document.getElementById('status-bar');
     const icon = document.getElementById('db-icon');
@@ -1536,10 +1337,7 @@ function setStatus(state, msg, count) {
     cnt.textContent  = count || '';
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   CHARACTER CARD
-   FIX: uses window.location.href (same tab) instead of window.open
-═══════════════════════════════════════════════════════════════════ */
+/* ─── Character card ─────────────────────────────────────────────── */
 function buildCard(char) {
     const div = document.createElement('div');
     div.className    = 'char-card';
@@ -1571,16 +1369,13 @@ function buildCard(char) {
     if (char.slug) {
         div.style.cursor = 'pointer';
         div.addEventListener('click', () => {
-            // FIX: navigate in the same tab
             window.location.href = `CharacterIntroduction.html?char=${char.slug}`;
         });
     }
     return div;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   RENDER GENERAL TIER LIST
-═══════════════════════════════════════════════════════════════════ */
+/* ─── Tier list renderer ─────────────────────────────────────────── */
 function renderTierList(characters) {
     const container = document.getElementById('tier-list-container');
     container.innerHTML = '';
@@ -1591,6 +1386,7 @@ function renderTierList(characters) {
         if (grouped[char.tier]?.[char.role]) grouped[char.tier][char.role].push(char);
     }
 
+    /* Column header row */
     const headerRow = document.createElement('div');
     headerRow.className = 'tier-col-headers';
     headerRow.id = 'tier-col-headers';
@@ -1614,11 +1410,13 @@ function renderTierList(characters) {
         row.className    = 'tier-row';
         row.dataset.tier = tier;
 
+        /* Tier label */
         const label = document.createElement('div');
         label.className = `tier-label ${meta.cssClass}`;
         label.innerHTML = `<span class="tier-name">${meta.label}</span><span class="tier-sub">${meta.sub}</span>`;
         row.appendChild(label);
 
+        /* Three role columns — always rendered separately */
         for (const role of ROLE_ORDER) {
             const chars = tierData[role];
             const rm    = ROLE_META[role];
@@ -1628,6 +1426,7 @@ function renderTierList(characters) {
             col.dataset.role = role;
             col.dataset.tier = tier;
 
+            /* Inline role pill (shown when filtered or on tablet) */
             const sidePill = document.createElement('span');
             sidePill.className   = `cat-side-label ${rm.sideClass}`;
             sidePill.textContent = rm.label;
@@ -1657,10 +1456,7 @@ function renderTierList(characters) {
     applyFilters();
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   TEAM MEMBER / TEAM CARD
-   FIX: uses window.location.href (same tab) instead of window.open
-═══════════════════════════════════════════════════════════════════ */
+/* ─── Team list renderer ─────────────────────────────────────────── */
 function buildTeamMember(name) {
     const char     = charMap[name.toLowerCase()];
     const rarity   = char ? (char.rarity || 5) : 5;
@@ -1677,7 +1473,6 @@ function buildTeamMember(name) {
     if (slug) {
         el.style.cursor = 'pointer';
         el.addEventListener('click', () => {
-            // FIX: navigate in the same tab
             window.location.href = `CharacterIntroduction.html?char=${slug}`;
         });
     }
@@ -1764,9 +1559,7 @@ function renderTeamTierList(teams) {
     }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   FILTERS
-═══════════════════════════════════════════════════════════════════ */
+/* ─── Filter logic ───────────────────────────────────────────────── */
 function applyFilters() {
     const isFiltered = activeFilter !== 'all';
     const headerRow  = document.getElementById('tier-col-headers');
@@ -1807,7 +1600,6 @@ document.getElementById('search-input').addEventListener('input', e => {
     applyFilters();
 });
 
-/* ─── View Tabs ──────────────────────────────────────────────────── */
 document.querySelectorAll('.view-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         document.querySelectorAll('.view-tab').forEach(t  => t.classList.remove('active'));
@@ -1818,12 +1610,12 @@ document.querySelectorAll('.view-tab').forEach(tab => {
 });
 
 /* ═══════════════════════════════════════════════════════════════════
-   INIT
+   INIT — with verbose debug logging
 ═══════════════════════════════════════════════════════════════════ */
 async function init() {
     setStatus('loading', 'Connecting to database…');
 
-    /* ── Load accordion content from DB (tier_meta table) ────────── */
+    /* ── Load accordion content ────────────────────────────────── */
     async function loadAccordionContent(sectionKey) {
         try {
             const { data, error } = await db
@@ -1833,14 +1625,12 @@ async function init() {
                 .single();
             if (error || !data?.value) throw new Error('not found');
             const items = JSON.parse(data.value);
-            // Merge fetched HTML with fallback structure (keeps icon/title from fallback)
             const merged = FALLBACK_ACCORDION[sectionKey].map(fb => {
                 const live = items.find(i => i.key === fb.key);
                 return live ? { ...fb, html: live.html } : fb;
             });
             renderAccordion(sectionKey, merged);
         } catch {
-            // Use fallback content
             renderAccordion(sectionKey, FALLBACK_ACCORDION[sectionKey]);
         }
     }
@@ -1850,45 +1640,108 @@ async function init() {
         loadAccordionContent('team'),
     ]);
 
-    /* ── Load characters & teams ─────────────────────────────────── */
+    /* ── Load characters ────────────────────────────────────────── */
     try {
+        console.log('[TierList] Querying v_characters_tiered…');
         const { data: chars, error: charErr } = await db
-            .from('characters')
+            .from('v_characters_tiered')
             .select('*')
             .order('name');
-        if (charErr) throw charErr;
 
+        /* ── DEBUG: log exactly what came back ─────────────────── */
+        console.log('[TierList] charErr:', charErr);
+        console.log('[TierList] chars count:', chars?.length);
+        if (chars?.length) {
+            console.log('[TierList] Sample row:', chars[0]);
+            const uniqueTiers = [...new Set(chars.map(c => c.tier))];
+            const uniqueRoles = [...new Set(chars.map(c => c.role))];
+            console.log('[TierList] Unique tiers in DB:', uniqueTiers);
+            console.log('[TierList] Unique roles in DB:', uniqueRoles);
+        }
+
+        if (charErr) {
+            console.error('[TierList] Character fetch error — falling back:', charErr.message);
+            throw charErr;
+        }
+
+        const VALID_ROLES = ['damage', 'enabler', 'buffer'];
+        const VALID_TIERS = ['T0', 'T0.5', 'T1', 'T1.5', 'T2'];
+
+        /* Check that at least some rows have both a valid tier AND role.
+           If none pass, the view may have wrong column names or data. */
+        const validRows = (chars || []).filter(c =>
+            VALID_TIERS.includes(c.tier) && VALID_ROLES.includes(c.role)
+        );
+
+        console.log('[TierList] Rows passing tier+role validation:', validRows.length, 'of', chars?.length);
+
+        if (validRows.length > 0) {
+            allChars = chars;
+            console.log('[TierList] Using live DB data.');
+        } else if (chars && chars.length > 0) {
+            /* Data came back but validation failed — log the problem clearly */
+            console.warn('[TierList] Rows returned but none pass validation. Check that:');
+            console.warn('  • "tier" column uses values like T0, T0.5, T1, T1.5, T2');
+            console.warn('  • "role" column uses values: damage, enabler, buffer (lowercase)');
+            console.warn('  • The view v_characters_tiered exposes these column names');
+            /* Merge slugs/images from DB into fallback data */
+            allChars = FALLBACK_DATA.characters.map(fb => {
+                const live = chars.find(c => c.name?.toLowerCase() === fb.name.toLowerCase());
+                return live
+                    ? { ...fb, slug: live.slug, img_path: live.img_path || null, rarity: live.rarity || fb.rarity }
+                    : fb;
+            });
+            console.log('[TierList] Using fallback data enriched with DB slugs/images.');
+        } else {
+            console.warn('[TierList] No character rows returned from DB — using fallback data entirely.');
+            allChars = FALLBACK_DATA.characters;
+        }
+
+        /* ── Load last-updated meta ─────────────────────────────── */
+        try {
+            const { data: meta, error: metaErr } = await db
+                .from('tier_meta')
+                .select('value')
+                .eq('key', 'last_updated')
+                .single();
+            if (metaErr || !meta?.value) throw new Error('no meta');
+            const d = new Date(meta.value);
+            document.getElementById('last-updated').textContent =
+                `Last updated: ${d.toLocaleDateString('en-GB')}`;
+        } catch {
+            document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
+        }
+
+        /* Characters are confirmed good — render them now, independently */
+        charMap = buildCharMap(allChars);
+        setStatus('connected', 'Supabase connected', `${allChars.length} operators loaded`);
+        renderTierList(allChars);
+
+    } catch (err) {
+        /* Only character fetch errors land here */
+        console.error('[TierList] Character fetch error:', err);
+        setStatus('error', 'DB error — using local fallback', 'fallback data active');
+        document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
+        allChars = FALLBACK_DATA.characters;
+        charMap  = buildCharMap(allChars);
+        renderTierList(allChars);
+    }
+
+    /* ── Load teams — fully isolated, never breaks characters ────── */
+    try {
+        console.log('[TierList] Querying teams…');
         const { data: teamRows, error: teamErr } = await db
             .from('teams')
             .select('*, team_members(*)')
             .order('sort_order');
 
-        const { data: meta, error: metaErr } = await db
-            .from('tier_meta')
-            .select('value')
-            .eq('key', 'last_updated')
-            .single();
+        console.log('[TierList] teamErr:', teamErr);
+        console.log('[TierList] teams count:', teamRows?.length);
 
-        const VALID_ROLES = ['damage', 'enabler', 'buffer'];
-        const VALID_TIERS = ['T0', 'T0.5', 'T1', 'T1.5', 'T2'];
+        if (teamErr) throw teamErr;
 
-        const hasValidChars = chars && chars.length > 0 &&
-            chars.some(c => VALID_TIERS.includes(c.tier) && VALID_ROLES.includes(c.role));
-
-        if (hasValidChars) {
-            allChars = chars;
-        } else if (chars && chars.length > 0) {
-            allChars = FALLBACK_DATA.characters.map(fb => {
-                const live = chars.find(c =>
-                    c.name.toLowerCase() === fb.name.toLowerCase() || c.id === fb.slug
-                );
-                return live ? { ...fb, slug: live.slug || live.id, img_path: live.img_path || null, rarity: live.rarity || fb.rarity } : fb;
-            });
-        } else {
-            allChars = FALLBACK_DATA.characters;
-        }
-
-        if (teamErr || !teamRows || teamRows.length === 0) {
+        if (!teamRows || teamRows.length === 0) {
+            console.warn('[TierList] Teams table empty — team tier list will show fallback data.');
             allTeams = FALLBACK_DATA.teams;
         } else {
             allTeams = teamRows.map(team => {
@@ -1903,41 +1756,14 @@ async function init() {
                 team.memberGroups = Object.keys(groups).sort((a, b) => a - b).map(k => groups[k]);
                 return team;
             });
+            console.log('[TierList] Teams loaded from DB:', allTeams.length);
         }
-
-        if (metaErr || !meta?.value) {
-            document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
-        } else {
-            try {
-                const d = new Date(meta.value);
-                document.getElementById('last-updated').textContent = `Last updated: ${d.toLocaleDateString('en-GB')}`;
-            } catch {
-                document.getElementById('last-updated').textContent = `Last updated: ${meta.value}`;
-            }
-        }
-
-        charMap = buildCharMap(allChars);
-
-        const usingFallback = !hasValidChars || teamErr || !teamRows?.length || metaErr;
-        if (usingFallback) {
-            setStatus('error', 'Partial data — some fallbacks active', `${allChars.length} operators loaded`);
-        } else {
-            setStatus('connected', 'Supabase connected', `${allChars.length} operators loaded`);
-        }
-
-        renderTierList(allChars);
-        renderTeamTierList(allTeams);
-
     } catch (err) {
-        console.error('Supabase fetch failed:', err);
-        setStatus('error', 'DB error — using local fallback', 'fallback data active');
-        document.getElementById('last-updated').textContent = `Last updated: ${FALLBACK_DATA.lastUpdated}`;
-        allChars = FALLBACK_DATA.characters;
+        console.warn('[TierList] Teams fetch failed — using fallback teams. Error:', err?.message || err);
         allTeams = FALLBACK_DATA.teams;
-        charMap  = buildCharMap(allChars);
-        renderTierList(allChars);
-        renderTeamTierList(allTeams);
     }
+
+    renderTeamTierList(allTeams);
 }
 
 init();
@@ -1946,222 +1772,6 @@ init();
     <script src="js/NavBar.js"></script>
     <script>
         NavBar.init({ sections: [] });
-    </script>
-        <script>
-        /*
-        !!!
-        
-        SUPABASE PROMPT, WAITING FOR APROVAL
-        
-        !!!
-        */
-/*
--- ═══════════════════════════════════════════════════════════════════
--- TIER LIST — ISOLATED SCHEMA
--- Does NOT alter the existing `characters` table.
--- character_tier_info references characters.slug via FK.
--- ═══════════════════════════════════════════════════════════════════
-
--- ── 1. Character tier metadata (isolated) ────────────────────────
-create table if not exists character_tier_info (
-    character_slug  text primary key
-        references characters(slug) on delete cascade on update cascade,
-    tier            text not null
-        check (tier in ('T0','T0.5','T1','T1.5','T2')),
-    role            text not null
-        check (role in ('damage','enabler','buffer')),
-    is_new          boolean not null default false,
-    is_expert       boolean not null default false,
-    watchlist       text check (watchlist in ('up','down') or watchlist is null),
-    updated_at      timestamptz not null default now()
-);
-
--- Handy index for role/tier filtering
-create index if not exists idx_cti_tier_role
-    on character_tier_info (tier, role);
-
--- ── 2. Populate tier data ─────────────────────────────────────────
-insert into character_tier_info
-    (character_slug, tier, role, is_new, is_expert, watchlist)
-values
-    ('laevatain',      'T0',   'damage',  false, false, null),
-    ('rossi',          'T0',   'damage',  false, false, null),
-    ('yvonne',         'T0',   'damage',  false, false, null),
-    ('zhuang-fangyi',  'T0',   'damage',  true,  false, 'up'),
-    ('tangtang',       'T0',   'enabler', false, false, null),
-    ('gilberta',       'T0',   'buffer',  false, false, null),
-    ('pogranichnik',   'T0',   'buffer',  false, false, null),
-    ('last-rite',      'T0.5', 'damage',  false, false, null),
-    ('chen-qianyu',    'T0.5', 'enabler', false, false, null),
-    ('lifeng',         'T0.5', 'enabler', false, false, null),
-    ('wulfgard',       'T0.5', 'enabler', false, false, null),
-    ('akekuri',        'T0.5', 'buffer',  false, false, null),
-    ('ardelia',        'T0.5', 'buffer',  false, false, null),
-    ('perlica',        'T0.5', 'buffer',  false, false, null),
-    ('xaihi',          'T0.5', 'buffer',  false, false, null),
-    ('avywenna',       'T1',   'damage',  false, true,  null),
-    ('da-pan',         'T1',   'damage',  false, false, null),
-    ('endministrator', 'T1',   'damage',  false, false, null),
-    ('alesh',          'T1',   'enabler', false, false, null),
-    ('arclight',       'T1',   'enabler', false, true,  null),
-    ('ember',          'T1',   'enabler', false, false, null),
-    ('snowshine',      'T1',   'enabler', false, false, null),
-    ('antal',          'T1',   'buffer',  false, false, null),
-    ('estella',        'T1.5', 'enabler', false, false, null),
-    ('fluorite',       'T1.5', 'enabler', false, false, null),
-    ('catcher',        'T2',   'enabler', false, false, null)
-on conflict (character_slug) do update set
-    tier       = excluded.tier,
-    role       = excluded.role,
-    is_new     = excluded.is_new,
-    is_expert  = excluded.is_expert,
-    watchlist  = excluded.watchlist,
-    updated_at = now();
-
--- ── 3. Teams ──────────────────────────────────────────────────────
-create table if not exists teams (
-    id          serial primary key,
-    name        text not null,
-    tier        text not null
-        check (tier in ('T0','T0.5','T1','T1.5','T2')),
-    is_expert   boolean not null default false,
-    sort_order  int not null default 0
-);
-
--- ── 4. Team members ───────────────────────────────────────────────
--- character_slug references character_tier_info (not characters directly)
--- so members must already have tier info populated.
--- If you prefer to allow characters not yet tiered, reference characters(slug) instead.
-create table if not exists team_members (
-    id              serial primary key,
-    team_id         int not null references teams(id) on delete cascade,
-    character_slug  text not null references characters(slug) on delete cascade,
-    group_index     int not null default 0,  -- OR-group index within the team slot
-    sort_order      int not null default 0
-);
-
-create index if not exists idx_tm_team_id on team_members (team_id);
-
--- ── 5. Teams data ─────────────────────────────────────────────────
-insert into teams (name, tier, is_expert, sort_order) values
-    ('Laevatain Hyper',        'T0',   false, 1),
-    ('Last Rite Hyper',        'T0.5', false, 2),
-    ('Physical Sustainless',   'T0.5', true,  3),
-    ('Endmin Physical',        'T1',   false, 4),
-    ('Da Pan Physical',        'T1',   false, 5),
-    ('Avywenna Electric',      'T1',   true,  6),
-    ('Yvonne Hyper',           'T1',   false, 7),
-    ('Wulfgard DPS',           'T1.5', false, 8),
-    ('Cryo / Physical Hybrid', 'T1.5', false, 9);
-
--- ── 6. Team members data ──────────────────────────────────────────
--- Laevatain Hyper (id=1)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (1, 'laevatain',    0, 1),
-    (1, 'wulfgard',     1, 1),
-    (1, 'akekuri',      1, 2),
-    (1, 'antal',        2, 1),
-    (1, 'akekuri',      2, 2),
-    (1, 'ardelia',      3, 1),
-    (1, 'gilberta',     3, 2);
-
--- Last Rite Hyper (id=2)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (2, 'last-rite',    0, 1),
-    (2, 'xaihi',        1, 1),
-    (2, 'ardelia',      2, 1),
-    (2, 'perlica',      3, 1),
-    (2, 'fluorite',     3, 2),
-    (2, 'akekuri',      3, 3);
-
--- Physical Sustainless (id=3)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (3, 'pogranichnik',  0, 1),
-    (3, 'chen-qianyu',   1, 1),
-    (3, 'endministrator',2, 1),
-    (3, 'da-pan',        2, 2),
-    (3, 'lifeng',        3, 1);
-
--- Endmin Physical (id=4)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (4, 'endministrator',0, 1),
-    (4, 'chen-qianyu',   1, 1),
-    (4, 'pogranichnik',  2, 1),
-    (4, 'lifeng',        2, 2),
-    (4, 'ardelia',       3, 1);
-
--- Da Pan Physical (id=5)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (5, 'da-pan',        0, 1),
-    (5, 'chen-qianyu',   1, 1),
-    (5, 'ardelia',       2, 1),
-    (5, 'pogranichnik',  3, 1),
-    (5, 'lifeng',        3, 2),
-    (5, 'endministrator',3, 3);
-
--- Avywenna Electric (id=6)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (6, 'avywenna',  0, 1),
-    (6, 'arclight',  1, 1),
-    (6, 'akekuri',   1, 2),
-    (6, 'perlica',   2, 1),
-    (6, 'antal',     3, 1),
-    (6, 'gilberta',  3, 2);
-
--- Yvonne Hyper (id=7)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (7, 'yvonne',    0, 1),
-    (7, 'xaihi',     1, 1),
-    (7, 'gilberta',  2, 1),
-    (7, 'last-rite', 3, 1),
-    (7, 'fluorite',  3, 2),
-    (7, 'snowshine', 3, 3),
-    (7, 'estella',   3, 4);
-
--- Wulfgard DPS (id=8)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (8, 'wulfgard',  0, 1),
-    (8, 'perlica',   1, 1),
-    (8, 'antal',     2, 1),
-    (8, 'arclight',  3, 1),
-    (8, 'gilberta',  3, 2),
-    (8, 'akekuri',   3, 3);
-
--- Cryo / Physical Hybrid (id=9)
-insert into team_members (team_id, character_slug, group_index, sort_order) values
-    (9, 'estella',        0, 1),
-    (9, 'alesh',          1, 1),
-    (9, 'ardelia',        2, 1),
-    (9, 'chen-qianyu',    2, 2),
-    (9, 'endministrator', 3, 1);
-
--- ── 7. Tier meta (accordion HTML + last_updated) ──────────────────
-create table if not exists tier_meta (
-    key    text primary key,
-    value  text not null
-);
-
-insert into tier_meta (key, value)
-values ('last_updated', '2026-04-17')
-on conflict (key) do update set value = excluded.value;
-
--- ── 8. Convenience view (optional but handy) ─────────────────────
--- Joins characters + character_tier_info so the JS query stays simple.
-create or replace view v_characters_tiered as
-select
-    c.slug,
-    c.name,
-    c.img_path,
-    c.rarity,
-    t.tier,
-    t.role,
-    t.is_new,
-    t.is_expert,
-    t.watchlist,
-    t.updated_at
-from characters c
-join character_tier_info t on t.character_slug = c.slug;
-*/
     </script>
 </body>
 </html>
