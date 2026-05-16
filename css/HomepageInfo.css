@@ -1088,3 +1088,13 @@
     .ei-reaction-concepts { grid-template-columns: 1fr; }
     .ei-glossary-grid { grid-template-columns: 1fr; }
 }
+
+/* Hide all panels by default */
+.ei-tab-panel {
+    display: none;
+  }
+  
+  /* Show the panel when it has the 'active' class */
+  .ei-tab-panel.active {
+    display: block; /* or flex, grid, depending on your layout */
+  }
