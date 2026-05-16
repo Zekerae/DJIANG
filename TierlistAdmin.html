@@ -599,47 +599,25 @@ document.querySelectorAll('.sidebar-btn[data-panel]').forEach(btn => {
    multiple times with different tier/role combos.
 ═══════════════════════════════════════════════════════════ */
 async function loadChars() {
-    /* Try the view first */
-    const { data: viewData, error: viewErr } = await db
-        .from('v_characters_tiered')
-        .select('*')
-        .order('name');
+    const { data: cti, error: ctiErr } = await db
+        .from('character_tier_info')
+        .select('id, character_slug, tier, role, is_new, is_expert, watchlist, characters(name, img_path, rarity)')
+        .order('character_slug');
 
-    if (!viewErr && viewData) {
-        charData = viewData.map(r => ({
-            id:        r.id,
-            slug:      r.slug      || r.character_slug,
-            name:      r.name,
-            rarity:    r.rarity,
-            img_path:  r.img_path  || null,
-            tier:      r.tier,
-            role:      r.role,
-            is_new:    r.is_new    || false,
-            is_expert: r.is_expert || false,
-            watchlist: r.watchlist || null,
-        }));
-    } else {
-        /* Fallback: direct join */
-        const { data: cti, error: ctiErr } = await db
-            .from('character_tier_info')
-            .select('id, character_slug, tier, role, is_new, is_expert, watchlist, characters(name, img_path, rarity)')
-            .order('character_slug');
+    if (ctiErr) { toast('Failed to load characters: ' + ctiErr.message, 'err'); return; }
 
-        if (ctiErr) { toast('Failed to load characters: ' + ctiErr.message, 'err'); return; }
-
-        charData = (cti || []).map(r => ({
-            id:        r.id,
-            slug:      r.character_slug,
-            name:      r.characters?.name     || r.character_slug,
-            rarity:    r.characters?.rarity   || 5,
-            img_path:  r.characters?.img_path || null,
-            tier:      r.tier,
-            role:      r.role,
-            is_new:    r.is_new    || false,
-            is_expert: r.is_expert || false,
-            watchlist: r.watchlist || null,
-        }));
-    }
+    charData = (cti || []).map(r => ({
+        id:        r.id,
+        slug:      r.character_slug,
+        name:      r.characters?.name     || r.character_slug,
+        rarity:    r.characters?.rarity   || 5,
+        img_path:  r.characters?.img_path || null,
+        tier:      r.tier,
+        role:      r.role,
+        is_new:    r.is_new    || false,
+        is_expert: r.is_expert || false,
+        watchlist: r.watchlist || null,
+    }));
 
     document.getElementById('count-chars').textContent = charData.length;
     renderCharsTable();
@@ -752,7 +730,7 @@ async function saveCharRow(btn) {
 
     const { error } = await db
         .from('character_tier_info')
-        .update({ tier, role, is_new, is_expert, watchlist, updated_at: new Date().toISOString() })
+        .update({ tier, role, is_new, is_expert, watchlist })
         .eq('id', id);   /* ← target by id, not slug */
 
     btn.classList.remove('saving');
@@ -947,15 +925,7 @@ document.getElementById('confirm-add-char').addEventListener('click', async () =
     */
     const { data: inserted, error } = await db
         .from('character_tier_info')
-        .insert({
-            character_slug: slug,
-            tier,
-            role,
-            is_new,
-            is_expert,
-            watchlist,
-            updated_at: new Date().toISOString()
-        })
+        .insert({ character_slug: slug, tier, role, is_new, is_expert, watchlist })
         .select()
         .single();
 
