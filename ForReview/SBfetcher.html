@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Endfield DB Exporter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #07080b;
+  --bg2:  #0c0d12;
+  --bg3:  #10121a;
+  --bord: rgba(255,255,255,.055);
+  --bord2:rgba(255,255,255,.10);
+  --text: #e4e0d8;
+  --dim:  #5a5868;
+  --dim2: #8a8694;
+  --gold: #d4943a;
+  --gold2:#f0b866;
+  --green:#6ddc9a;
+  --red:  #ff6b6b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0;}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;background:rgba(7,8,11,.95);border-bottom:1px solid var(--bord);}
+.logo-wrap{display:flex;align-items:center;gap:12px;}
+.logo-mark{width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,var(--gold),#a0601a);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:#fff;}
+.logo-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:3px;text-transform:uppercase;color:var(--dim2);}
+.logo-label span{color:var(--gold);}
+
+/* MAIN */
+.main{max-width:900px;margin:0 auto;padding:40px 24px;}
+
+/* CONFIG CARD */
+.card{background:var(--bg2);border:1px solid var(--bord);border-radius:10px;padding:24px 28px;margin-bottom:20px;}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';width:16px;height:1px;background:var(--gold);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim2);}
+.field input,.field select{background:rgba(255,255,255,.04);border:1px solid var(--bord2);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.8rem;padding:9px 12px;outline:none;transition:.2s;width:100%;}
+.field input:focus,.field select:focus{border-color:var(--gold);background:rgba(255,255,255,.07);}
+.field input::placeholder{color:var(--dim);}
+.full{grid-column:1/-1;}
+
+/* TABLE SELECTOR */
+.table-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.table-opt{position:relative;}
+.table-opt input[type=checkbox]{position:absolute;opacity:0;width:0;height:0;}
+.table-opt label{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:7px;border:1px solid var(--bord);background:rgba(0,0,0,.2);cursor:pointer;transition:.2s;}
+.table-opt input:checked + label{border-color:var(--gold);background:rgba(212,148,58,.1);}
+.table-opt label .tname{font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--text);}
+.table-opt label .tdesc{font-size:.65rem;color:var(--dim2);}
+.table-opt input:checked + label .tname{color:var(--gold);}
+
+/* OPTIONS row */
+.options-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.opt-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim2);}
+.opt-check input[type=checkbox]{appearance:none;width:16px;height:16px;border:1px solid var(--bord2);border-radius:3px;cursor:pointer;flex-shrink:0;transition:.2s;position:relative;}
+.opt-check input:checked{background:var(--gold);border-color:var(--gold);}
+.opt-check input:checked::after{content:'';position:absolute;top:2px;left:4px;width:5px;height:8px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg);}
+
+/* FETCH BTN */
+.fetch-btn{display:flex;align-items:center;gap:8px;background:var(--gold);border:none;border-radius:6px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:10px 22px;cursor:pointer;transition:.2s;}
+.fetch-btn:hover{background:var(--gold2);}
+.fetch-btn:disabled{opacity:.4;cursor:not-allowed;}
+.fetch-btn svg{width:16px;height:16px;}
+
+/* STATUS */
+.status-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:1px;margin-top:12px;display:none;}
+.status-bar.show{display:flex;}
+.status-bar.loading{background:rgba(212,148,58,.08);border:1px solid rgba(212,148,58,.2);color:var(--gold2);}
+.status-bar.ok{background:rgba(109,220,154,.08);border:1px solid rgba(109,220,154,.2);color:var(--green);}
+.status-bar.err{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red);}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.15);border-top-color:currentColor;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* PREVIEW */
+.preview-card{background:var(--bg2);border:1px solid var(--bord);border-radius:10px;overflow:hidden;margin-bottom:20px;display:none;}
+.preview-card.show{display:block;}
+.preview-header{padding:16px 24px;border-bottom:1px solid var(--bord);display:flex;align-items:center;justify-content:space-between;}
+.preview-title{font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);}
+.preview-meta{font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:1px;color:var(--dim2);}
+.preview-meta span{color:var(--text);}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--bord);background:var(--bg3);}
+.tab{padding:10px 20px;font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--dim2);border-bottom:2px solid transparent;transition:.15s;display:flex;align-items:center;gap:7px;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-badge{background:rgba(212,148,58,.15);border:1px solid rgba(212,148,58,.25);color:var(--gold);border-radius:10px;padding:1px 7px;font-size:.55rem;}
+
+/* TABLE PREVIEW */
+.table-wrap{overflow-x:auto;max-height:320px;}
+.data-table{width:100%;border-collapse:collapse;font-size:.72rem;}
+.data-table th{font-family:'Rajdhani',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim2);padding:10px 14px;text-align:left;background:rgba(0,0,0,.3);border-bottom:1px solid var(--bord);position:sticky;top:0;}
+.data-table td{padding:9px 14px;border-bottom:1px solid var(--bord);color:var(--text);font-size:.72rem;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;}
+.data-table tr:hover td{background:rgba(255,255,255,.025);}
+.data-table .null-val{color:var(--dim);font-style:italic;}
+.data-table .num-val{color:var(--gold2);}
+.data-table .bool-true{color:var(--green);}
+.data-table .bool-false{color:var(--red);}
+
+/* JSON PREVIEW */
+.json-wrap{position:relative;}
+.json-code{background:rgba(0,0,0,.4);padding:18px 20px;font-family:'Courier New',monospace;font-size:.7rem;color:#c9d1d9;overflow:auto;max-height:320px;white-space:pre;line-height:1.6;}
+.json-key{color:#79b8ff;}
+.json-str{color:#9ecbff;}
+.json-num{color:var(--gold2);}
+.json-bool{color:var(--green);}
+.json-null{color:var(--dim2);}
+
+/* EXPORT BAR */
+.export-bar{padding:16px 24px;border-top:1px solid var(--bord);background:rgba(0,0,0,.2);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.export-btn{display:flex;align-items:center;gap:7px;background:rgba(109,220,154,.1);border:1px solid rgba(109,220,154,.3);border-radius:6px;color:var(--green);font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:8px 16px;cursor:pointer;transition:.2s;}
+.export-btn:hover{background:rgba(109,220,154,.2);border-color:rgba(109,220,154,.5);}
+.export-btn svg{width:14px;height:14px;}
+.copy-btn{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--bord2);border-radius:6px;color:var(--dim2);font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:8px 16px;cursor:pointer;transition:.2s;}
+.copy-btn:hover{color:var(--text);background:rgba(255,255,255,.07);}
+.copy-btn svg{width:14px;height:14px;}
+.filename-input{background:rgba(255,255,255,.04);border:1px solid var(--bord2);border-radius:6px;color:var(--dim2);font-family:'DM Sans',sans-serif;font-size:.75rem;padding:7px 12px;outline:none;width:200px;transition:.2s;}
+.filename-input:focus{border-color:var(--gold);color:var(--text);}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.stat-box{background:var(--bg2);border:1px solid var(--bord);border-radius:8px;padding:14px 16px;}
+.stat-box-label{font-family:'Rajdhani',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim2);margin-bottom:6px;}
+.stat-box-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:1px;color:var(--text);}
+.stat-box-val.gold{color:var(--gold);}
+.stat-box-val.green{color:var(--green);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-mark">EF</div>
+    <div class="logo-label"><span>Endfield</span> · DB Exporter</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- CONFIG -->
+  <div class="card">
+    <div class="card-title">Supabase Connection</div>
+    <div class="field-row">
+      <div class="field">
+        <label>Project URL</label>
+        <input type="text" id="cfgUrl" placeholder="https://xxxx.supabase.co" value="https://vjcucliqjjljhgbqshmi.supabase.co">
+      </div>
+      <div class="field">
+        <label>Anon / Service Key</label>
+        <input type="password" id="cfgKey" placeholder="eyJ…" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10">
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLES -->
+  <div class="card">
+    <div class="card-title">Tables to Export</div>
+    <div class="table-grid">
+      <div class="table-opt">
+        <input type="checkbox" id="tbl-weapons" checked>
+        <label for="tbl-weapons">
+          <span class="tname">weapons</span>
+          <span class="tdesc">All weapon rows + metadata</span>
+        </label>
+      </div>
+      <div class="table-opt">
+        <input type="checkbox" id="tbl-weapon_skills" checked>
+        <label for="tbl-weapon_skills">
+          <span class="tname">weapon_skills</span>
+          <span class="tdesc">Skill data per weapon</span>
+        </label>
+      </div>
+      <div class="table-opt">
+        <input type="checkbox" id="tbl-weapon_progress">
+        <label for="tbl-weapon_progress">
+          <span class="tname">weapon_progress</span>
+          <span class="tdesc">Saved level / notes / tags</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card-title" style="margin-top:16px">Export Format</div>
+    <div class="options-row">
+      <label class="opt-check">
+        <input type="checkbox" id="optMerge" checked>
+        Merge skills into weapons (nested)
+      </label>
+      <label class="opt-check">
+        <input type="checkbox" id="optPretty" checked>
+        Pretty-print JSON
+      </label>
+      <label class="opt-check">
+        <input type="checkbox" id="optFlatSkills">
+        Also export flat weapon_skills array
+      </label>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <button class="fetch-btn" id="fetchBtn" onclick="fetchAll()">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Fetch from Supabase
+      </button>
+    </div>
+    <div class="status-bar" id="statusBar">
+      <div class="spinner" id="statusSpinner"></div>
+      <span id="statusText">Connecting…</span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="statsRow" style="display:none">
+    <div class="stat-box">
+      <div class="stat-box-label">Weapons</div>
+      <div class="stat-box-val gold" id="statWeapons">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-label">Skills</div>
+      <div class="stat-box-val" id="statSkills">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-label">Progress Rows</div>
+      <div class="stat-box-val" id="statProgress">—</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-label">Export Size</div>
+      <div class="stat-box-val green" id="statSize">—</div>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview-card" id="previewCard">
+    <div class="preview-header">
+      <div class="preview-title">Preview</div>
+      <div class="preview-meta" id="previewMeta">—</div>
+    </div>
+    <div class="tabs" id="tabsRow"></div>
+    <div id="tabContent"></div>
+    <div class="export-bar">
+      <button class="export-btn" onclick="downloadJSON()">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v9M4 7l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Download JSON
+      </button>
+      <button class="copy-btn" onclick="copyJSON()">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2H3.5A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Copy to clipboard
+      </button>
+      <input class="filename-input" id="filenameInput" type="text" value="endfield-weapons.json">
+    </div>
+  </div>
+
+</div>
+
+<script>
+let fetchedData = {};
+let exportBlob  = null;
+let activeTab   = 'json';
+
+/* ── helpers ── */
+function $(id){ return document.getElementById(id); }
+
+function setStatus(type, msg) {
+  const bar = $('statusBar');
+  bar.className = 'status-bar show ' + type;
+  $('statusSpinner').style.display = type === 'loading' ? 'block' : 'none';
+  $('statusText').textContent = msg;
+}
+
+async function sbFetch(table, params='') {
+  const url = $('cfgUrl').value.trim().replace(/\/$/, '');
+  const key  = $('cfgKey').value.trim();
+  const r = await fetch(`${url}/rest/v1/${table}?${params}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': key,
+      'Authorization': `Bearer ${key}`,
+    }
+  });
+  if (!r.ok) throw new Error(`${table}: HTTP ${r.status} — ${await r.text()}`);
+  return r.json();
+}
+
+/* ── fetch all ── */
+async function fetchAll() {
+  const btn = $('fetchBtn');
+  btn.disabled = true;
+  setStatus('loading', 'Connecting to Supabase…');
+  fetchedData = {};
+
+  try {
+    const tables = [
+      { id:'tbl-weapons',        name:'weapons',         params:'select=*&order=rarity.desc,type.asc,name.asc' },
+      { id:'tbl-weapon_skills',  name:'weapon_skills',   params:'select=*&order=id.asc,skill_index.asc' },
+      { id:'tbl-weapon_progress',name:'weapon_progress', params:'select=*' },
+    ];
+
+    for (const t of tables) {
+      if (!$(t.id).checked) continue;
+      setStatus('loading', `Fetching ${t.name}…`);
+      fetchedData[t.name] = await sbFetch(t.name, t.params);
+    }
+
+    setStatus('ok', `Done — ${Object.keys(fetchedData).join(', ')} fetched.`);
+    buildExport();
+    renderPreview();
+
+  } catch(e) {
+    setStatus('err', e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ── build export JSON ── */
+function buildExport() {
+  const weapons   = fetchedData['weapons']        || [];
+  const skills    = fetchedData['weapon_skills']  || [];
+  const progress  = fetchedData['weapon_progress'] || [];
+  const merge     = $('optMerge').checked;
+  const flatSkills= $('optFlatSkills').checked;
+
+  let out = {};
+
+  if (weapons.length) {
+    if (merge && skills.length) {
+      const skillMap = {};
+      for (const s of skills) {
+        if (!skillMap[s.id]) skillMap[s.id] = [];
+        const d = typeof s.data === 'string' ? JSON.parse(s.data) : s.data;
+        skillMap[s.id].push({
+          skill_id:    s.skill_id,
+          skill_name:  s.skill_name,
+          skill_index: s.skill_index,
+          max_lv:      s.max_lv,
+          default_lv:  s.default_lv,
+          data:        d,
+        });
+      }
+      out.weapons = weapons.map(w => {
+        const wp = progress.find(p => p.weapon_id === w.id);
+        return {
+          ...w,
+          skills: skillMap[w.id] || [],
+          ...(wp ? { saved_progress: { level: wp.level, notes: wp.notes, tags: wp.tags } } : {}),
+        };
+      });
+    } else {
+      out.weapons = weapons;
+    }
+  }
+
+  if (skills.length && (!merge || flatSkills)) {
+    out.weapon_skills = skills.map(s => ({
+      ...s,
+      data: typeof s.data === 'string' ? JSON.parse(s.data) : s.data,
+    }));
+  }
+
+  if (progress.length) {
+    out.weapon_progress = progress;
+  }
+
+  out._meta = {
+    exported_at: new Date().toISOString(),
+    weapon_count: weapons.length,
+    skill_rows: skills.length,
+    progress_rows: progress.length,
+    merged: merge,
+  };
+
+  const pretty = $('optPretty').checked;
+  const str = pretty ? JSON.stringify(out, null, 2) : JSON.stringify(out);
+  exportBlob = new Blob([str], { type:'application/json' });
+
+  /* stats */
+  $('statWeapons').textContent  = weapons.length || '—';
+  $('statSkills').textContent   = skills.length  || '—';
+  $('statProgress').textContent = progress.length > 0 ? progress.length : '—';
+  const kb = (exportBlob.size / 1024).toFixed(1);
+  $('statSize').textContent     = kb < 1024 ? `${kb} KB` : `${(kb/1024).toFixed(2)} MB`;
+  $('statsRow').style.display   = 'grid';
+
+  return { out, str };
+}
+
+/* ── render preview ── */
+function renderPreview() {
+  const pc = $('previewCard');
+  pc.classList.add('show');
+
+  const weapons  = fetchedData['weapons']       || [];
+  const skills   = fetchedData['weapon_skills'] || [];
+
+  $('previewMeta').innerHTML =
+    `<span>${weapons.length} weapons</span> · <span>${skills.length} skill rows</span>`;
+
+  buildTabs();
+}
+
+/* ── tabs ── */
+function buildTabs() {
+  const tabs = [{ id:'json', label:'JSON Preview', badge:'' }];
+  for (const k of Object.keys(fetchedData)) {
+    tabs.push({ id:k, label:k, badge: fetchedData[k].length });
+  }
+
+  $('tabsRow').innerHTML = tabs.map(t =>
+    `<div class="tab ${t.id===activeTab?'active':''}" onclick="switchTab('${t.id}')">
+      ${t.label}
+      ${t.badge !== '' ? `<span class="tab-badge">${t.badge}</span>` : ''}
+    </div>`
+  ).join('');
+
+  renderTab(activeTab);
+}
+
+function switchTab(id) {
+  activeTab = id;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.textContent.trim().startsWith(id) || t.getAttribute('onclick') === `switchTab('${id}')`) {
+      t.classList.add('active');
+    }
+  });
+  buildTabs();
+}
+
+function renderTab(id) {
+  const cont = $('tabContent');
+  if (id === 'json') {
+    const { str } = buildExport();
+    const preview = str.slice(0, 8000) + (str.length > 8000 ? '\n\n… (truncated for preview)' : '');
+    cont.innerHTML = `<div class="json-wrap"><pre class="json-code">${syntaxHL(preview)}</pre></div>`;
+  } else {
+    const rows = fetchedData[id] || [];
+    if (!rows.length) { cont.innerHTML = `<div style="padding:24px;color:var(--dim);font-size:.8rem">No rows.</div>`; return; }
+    const cols = Object.keys(rows[0]);
+    cont.innerHTML = `<div class="table-wrap"><table class="data-table">
+      <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
+      <tbody>${rows.slice(0,100).map(row =>
+        `<tr>${cols.map(c => cellHTML(row[c])).join('')}</tr>`
+      ).join('')}</tbody>
+    </table></div>
+    ${rows.length > 100 ? `<div style="padding:10px 14px;font-size:.65rem;color:var(--dim)">Showing first 100 of ${rows.length} rows</div>` : ''}`;
+  }
+}
+
+function cellHTML(v) {
+  if (v === null || v === undefined) return `<td class="null-val">null</td>`;
+  if (typeof v === 'boolean') return `<td class="${v?'bool-true':'bool-false'}">${v}</td>`;
+  if (typeof v === 'number') return `<td class="num-val">${v}</td>`;
+  if (typeof v === 'object') {
+    const s = JSON.stringify(v);
+    return `<td title="${s.replace(/"/g,'&quot;')}" style="color:var(--dim2)">${s.slice(0,40)}${s.length>40?'…':''}</td>`;
+  }
+  const s = String(v);
+  return `<td title="${s.replace(/"/g,'&quot;')}">${s.slice(0,60)}${s.length>60?'…':''}</td>`;
+}
+
+function syntaxHL(str) {
+  return str
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+    .replace(/: "([^"]*?)"/g, ': <span class="json-str">"$1"</span>')
+    .replace(/: (-?[0-9]+\.?[0-9]*)/g, ': <span class="json-num">$1</span>')
+    .replace(/: (true|false)/g, ': <span class="json-bool">$1</span>')
+    .replace(/: (null)/g, ': <span class="json-null">$1</span>');
+}
+
+/* ── download / copy ── */
+function downloadJSON() {
+  if (!exportBlob) { alert('Fetch data first.'); return; }
+  const a   = document.createElement('a');
+  a.href    = URL.createObjectURL(exportBlob);
+  a.download= $('filenameInput').value || 'endfield-export.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function copyJSON() {
+  if (!exportBlob) { alert('Fetch data first.'); return; }
+  const text = await exportBlob.text();
+  await navigator.clipboard.writeText(text);
+  const btn = document.querySelector('.copy-btn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = `<svg viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Copied!`;
+  btn.style.color = 'var(--green)';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+}
+
+/* re-run export when options change */
+['optMerge','optPretty','optFlatSkills'].forEach(id =>
+  $(id).addEventListener('change', () => {
+    if (Object.keys(fetchedData).length) { buildExport(); renderTab(activeTab); }
+  })
+);
+</script>
+</body>
+</html>
