@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/WipeHover.css">
     <link rel="stylesheet" href="css/NavBar.css">
     <link rel="stylesheet" href="css/HomepageInfo.css">
+    <link rel="stylesheet" href="css/HomepageEventTimeline.css">
 </head>
 <body>
 
@@ -426,21 +427,629 @@
 
 </section>
 
+
+<!-- ══════════════════════════════════════════════════════════════════
+     EVENT TIMELINE SECTION
+     ══════════════════════════════════════════════════════════════════ -->
+<section id="event-timeline">
+
+  <div class="et-header">
+    <div class="et-header-left">
+      <div class="et-header-label">OPERATIONS LOG</div>
+      <div class="et-header-title">EVENT<br>TIMELINE</div>
+      <p class="et-header-sub">// Live tracking of current, ongoing &amp; upcoming events. Times shown in your local timezone.</p>
+    </div>
+  </div>
+
+  <div class="et-grid">
+
+    <!-- ══ CURRENT EVENTS ══ -->
+    <div class="et-col">
+      <div class="et-col-header">
+        <span class="et-col-title">CURRENT</span>
+        <div class="et-region-tabs" data-col="current">
+          <button class="et-region-btn active" data-region="NA">NA</button>
+          <button class="et-region-btn" data-region="EU">EU</button>
+          <button class="et-region-btn" data-region="Asia">ASIA</button>
+        </div>
+      </div>
+      <div class="et-events-list" id="et-current-list"></div>
+    </div>
+
+    <!-- ══ UPCOMING EVENTS ══ -->
+    <div class="et-col">
+      <div class="et-col-header">
+        <span class="et-col-title">UPCOMING</span>
+        <div class="et-region-tabs" data-col="upcoming">
+          <button class="et-region-btn active" data-region="NA">NA</button>
+          <button class="et-region-btn" data-region="EU">EU</button>
+          <button class="et-region-btn" data-region="Asia">ASIA</button>
+        </div>
+      </div>
+      <div class="et-events-list" id="et-upcoming-list"></div>
+    </div>
+
+  </div><!-- /.et-grid -->
+
+  <div class="et-bottom-bar">
+    <span>// LIVE DATA — TIMES ARE APPROXIMATE · SOURCE: GAME8 &amp; OFFICIAL ENDFIELD CALENDARS</span>
+    <span>DJIANG OPS LOG &#9632;</span>
+  </div>
+
+</section>
+
+<style>
+/* ══════════════════════════════════════════════════
+   EVENT TIMELINE — SECTION STYLES
+   ══════════════════════════════════════════════════ */
+
+#event-timeline {
+  position: relative;
+  background: var(--bg, #0a0a0a);
+  color: var(--text, #e0e0e0);
+  padding: 80px 0 40px;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+#event-timeline::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0; left: 5%; right: 5%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(180,140,80,0.4), transparent);
+}
+
+/* ── HEADER ── */
+.et-header {
+  max-width: 1200px;
+  margin: 0 auto 48px;
+  padding: 0 40px;
+}
+
+.et-header-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: rgba(180,140,80,0.8);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.et-header-title {
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--text, #e0e0e0);
+  margin-bottom: 20px;
+}
+
+.et-header-sub {
+  font-size: 0.82rem;
+  color: rgba(200,200,200,0.45);
+  letter-spacing: 0.05em;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+/* ── TWO-COLUMN GRID ── */
+.et-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ── COLUMN ── */
+.et-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(180,140,80,0.25);
+  margin-bottom: 10px;
+}
+
+.et-col-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(220,200,160,0.9);
+}
+
+/* ── REGION TABS ── */
+.et-region-tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.et-region-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(200,200,200,0.45);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.et-region-btn:hover { color: rgba(200,200,200,0.75); border-color: rgba(255,255,255,0.15); }
+.et-region-btn.active {
+  background: rgba(30,120,200,0.25);
+  border-color: rgba(60,150,230,0.5);
+  color: rgba(120,185,255,1);
+}
+
+/* ── EVENT CARD ── */
+.et-event-card {
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 5px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.et-event-card:hover { border-color: rgba(255,255,255,0.12); }
+
+.et-event-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  height: 52px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* tint overlay so text is always readable */
+.et-event-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  /* darkening overlay — each card overrides via --tint */
+  background: var(--tint, rgba(20,20,30,0.6));
+  mix-blend-mode: multiply;
+}
+
+.et-event-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.et-event-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.et-event-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+.et-event-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  text-transform: uppercase;
+}
+
+.et-event-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.et-event-timer {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  background: rgba(0,0,0,0.55);
+  color: rgba(230,230,230,0.9);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.et-event-timer.ending-soon {
+  background: rgba(200,60,40,0.3);
+  color: rgba(255,150,130,0.95);
+  border-color: rgba(200,60,40,0.5);
+}
+
+.et-event-timer.upcoming-soon {
+  background: rgba(50,150,230,0.2);
+  color: rgba(120,185,255,0.95);
+  border-color: rgba(50,150,230,0.4);
+}
+
+.et-chevron {
+  font-size: 0.65rem;
+  color: rgba(200,200,200,0.5);
+  transition: transform 0.2s;
+}
+
+.et-event-card.open .et-chevron { transform: rotate(180deg); }
+
+/* ── EXPANDED DETAILS ── */
+.et-event-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: rgba(12,14,18,0.95);
+  border-top: none;
+}
+
+.et-event-card.open .et-event-details {
+  max-height: 300px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.et-event-details-inner {
+  padding: 14px 16px;
+}
+
+.et-event-duration {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(180,140,80,0.75);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.et-event-desc {
+  font-size: 0.76rem;
+  color: rgba(180,180,180,0.65);
+  line-height: 1.65;
+  max-width: 520px;
+}
+
+.et-event-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.et-event-tag {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.05);
+  color: rgba(200,200,200,0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── BOTTOM BAR ── */
+.et-bottom-bar {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding: 16px 40px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: rgba(150,150,150,0.3);
+  text-transform: uppercase;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  .et-grid { grid-template-columns: 1fr; }
+  .et-header, .et-grid, .et-bottom-bar { padding-left: 20px; padding-right: 20px; }
+  .et-bottom-bar { flex-direction: column; gap: 6px; text-align: center; }
+}
+</style>
+
 <script>
-(function() {
-  var tabs   = document.querySelectorAll('.ei-tab-btn');
-  var panels = document.querySelectorAll('.ei-tab-panel');
-  tabs.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var target = btn.dataset.tab;
-      tabs.forEach(function(b) { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-      panels.forEach(function(p) { p.classList.remove('active'); });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected','true');
-      var panel = document.getElementById('ei-panel-' + target);
-      if (panel) panel.classList.add('active');
+(function () {
+
+  /* ─────────────────────────────────────────────
+     EVENT DATA
+     Offsets are in hours relative to NA server time.
+     endDays is days from now until expiry (approximate).
+     startDays: days until event starts (0 = already live).
+  ───────────────────────────────────────────── */
+
+  var regionOffsets = { NA: 0, EU: 1, Asia: -13 }; // rough h offsets vs NA
+
+  // Banner/accent colours per event type
+  var COLORS = {
+    banner:   { bg: 'rgba(40,25,60,0.92)',   bar: 'rgba(90,50,130,0.45)',  accent: '#a07acc' },
+    combat:   { bg: 'rgba(60,20,20,0.92)',   bar: 'rgba(160,50,50,0.45)', accent: '#e07070' },
+    event:    { bg: 'rgba(30,45,70,0.92)',   bar: 'rgba(50,100,170,0.45)',accent: '#6ab0f5' },
+    signin:   { bg: 'rgba(25,50,35,0.92)',   bar: 'rgba(50,140,80,0.45)', accent: '#6ecf8a' },
+    endgame:  { bg: 'rgba(20,30,55,0.92)',   bar: 'rgba(40,80,180,0.45)', accent: '#7090e0' },
+    rerun:    { bg: 'rgba(55,40,15,0.92)',   bar: 'rgba(180,130,40,0.45)',accent: '#e0b84a' },
+  };
+
+  // NOW in ms
+  var now = Date.now();
+
+  function daysFromNow(d) { return now + d * 86400000; }
+  function hoursFromNow(h) { return now + h * 3600000; }
+
+  /* ── CURRENT EVENTS ── */
+  var currentEvents = [
+    {
+      name: 'Thunder of Renewal — Zhuang Fangyi',
+      type: 'banner',
+      end: daysFromNow(6),
+      duration: 'APR 17 – MAY 22, 2026',
+      desc: 'Debut banner for 6★ Electric Striker Zhuang Fangyi. Off-rate: Tangtang & Rossi. Guaranteed at 120 pulls.',
+      tags: ['6★ OPERATOR', 'ELECTRIC', 'STRIKER'],
+    },
+    {
+      name: 'Drifting Raft Issue — Lone Barge',
+      type: 'banner',
+      end: daysFromNow(6),
+      duration: 'APR 17 – TBD',
+      desc: 'Weapon banner featuring Zhuang Fangyi\'s signature Arts Unit weapon Lone Barge.',
+      tags: ['WEAPON BANNER', 'ARTS UNIT'],
+    },
+    {
+      name: 'Pristine Monthly Pass Tribute',
+      type: 'signin',
+      end: daysFromNow(2),
+      duration: 'APR 17 – MAY 18, 2026',
+      desc: 'Log in daily for up to 30 reward claims. Earns Oroberyls, T-Creds, and operator upgrade materials.',
+      tags: ['SIGN-IN', 'DAILY LOGIN'],
+    },
+    {
+      name: 'Etchspace Salvage — Zones 5 & 6',
+      type: 'endgame',
+      end: null,
+      duration: 'APR 17, 2026 — PERMANENT',
+      desc: 'Aberrant Zones 5 and 6 permanently added to the roguelike exploration mode. New rewards and milestones.',
+      tags: ['PERMANENT', 'ROGUELIKE'],
+    },
+    {
+      name: 'Umbral Monument — Turbidity Manifest',
+      type: 'endgame',
+      end: null,
+      duration: 'MAY 8, 2026 — ONGOING',
+      desc: 'New Turbidity Manifest series added to the permanent endgame challenge mode. High-difficulty combat.',
+      tags: ['ENDGAME', 'COMBAT CHALLENGE'],
+    },
+    {
+      name: 'Delver of the Cryptic',
+      type: 'event',
+      end: null,
+      duration: 'FEB 24, 2026 — PERMANENT',
+      desc: 'Permanent puzzle-solving mode. Grotto Survey stages continue to expand with each version update.',
+      tags: ['PERMANENT', 'PUZZLE'],
+    },
+  ];
+
+  /* ── UPCOMING EVENTS ── */
+  var upcomingEvents = [
+    {
+      name: 'Fest of Brilliance — Rerun',
+      type: 'rerun',
+      start: daysFromNow(0), // May 14 — very close
+      startLabel: 'MAY 14, 2026',
+      duration: 'MAY 14 – MAY 22, 2026',
+      desc: 'Limited rerun banner featuring Laevatain, Gilberta, Ardelia, and Pogranichnik. Last chance this version.',
+      tags: ['RERUN', 'LIMITED', '6★ OPERATORS'],
+    },
+    {
+      name: 'Smelting Fire Issue — Laevatain Weapon',
+      type: 'rerun',
+      start: daysFromNow(0),
+      startLabel: 'MAY 14, 2026',
+      duration: 'MAY 14 – MAY 22, 2026',
+      desc: 'Weapon rerun for Laevatain\'s signature Arts Unit, previously named Smelting Forge.',
+      tags: ['WEAPON RERUN'],
+    },
+    {
+      name: 'Swift Walker Issue — Gilberta Weapon',
+      type: 'rerun',
+      start: daysFromNow(0),
+      startLabel: 'MAY 14, 2026',
+      duration: 'MAY 14 – MAY 22, 2026',
+      desc: 'Weapon rerun for Gilberta\'s signature Arts Unit, previously named Express Delivery.',
+      tags: ['WEAPON RERUN'],
+    },
+    {
+      name: 'Version 1.3 — New Patch',
+      type: 'event',
+      start: daysFromNow(6),
+      startLabel: '~MAY 22, 2026',
+      duration: 'ESTIMATED ~MAY 22, 2026',
+      desc: 'Next major version update. Featured character Mi Fu is strongly anticipated. Details TBA from official livestream.',
+      tags: ['PATCH UPDATE', 'TBA'],
+    },
+    {
+      name: 'Mi Fu — Debut Banner (Expected)',
+      type: 'banner',
+      start: daysFromNow(6),
+      startLabel: '~MAY 22, 2026',
+      duration: 'VERSION 1.3 — TBA',
+      desc: 'Mi Fu has appeared in the main story and was teased in the 1.2 livestream. Debut banner highly anticipated.',
+      tags: ['ANTICIPATED', '6★ OPERATOR', 'TBA'],
+    },
+  ];
+
+  /* ─────────────────────────────────────────────
+     UTILITIES
+  ───────────────────────────────────────────── */
+
+  function formatCountdown(ms) {
+    if (ms <= 0) return 'ENDING';
+    var totalSec = Math.floor(ms / 1000);
+    var d = Math.floor(totalSec / 86400);
+    var h = Math.floor((totalSec % 86400) / 3600);
+    if (d > 0) return d + 'd ' + h + 'h';
+    var m = Math.floor((totalSec % 3600) / 60);
+    return h + 'h ' + m + 'm';
+  }
+
+  function timerClass(msLeft) {
+    if (msLeft === null) return '';
+    if (msLeft < 86400000 * 3) return 'ending-soon';
+    return '';
+  }
+
+  function startTimerClass(msUntil) {
+    if (msUntil < 86400000 * 3) return 'upcoming-soon';
+    return '';
+  }
+
+  /* ─────────────────────────────────────────────
+     BUILD CARDS
+  ───────────────────────────────────────────── */
+
+  function buildCard(ev, isUpcoming, regionOffset) {
+    var colors = COLORS[ev.type] || COLORS.event;
+    var card = document.createElement('div');
+    card.className = 'et-event-card';
+    card.style.borderColor = 'rgba(255,255,255,0.07)';
+
+    // Timer text
+    var timerText, timerCls;
+    if (isUpcoming) {
+      var msUntil = (ev.start || 0) + regionOffset * 3600000 - now;
+      timerText = msUntil <= 0 ? 'SOON' : formatCountdown(msUntil);
+      timerCls = startTimerClass(Math.max(msUntil, 0));
+    } else {
+      if (ev.end === null) {
+        timerText = 'ONGOING';
+        timerCls = '';
+      } else {
+        var msLeft = ev.end + regionOffset * 3600000 - now;
+        timerText = msLeft <= 0 ? 'ENDED' : formatCountdown(msLeft);
+        timerCls = timerClass(Math.max(msLeft, 0));
+      }
+    }
+
+    // Icon abbreviation
+    var iconLetters = ev.name.split(/[\s–—]/g).map(function(w){ return w[0]; }).filter(Boolean).slice(0,2).join('');
+
+    card.innerHTML =
+      '<div class="et-event-bar" style="background: linear-gradient(135deg, ' + colors.bar + ' 0%, rgba(10,10,14,0.8) 100%);">' +
+        '<div class="et-event-bar-left">' +
+          '<div class="et-event-icon" style="background:' + colors.bar + '; color:' + colors.accent + ';">' + iconLetters.toUpperCase() + '</div>' +
+          '<div class="et-event-name">' + ev.name + '</div>' +
+        '</div>' +
+        '<div class="et-event-bar-right">' +
+          '<span class="et-event-timer ' + timerCls + '" data-end="' + (isUpcoming ? (ev.start||0) : (ev.end||0)) + '" data-upcoming="' + (isUpcoming?1:0) + '" data-offset="' + regionOffset + '">' + timerText + '</span>' +
+          '<span class="et-chevron">&#9660;</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="et-event-details">' +
+        '<div class="et-event-details-inner">' +
+          '<div class="et-event-duration">&#9632; ' + (isUpcoming ? 'STARTS: ' + ev.startLabel : ev.duration) + '</div>' +
+          '<p class="et-event-desc">' + ev.desc + '</p>' +
+          '<div class="et-event-tags">' + ev.tags.map(function(t){ return '<span class="et-event-tag">' + t + '</span>'; }).join('') + '</div>' +
+        '</div>' +
+      '</div>';
+
+    // Toggle expand
+    card.querySelector('.et-event-bar').addEventListener('click', function () {
+      card.classList.toggle('open');
+    });
+
+    return card;
+  }
+
+  function renderList(listEl, events, isUpcoming, regionOffset) {
+    listEl.innerHTML = '';
+    events.forEach(function(ev) {
+      listEl.appendChild(buildCard(ev, isUpcoming, regionOffset));
+    });
+  }
+
+  /* ─────────────────────────────────────────────
+     REGION TAB WIRING
+  ───────────────────────────────────────────── */
+
+  var currentRegion = 'NA';
+  var upcomingRegion = 'NA';
+
+  var currentList  = document.getElementById('et-current-list');
+  var upcomingList = document.getElementById('et-upcoming-list');
+
+  function render() {
+    renderList(currentList,  currentEvents,  false, regionOffsets[currentRegion]  || 0);
+    renderList(upcomingList, upcomingEvents, true,  regionOffsets[upcomingRegion] || 0);
+  }
+
+  document.querySelectorAll('.et-region-tabs').forEach(function(tabs) {
+    tabs.querySelectorAll('.et-region-btn').forEach(function(btn) {
+      btn.addEventListener('click', function () {
+        tabs.querySelectorAll('.et-region-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var col = tabs.dataset.col;
+        var region = btn.dataset.region;
+        if (col === 'current') currentRegion = region;
+        else upcomingRegion = region;
+        render();
+      });
     });
   });
+
+  /* ─────────────────────────────────────────────
+     LIVE COUNTDOWN TICK
+  ───────────────────────────────────────────── */
+
+  function tick() {
+    var nowMs = Date.now();
+    document.querySelectorAll('.et-event-timer').forEach(function(el) {
+      var endMs = parseInt(el.dataset.end, 10);
+      var upcoming = el.dataset.upcoming === '1';
+      var offset = parseInt(el.dataset.offset, 10) || 0;
+      if (!endMs) { return; }
+      var adjusted = endMs + offset * 3600000;
+      var delta = adjusted - nowMs;
+      if (upcoming) {
+        el.textContent = delta <= 0 ? 'SOON' : formatCountdown(delta);
+        el.className = 'et-event-timer ' + startTimerClass(Math.max(delta, 0));
+      } else {
+        el.textContent = delta <= 0 ? 'ENDED' : formatCountdown(delta);
+        el.className = 'et-event-timer ' + timerClass(Math.max(delta, 0));
+      }
+    });
+  }
+
+  /* ─────────────────────────────────────────────
+     INIT
+  ───────────────────────────────────────────── */
+
+  render();
+  setInterval(tick, 30000); // update every 30s
+
 })();
 </script>
 
@@ -710,10 +1319,11 @@
     <script src="js/WeaponSpin.js"></script>
     <script>
         NavBar.init({
-            sections: ['landing-page', 'endfield-info', 'character-slide', 'carousel-3D', 'footer'],
+            sections: ['landing-page', 'endfield-info', 'event-timeline', 'character-slide', 'carousel-3D', 'footer'],
             navLinks: [
                 { label: 'HOME',      target: 'landing-page' },
                 { label: 'GUIDES',    target: 'endfield-info' },
+                { label: 'EVENTS',    target: 'event-timeline' },
                 { label: 'OPERATORS', target: 'character-slide' },
                 { label: 'WEAPONS',   target: 'carousel-3D' },
                 { label: 'ABOUT US',  target: 'footer' },

@@ -1,0 +1,315 @@
+/* ══════════════════════════════════════════════════════════════════
+   HomepageEventTimeline.css
+   Live event tracker — Current, Ongoing & Upcoming events
+   Drop this in your /css/ folder and add:
+     <link rel="stylesheet" href="css/HomepageEventTimeline.css">
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── SECTION ── */
+#event-timeline {
+  position: relative;
+  background: var(--bg, #0a0a0a);
+  color: var(--text, #e0e0e0);
+  padding: 80px 0 40px;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+#event-timeline::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0; left: 5%; right: 5%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(180,140,80,0.4), transparent);
+}
+
+/* ── HEADER ── */
+.et-header {
+  max-width: 1200px;
+  margin: 0 auto 48px;
+  padding: 0 40px;
+}
+
+.et-header-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  color: rgba(180,140,80,0.8);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.et-header-title {
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  color: var(--text, #e0e0e0);
+  margin-bottom: 20px;
+}
+
+.et-header-sub {
+  font-size: 0.82rem;
+  color: rgba(200,200,200,0.45);
+  letter-spacing: 0.05em;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+/* ── TWO-COLUMN GRID ── */
+.et-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ── COLUMN HEADER ── */
+.et-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(180,140,80,0.25);
+  margin-bottom: 10px;
+}
+
+.et-col-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(220,200,160,0.9);
+}
+
+/* ── REGION TABS ── */
+.et-region-tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.et-region-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(200,200,200,0.45);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.et-region-btn:hover {
+  color: rgba(200,200,200,0.75);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.et-region-btn.active {
+  background: rgba(30,120,200,0.25);
+  border-color: rgba(60,150,230,0.5);
+  color: rgba(120,185,255,1);
+}
+
+/* ── EVENT CARD ── */
+.et-event-card {
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 5px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.et-event-card:hover {
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* ── EVENT BAR (collapsed header row) ── */
+.et-event-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  height: 52px;
+  position: relative;
+  overflow: hidden;
+}
+
+.et-event-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Letter-icon fallback */
+.et-event-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.et-event-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.et-event-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  text-transform: uppercase;
+}
+
+.et-event-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── COUNTDOWN BADGE ── */
+.et-event-timer {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  background: rgba(0,0,0,0.55);
+  color: rgba(230,230,230,0.9);
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Red: ending within 3 days */
+.et-event-timer.ending-soon {
+  background: rgba(200,60,40,0.3);
+  color: rgba(255,150,130,0.95);
+  border-color: rgba(200,60,40,0.5);
+}
+
+/* Blue: starting within 3 days */
+.et-event-timer.upcoming-soon {
+  background: rgba(50,150,230,0.2);
+  color: rgba(120,185,255,0.95);
+  border-color: rgba(50,150,230,0.4);
+}
+
+/* Chevron arrow */
+.et-chevron {
+  font-size: 0.65rem;
+  color: rgba(200,200,200,0.5);
+  transition: transform 0.2s;
+}
+
+.et-event-card.open .et-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── EXPANDED DETAILS ── */
+.et-event-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: rgba(12,14,18,0.95);
+}
+
+.et-event-card.open .et-event-details {
+  max-height: 300px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.et-event-details-inner {
+  padding: 14px 16px;
+}
+
+.et-event-duration {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(180,140,80,0.75);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.et-event-desc {
+  font-size: 0.76rem;
+  color: rgba(180,180,180,0.65);
+  line-height: 1.65;
+  max-width: 520px;
+}
+
+/* ── TAGS ── */
+.et-event-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.et-event-tag {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.05);
+  color: rgba(200,200,200,0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── BOTTOM BAR ── */
+.et-bottom-bar {
+  max-width: 1200px;
+  margin: 32px auto 0;
+  padding: 16px 40px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: rgba(150,150,150,0.3);
+  text-transform: uppercase;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  .et-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .et-header,
+  .et-grid,
+  .et-bottom-bar {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .et-bottom-bar {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+}
