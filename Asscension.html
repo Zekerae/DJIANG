@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg: #0d0f12; --surface: #141720; --surface2: #1a1e2a; --surface3: #1f2433;
@@ -147,8 +148,28 @@ body::before {
 }
 .plan-card:hover::before { opacity: 1; }
 .plan-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px 6px; }
-.plan-avatar { width: 38px; height: 38px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border2); border-radius: 2px; }
+
+.plan-avatar {
+  width: 48px; height: 54px; flex-shrink: 0;
+  border: 1px solid var(--border2); border-radius: 2px;
+  overflow: hidden; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface2);
+}
+.plan-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: top center;
+  display: block;
+}
 .plan-avatar svg { width: 18px; height: 18px; }
+.plan-avatar-rarity {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+}
+.plan-avatar-initials {
+  font-family: var(--font-display); font-size: 15px; font-weight: 700;
+  color: var(--muted); letter-spacing: 0.05em;
+}
+
 .plan-meta { flex: 1; min-width: 0; }
 .plan-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; margin-bottom: 4px; }
 .plan-tags { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
@@ -289,13 +310,11 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .map-canvas-wrap { position: absolute; inset: 0; display: none; flex-direction: column; }
 .map-canvas-wrap.active { display: flex; }
 
-/* Leaflet map */
 .leaflet-map { flex: 1; background: #0a0c0f; }
 .leaflet-container { background: #0a0c0f !important; font-family: var(--font-mono) !important; }
 .leaflet-control-zoom { display: none; }
 .leaflet-control-attribution { display: none !important; }
 
-/* Custom zoom controls */
 .map-zoom-controls { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; z-index: 1000; pointer-events: all; }
 .map-zoom-btn {
   width: 30px; height: 30px; background: var(--surface); border: 1px solid var(--border2);
@@ -307,10 +326,8 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .map-zoom-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
 .map-zoom-btn.rst { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 4px; }
 
-/* Map coordinates readout */
 .map-coords { position: absolute; bottom: 14px; left: 14px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); background: rgba(13,15,18,0.85); border: 1px solid var(--border); padding: 3px 8px; z-index: 1000; letter-spacing: 0.06em; pointer-events: none; }
 
-/* Custom leaflet marker */
 .endo-pin {
   display: flex; align-items: center; gap: 5px;
   padding: 4px 9px 4px 6px;
@@ -324,11 +341,9 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .endo-pin:hover { border-color: var(--accent) !important; transform: scale(1.05); }
 .endo-pin.highlighted { border-color: var(--accent) !important; background: rgba(0,196,163,0.12) !important; box-shadow: 0 0 12px rgba(0,196,163,0.25); }
 .endo-pin-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.endo-pin-content {}
 .endo-pin-mat { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1; }
 .endo-pin-zone { font-family: var(--font-mono); font-size: 9px; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; line-height: 1.2; }
 
-/* Info panel at bottom of map */
 .map-info-bar { padding: 10px 14px; background: rgba(13,15,18,0.97); border-top: 1px solid var(--border); flex-shrink: 0; display: none; }
 .map-info-bar.visible { display: block; }
 .map-info-title { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 7px; }
@@ -343,7 +358,6 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .map-placeholder-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.06); margin-bottom: 5px; }
 .map-placeholder-sub { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.04); letter-spacing: 0.1em; }
 
-/* LEGEND */
 .map-legend { position: absolute; top: 10px; left: 10px; z-index: 1000; background: rgba(13,15,18,0.92); border: 1px solid var(--border2); padding: 8px 12px; min-width: 120px; display: none; }
 .map-legend.visible { display: block; }
 .map-legend-title { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
@@ -370,7 +384,8 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .modal-list::-webkit-scrollbar-thumb { background: var(--surface3); }
 .modal-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; background: var(--surface2); border: 1px solid var(--border); cursor: pointer; transition: all 0.12s; text-align: left; width: 100%; }
 .modal-item:hover { border-color: var(--accent); background: rgba(0,196,163,0.06); }
-.modal-item-icon { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border2); }
+.modal-item-icon { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border2); overflow: hidden; }
+.modal-item-icon img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 .modal-item-icon svg { width: 15px; height: 15px; }
 .modal-item-name { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.1; margin-bottom: 2px; }
 .modal-item-sub { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
@@ -381,7 +396,6 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface3); }
 
-/* Leaflet popup override */
 .leaflet-popup-content-wrapper {
   background: rgba(20,23,32,0.97) !important;
   border: 1px solid rgba(0,196,163,0.4) !important;
@@ -584,6 +598,42 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 
 <script>
 // ────────────────────────────────────────────────
+// SUPABASE
+// ────────────────────────────────────────────────
+const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Portrait cache: name/slug (lowercase) → img_path string or null ──
+const charImgCache = {};
+let imagesLoaded = false;
+
+async function loadCharImages() {
+  try {
+    const { data, error } = await db
+      .from('v_characters_tiered')
+      .select('name, slug, img_path');
+    if (error) throw error;
+    for (const row of (data || [])) {
+      // Use ?? null so an empty string stays as-is (not coerced to null)
+      if (row.name) charImgCache[row.name.toLowerCase()] = row.img_path ?? null;
+      if (row.slug) charImgCache[row.slug] = row.img_path ?? null;
+    }
+  } catch (e) {
+    console.warn('Could not load character images from Supabase:', e.message);
+  } finally {
+    imagesLoaded = true;
+  }
+}
+
+function getCharImg(name) {
+  // Return undefined (not in cache yet) vs null (in cache, confirmed no image)
+  const key = name.toLowerCase();
+  if (!(key in charImgCache)) return undefined;
+  return charImgCache[key] || null;
+}
+
+// ────────────────────────────────────────────────
 // DATA
 // ────────────────────────────────────────────────
 const OPERATORS = [
@@ -653,24 +703,12 @@ const MATS = {
   skill_book_3:      {name:"Skill Summary III", color:"#2d6ea0",category:"Skill Books"},
 };
 
-// ── MAP DIMENSIONS ──
-// We use a simple CRS where the map image is [W x H] pixels.
-// Leaflet LatLng maps to [y, x] (row, col) in image space.
 const MAP_CONFIG = {
-  valley: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2,
-    bgGradient: 'radial-gradient(ellipse at 30% 40%, #0d1a0e 0%, #0a0c0f 60%)',
-    label: 'Valley IV' },
-  wuling: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2,
-    bgGradient: 'radial-gradient(ellipse at 60% 40%, #0d0e1a 0%, #0a0c0f 60%)',
-    label: 'Wuling' },
-  marker: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2,
-    bgGradient: 'radial-gradient(ellipse at 50% 30%, #130e1a 0%, #0a0c0f 60%)',
-    label: 'Marker Stone' },
+  valley: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2, label: 'Valley IV' },
+  wuling: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2, label: 'Wuling' },
+  marker: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2, label: 'Marker Stone' },
 };
 
-// ── MATERIAL FARMING LOCATIONS ──
-// Coords are [lat, lng] = [y-from-top, x-from-left] in image pixel space, scaled to [0..1800] x [0..2400]
-// Using approximate positions based on known Endfield zone layouts
 const MAT_LOCATIONS = {
   lmd: {
     valley: [
@@ -780,11 +818,9 @@ const MAT_LOCATIONS = {
 };
 
 // ── SVG MAP BACKGROUNDS ──
-// Full-resolution stylized maps drawn in SVG, matching Endfield's aesthetic
 function buildMapSVG(mapKey) {
   const cfg = MAP_CONFIG[mapKey];
   const W = cfg.w, H = cfg.h;
-
   const maps = {
     valley: buildValleySVG(W, H),
     wuling: buildWulingSVG(W, H),
@@ -800,8 +836,6 @@ function buildValleySVG(W, H) {
       <stop offset="0%" stop-color="#0e1a10"/>
       <stop offset="100%" stop-color="#080b0a"/>
     </radialGradient>
-    <filter id="glow-g"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="glow-s"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <pattern id="grid-v" width="80" height="80" patternUnits="userSpaceOnUse">
       <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(0,196,163,0.04)" stroke-width="0.8"/>
     </pattern>
@@ -812,84 +846,34 @@ function buildValleySVG(W, H) {
   <rect width="${W}" height="${H}" fill="url(#bgv)"/>
   <rect width="${W}" height="${H}" fill="url(#grid-v)"/>
   <rect width="${W}" height="${H}" fill="url(#dots-v)"/>
-
-  <!-- Elevation contours -->
   <ellipse cx="1200" cy="600" rx="900" ry="450" fill="none" stroke="rgba(0,196,163,0.04)" stroke-width="1"/>
   <ellipse cx="1200" cy="600" rx="700" ry="320" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="1"/>
   <ellipse cx="1200" cy="600" rx="500" ry="200" fill="none" stroke="rgba(0,196,163,0.06)" stroke-width="1.2"/>
-
-  <!-- Major terrain regions -->
-  <!-- Power Plateau (top center) -->
-  <polygon points="750,100 1600,60 1750,400 1400,480 950,500 700,380"
-    fill="rgba(255,107,53,0.06)" stroke="rgba(255,107,53,0.18)" stroke-width="1.5"/>
-  <text x="1200" y="270" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="22" fill="rgba(255,107,53,0.35)" letter-spacing="6" text-transform="uppercase">POWER PLATEAU</text>
-
-  <!-- Industrial Ruins (top left) -->
-  <polygon points="60,60 520,40 560,380 360,440 100,340"
-    fill="rgba(192,132,252,0.05)" stroke="rgba(192,132,252,0.15)" stroke-width="1.5"/>
+  <polygon points="750,100 1600,60 1750,400 1400,480 950,500 700,380" fill="rgba(255,107,53,0.06)" stroke="rgba(255,107,53,0.18)" stroke-width="1.5"/>
+  <text x="1200" y="270" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="22" fill="rgba(255,107,53,0.35)" letter-spacing="6">POWER PLATEAU</text>
+  <polygon points="60,60 520,40 560,380 360,440 100,340" fill="rgba(192,132,252,0.05)" stroke="rgba(192,132,252,0.15)" stroke-width="1.5"/>
   <text x="300" y="220" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(192,132,252,0.3)" letter-spacing="3">INDUSTRIAL RUINS</text>
-
-  <!-- Originium Lodespring (center) -->
-  <polygon points="820,420 1440,360 1560,880 1360,1000 860,980 680,800"
-    fill="rgba(91,186,91,0.07)" stroke="rgba(91,186,91,0.2)" stroke-width="1.5"/>
+  <polygon points="820,420 1440,360 1560,880 1360,1000 860,980 680,800" fill="rgba(91,186,91,0.07)" stroke="rgba(91,186,91,0.2)" stroke-width="1.5"/>
   <text x="1120" y="680" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="20" fill="rgba(91,186,91,0.35)" letter-spacing="5">ORIGINIUM LODESPRING</text>
-
-  <!-- Mineral Beds (top right) -->
-  <polygon points="1680,80 2300,60 2360,480 2100,560 1760,540 1620,340"
-    fill="rgba(107,142,201,0.07)" stroke="rgba(107,142,201,0.2)" stroke-width="1.5"/>
+  <polygon points="1680,80 2300,60 2360,480 2100,560 1760,540 1620,340" fill="rgba(107,142,201,0.07)" stroke="rgba(107,142,201,0.2)" stroke-width="1.5"/>
   <text x="2000" y="300" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" fill="rgba(107,142,201,0.3)" letter-spacing="4">MINERAL BEDS</text>
-
-  <!-- Core AIC Area (center-left) -->
-  <polygon points="200,880 760,840 800,1200 560,1300 180,1240"
-    fill="rgba(0,196,163,0.08)" stroke="rgba(0,196,163,0.22)" stroke-width="2"/>
+  <polygon points="200,880 760,840 800,1200 560,1300 180,1240" fill="rgba(0,196,163,0.08)" stroke="rgba(0,196,163,0.22)" stroke-width="2"/>
   <text x="490" y="1060" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(0,196,163,0.5)" letter-spacing="3">CORE AIC AREA</text>
-
-  <!-- Deep Mine (right) -->
-  <rect x="1700" y="900" width="540" height="380" rx="4"
-    fill="rgba(155,126,201,0.06)" stroke="rgba(155,126,201,0.18)" stroke-width="1.5"/>
+  <rect x="1700" y="900" width="540" height="380" rx="4" fill="rgba(155,126,201,0.06)" stroke="rgba(155,126,201,0.18)" stroke-width="1.5"/>
   <text x="1970" y="1100" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(155,126,201,0.32)" letter-spacing="3">DEEP MINE ZONE</text>
-
-  <!-- Processing Center -->
-  <rect x="1000" y="1050" width="420" height="260" rx="3"
-    fill="rgba(201,160,91,0.06)" stroke="rgba(201,160,91,0.18)" stroke-width="1.5"/>
+  <rect x="1000" y="1050" width="420" height="260" rx="3" fill="rgba(201,160,91,0.06)" stroke="rgba(201,160,91,0.18)" stroke-width="1.5"/>
   <text x="1210" y="1180" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(201,160,91,0.32)" letter-spacing="2">PROCESSING CENTER</text>
-
-  <!-- AIC Factory -->
-  <rect x="280" y="1150" width="380" height="240" rx="3"
-    fill="rgba(0,196,163,0.07)" stroke="rgba(0,196,163,0.2)" stroke-width="1.5"/>
+  <rect x="280" y="1150" width="380" height="240" rx="3" fill="rgba(0,196,163,0.07)" stroke="rgba(0,196,163,0.2)" stroke-width="1.5"/>
   <text x="470" y="1272" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(0,196,163,0.4)" letter-spacing="2">AIC FACTORY</text>
-
-  <!-- Coolant River -->
-  <path d="M0,1100 C300,1050 500,980 700,1020 S1100,1100 1400,1060 S1900,980 2400,1080"
-    fill="none" stroke="rgba(79,195,247,0.18)" stroke-width="8"/>
-  <path d="M0,1110 C300,1060 500,990 700,1030 S1100,1110 1400,1070 S1900,990 2400,1090"
-    fill="none" stroke="rgba(79,195,247,0.08)" stroke-width="4"/>
+  <path d="M0,1100 C300,1050 500,980 700,1020 S1100,1100 1400,1060 S1900,980 2400,1080" fill="none" stroke="rgba(79,195,247,0.18)" stroke-width="8"/>
   <text x="900" y="1090" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(79,195,247,0.3)" letter-spacing="4">COOLANT RIVER</text>
-
-  <!-- Mountain ranges (decorative) -->
-  <path d="M1600,100 L1680,40 L1760,100 L1840,20 L1920,100 L2000,50 L2080,100 L2160,30 L2240,100"
-    fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
-  <path d="M60,100 L120,50 L180,100 L240,60 L300,100 L360,40 L420,100"
-    fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2"/>
-
-  <!-- Zone labels -->
   <text x="600" y="150" font-family="'IBM Plex Mono',monospace" font-size="13" fill="rgba(255,140,66,0.4)" letter-spacing="3">PLATEAU TRUNKWAY</text>
-  <text x="1400" y="1500" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(255,255,255,0.1)" letter-spacing="3">VALLEY PASS ↙</text>
-  <text x="1800" y="1600" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(255,255,255,0.1)" letter-spacing="3">ABURREY QUARRY →</text>
-
-  <!-- Grid coordinates -->
-  ${Array.from({length:6},(_, i)=>`<text x="${i*480+20}" y="18" font-family="'IBM Plex Mono',monospace" font-size="11" fill="rgba(255,255,255,0.08)">${i*480}</text>`).join('')}
-  ${Array.from({length:5},(_, i)=>`<text x="4" y="${(i+1)*360+6}" font-family="'IBM Plex Mono',monospace" font-size="11" fill="rgba(255,255,255,0.08)">${(i+1)*360}</text>`).join('')}
-
-  <!-- Compass -->
   <g transform="translate(2300,100)">
     <circle cx="0" cy="0" r="28" fill="rgba(0,0,0,0.5)" stroke="rgba(0,196,163,0.3)" stroke-width="1"/>
     <path d="M0,-20 L5,5 L0,2 L-5,5 Z" fill="rgba(0,196,163,0.8)"/>
     <path d="M0,20 L5,-5 L0,-2 L-5,-5 Z" fill="rgba(255,255,255,0.25)"/>
     <text x="0" y="-26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="rgba(0,196,163,0.8)">N</text>
   </g>
-
-  <!-- Map title watermark -->
   <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-size="120" font-weight="700" fill="rgba(255,255,255,0.018)" letter-spacing="20">VALLEY IV</text>
 </svg>`;
 }
@@ -901,83 +885,34 @@ function buildWulingSVG(W, H) {
       <stop offset="0%" stop-color="#0d1118"/>
       <stop offset="100%" stop-color="#08090e"/>
     </radialGradient>
-    <filter id="glow-w"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <pattern id="grid-w" width="80" height="80" patternUnits="userSpaceOnUse">
       <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(91,138,247,0.04)" stroke-width="0.8"/>
-    </pattern>
-    <pattern id="dots-w" width="40" height="40" patternUnits="userSpaceOnUse">
-      <circle cx="20" cy="20" r="0.8" fill="rgba(255,255,255,0.05)"/>
     </pattern>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bgw)"/>
   <rect width="${W}" height="${H}" fill="url(#grid-w)"/>
-  <rect width="${W}" height="${H}" fill="url(#dots-w)"/>
-
-  <!-- Elevation contours -->
-  <ellipse cx="1100" cy="700" rx="900" ry="480" fill="none" stroke="rgba(91,138,247,0.04)" stroke-width="1"/>
-  <ellipse cx="1100" cy="700" rx="650" ry="340" fill="none" stroke="rgba(91,138,247,0.05)" stroke-width="1.2"/>
-
-  <!-- Bamboo Sea (top center) -->
-  <polygon points="700,40 1450,20 1560,340 1300,400 780,380"
-    fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.22)" stroke-width="1.5"/>
+  <polygon points="700,40 1450,20 1560,340 1300,400 780,380" fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.22)" stroke-width="1.5"/>
   <text x="1100" y="210" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="22" fill="rgba(74,222,128,0.38)" letter-spacing="6">BAMBOO SEA</text>
-
-  <!-- Northern Mineral Beds -->
-  <polygon points="60,60 560,40 600,340 380,400 80,320"
-    fill="rgba(107,142,201,0.07)" stroke="rgba(107,142,201,0.2)" stroke-width="1.5"/>
+  <polygon points="60,60 560,40 600,340 380,400 80,320" fill="rgba(107,142,201,0.07)" stroke="rgba(107,142,201,0.2)" stroke-width="1.5"/>
   <text x="330" y="210" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="15" fill="rgba(107,142,201,0.32)" letter-spacing="2">N. MINERAL BEDS</text>
-
-  <!-- Stragglers Grove -->
-  <rect x="1480" y="120" width="520" height="400" rx="4"
-    fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.15)" stroke-width="1.5"/>
+  <rect x="1480" y="120" width="520" height="400" rx="4" fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.15)" stroke-width="1.5"/>
   <text x="1740" y="340" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(74,222,128,0.3)" letter-spacing="3">STRAGGLERS GROVE</text>
-
-  <!-- Wuling City (center) -->
-  <polygon points="380,620 1060,580 1180,1100 900,1200 360,1080"
-    fill="rgba(192,132,252,0.06)" stroke="rgba(192,132,252,0.2)" stroke-width="2"/>
+  <polygon points="380,620 1060,580 1180,1100 900,1200 360,1080" fill="rgba(192,132,252,0.06)" stroke="rgba(192,132,252,0.2)" stroke-width="2"/>
   <text x="760" y="880" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="20" fill="rgba(192,132,252,0.38)" letter-spacing="4">WULING CITY</text>
-
-  <!-- City Outskirts -->
-  <rect x="60" y="760" width="420" height="280" rx="3"
-    fill="rgba(201,123,91,0.06)" stroke="rgba(201,123,91,0.15)" stroke-width="1.5"/>
+  <rect x="60" y="760" width="420" height="280" rx="3" fill="rgba(201,123,91,0.06)" stroke="rgba(201,123,91,0.15)" stroke-width="1.5"/>
   <text x="270" y="905" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" fill="rgba(201,123,91,0.3)" letter-spacing="2">CITY OUTSKIRTS</text>
-
-  <!-- Ecological Research Station -->
-  <polygon points="1320,840 2000,780 2100,1140 1880,1240 1260,1160"
-    fill="rgba(91,186,91,0.06)" stroke="rgba(91,186,91,0.18)" stroke-width="1.5"/>
+  <polygon points="1320,840 2000,780 2100,1140 1880,1240 1260,1160" fill="rgba(91,186,91,0.06)" stroke="rgba(91,186,91,0.18)" stroke-width="1.5"/>
   <text x="1680" y="1000" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="17" fill="rgba(91,186,91,0.3)" letter-spacing="3">ECOLOGICAL STATION</text>
-
-  <!-- Wuling Market -->
-  <rect x="450" y="640" width="380" height="280" rx="3"
-    fill="rgba(240,184,64,0.06)" stroke="rgba(240,184,64,0.18)" stroke-width="1.5"/>
+  <rect x="450" y="640" width="380" height="280" rx="3" fill="rgba(240,184,64,0.06)" stroke="rgba(240,184,64,0.18)" stroke-width="1.5"/>
   <text x="640" y="790" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(240,184,64,0.38)" letter-spacing="2">WULING MARKET</text>
-
-  <!-- Wuling River -->
-  <path d="M0,1380 C400,1320 700,1360 1000,1340 S1600,1300 2000,1360 S2200,1400 2400,1380"
-    fill="none" stroke="rgba(79,195,247,0.18)" stroke-width="10"/>
-  <path d="M0,1390 C400,1330 700,1370 1000,1350 S1600,1310 2000,1370 S2200,1410 2400,1390"
-    fill="none" stroke="rgba(79,195,247,0.08)" stroke-width="5"/>
+  <path d="M0,1380 C400,1320 700,1360 1000,1340 S1600,1300 2000,1360 S2200,1400 2400,1380" fill="none" stroke="rgba(79,195,247,0.18)" stroke-width="10"/>
   <text x="900" y="1375" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(79,195,247,0.28)" letter-spacing="4">WULING RIVER</text>
-
-  <!-- Tianshi Pillar Array -->
-  <g opacity="0.4">
-    <line x1="700" y1="400" x2="700" y2="700" stroke="rgba(192,132,252,0.4)" stroke-width="2" stroke-dasharray="8,4"/>
-    <line x1="900" y1="380" x2="900" y2="680" stroke="rgba(192,132,252,0.4)" stroke-width="2" stroke-dasharray="8,4"/>
-    <line x1="800" y1="390" x2="800" y2="690" stroke="rgba(192,132,252,0.5)" stroke-width="3" stroke-dasharray="8,4"/>
-  </g>
-  <text x="790" y="420" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="11" fill="rgba(192,132,252,0.3)" letter-spacing="2">TIANSHI ARRAY</text>
-
-  <!-- Compass -->
   <g transform="translate(2300,100)">
     <circle cx="0" cy="0" r="28" fill="rgba(0,0,0,0.5)" stroke="rgba(91,138,247,0.3)" stroke-width="1"/>
     <path d="M0,-20 L5,5 L0,2 L-5,5 Z" fill="rgba(91,138,247,0.8)"/>
     <path d="M0,20 L5,-5 L0,-2 L-5,-5 Z" fill="rgba(255,255,255,0.25)"/>
     <text x="0" y="-26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="rgba(91,138,247,0.8)">N</text>
   </g>
-
-  ${Array.from({length:6},(_, i)=>`<text x="${i*480+20}" y="18" font-family="'IBM Plex Mono',monospace" font-size="11" fill="rgba(255,255,255,0.07)">${i*480}</text>`).join('')}
-  ${Array.from({length:5},(_, i)=>`<text x="4" y="${(i+1)*360+6}" font-family="'IBM Plex Mono',monospace" font-size="11" fill="rgba(255,255,255,0.07)">${(i+1)*360}</text>`).join('')}
-
   <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-size="120" font-weight="700" fill="rgba(255,255,255,0.015)" letter-spacing="20">WULING</text>
 </svg>`;
 }
@@ -989,7 +924,6 @@ function buildMarkerSVG(W, H) {
       <stop offset="0%" stop-color="#130b1a"/>
       <stop offset="100%" stop-color="#0a080e"/>
     </radialGradient>
-    <filter id="glow-m"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     <pattern id="grid-m" width="80" height="80" patternUnits="userSpaceOnUse">
       <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(192,132,252,0.04)" stroke-width="0.8"/>
     </pattern>
@@ -1000,63 +934,20 @@ function buildMarkerSVG(W, H) {
   <rect width="${W}" height="${H}" fill="url(#bgm)"/>
   <rect width="${W}" height="${H}" fill="url(#grid-m)"/>
   <rect width="${W}" height="${H}" fill="url(#hex-m)"/>
-
-  <!-- Marker Stone Core -->
-  <polygon points="700,500 1400,440 1640,900 1320,1180 720,1140 480,820"
-    fill="rgba(160,160,210,0.06)" stroke="rgba(160,160,210,0.2)" stroke-width="2"/>
+  <polygon points="700,500 1400,440 1640,900 1320,1180 720,1140 480,820" fill="rgba(160,160,210,0.06)" stroke="rgba(160,160,210,0.2)" stroke-width="2"/>
   <text x="1060" y="820" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" fill="rgba(160,160,210,0.32)" letter-spacing="4">MARKER STONE CORE</text>
-
-  <!-- Eastern Vegetation -->
-  <polygon points="1400,80 2000,60 2200,520 1960,600 1360,560"
-    fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.2)" stroke-width="1.5"/>
+  <polygon points="1400,80 2000,60 2200,520 1960,600 1360,560" fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.2)" stroke-width="1.5"/>
   <text x="1780" y="310" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(74,222,128,0.32)" letter-spacing="3">EASTERN VEGETATION</text>
-
-  <!-- Challenge Zones -->
-  <polygon points="1200,1020 1900,960 2060,1360 1700,1460 1100,1380"
-    fill="rgba(224,80,96,0.06)" stroke="rgba(224,80,96,0.2)" stroke-width="2"/>
+  <polygon points="1200,1020 1900,960 2060,1360 1700,1460 1100,1380" fill="rgba(224,80,96,0.06)" stroke="rgba(224,80,96,0.2)" stroke-width="2"/>
   <text x="1580" y="1200" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" fill="rgba(224,80,96,0.32)" letter-spacing="4">CHALLENGE ZONES</text>
-
-  <!-- Boss Arena -->
-  <rect x="240" y="820" width="500" height="340" rx="4"
-    fill="rgba(224,80,96,0.07)" stroke="rgba(224,80,96,0.28)" stroke-width="2.5"/>
+  <rect x="240" y="820" width="500" height="340" rx="4" fill="rgba(224,80,96,0.07)" stroke="rgba(224,80,96,0.28)" stroke-width="2.5"/>
   <text x="490" y="1000" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="17" fill="rgba(224,80,96,0.45)" letter-spacing="3">BOSS ARENA</text>
-  <!-- Boss skull icon -->
-  <g transform="translate(490,940)" opacity="0.3">
-    <circle cx="0" cy="-10" r="18" fill="none" stroke="rgba(224,80,96,0.6)" stroke-width="1.5"/>
-    <rect x="-9" y="5" width="18" height="12" rx="2" fill="none" stroke="rgba(224,80,96,0.6)" stroke-width="1.5"/>
-    <circle cx="-5" cy="-12" r="3" fill="rgba(224,80,96,0.5)"/>
-    <circle cx="5" cy="-12" r="3" fill="rgba(224,80,96,0.5)"/>
-  </g>
-
-  <!-- Gathering East -->
-  <rect x="1440" y="80" width="440" height="300" rx="3"
-    fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.15)" stroke-width="1.5"/>
-  <text x="1660" y="235" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" fill="rgba(74,222,128,0.3)" letter-spacing="2">GATHERING EAST</text>
-
-  <!-- The Marker Monolith (decorative center piece) -->
-  <g transform="translate(1060,480)" opacity="0.5">
-    <rect x="-8" y="-80" width="16" height="80" fill="rgba(192,132,252,0.3)"/>
-    <polygon points="0,-100 12,-80 -12,-80" fill="rgba(192,132,252,0.5)"/>
-    <ellipse cx="0" cy="0" rx="30" ry="8" fill="rgba(192,132,252,0.15)"/>
-  </g>
-  <text x="1060" y="570" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="11" fill="rgba(192,132,252,0.35)" letter-spacing="2">THE MARKER</text>
-
-  <!-- Ley lines -->
-  <line x1="490" y1="820" x2="1060" y2="480" stroke="rgba(224,80,96,0.12)" stroke-width="1.5" stroke-dasharray="12,6"/>
-  <line x1="1060" y1="480" x2="1660" y2="840" stroke="rgba(192,132,252,0.1)" stroke-width="1.5" stroke-dasharray="12,6"/>
-  <line x1="490" y1="820" x2="1660" y2="840" stroke="rgba(160,160,210,0.08)" stroke-width="1" stroke-dasharray="8,4"/>
-
-  <!-- Compass -->
   <g transform="translate(2300,100)">
     <circle cx="0" cy="0" r="28" fill="rgba(0,0,0,0.5)" stroke="rgba(192,132,252,0.3)" stroke-width="1"/>
     <path d="M0,-20 L5,5 L0,2 L-5,5 Z" fill="rgba(192,132,252,0.8)"/>
     <path d="M0,20 L5,-5 L0,-2 L-5,-5 Z" fill="rgba(255,255,255,0.25)"/>
     <text x="0" y="-26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="rgba(192,132,252,0.8)">N</text>
   </g>
-
-  ${Array.from({length:6},(_, i)=>`<text x="${i*480+20}" y="18" font-family="'IBM Plex Mono',monospace" font-size="11" fill="rgba(255,255,255,0.07)">${i*480}</text>`).join('')}
-  ${Array.from({length:5},(_, i)=>`<text x="4" y="${(i+1)*360+6}" font-family="'IBM Plex Mono',monospace" font-size="11" fill="rgba(255,255,255,0.07)">${(i+1)*360}</text>`).join('')}
-
   <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-size="120" font-weight="700" fill="rgba(255,255,255,0.015)" letter-spacing="15">MARKER STONE</text>
 </svg>`;
 }
@@ -1077,9 +968,8 @@ let haveQty = {};
 let focusedPlanIds = new Set();
 let focusPanelOpen = false;
 
-// Leaflet map instances
 const leafletMaps = {};
-const mapLayers = {}; // per-map: {bg, pins: {matKey: layerGroup}}
+const mapLayers = {};
 const mapInited = {};
 
 // ────────────────────────────────────────────────
@@ -1087,6 +977,9 @@ const mapInited = {};
 // ────────────────────────────────────────────────
 function getElColor(el) {
   return {Heat:'#ff6b35',Cryo:'#4fc3f7',Electric:'#c084fc',Physical:'#94a3b8',Nature:'#4ade80'}[el]||'#6b7280';
+}
+function getRarityColor(rarity) {
+  return {6:'#e8a45a', 5:'#b0b0d8', 4:'#5a8ad8'}[rarity] || '#6b7280';
 }
 
 const EL_ICON = {
@@ -1133,16 +1026,11 @@ function totalMats() {
 function initLeafletMap(mapKey) {
   if (mapInited[mapKey]) return;
   mapInited[mapKey] = true;
-
   const cfg = MAP_CONFIG[mapKey];
   const W = cfg.w, H = cfg.h;
-
-  // Build SVG as data URL for background overlay
   const svgStr = buildMapSVG(mapKey);
   const svgBlob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
   const svgUrl = URL.createObjectURL(svgBlob);
-
-  // CRS.Simple uses pixel coordinates directly
   const map = L.map(`lmap-${mapKey}`, {
     crs: L.CRS.Simple,
     minZoom: cfg.minZoom,
@@ -1153,29 +1041,16 @@ function initLeafletMap(mapKey) {
     attributionControl: false,
     scrollWheelZoom: true,
   });
-
-  // In CRS.Simple, lat = -y (y increases downward), lng = x
   const bounds = [[-H, 0], [0, W]];
-
-  // SVG background image layer
-  const imgLayer = L.imageOverlay(svgUrl, bounds, {opacity: 1, interactive: false});
-  imgLayer.addTo(map);
-
+  L.imageOverlay(svgUrl, bounds, {opacity: 1, interactive: false}).addTo(map);
   map.fitBounds(bounds);
-
-  // Coordinate tracker
   map.on('mousemove', (e) => {
     const {lat, lng} = e.latlng;
-    const x = Math.round(lng);
-    const y = Math.round(-lat);
     const el = document.getElementById(`coords-${mapKey}`);
-    if (el) el.textContent = `X:${x} Y:${y}`;
+    if (el) el.textContent = `X:${Math.round(lng)} Y:${Math.round(-lat)}`;
   });
-
   leafletMaps[mapKey] = map;
   mapLayers[mapKey] = { pins: {} };
-
-  // Update pins on next tick
   setTimeout(() => updateMapPins(mapKey), 50);
 }
 
@@ -1188,23 +1063,14 @@ function createPinIcon(matKey, zone, isHighlighted) {
   const borderColor = isHighlighted ? mat.color : 'rgba(255,255,255,0.2)';
   const bg = isHighlighted ? `rgba(13,15,18,0.98)` : 'rgba(13,15,18,0.9)';
   const glow = isHighlighted ? `box-shadow:0 0 14px ${mat.color}55,0 0 4px ${mat.color}33;` : '';
-  const scale = isHighlighted ? 'transform:scale(1.05);' : '';
-
-  const html = `<div class="endo-pin ${isHighlighted?'highlighted':''}"
-    style="border-color:${borderColor};background:${bg};${glow}${scale}">
+  const html = `<div class="endo-pin ${isHighlighted?'highlighted':''}" style="border-color:${borderColor};background:${bg};${glow}">
     <div class="endo-pin-dot" style="background:${mat.color};${isHighlighted?`box-shadow:0 0 6px ${mat.color};`:''}"></div>
     <div class="endo-pin-content">
       <div class="endo-pin-mat" style="color:${mat.color}">${shortName}</div>
       <div class="endo-pin-zone">${zone}</div>
     </div>
   </div>`;
-
-  return L.divIcon({
-    html,
-    className: '',
-    iconAnchor: [0, 20],
-    iconSize: null,
-  });
+  return L.divIcon({ html, className: '', iconAnchor: [0, 20], iconSize: null });
 }
 
 function createPopupContent(matKey, pin) {
@@ -1219,58 +1085,33 @@ function createPopupContent(matKey, pin) {
 function updateMapPins(mapKey) {
   const map = leafletMaps[mapKey];
   if (!map) return;
-
   const layers = mapLayers[mapKey];
   const needMats = totalMats();
-
-  // Remove all existing pin layers
-  for (const lg of Object.values(layers.pins)) {
-    map.removeLayer(lg);
-  }
+  for (const lg of Object.values(layers.pins)) map.removeLayer(lg);
   layers.pins = {};
-
   const visibleMats = [];
-
   for (const [matKey, qty] of Object.entries(needMats)) {
     if (!MATS[matKey]) continue;
     const locs = (MAT_LOCATIONS[matKey] || {})[mapKey];
     if (!locs || !locs.length) continue;
-
     visibleMats.push(matKey);
     const isHighlighted = highlightedMat === matKey;
     const isDimmed = highlightedMat && !isHighlighted;
-
     const lg = L.layerGroup();
-
     for (const pin of locs) {
-      // CRS.Simple: lat = -y, lng = x
-      const latlng = [-pin.y, pin.x];
-
-      const marker = L.marker(latlng, {
+      const marker = L.marker([-pin.y, pin.x], {
         icon: createPinIcon(matKey, pin.zone, isHighlighted),
         opacity: isDimmed ? 0.2 : 1,
         zIndexOffset: isHighlighted ? 1000 : 0,
         interactive: true,
       });
-
-      marker.bindPopup(createPopupContent(matKey, pin), {
-        closeButton: true,
-        maxWidth: 260,
-        className: '',
-      });
-
-      marker.on('click', () => {
-        highlightMat(matKey);
-      });
-
+      marker.bindPopup(createPopupContent(matKey, pin), { closeButton: true, maxWidth: 260, className: '' });
+      marker.on('click', () => { highlightMat(matKey); });
       lg.addLayer(marker);
     }
-
     lg.addTo(map);
     layers.pins[matKey] = lg;
   }
-
-  // Update legend
   updateLegend(mapKey, visibleMats, needMats);
 }
 
@@ -1278,13 +1119,8 @@ function updateLegend(mapKey, visibleMats, needMats) {
   const legendEl = document.getElementById(`legend-${mapKey}`);
   const itemsEl = document.getElementById(`legend-items-${mapKey}`);
   if (!legendEl || !itemsEl) return;
-
-  if (!visibleMats.length) {
-    legendEl.classList.remove('visible');
-    return;
-  }
+  if (!visibleMats.length) { legendEl.classList.remove('visible'); return; }
   legendEl.classList.add('visible');
-
   itemsEl.innerHTML = visibleMats.map(k => {
     const mat = MATS[k];
     const isHighlighted = highlightedMat === k;
@@ -1304,25 +1140,20 @@ function updateLegend(mapKey, visibleMats, needMats) {
 function leafletZoom(mapKey, dir) {
   const map = leafletMaps[mapKey];
   if (!map) return;
-  if (dir > 0) map.zoomIn();
-  else map.zoomOut();
+  if (dir > 0) map.zoomIn(); else map.zoomOut();
 }
-
 function leafletReset(mapKey) {
   const map = leafletMaps[mapKey];
   if (!map) return;
   const cfg = MAP_CONFIG[mapKey];
-  const bounds = [[-cfg.h, 0], [0, cfg.w]];
-  map.fitBounds(bounds);
+  map.fitBounds([[-cfg.h, 0], [0, cfg.w]]);
 }
-
 function switchMap(mapKey) {
   activeMap = mapKey;
   ['valley','wuling','marker'].forEach(k => {
     document.getElementById(`mtab-${k}`).classList.toggle('active', k===mapKey);
     document.getElementById(`mapwrap-${k}`).classList.toggle('active', k===mapKey);
   });
-  // Init on first switch
   setTimeout(() => {
     initLeafletMap(mapKey);
     const map = leafletMaps[mapKey];
@@ -1330,30 +1161,22 @@ function switchMap(mapKey) {
     updateMapPins(mapKey);
   }, 20);
 }
-
 function highlightMat(matKey) {
   highlightedMat = (highlightedMat === matKey) ? null : matKey;
   renderMapFilters();
   updateMapPins(activeMap);
-  // Also highlight in material list
   renderNeed();
-  // Show info bar
   updateInfoBar(activeMap, matKey);
 }
-
 function updateInfoBar(mapKey, matKey) {
   const bar = document.getElementById(`info-${mapKey}`);
   const title = document.getElementById(`info-title-${mapKey}`);
   const cards = document.getElementById(`info-cards-${mapKey}`);
   if (!bar) return;
-
-  if (!matKey || matKey !== highlightedMat) {
-    bar.classList.remove('visible'); return;
-  }
+  if (!matKey || matKey !== highlightedMat) { bar.classList.remove('visible'); return; }
   const mat = MATS[matKey];
   const locs = (MAT_LOCATIONS[matKey] || {})[mapKey];
   if (!locs || !locs.length) { bar.classList.remove('visible'); return; }
-
   title.innerHTML = `<span style="color:${mat.color}">● ${mat.name}</span> — ${MAP_CONFIG[mapKey].label} Farming Locations`;
   cards.innerHTML = locs.map(l => `<div class="map-info-card">
     <div class="map-info-card-zone" style="color:${mat.color}">${l.zone}</div>
@@ -1365,10 +1188,7 @@ function updateInfoBar(mapKey, matKey) {
 // ────────────────────────────────────────────────
 // PLANS SEARCH
 // ────────────────────────────────────────────────
-function onPlansSearchInput() {
-  planSearchQuery = document.getElementById('plans-search-input').value;
-  renderSearchDropdown();
-}
+function onPlansSearchInput() { planSearchQuery = document.getElementById('plans-search-input').value; renderSearchDropdown(); }
 function onPlansSearchFocus() { renderSearchDropdown(); }
 function renderSearchDropdown() {
   const dd = document.getElementById('plans-search-dropdown');
@@ -1396,10 +1216,7 @@ function jumpToPlan(id) {
   const plan=plans.find(p=>p.id===id); if(!plan) return;
   switchPlanTab(plan.type); closeSearchDropdown();
   document.getElementById('plans-search-input').value=''; planSearchQuery='';
-  setTimeout(()=>{
-    const card=document.querySelector(`.plan-card[data-id="${id}"]`);
-    if(card) card.scrollIntoView({behavior:'smooth',block:'nearest'});
-  },60);
+  setTimeout(()=>{ const card=document.querySelector(`.plan-card[data-id="${id}"]`); if(card) card.scrollIntoView({behavior:'smooth',block:'nearest'}); },60);
 }
 function closeSearchDropdown() { document.getElementById('plans-search-dropdown').classList.remove('open'); }
 document.addEventListener('click', e => {
@@ -1513,22 +1330,56 @@ function renderPlans() {
   for (const plan of visible) container.appendChild(buildPlanCard(plan));
 }
 
+// ────────────────────────────────────────────────
+// BUILD PLAN CARD — portrait image or SVG fallback
+// ────────────────────────────────────────────────
+function buildAvatarHTML(plan) {
+  const isOp = plan.type === 'operator';
+  const el = plan.item.element || null;
+  const elColor = getElColor(el);
+  const rarityColor = getRarityColor(plan.item.rarity);
+
+  if (isOp) {
+    const imgPath = getCharImg(plan.item.name);
+
+    if (imgPath) {
+      // Portrait loaded from Supabase
+      return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">
+        <img src="${imgPath}" alt="${plan.item.name}" loading="lazy">
+        <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+      </div>`;
+    } else {
+      // Fallback: element SVG icon
+      const icon = EL_ICON[el] || OP_ICON;
+      return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">
+        ${icon}
+        <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+      </div>`;
+    }
+  } else {
+    // Weapon — SVG icon always
+    return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">
+      ${WPN_ICON}
+      <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+    </div>`;
+  }
+}
+
 function buildPlanCard(plan) {
   const el=plan.item.element||null;
   const elLower=el?el.toLowerCase():'';
-  const elColor=getElColor(el);
   const isOp=plan.type==='operator';
-  const icon=isOp?(EL_ICON[el]||OP_ICON):WPN_ICON;
   const quickRanges=[[1,40],[1,60],[1,80],[20,60],[40,80]];
   const qBtns=quickRanges.map(([f,t])=>{
     const active=plan.fromLv===f&&plan.toLv===t?'active':'';
     return `<button class="quick-btn ${active}" onclick="setRange(${plan.id},${f},${t})">${f}→${t}</button>`;
   }).join('');
+
   const card=document.createElement('div');
   card.className='plan-card'; card.dataset.id=plan.id;
   card.innerHTML=`
     <div class="plan-head">
-      <div class="plan-avatar" style="background:${elColor}18;border-color:${elColor}55">${icon}</div>
+      ${buildAvatarHTML(plan)}
       <div class="plan-meta">
         <div class="plan-name">${plan.item.name}</div>
         <div class="plan-tags">
@@ -1662,12 +1513,8 @@ function renderNeed() {
 }
 
 function onNeedRowClick(matKey, e) {
-  // Right-click or shift-click = highlight on map, left-click = check
-  if (e.shiftKey || e.ctrlKey || e.metaKey) {
-    highlightMat(matKey);
-  } else {
-    toggleCheck(matKey);
-  }
+  if (e.shiftKey || e.ctrlKey || e.metaKey) { highlightMat(matKey); }
+  else { toggleCheck(matKey); }
 }
 
 // ────────────────────────────────────────────────
@@ -1681,7 +1528,6 @@ function renderMapFilters() {
   const mats=totalMats();
   chipsEl.innerHTML=Object.keys(mats).map(k=>{
     const mat=MATS[k]; if(!mat) return '';
-    // Check if this mat has locations on any map
     const hasLocs=Object.values(MAT_LOCATIONS[k]||{}).some(a=>a.length>0);
     if(!hasLocs) return '';
     const active=highlightedMat===k?'active':'';
@@ -1737,6 +1583,7 @@ function filterModal() {
   if(q) filtered=filtered.filter(x=>x.name.toLowerCase().includes(q));
   renderModalList(filtered);
 }
+
 function renderModalList(items) {
   const list=document.getElementById('modal-list');
   if(!items.length) { list.innerHTML='<p style="grid-column:1/-1;font-size:12px;color:var(--muted);font-family:var(--font-mono);padding:8px">No results</p>'; return; }
@@ -1744,10 +1591,22 @@ function renderModalList(items) {
     const isOp=modalType==='operator';
     const el=isOp?item.element:null;
     const elColor=getElColor(el);
-    const icon=el?(EL_ICON[el]||OP_ICON):WPN_ICON;
     const inPlan=plans.some(p=>p.item.id===item.id&&p.type===modalType);
+
+    let iconContent;
+    if (isOp) {
+      const imgPath = getCharImg(item.name);
+      if (imgPath) {
+        iconContent = `<img src="${imgPath}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`;
+      } else {
+        iconContent = EL_ICON[el] || OP_ICON;
+      }
+    } else {
+      iconContent = WPN_ICON;
+    }
+
     return `<button class="modal-item" onclick='selectItem(${JSON.stringify(item).replace(/'/g,"&#39;")})' style="${inPlan?'border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)':''}">
-      <div class="modal-item-icon" style="${el?`border-color:${elColor}40`:''}">${icon}</div>
+      <div class="modal-item-icon" style="${el?`border-color:${elColor}40;height:36px;`:''}">${iconContent}</div>
       <div>
         <div class="modal-item-name">${item.name}${inPlan?' <span style="color:var(--accent);font-size:9px">✓</span>':''}</div>
         <div class="modal-item-sub">${isOp?`${item.cls} · ${item.element}`:item.type} · ${item.rarity}★</div>
@@ -1759,14 +1618,20 @@ function selectItem(item) { addPlan(modalType,item); }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
 // ────────────────────────────────────────────────
-// INIT
+// INIT — fixed image loading sequence
 // ────────────────────────────────────────────────
-// Init Valley IV map immediately (it's the default visible tab)
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
+  // 1. Render UI immediately with SVG fallbacks
   renderAll();
-  setTimeout(() => {
-    initLeafletMap('valley');
-  }, 100);
+
+  // 2. Init the default map
+  setTimeout(() => { initLeafletMap('valley'); }, 100);
+
+  // 3. Load portraits from Supabase, then re-render everything
+  //    so cards and the modal both get updated with real images.
+  //    This fires unconditionally — no more "if plans.length" guard.
+  await loadCharImages();
+  renderAll();
 });
 </script>
 </body>
