@@ -8,6 +8,9 @@ const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Authenticated user — set in DOMContentLoaded
+let CURRENT_USER = null;
+
 function emojiToTwemojiUrl(emoji) {
   const codePoints = [...emoji]
     .map(c => c.codePointAt(0).toString(16))
@@ -143,6 +146,10 @@ function applyTheme(elementOrHex) {
 document.addEventListener('DOMContentLoaded', async () => {
   const overlay = document.getElementById('loading-overlay');
   document.getElementById('load-msg').textContent = 'Connecting to Database...';
+
+  // Resolve auth session
+  const { data: { session } } = await db.auth.getSession();
+  CURRENT_USER = session?.user || null;
 
   const params   = new URLSearchParams(window.location.search);
   const charSlug = params.get('char') || null;
@@ -506,23 +513,79 @@ function renderSkillTracks(skills) {
   }).join('');
 }
 
-function renderChecklist(char) {
+// ─── CHECKLIST — Supabase persistence ────────────────────────
+async function loadChecklistState(charId) {
+  if (!CURRENT_USER) return {};
+  const { data, error } = await db
+    .from('user_checklists')
+    .select('checked_ids')
+    .eq('user_id', CURRENT_USER.id)
+    .eq('character_id', charId)
+    .single();
+  if (error || !data) return {};
+  // checked_ids is stored as a JSON array of strings
+  const ids = data.checked_ids || [];
+  return Object.fromEntries(ids.map(id => [id, true]));
+}
+
+async function saveChecklistState(charId) {
+  if (!CURRENT_USER) return;
+  const checked = [];
+  document.querySelectorAll('.check-row[data-check-id]').forEach(row => {
+    if (row.classList.contains('done')) checked.push(row.dataset.checkId);
+  });
+  const { error } = await db.from('user_checklists').upsert({
+    user_id:      CURRENT_USER.id,
+    character_id: charId,
+    checked_ids:  checked,
+    updated_at:   new Date().toISOString(),
+  }, { onConflict: 'user_id,character_id' });
+  if (error) console.warn('Checklist save error:', error);
+}
+
+async function renderChecklist(char) {
   const shared = char.checklist_shared || [];
   const f2p    = char.checklist_f2p    || [];
   const spend  = char.checklist_spend  || [];
   const el = document.getElementById('dom-checklist');
   el.innerHTML =
-    shared.map(c => checkRow(c, '')).join('') +
-    f2p.map(c   => checkRow(c, 'route-f2p')).join('') +
-    spend.map(c  => checkRow(c, 'route-spend', true)).join('');
+    shared.map((c, i) => checkRow(c, '',            false, `shared-${i}`)).join('') +
+    f2p.map(   (c, i) => checkRow(c, 'route-f2p',   false, `f2p-${i}`)).join('') +
+    spend.map( (c, i) => checkRow(c, 'route-spend',  true, `spend-${i}`)).join('');
+
+  // Restore saved state from Supabase
+  const state = await loadChecklistState(char.id);
+  document.querySelectorAll('.check-row[data-check-id]').forEach(row => {
+    if (state[row.dataset.checkId]) row.classList.add('done');
+  });
+  updateCheckProgress();
 }
 
-function checkRow(c, routeClass, hidden = false) {
-  return `<div class="check-row${routeClass ? ' ' + routeClass : ''}" onclick="toggleCheck(this)"${hidden ? ' style="display:none"' : ''}>
+function checkRow(c, routeClass, hidden, checkId) {
+  if (hidden === undefined) hidden = false;
+  if (!checkId) checkId = '';
+  return `<div class="check-row${routeClass ? ' ' + routeClass : ''}"
+    data-check-id="${checkId}"
+    onclick="toggleCheck(this)"${hidden ? ' style="display:none"' : ''}>
     <div class="check-box">✓</div>
     <span class="check-label">${c.label}</span>
     <span class="check-cost">${c.cost}</span>
   </div>`;
+}
+
+function toggleCheck(row) {
+  row.classList.toggle('done');
+  updateCheckProgress();
+  if (CHAR && CHAR.id) saveChecklistState(CHAR.id);
+}
+
+function updateCheckProgress() {
+  const rows = [...document.querySelectorAll('.check-row')].filter(r => r.style.display !== 'none');
+  const done = rows.filter(r => r.classList.contains('done')).length;
+  const fill  = document.getElementById('check-fill');
+  const label = document.getElementById('check-label');
+  if (fill)  fill.style.width  = rows.length ? `${(done/rows.length)*100}%` : '0%';
+  if (label) label.textContent = `${done} / ${rows.length}`;
 }
 
 function updateProfileStats() {
@@ -633,15 +696,3 @@ function switchRoute(route) {
   updateCheckProgress();
 }
 
-function toggleCheck(row) {
-  row.classList.toggle('done');
-  updateCheckProgress();
-}
-function updateCheckProgress() {
-  const rows = [...document.querySelectorAll('.check-row')].filter(r => r.style.display !== 'none');
-  const done = rows.filter(r => r.classList.contains('done')).length;
-  const fill  = document.getElementById('check-fill');
-  const label = document.getElementById('check-label');
-  if (fill)  fill.style.width  = rows.length ? `${(done/rows.length)*100}%` : '0%';
-  if (label) label.textContent = `${done} / ${rows.length}`;
-}

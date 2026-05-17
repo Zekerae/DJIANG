@@ -5,21 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DJIANG — Authentication</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+  /* ── HARMONY OS FONT FACE ── */
+  @font-face {
+    font-family: 'HarmonyOS Sans';
+    src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans.woff2') format('woff2'),
+         url('assets/fonts/HarmonyOS/HarmonyOS_Sans.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'HarmonyOS Sans';
+    src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff2') format('woff2'),
+         url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff') format('woff');
+    font-weight: 700 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
-    --bg: #07080b;
-    --bg2: #0c0d12;
+    --bg: #06080d;
+    --bg2: #0a0c13;
     --teal: #00e5c0;
-    --purple: #6b4fa0;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(0,229,192,0.25);
-    --text: #e4e0d8;
-    --dim: #5a5868;
-    --dim2: #8a8694;
+    --teal-dim: rgba(0,229,192,0.15);
+    --teal-glow: rgba(0,229,192,0.08);
+    --purple: #5a3f8a;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(0,229,192,0.3);
+    --text: #ddd9d0;
+    --dim: #4e4c5a;
+    --dim2: #7e7c8e;
     --error: #e05a5a;
-    --success: #6ddc9a;
+    --success: #5ddc9a;
+    --card-bg: rgba(8, 10, 18, 0.88);
+
+    /* Font stack — HarmonyOS first, fallback to Poppins */
+    --font-display: 'HarmonyOS Sans', 'Poppins', sans-serif;
+    --font-body: 'Inter', 'Poppins', sans-serif;
+    --font-label: 'Poppins', sans-serif;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,7 +53,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--font-body);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -36,7 +62,20 @@
     position: relative;
   }
 
-  /* ── BACKGROUND CANVAS ── */
+  /* ── BACKGROUND IMAGE SLOT ── */
+  /* Replace the gradient with your background image by setting --bg-image */
+  #bg-image {
+    position: fixed;
+    inset: 0;
+    background-image: url('assets/HomepageAssets/DJIANG.png');
+    background-size: cover;
+    background-position: center;
+    filter: blur(3px) brightness(0.35) saturate(0.8);
+    transform: scale(1.04); /* prevent blur edge bleed */
+    z-index: 0;
+  }
+
+  /* If no image, show the animated canvas fallback */
   #bg-canvas {
     position: fixed;
     inset: 0;
@@ -45,14 +84,111 @@
     pointer-events: none;
   }
 
-  /* Scanlines */
-  body::before {
-    content: '';
+  /* ── SCAN LINES ── */
+  #scanlines {
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
+    z-index: 2;
     pointer-events: none;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.10) 2px,
+        rgba(0,0,0,0.10) 4px
+      );
+    animation: scanPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes scanPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.9; }
+  }
+
+  /* ── MOVING SCAN LINE ── */
+  #scan-sweep {
+    position: fixed;
+    left: 0; right: 0;
+    height: 2px;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, rgba(0,229,192,0.12) 40%, rgba(0,229,192,0.25) 50%, rgba(0,229,192,0.12) 60%, transparent 100%);
+    animation: sweepDown 12s linear infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes sweepDown {
+    0%   { top: -2px; }
+    100% { top: 100vh; }
+  }
+
+  /* ── VIGNETTE ── */
+  #vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.75) 100%);
+  }
+
+  /* ── GRID OVERLAY ── */
+  #grid-overlay {
+    position: fixed;
+    inset: 0;
     z-index: 1;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image:
+      linear-gradient(rgba(0,229,192,1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,192,1) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* ── CORNER HUD DECORATIONS ── */
+  .hud-corner {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0.35;
+  }
+  .hud-corner.tl { top: 20px; left: 20px; border-top: 1px solid var(--teal); border-left: 1px solid var(--teal); }
+  .hud-corner.tr { top: 20px; right: 20px; border-top: 1px solid var(--teal); border-right: 1px solid var(--teal); }
+  .hud-corner.bl { bottom: 20px; left: 20px; border-bottom: 1px solid var(--teal); border-left: 1px solid var(--teal); }
+  .hud-corner.br { bottom: 20px; right: 20px; border-bottom: 1px solid var(--teal); border-right: 1px solid var(--teal); }
+
+  /* HUD crosshair left */
+  .hud-cross {
+    position: fixed;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0.2;
+    color: var(--teal);
+    font-size: 22px;
+    font-family: var(--font-body);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  /* HUD label bottom right */
+  .hud-label {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 4;
+    pointer-events: none;
+    font-family: var(--font-label);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    opacity: 0.3;
   }
 
   /* ── LAYOUT ── */
@@ -60,84 +196,135 @@
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 460px;
+    max-width: 440px;
     padding: 24px;
+    animation: wrapperIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  @keyframes wrapperIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   /* ── LOGO ── */
   .auth-logo {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
-  .auth-logo .logo-mark {
-    display: inline-block;
-    font-family: 'Barlow Condensed', sans-serif;
+  .logo-lockup {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-mark {
+    font-family: var(--font-display);
     font-weight: 900;
-    font-size: 14px;
-    letter-spacing: 6px;
-    color: var(--teal);
-    border: 1px solid var(--border2);
-    padding: 6px 18px;
-    border-radius: 2px;
-    margin-bottom: 10px;
-    position: relative;
-  }
-
-  .auth-logo .logo-mark::before,
-  .auth-logo .logo-mark::after {
-    content: '';
-    position: absolute;
-    width: 6px; height: 6px;
-    border-color: var(--teal);
-    border-style: solid;
-    opacity: 0.6;
-  }
-
-  .auth-logo .logo-mark::before { top: -2px; left: -2px; border-width: 1px 0 0 1px; }
-  .auth-logo .logo-mark::after  { bottom: -2px; right: -2px; border-width: 0 1px 1px 0; }
-
-  .auth-logo .logo-sub {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 10px;
-    letter-spacing: 3px;
+    font-size: 28px;
+    letter-spacing: 10px;
+    color: #fff;
     text-transform: uppercase;
-    color: var(--dim2);
+    position: relative;
+    padding: 0 4px;
+    line-height: 1;
+  }
+
+  .logo-mark::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    margin-top: 6px;
+  }
+
+  .logo-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-badge::before,
+  .logo-badge::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--border2);
+    opacity: 0.5;
+  }
+
+  .logo-sub {
+    font-family: var(--font-label);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    opacity: 0.7;
   }
 
   /* ── CARD ── */
   .auth-card {
-    background: rgba(12, 13, 18, 0.95);
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px;
     overflow: hidden;
     position: relative;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,229,192,0.05);
+    backdrop-filter: blur(24px) saturate(1.2);
+    -webkit-backdrop-filter: blur(24px) saturate(1.2);
+    box-shadow:
+      0 40px 100px rgba(0,0,0,0.8),
+      0 0 0 1px rgba(0,229,192,0.04),
+      inset 0 1px 0 rgba(255,255,255,0.05);
   }
 
+  /* top glow line */
   .auth-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0; left: 10%; right: 10%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--teal), transparent);
-    opacity: 0.5;
+    background: linear-gradient(90deg, transparent, var(--teal) 40%, var(--teal) 60%, transparent);
+    opacity: 0.45;
   }
+
+  /* corner accents */
+  .auth-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(90,63,138,0.4), transparent);
+  }
+
+  .card-corner {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .card-corner.tl { top: -1px; left: -1px; border-top: 1px solid var(--teal); border-left: 1px solid var(--teal); }
+  .card-corner.tr { top: -1px; right: -1px; border-top: 1px solid var(--teal); border-right: 1px solid var(--teal); }
+  .card-corner.bl { bottom: -1px; left: -1px; border-bottom: 1px solid var(--teal); border-left: 1px solid var(--teal); }
+  .card-corner.br { bottom: -1px; right: -1px; border-bottom: 1px solid var(--teal); border-right: 1px solid var(--teal); }
 
   /* ── TABS ── */
   .auth-tabs {
     display: grid;
     grid-template-columns: 1fr 1fr;
     border-bottom: 1px solid var(--border);
+    position: relative;
   }
 
   .auth-tab {
-    padding: 16px;
+    padding: 15px 16px;
     text-align: center;
-    font-family: 'Rajdhani', sans-serif;
+    font-family: var(--font-label);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--dim);
@@ -152,7 +339,7 @@
 
   .auth-tab.active {
     color: var(--teal);
-    background: rgba(0,229,192,0.04);
+    background: rgba(0,229,192,0.03);
   }
 
   .auth-tab.active::after {
@@ -161,66 +348,82 @@
     bottom: -1px; left: 0; right: 0;
     height: 1px;
     background: var(--teal);
+    box-shadow: 0 0 8px rgba(0,229,192,0.5);
   }
 
   /* ── PANELS ── */
   .auth-panel {
-    padding: 32px 30px;
+    padding: 28px 26px;
     display: none;
-    animation: fadeSlide 0.3s ease;
+    animation: fadeSlide 0.3s cubic-bezier(0.16,1,0.3,1);
   }
 
   .auth-panel.active { display: block; }
 
   @keyframes fadeSlide {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── FORM ELEMENTS ── */
+  /* ── FIELD ── */
   .field {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   .field label {
-    display: block;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-label);
+    font-size: 10.5px;
+    font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--dim2);
-    margin-bottom: 8px;
+    margin-bottom: 7px;
+  }
+
+  .field label::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--teal);
+    opacity: 0.6;
   }
 
   .field input {
     width: 100%;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 13px 16px;
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 2px;
+    padding: 11px 14px;
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 400;
     transition: all 0.2s;
     outline: none;
+    letter-spacing: 0.2px;
   }
+
+  .field input::placeholder { color: var(--dim); font-size: 14px; }
 
   .field input:focus {
-    border-color: rgba(0,229,192,0.4);
+    border-color: rgba(0,229,192,0.35);
     background: rgba(0,0,0,0.6);
-    box-shadow: 0 0 0 3px rgba(0,229,192,0.06);
+    box-shadow: 0 0 0 3px rgba(0,229,192,0.05), inset 0 1px 0 rgba(255,255,255,0.03);
   }
 
-  .field input.error {
-    border-color: rgba(224,90,90,0.5);
-  }
+  .field input.error { border-color: rgba(224,90,90,0.5); }
 
   .field-error {
-    font-size: 11px;
+    font-family: var(--font-body);
+    font-size: 12px;
     color: var(--error);
-    margin-top: 6px;
-    letter-spacing: 0.5px;
+    margin-top: 5px;
+    letter-spacing: 0.3px;
     display: none;
   }
 
@@ -230,32 +433,34 @@
   .forgot-link {
     display: block;
     text-align: right;
-    font-size: 11px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 400;
     color: var(--dim2);
     cursor: pointer;
-    margin-top: -10px;
-    margin-bottom: 22px;
+    margin-top: -8px;
+    margin-bottom: 20px;
     transition: color 0.2s;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
   }
 
   .forgot-link:hover { color: var(--teal); }
 
-  /* ── BUTTON ── */
+  /* ── PRIMARY BUTTON ── */
   .btn-primary {
     width: 100%;
-    padding: 14px;
+    padding: 13px;
     background: transparent;
     border: 1px solid var(--teal);
-    border-radius: 3px;
+    border-radius: 2px;
     color: var(--teal);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 12px;
+    font-family: var(--font-label);
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s;
     position: relative;
     overflow: hidden;
   }
@@ -271,15 +476,13 @@
   }
 
   .btn-primary:hover::before { transform: translateX(0); }
-  .btn-primary:hover { color: #000; }
-
+  .btn-primary:hover { color: #050a0d; box-shadow: 0 0 20px rgba(0,229,192,0.2); }
   .btn-primary span { position: relative; z-index: 1; }
 
   .btn-primary:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
   }
-
   .btn-primary:disabled::before { transform: translateX(-101%) !important; }
   .btn-primary:disabled { color: var(--teal) !important; }
 
@@ -287,8 +490,8 @@
   .auth-divider {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin: 22px 0;
+    gap: 10px;
+    margin: 18px 0;
   }
 
   .auth-divider::before,
@@ -300,34 +503,33 @@
   }
 
   .auth-divider span {
+    font-family: var(--font-label);
     font-size: 10px;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--dim);
-    font-family: 'Rajdhani', sans-serif;
   }
 
   /* ── OAUTH BUTTONS ── */
   .oauth-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 6px;
+    gap: 8px;
   }
 
   .btn-oauth {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 11px 14px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
-    border-radius: 3px;
+    gap: 7px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 2px;
     color: var(--dim2);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
+    font-family: var(--font-label);
+    font-size: 11.5px;
+    font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     cursor: pointer;
@@ -335,40 +537,41 @@
   }
 
   .btn-oauth:hover {
-    border-color: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.18);
     color: #fff;
-    background: rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.06);
   }
 
-  .btn-oauth svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .btn-oauth svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-  /* ── ALERT ── */
+  /* ── ALERTS ── */
   .auth-alert {
-    padding: 12px 16px;
-    border-radius: 3px;
+    padding: 10px 14px;
+    border-radius: 2px;
+    font-family: var(--font-body);
     font-size: 13px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     display: none;
-    letter-spacing: 0.3px;
-    line-height: 1.5;
+    letter-spacing: 0.2px;
+    line-height: 1.55;
   }
 
   .auth-alert.visible { display: block; }
 
   .auth-alert.error {
-    background: rgba(224,90,90,0.12);
-    border: 1px solid rgba(224,90,90,0.3);
+    background: rgba(224,90,90,0.1);
+    border: 1px solid rgba(224,90,90,0.25);
     color: #f4a0a0;
   }
 
   .auth-alert.success {
-    background: rgba(109,220,154,0.1);
-    border: 1px solid rgba(109,220,154,0.3);
+    background: rgba(93,220,154,0.08);
+    border: 1px solid rgba(93,220,154,0.25);
     color: var(--success);
   }
 
   .auth-alert.info {
-    background: rgba(0,229,192,0.08);
+    background: rgba(0,229,192,0.06);
     border: 1px solid rgba(0,229,192,0.2);
     color: var(--teal);
   }
@@ -377,13 +580,13 @@
   .pw-strength {
     display: flex;
     gap: 3px;
-    margin-top: 8px;
+    margin-top: 7px;
   }
 
   .pw-bar {
     flex: 1;
     height: 2px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.07);
     border-radius: 1px;
     transition: background 0.3s;
   }
@@ -393,55 +596,19 @@
   .pw-bar.strong { background: var(--success); }
 
   .pw-label {
-    font-size: 10px;
-    color: var(--dim);
-    margin-top: 5px;
-    letter-spacing: 1px;
-  }
-
-  /* ── FORGOT PASSWORD PANEL ── */
-  .back-link {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Rajdhani', sans-serif;
+    font-family: var(--font-body);
     font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--dim2);
-    cursor: pointer;
-    margin-bottom: 24px;
-    transition: color 0.2s;
+    color: var(--dim);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
   }
 
-  .back-link:hover { color: var(--teal); }
-
-  .back-link svg { width: 14px; height: 14px; }
-
-  .panel-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #fff;
-    margin-bottom: 6px;
-  }
-
-  .panel-sub {
-    font-size: 13px;
-    color: var(--dim2);
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
-
-  /* ── AGREE LINE ── */
+  /* ── AGREE ROW ── */
   .agree-row {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     cursor: pointer;
   }
 
@@ -449,10 +616,14 @@
     margin-top: 2px;
     accent-color: var(--teal);
     flex-shrink: 0;
+    width: 13px;
+    height: 13px;
   }
 
   .agree-row span {
-    font-size: 12px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 400;
     color: var(--dim2);
     line-height: 1.5;
   }
@@ -460,11 +631,49 @@
   .agree-row a { color: var(--teal); text-decoration: none; }
   .agree-row a:hover { text-decoration: underline; }
 
+  /* ── FORGOT CARD SPECIFICS ── */
+  .back-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-label);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--dim2);
+    cursor: pointer;
+    margin-bottom: 22px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--teal); }
+  .back-link svg { width: 13px; height: 13px; }
+
+  .panel-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 5px;
+  }
+
+  .panel-sub {
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--dim2);
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
   /* ── SPINNER ── */
   .spinner {
     display: inline-block;
-    width: 14px; height: 14px;
-    border: 2px solid transparent;
+    width: 12px; height: 12px;
+    border: 1.5px solid transparent;
     border-top-color: currentColor;
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
@@ -477,10 +686,11 @@
   /* ── FOOTER NOTE ── */
   .auth-footer-note {
     text-align: center;
-    margin-top: 20px;
-    font-size: 11px;
+    margin-top: 18px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
     color: var(--dim);
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
   }
 
   .auth-footer-note a {
@@ -491,28 +701,100 @@
 
   .auth-footer-note a:hover { color: var(--teal); }
 
+  /* ── OUTER FOOTER ── */
+  .outer-footer {
+    text-align: center;
+    margin-top: 18px;
+    font-family: var(--font-label);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .outer-footer a {
+    color: var(--dim2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .outer-footer a:hover { color: var(--teal); }
+
+  /* ── STATUS LINE ── */
+  .status-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+    font-family: var(--font-label);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .status-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 6px var(--teal);
+    animation: statusPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes statusPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 500px) {
     .auth-wrapper { padding: 16px; }
-    .auth-panel { padding: 24px 20px; }
+    .auth-panel { padding: 22px 18px; }
     .oauth-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
+<!-- BACKGROUND LAYERS -->
+<div id="bg-image"></div>
 <canvas id="bg-canvas"></canvas>
+<div id="grid-overlay"></div>
+<div id="vignette"></div>
+<div id="scanlines"></div>
+<div id="scan-sweep"></div>
 
+<!-- HUD DECORATIONS -->
+<div class="hud-corner tl"></div>
+<div class="hud-corner tr"></div>
+<div class="hud-corner bl"></div>
+<div class="hud-corner br"></div>
+<div class="hud-cross">+</div>
+<div class="hud-label">DJIANG // SYS AUTH</div>
+
+<!-- MAIN CONTENT -->
 <div class="auth-wrapper">
 
   <!-- LOGO -->
   <div class="auth-logo">
-    <div class="logo-mark">DJIANG</div>
-    <div class="logo-sub">Arknights: Endfield Companion</div>
+    <div class="logo-lockup">
+      <div class="logo-mark">DJIANG</div>
+      <div class="logo-badge">
+        <div class="logo-sub">Arknights: Endfield Companion</div>
+      </div>
+    </div>
   </div>
 
-  <!-- MAIN CARD (Login / Register) -->
+  <!-- MAIN CARD -->
   <div class="auth-card" id="main-card">
+    <div class="card-corner tl"></div>
+    <div class="card-corner tr"></div>
+    <div class="card-corner bl"></div>
+    <div class="card-corner br"></div>
+
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="showTab('login')" id="tab-login">Sign In</button>
       <button class="auth-tab" onclick="showTab('register')" id="tab-register">Register</button>
@@ -520,12 +802,16 @@
 
     <!-- LOGIN PANEL -->
     <div class="auth-panel active" id="panel-login">
+      <div class="status-line">
+        <div class="status-dot"></div>
+        <span>Secure Connection Active</span>
+      </div>
+
       <div class="auth-alert" id="login-alert"></div>
 
-      <!-- OAuth -->
       <div class="oauth-grid">
         <button class="btn-oauth" onclick="oauthLogin('google')">
-          <svg viewBox="0 0 24 24" fill="currentColor">
+          <svg viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -541,10 +827,10 @@
         </button>
       </div>
 
-      <div class="auth-divider"><span>or</span></div>
+      <div class="auth-divider"><span>or continue with email</span></div>
 
       <div class="field">
-        <label>Email</label>
+        <label>Email Address</label>
         <input type="email" id="login-email" placeholder="keeper@endfield.com" autocomplete="email">
         <div class="field-error" id="login-email-err"></div>
       </div>
@@ -561,19 +847,23 @@
         <span id="login-btn-text">Sign In</span>
       </button>
 
-      <div class="auth-footer-note" style="margin-top:16px">
-        Don't have an account? <a onclick="showTab('register')" style="cursor:pointer">Register</a>
+      <div class="auth-footer-note" style="margin-top:14px">
+        No account yet? <a onclick="showTab('register')" style="cursor:pointer">Register here</a>
       </div>
     </div>
 
     <!-- REGISTER PANEL -->
     <div class="auth-panel" id="panel-register">
+      <div class="status-line">
+        <div class="status-dot"></div>
+        <span>New Operator Enrollment</span>
+      </div>
+
       <div class="auth-alert" id="register-alert"></div>
 
-      <!-- OAuth -->
       <div class="oauth-grid">
         <button class="btn-oauth" onclick="oauthLogin('google')">
-          <svg viewBox="0 0 24 24" fill="currentColor">
+          <svg viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -589,7 +879,7 @@
         </button>
       </div>
 
-      <div class="auth-divider"><span>or</span></div>
+      <div class="auth-divider"><span>or continue with email</span></div>
 
       <div class="field">
         <label>Username</label>
@@ -598,7 +888,7 @@
       </div>
 
       <div class="field">
-        <label>Email</label>
+        <label>Email Address</label>
         <input type="email" id="reg-email" placeholder="keeper@endfield.com" autocomplete="email">
         <div class="field-error" id="reg-email-err"></div>
       </div>
@@ -625,14 +915,19 @@
         <span id="register-btn-text">Create Account</span>
       </button>
 
-      <div class="auth-footer-note" style="margin-top:16px">
-        Already have an account? <a onclick="showTab('login')" style="cursor:pointer">Sign in</a>
+      <div class="auth-footer-note" style="margin-top:14px">
+        Already a Keeper? <a onclick="showTab('login')" style="cursor:pointer">Sign in here</a>
       </div>
     </div>
   </div>
 
   <!-- FORGOT PASSWORD CARD -->
   <div class="auth-card" id="forgot-card" style="display:none">
+    <div class="card-corner tl"></div>
+    <div class="card-corner tr"></div>
+    <div class="card-corner bl"></div>
+    <div class="card-corner br"></div>
+
     <div class="auth-panel active">
       <div class="back-link" onclick="showMain()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -640,8 +935,9 @@
         </svg>
         Back to Sign In
       </div>
+
       <div class="panel-title">Reset Password</div>
-      <div class="panel-sub">Enter your email address and we'll send you a secure link to reset your password.</div>
+      <div class="panel-sub">Enter your email and we'll send a secure link to reset your credentials.</div>
 
       <div class="auth-alert" id="forgot-alert"></div>
 
@@ -657,7 +953,7 @@
     </div>
   </div>
 
-  <div class="auth-footer-note">
+  <div class="outer-footer">
     <a href="index.html">← Return to DJIANG</a>
   </div>
 </div>
@@ -668,7 +964,7 @@ const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── BACKGROUND CANVAS ─────────────────────────────────────────────
+// ── BACKGROUND CANVAS (animated fallback / overlay) ───────────────
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 let t = 0;
@@ -680,33 +976,44 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-const particles = Array.from({ length: 80 }, () => ({
+const particles = Array.from({ length: 60 }, () => ({
   x: Math.random() * window.innerWidth,
   y: Math.random() * window.innerHeight,
-  r: Math.random() * 1.4 + 0.3,
-  vx: (Math.random() - 0.5) * 0.3,
-  vy: (Math.random() - 0.5) * 0.3,
-  alpha: Math.random() * 0.4 + 0.1,
-  color: Math.random() > 0.6 ? '#00e5c0' : '#6b4fa0',
+  r: Math.random() * 1.2 + 0.2,
+  vx: (Math.random() - 0.5) * 0.25,
+  vy: (Math.random() - 0.5) * 0.25,
+  alpha: Math.random() * 0.3 + 0.05,
+  color: Math.random() > 0.6 ? '#00e5c0' : '#5a3f8a',
 }));
 
 const orbs = [
-  { x: 0.15, y: 0.3,  r: 200, color: '#2a7a55', alpha: 0.12, speed: 0.0003, phase: 0 },
-  { x: 0.85, y: 0.6,  r: 160, color: '#6b4fa0', alpha: 0.15, speed: 0.0005, phase: 1 },
-  { x: 0.5,  y: 0.85, r: 130, color: '#00e5c0', alpha: 0.07, speed: 0.0004, phase: 2 },
+  { x: 0.1,  y: 0.25, r: 220, color: '#1a4a38', alpha: 0.18, speed: 0.0003, phase: 0 },
+  { x: 0.9,  y: 0.7,  r: 180, color: '#5a3f8a', alpha: 0.18, speed: 0.0005, phase: 1 },
+  { x: 0.5,  y: 0.9,  r: 140, color: '#00e5c0', alpha: 0.08, speed: 0.0004, phase: 2 },
 ];
 
 function drawBg() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Only draw if no bg-image is set
+  const bgDiv = document.getElementById('bg-image');
+  const hasImage = getComputedStyle(bgDiv).backgroundImage !== 'none';
+  if (!hasImage) {
+    // draw solid base
+    ctx.fillStyle = '#06080d';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
   orbs.forEach(o => {
-    const cx = o.x * canvas.width  + Math.sin(t * o.speed + o.phase) * 40;
-    const cy = o.y * canvas.height + Math.cos(t * o.speed + o.phase) * 25;
+    const cx = o.x * canvas.width  + Math.sin(t * o.speed + o.phase) * 45;
+    const cy = o.y * canvas.height + Math.cos(t * o.speed + o.phase) * 30;
     const g  = ctx.createRadialGradient(cx, cy, 0, cx, cy, o.r);
     g.addColorStop(0, o.color + Math.round(o.alpha * 255).toString(16).padStart(2,'0'));
     g.addColorStop(1, 'transparent');
     ctx.beginPath(); ctx.arc(cx, cy, o.r, 0, Math.PI*2);
     ctx.fillStyle = g; ctx.fill();
   });
+
   particles.forEach(p => {
     p.vx *= 0.99; p.vy *= 0.99;
     p.x += p.vx; p.y += p.vy;
@@ -718,6 +1025,7 @@ function drawBg() {
     ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill();
     ctx.globalAlpha = 1;
   });
+
   t++;
   requestAnimationFrame(drawBg);
 }
@@ -788,9 +1096,9 @@ function fieldError(inputId, errId, msg) {
 // ── PASSWORD STRENGTH ─────────────────────────────────────────────
 function checkPasswordStrength(pw) {
   let score = 0;
-  if (pw.length >= 8)  score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/[0-9]/.test(pw)) score++;
+  if (pw.length >= 8)        score++;
+  if (/[A-Z]/.test(pw))     score++;
+  if (/[0-9]/.test(pw))     score++;
   if (/[^A-Za-z0-9]/.test(pw)) score++;
 
   const bars   = ['pw-bar-1','pw-bar-2','pw-bar-3','pw-bar-4'];
@@ -808,7 +1116,6 @@ function checkPasswordStrength(pw) {
   lbl.style.color = score >= 3 ? 'var(--success)' : score === 2 ? '#e0a05a' : score === 1 ? 'var(--error)' : 'var(--dim)';
 }
 
-// ── VALIDATE ──────────────────────────────────────────────────────
 function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -820,26 +1127,19 @@ async function doLogin() {
   const pw    = document.getElementById('login-password').value;
 
   let valid = true;
-  if (!email)                  { fieldError('login-email', 'login-email-err', 'Email is required.'); valid = false; }
-  else if (!validateEmail(email)) { fieldError('login-email', 'login-email-err', 'Enter a valid email.'); valid = false; }
-  if (!pw)                     { fieldError('login-password', 'login-pw-err', 'Password is required.'); valid = false; }
+  if (!email)                     { fieldError('login-email',    'login-email-err', 'Email is required.'); valid = false; }
+  else if (!validateEmail(email)) { fieldError('login-email',    'login-email-err', 'Enter a valid email.'); valid = false; }
+  if (!pw)                        { fieldError('login-password', 'login-pw-err',    'Password is required.'); valid = false; }
   if (!valid) return;
 
   setLoading('login-btn', 'login-btn-text', true);
-
   const { data, error } = await db.auth.signInWithPassword({ email, password: pw });
-
   setLoading('login-btn', 'login-btn-text', false, 'Sign In');
 
-  if (error) {
-    showAlert('login-alert', 'error', error.message || 'Login failed. Please try again.');
-    return;
-  }
+  if (error) { showAlert('login-alert', 'error', error.message || 'Login failed. Please try again.'); return; }
 
-  // Check role and redirect
-  const user = data.user;
   showAlert('login-alert', 'success', 'Welcome back, Keeper! Redirecting...');
-  setTimeout(() => redirectByRole(user), 1000);
+  setTimeout(() => redirectByRole(data.user), 1000);
 }
 
 // ── REGISTER ──────────────────────────────────────────────────────
@@ -851,48 +1151,35 @@ async function doRegister() {
   const agreed   = document.getElementById('reg-agree').checked;
 
   let valid = true;
-  if (!username || username.length < 3)  { fieldError('reg-username', 'reg-username-err', 'Username must be at least 3 characters.'); valid = false; }
-  if (!email)                            { fieldError('reg-email', 'reg-email-err', 'Email is required.'); valid = false; }
-  else if (!validateEmail(email))        { fieldError('reg-email', 'reg-email-err', 'Enter a valid email.'); valid = false; }
-  if (!pw || pw.length < 6)             { fieldError('reg-password', 'reg-pw-err', 'Password must be at least 6 characters.'); valid = false; }
+  if (!username || username.length < 3) { fieldError('reg-username', 'reg-username-err', 'Username must be at least 3 characters.'); valid = false; }
+  if (!email)                           { fieldError('reg-email', 'reg-email-err', 'Email is required.'); valid = false; }
+  else if (!validateEmail(email))       { fieldError('reg-email', 'reg-email-err', 'Enter a valid email.'); valid = false; }
+  if (!pw || pw.length < 6)            { fieldError('reg-password', 'reg-pw-err', 'Password must be at least 6 characters.'); valid = false; }
   if (!agreed) { showAlert('register-alert', 'error', 'You must agree to the Terms of Service.'); valid = false; }
   if (!valid) return;
 
   setLoading('register-btn', 'register-btn-text', true);
-
   const { data, error } = await db.auth.signUp({
     email,
     password: pw,
     options: {
-      data: {
-        username,
-        display_name: username,
-        role: 'user',
-      },
+      data: { username, display_name: username, role: 'user' },
       emailRedirectTo: window.location.origin + '/auth.html'
     }
   });
-
   setLoading('register-btn', 'register-btn-text', false, 'Create Account');
 
-  if (error) {
-    showAlert('register-alert', 'error', error.message || 'Registration failed.');
-    return;
-  }
+  if (error) { showAlert('register-alert', 'error', error.message || 'Registration failed.'); return; }
 
-  // Also upsert into public.profiles if table exists
   if (data.user) {
     await db.from('profiles').upsert({
-      id:           data.user.id,
-      username,
-      display_name: username,
-      role:         'user',
-      created_at:   new Date().toISOString(),
+      id: data.user.id, username, display_name: username, role: 'user',
+      created_at: new Date().toISOString(),
     }).select();
   }
 
   if (data.user && !data.session) {
-    showAlert('register-alert', 'success', 'Account created! Check your email to confirm your address before signing in.');
+    showAlert('register-alert', 'success', 'Account created! Check your email to confirm before signing in.');
   } else if (data.session) {
     showAlert('register-alert', 'success', 'Account created! Redirecting...');
     setTimeout(() => redirectByRole(data.user), 1200);
@@ -908,17 +1195,12 @@ async function doForgot() {
   if (!validateEmail(email)){ fieldError('forgot-email', 'forgot-email-err', 'Enter a valid email.'); return; }
 
   setLoading('forgot-btn', 'forgot-btn-text', true);
-
   const { error } = await db.auth.resetPasswordForEmail(email, {
     redirectTo: window.location.origin + '/reset-password.html'
   });
-
   setLoading('forgot-btn', 'forgot-btn-text', false, 'Send Reset Link');
 
-  if (error) {
-    showAlert('forgot-alert', 'error', error.message || 'Could not send reset email.');
-    return;
-  }
+  if (error) { showAlert('forgot-alert', 'error', error.message || 'Could not send reset email.'); return; }
 
   showAlert('forgot-alert', 'success', 'Reset link sent! Check your inbox (and spam folder).');
   document.getElementById('forgot-email').value = '';
@@ -933,38 +1215,25 @@ async function oauthLogin(provider) {
   if (error) showAlert('login-alert', 'error', error.message);
 }
 
-// --- REDIRECT BY ROLE FUNCTION ---
+// ── REDIRECT BY ROLE ──────────────────────────────────────────────
 async function redirectByRole() {
-    // 1. Get the current active session from Supabase
-    const { data: { session }, error: sessionError } = await db.auth.getSession();
+  const { data: { session }, error: sessionError } = await db.auth.getSession();
+  if (!session) return;
 
-    // 2. If there is no session, stop right here.
-    if (!session) return;
+  const { data: profile } = await db
+    .from('profiles')
+    .select('role')
+    .eq('id', session.user.id)
+    .single();
 
-    // 3. Check their role in the profiles table
-    const { data: profile } = await db
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single();
-
-    // 4. Determine their final role
-    const role = profile?.role || session.user.user_metadata?.role || 'user';
-
-    // 5. Redirect based on role
-    if (role === 'admin') {
-      window.location.href = 'admin.html';
-    } else {
-      window.location.href = 'index.html';
-    }
+  const role = profile?.role || session.user.user_metadata?.role || 'user';
+  window.location.href = role === 'admin' ? 'admin.html' : 'index.html';
 }
 
-// ── HANDLE OAUTH CALLBACK & EXISTING SESSION ──────────────────────
+// ── HANDLE EXISTING SESSION ───────────────────────────────────────
 (async () => {
   const { data: { session } } = await db.auth.getSession();
-  if (session?.user) {
-    redirectByRole(session.user);
-  }
+  if (session?.user) redirectByRole(session.user);
 })();
 </script>
 </body>
