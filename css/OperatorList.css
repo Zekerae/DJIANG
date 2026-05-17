@@ -198,37 +198,106 @@ body::before {
 .op-card.card-owned { border-color: rgba(60,200,90,0.32) !important; }
 .op-card.card-owned .card-vignette { background: linear-gradient(180deg, transparent 30%, rgba(0,10,3,0.95) 100%); }
 
-/* --- TRACKER INPUTS --- */
-.card-tracker {
-  display: none; gap: 5px; margin-top: 7px; align-items: center;
+/* --- CARD WRAP (holds card + drawer) --- */
+.card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-self: start; /* prevent grid from stretching it */
 }
-.card-tracker.visible { display: flex; }
 
-/* Skills row wraps into a 2×2 grid */
-.card-tracker-skills {
-  flex-wrap: wrap; gap: 4px; margin-top: 3px;
+/* The op-card inside a wrap loses its own aspect-ratio control — wrap handles height */
+.card-wrap .op-card {
+  position: relative;
+  aspect-ratio: 0.72;
+  width: 100%;
+  flex-shrink: 0;
 }
-.card-tracker-skills .tracker-field {
-  flex: 1 1 calc(50% - 4px); min-width: 0;
-}
-.tracker-field {
-  display: flex; align-items: center; gap: 3px;
-  background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 4px; padding: 3px 6px; cursor: text;
-}
-.tracker-lbl {
-  font-family: 'Rajdhani', sans-serif; font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase; color: var(--dim2); white-space: nowrap;
-}
-.tracker-input {
-  width: 36px; background: transparent; border: none; outline: none;
-  color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700;
-  text-align: center; padding: 0; -moz-appearance: textfield;
-}
-.tracker-input::-webkit-outer-spin-button,
-.tracker-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.tracker-input::placeholder { color: var(--dim); }
 
+/* --- DRAWER --- */
+.card-drawer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.card-drawer.open {
+  max-height: 220px;
+  opacity: 1;
+  pointer-events: all;
+}
+
+.drawer-inner {
+  padding: 12px 14px 14px;
+  background: rgba(12, 13, 18, 0.97);
+  border: 1px solid var(--bord2);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drawer-row { display: flex; align-items: center; gap: 8px; }
+
+.drawer-divider {
+  height: 1px;
+  background: var(--bord);
+}
+
+.drawer-skills {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.drawer-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--bord);
+  border-radius: 5px;
+  padding: 6px 10px;
+  cursor: text;
+}
+.drawer-field:focus-within {
+  border-color: rgba(212,148,58,0.45);
+  background: rgba(212,148,58,0.05);
+}
+
+.drawer-lbl {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--dim2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.drawer-input {
+  width: 36px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--gold2);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: right;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+.drawer-input::-webkit-outer-spin-button,
+.drawer-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.drawer-input::placeholder { color: var(--dim); font-weight: 400; }
+
+/* Level field spans full width */
+.drawer-row .drawer-field { flex: 1; }
+.drawer-row .drawer-input { width: 50px; font-size: 1.05rem; }
 /* --- ROSTER NOTICE (guest users) --- */
 .roster-notice {
   font-family: 'Rajdhani', sans-serif; font-size: 0.72rem; letter-spacing: 1.5px;
