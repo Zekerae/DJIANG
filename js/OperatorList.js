@@ -342,7 +342,7 @@ function applySort() {
 
 searchInput.addEventListener('input', updateFilters);
 
-document.querySelectorAll('.filter-row .pill').forEach(btn => {
+document.querySelectorAll('.filter-row .pill:not(#pill-owned)').forEach(btn => {
   btn.addEventListener('click', () => {
     const groupElement = btn.closest('[data-group]');
     if (!groupElement) return;
@@ -352,6 +352,12 @@ document.querySelectorAll('.filter-row .pill').forEach(btn => {
     else                         { filters[group].add(val);    btn.classList.add('active'); }
     updateFilters();
   });
+});
+
+document.getElementById('pill-owned').addEventListener('click', () => {
+  filterOwned = !filterOwned;
+  document.getElementById('pill-owned').classList.toggle('active', filterOwned);
+  updateFilters();
 });
 
 document.getElementById('clearBtn').addEventListener('click', () => {
@@ -372,15 +378,6 @@ document.getElementById('clearBtn').addEventListener('click', () => {
   if (minEl) { minEl.value = 1; minOut.textContent = '1'; }
   if (maxEl) { maxEl.value = 90; maxOut.textContent = '90'; }
   updateFilters();
-});
-
-// Owned toggle pill
-document.addEventListener('click', e => {
-  if (e.target.id === 'pill-owned') {
-    filterOwned = !filterOwned;
-    e.target.classList.toggle('active', filterOwned);
-    updateFilters();
-  }
 });
 
 // Level range sliders (delegated — elements added after init)
