@@ -1,4 +1,51 @@
 // ==========================================
+// SUPABASE — same project as OperatorList / auth
+// ==========================================
+const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let CURRENT_USER  = null;
+// Cache: { [weapon_id]: { owned, level } }
+let WEAPON_ROSTER = {};
+
+async function loadWeaponRoster() {
+  if (!CURRENT_USER) return;
+  const { data, error } = await db
+    .from('user_weapon_roster')
+    .select('weapon_id, owned, level')
+    .eq('user_id', CURRENT_USER.id);
+  if (error) { console.warn('Weapon roster load error:', error); return; }
+  WEAPON_ROSTER = {};
+  (data || []).forEach(row => { WEAPON_ROSTER[row.weapon_id] = row; });
+}
+
+async function upsertWeaponEntry(weaponId, patch) {
+  if (!CURRENT_USER) return;
+  const existing = WEAPON_ROSTER[weaponId] || { owned: false, level: null };
+  const updated  = { ...existing, ...patch };
+  WEAPON_ROSTER[weaponId] = updated;
+  const { error } = await db.from('user_weapon_roster').upsert({
+    user_id:    CURRENT_USER.id,
+    weapon_id:  weaponId,
+    owned:      updated.owned,
+    level:      updated.level !== null ? parseInt(updated.level) : null,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id,weapon_id' });
+  if (error) console.warn('Weapon roster save error:', error);
+}
+
+function getWeaponEntry(id) {
+  return WEAPON_ROSTER[id] || { owned: false, level: null };
+}
+
+const _wpnDebounce = {};
+function wpnDebounce(key, fn, delay = 600) {
+  clearTimeout(_wpnDebounce[key]);
+  _wpnDebounce[key] = setTimeout(fn, delay);
+}
+
+// ==========================================
 // ASSET DICTIONARY
 // ==========================================
 const STAR_IMAGE = "assets/RarityAssets/StarIcon.png";
@@ -137,6 +184,11 @@ const grid        = document.getElementById('cardGrid');
 const searchInput = document.getElementById('wpnSearch');
 const filters     = { rarity: new Set(), type: new Set(), stat: new Set() };
 let currentSort   = 'rarity';
+let sortDir       = -1;          // -1 = desc, 1 = asc
+let filterOwned      = false;
+let filterLevelMin   = 1;
+let filterLevelMax   = 90;
+let filterLevelActive = false;
 
 // ==========================================
 // CARD BUILDER (portrait style)
@@ -155,44 +207,71 @@ function createCard(w) {
     ? `<div class="stat-row"><span class="stat-label">S2</span><span class="stat-val">${w.stat2}</span></div>`
     : '';
 
-  // ── FIX: id is embedded directly in the card HTML so it's always available ──
+  const entry   = getWeaponEntry(w.id);
+  const isOwned = !!entry.owned;
+  const drawerVisible = isOwned ? ' open' : '';
+
   return `
-    <div class="wpn-card rarity-${w.rarity} bg-${typeKey}"
+    <div class="wpn-card-wrap${isOwned ? ' wpn-wrap-owned' : ''}"
+         data-id="${w.id}"
          data-name="${w.name.toLowerCase()}"
          data-rarity="${w.rarity}"
          data-type="${w.type}"
          data-atk="${w.base_atk || 0}"
          data-tags="${w._tags.join('|')}"
-         data-id="${w.id}">
+         data-owned="${isOwned}"
+         data-level="${entry.level || ''}">
 
-      <div class="card-placeholder">${w.name.charAt(0)}</div>
-      ${imgTag}
-      <div class="card-vignette"></div>
+      <div class="wpn-card rarity-${w.rarity} bg-${typeKey}${isOwned ? ' card-owned' : ''}"
+           onclick="cardNavigate(event, '${w.id}')">
 
-      <div class="card-type-badge badge-${typeKey}">
-        ${typeIconPath ? `<img src="${typeIconPath}" class="badge-icon" alt="${w.type}">` : ''}
-        ${w.type}
-      </div>
+        <div class="card-placeholder">${w.name.charAt(0)}</div>
+        ${imgTag}
+        <div class="card-vignette"></div>
 
-      <div class="card-info">
-        <div class="card-name">${w.name}</div>
-        <div class="card-stats">
-          <div class="stat-row atk-row">
-            <span class="stat-label">ATK</span>
-            <span class="stat-val">${atkDisplay}</span>
-          </div>
-          ${w.stat1 && w.stat1 !== '—' ? `<div class="stat-row"><span class="stat-label">S1</span><span class="stat-val">${w.stat1}</span></div>` : ''}
-          ${stat2Row}
+        <div class="owned-badge${isOwned ? ' owned' : ''}"
+             onclick="toggleOwned(event, '${w.id}')"
+             title="${isOwned ? 'Owned — click to unmark' : 'Mark as owned'}">
+          <span class="owned-check">✓</span>
         </div>
-        <div class="card-stars">${stars}</div>
+
+        <div class="card-type-badge badge-${typeKey}">
+          ${typeIconPath ? `<img src="${typeIconPath}" class="badge-icon" alt="${w.type}">` : ''}
+          ${w.type}
+        </div>
+
+        <div class="card-info">
+          <div class="card-name">${w.name}</div>
+          <div class="card-stats">
+            <div class="stat-row atk-row">
+              <span class="stat-label">ATK</span>
+              <span class="stat-val">${atkDisplay}</span>
+            </div>
+            ${w.stat1 && w.stat1 !== '—' ? `<div class="stat-row"><span class="stat-label">S1</span><span class="stat-val">${w.stat1}</span></div>` : ''}
+            ${stat2Row}
+          </div>
+          <div class="card-stars">${stars}</div>
+        </div>
+
+        <div class="passive-dropdown">
+          <div class="passive-label">Passive</div>
+          <div class="passive-text">${w.passive || 'No data available.'}</div>
+        </div>
+
+        ${w.passive ? `<button class="passive-btn" title="Toggle passive" aria-label="Toggle passive">▾</button>` : ''}
       </div>
 
-      <div class="passive-dropdown">
-        <div class="passive-label">Passive</div>
-        <div class="passive-text">${w.passive || 'No data available.'}</div>
+      <div class="wpn-drawer${drawerVisible}">
+        <div class="drawer-inner">
+          <label class="drawer-field">
+            <span class="drawer-lbl">Level</span>
+            <input class="drawer-input" type="number" min="1" max="90" placeholder="—"
+              value="${entry.level || ''}"
+              oninput="saveWeaponLevel(event, '${w.id}')">
+          </label>
+        </div>
       </div>
 
-      ${w.passive ? `<button class="passive-btn" title="Toggle passive" aria-label="Toggle passive">▾</button>` : ''}
     </div>
   `;
 }
@@ -204,15 +283,22 @@ function updateFilters() {
   const query = searchInput.value.toLowerCase();
   let visible = 0;
 
-  document.querySelectorAll('.wpn-card').forEach(card => {
-    const tags = card.dataset.tags ? card.dataset.tags.split('|') : [];
-    const ok =
-      card.dataset.name.includes(query) &&
-      (filters.rarity.size === 0 || filters.rarity.has(card.dataset.rarity)) &&
-      (filters.type.size   === 0 || filters.type.has(card.dataset.type)) &&
-      (filters.stat.size   === 0 || [...filters.stat].every(t => tags.includes(t)));
+  document.querySelectorAll('.wpn-card-wrap').forEach(wrap => {
+    const tags = wrap.dataset.tags ? wrap.dataset.tags.split('|') : [];
+    const matchesSearch  = wrap.dataset.name.includes(query);
+    const matchesRarity  = filters.rarity.size === 0 || filters.rarity.has(wrap.dataset.rarity);
+    const matchesType    = filters.type.size   === 0 || filters.type.has(wrap.dataset.type);
+    const matchesStat    = filters.stat.size   === 0 || [...filters.stat].every(t => tags.includes(t));
+    const matchesOwned   = !filterOwned || wrap.dataset.owned === 'true';
 
-    card.classList.toggle('hidden', !ok);
+    let matchesLevel = true;
+    if (filterLevelActive) {
+      const lv = parseInt(wrap.dataset.level);
+      matchesLevel = !isNaN(lv) && lv >= filterLevelMin && lv <= filterLevelMax;
+    }
+
+    const ok = matchesSearch && matchesRarity && matchesType && matchesStat && matchesOwned && matchesLevel;
+    wrap.classList.toggle('hidden', !ok);
     if (ok) visible++;
   });
 
@@ -227,65 +313,138 @@ function updateFilters() {
 }
 
 function applySort() {
-  const cards = Array.from(grid.querySelectorAll('.wpn-card'));
-  cards.sort((a, b) => {
+  const wraps = Array.from(grid.querySelectorAll('.wpn-card-wrap'));
+  const d = sortDir;
+
+  wraps.sort((a, b) => {
     if (currentSort === 'rarity') {
-      const diff = parseInt(b.dataset.rarity) - parseInt(a.dataset.rarity);
+      const diff = (parseInt(b.dataset.rarity) - parseInt(a.dataset.rarity)) * d;
       return diff !== 0 ? diff : a.dataset.name.localeCompare(b.dataset.name);
     }
-    if (currentSort === 'name') return a.dataset.name.localeCompare(b.dataset.name);
-    if (currentSort === 'atk')  return parseInt(b.dataset.atk) - parseInt(a.dataset.atk);
+    if (currentSort === 'name') return a.dataset.name.localeCompare(b.dataset.name) * d;
+    if (currentSort === 'atk')  return (parseInt(b.dataset.atk) - parseInt(a.dataset.atk)) * d;
+    if (currentSort === 'level') {
+      const lA = parseInt(a.dataset.level) || 0;
+      const lB = parseInt(b.dataset.level) || 0;
+      if (lA !== lB) return (lB - lA) * d;
+      return a.dataset.name.localeCompare(b.dataset.name);
+    }
     return 0;
   });
-  cards.forEach(c => grid.appendChild(c));
+  wraps.forEach(c => grid.appendChild(c));
 }
 
 // ==========================================
-// INIT
+// INIT — auth → load roster → render
 // ==========================================
-grid.innerHTML = WEAPONS.map(createCard).join('');
-applySort();
+async function init() {
+  const { data: { session } } = await db.auth.getSession();
+  CURRENT_USER = session?.user || null;
 
-// Inject icons into type filter pills
-document.querySelectorAll('.filter-row .pill').forEach(pill => {
-  const groupEl = pill.closest('[data-group]');
-  if (!groupEl) return;
-  const group = groupEl.dataset.group;
-  const val   = pill.dataset.val;
-  let iconPath = '';
-  if (group === 'type')   iconPath = WEAPON_ASSETS.types[val];
-  if (group === 'rarity') iconPath = STAR_IMAGE;
-  if (iconPath) {
-    pill.innerHTML = `<img src="${iconPath}" class="pill-icon" alt=""> ` + pill.innerHTML;
+  if (CURRENT_USER) await loadWeaponRoster();
+
+  grid.innerHTML = WEAPONS.map(createCard).join('');
+  applySort();
+
+  // Inject icons into type / rarity filter pills
+  document.querySelectorAll('.filter-row .pill').forEach(pill => {
+    const groupEl = pill.closest('[data-group]');
+    if (!groupEl) return;
+    const group = groupEl.dataset.group;
+    const val   = pill.dataset.val;
+    let iconPath = '';
+    if (group === 'type')   iconPath = WEAPON_ASSETS.types[val];
+    if (group === 'rarity') iconPath = STAR_IMAGE;
+    if (iconPath) {
+      pill.innerHTML = `<img src="${iconPath}" class="pill-icon" alt=""> ` + pill.innerHTML;
+    }
+  });
+
+  if (!CURRENT_USER) {
+    const notice = document.createElement('div');
+    notice.className = 'roster-notice';
+    notice.style.cssText = 'font-size:12px;color:var(--dim2);padding:6px 0 14px;text-align:center';
+    notice.innerHTML = `<a href="auth.html" style="color:var(--gold2)">Sign in</a> to track your weapon collection across devices.`;
+    document.querySelector('.results-row')?.prepend(notice);
   }
-});
+}
 
 // ==========================================
-// CARD CLICK — passive toggle OR navigate
+// OWNED TOGGLE
+// ==========================================
+async function toggleOwned(event, id) {
+  event.stopPropagation();
+  if (!CURRENT_USER) { alert('Please log in to track your weapons.'); return; }
+
+  const entry    = getWeaponEntry(id);
+  const newOwned = !entry.owned;
+  await upsertWeaponEntry(id, { owned: newOwned });
+
+  const wrap   = document.querySelector(`.wpn-card-wrap[data-id="${id}"]`);
+  if (!wrap) return;
+  const card   = wrap.querySelector('.wpn-card');
+  const drawer = wrap.querySelector('.wpn-drawer');
+  const badge  = wrap.querySelector('.owned-badge');
+
+  card.classList.toggle('card-owned', newOwned);
+  wrap.classList.toggle('wpn-wrap-owned', newOwned);
+  wrap.dataset.owned = newOwned;
+  drawer.classList.toggle('open', newOwned);
+  badge.classList.toggle('owned', newOwned);
+  badge.title = newOwned ? 'Owned — click to unmark' : 'Mark as owned';
+
+  if (filterOwned || filterLevelActive) updateFilters();
+  if (currentSort === 'level') applySort();
+}
+
+// ==========================================
+// LEVEL SAVE
+// ==========================================
+function saveWeaponLevel(event, id) {
+  if (!CURRENT_USER) return;
+  const input = event.target;
+  let val = parseInt(input.value);
+  if (isNaN(val) || input.value === '') { val = null; }
+  else { val = Math.min(90, Math.max(1, val)); input.value = val; }
+
+  const wrap = document.querySelector(`.wpn-card-wrap[data-id="${id}"]`);
+  if (wrap) wrap.dataset.level = val !== null ? String(val) : '';
+
+  if (currentSort === 'level') applySort();
+  if (filterLevelActive) updateFilters();
+
+  wpnDebounce('level-' + id, () => upsertWeaponEntry(id, { level: val }));
+}
+
+// ==========================================
+// NAVIGATE (card click — skip badge / drawer / passive)
+// ==========================================
+function cardNavigate(event, id) {
+  if (event.target.closest('.owned-badge')) return;
+  if (event.target.closest('.passive-btn')) return;
+  if (event.target.closest('.passive-dropdown')) return;
+  window.location.href = `WeaponIntroduction.html?weapon=${id}`;
+}
+
+// ==========================================
+// CARD CLICK DELEGATION (passive toggle)
 // ==========================================
 grid.addEventListener('click', e => {
-  // Passive toggle button — open/close dropdown, do NOT navigate
   const btn = e.target.closest('.passive-btn');
   if (btn) {
     e.stopPropagation();
-    const card  = btn.closest('.wpn-card');
+    const card   = btn.closest('.wpn-card');
     const isOpen = card.classList.contains('passive-open');
     document.querySelectorAll('.wpn-card.passive-open').forEach(c => c.classList.remove('passive-open'));
     if (!isOpen) card.classList.add('passive-open');
     return;
   }
-
-  // Clicks inside the open passive dropdown — don't navigate
   if (e.target.closest('.passive-dropdown')) return;
-
-  // Everything else on a card — navigate to WeaponIntroduction
-  const card = e.target.closest('.wpn-card');
-  if (card && card.dataset.id) {
-    window.location.href = `WeaponIntroduction.html?weapon=${card.dataset.id}`;
-  }
+  if (e.target.closest('.owned-badge')) return;
+  if (e.target.closest('.wpn-drawer')) return;
 });
 
-// Close passive dropdown on outside click
+// Close passive on outside click
 document.addEventListener('click', e => {
   if (!e.target.closest('.wpn-card')) {
     document.querySelectorAll('.wpn-card.passive-open').forEach(c => c.classList.remove('passive-open'));
@@ -298,30 +457,59 @@ document.addEventListener('click', e => {
 searchInput.addEventListener('input', updateFilters);
 
 // ==========================================
-// FILTER PILLS (rarity + type)
+// FILTER PILLS (delegated — handles owned pill too)
 // ==========================================
-document.querySelectorAll('.filter-row .pill:not(.stat-tag)').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const groupEl = btn.closest('[data-group]');
-    if (!groupEl) return;
-    const group = groupEl.dataset.group;
-    const val   = btn.dataset.val;
-    if (filters[group].has(val)) { filters[group].delete(val); btn.classList.remove('active'); }
-    else                         { filters[group].add(val);    btn.classList.add('active'); }
+document.addEventListener('click', e => {
+  const pill = e.target.closest('.filter-row .pill');
+  if (!pill) return;
+
+  // Owned pill
+  if (pill.id === 'pill-owned') {
+    filterOwned = !filterOwned;
+    pill.classList.toggle('active', filterOwned);
     updateFilters();
-  });
+    return;
+  }
+
+  // Stat tag pills
+  if (pill.classList.contains('stat-tag')) {
+    const val = pill.dataset.val;
+    if (filters.stat.has(val)) { filters.stat.delete(val); pill.classList.remove('active'); }
+    else                       { filters.stat.add(val);    pill.classList.add('active'); }
+    updateFilters();
+    return;
+  }
+
+  // Standard group pills (rarity, type)
+  const groupEl = pill.closest('[data-group]');
+  if (!groupEl) return;
+  const group = groupEl.dataset.group;
+  const val   = pill.dataset.val;
+  if (filters[group].has(val)) { filters[group].delete(val); pill.classList.remove('active'); }
+  else                         { filters[group].add(val);    pill.classList.add('active'); }
+  updateFilters();
 });
 
 // ==========================================
-// STAT TAG PILLS
+// LEVEL RANGE SLIDERS
 // ==========================================
-document.querySelectorAll('.pill.stat-tag').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const val = btn.dataset.val;
-    if (filters.stat.has(val)) { filters.stat.delete(val); btn.classList.remove('active'); }
-    else                       { filters.stat.add(val);    btn.classList.add('active'); }
+document.addEventListener('input', e => {
+  if (e.target.id === 'filter-lv-min' || e.target.id === 'filter-lv-max') {
+    const minEl  = document.getElementById('filter-lv-min');
+    const maxEl  = document.getElementById('filter-lv-max');
+    const minOut = document.getElementById('filter-lv-min-out');
+    const maxOut = document.getElementById('filter-lv-max-out');
+    filterLevelMin = parseInt(minEl.value);
+    filterLevelMax = parseInt(maxEl.value);
+    if (filterLevelMin > filterLevelMax) {
+      if (e.target.id === 'filter-lv-min') { filterLevelMin = filterLevelMax; minEl.value = filterLevelMin; }
+      else                                 { filterLevelMax = filterLevelMin; maxEl.value = filterLevelMax; }
+    }
+    minOut.textContent = filterLevelMin;
+    maxOut.textContent = filterLevelMax;
+    filterLevelActive = !(filterLevelMin === 1 && filterLevelMax === 90);
     updateFilters();
-  });
+  }
 });
 
 // ==========================================
@@ -330,18 +518,38 @@ document.querySelectorAll('.pill.stat-tag').forEach(btn => {
 document.getElementById('clearBtn').addEventListener('click', () => {
   searchInput.value = '';
   filters.rarity.clear(); filters.type.clear(); filters.stat.clear();
+  filterOwned = false;
+  filterLevelActive = false; filterLevelMin = 1; filterLevelMax = 90;
   document.querySelectorAll('.filter-row .pill').forEach(b => b.classList.remove('active'));
+  const minEl = document.getElementById('filter-lv-min');
+  const maxEl = document.getElementById('filter-lv-max');
+  if (minEl) { minEl.value = 1;  document.getElementById('filter-lv-min-out').textContent = '1'; }
+  if (maxEl) { maxEl.value = 90; document.getElementById('filter-lv-max-out').textContent = '90'; }
   updateFilters();
 });
 
 // ==========================================
-// SORT BUTTONS
+// SORT BUTTONS — with direction toggle + arrow
 // ==========================================
 document.querySelectorAll('.sort-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentSort = btn.dataset.sort;
+    if (currentSort === btn.dataset.sort) {
+      sortDir *= -1;
+    } else {
+      document.querySelectorAll('.sort-btn').forEach(b => {
+        b.classList.remove('active');
+        b.querySelector('.sort-arrow')?.remove();
+      });
+      btn.classList.add('active');
+      currentSort = btn.dataset.sort;
+      sortDir = -1;
+    }
+    const existing = btn.querySelector('.sort-arrow');
+    if (existing) existing.remove();
+    const arrow = document.createElement('span');
+    arrow.className = 'sort-arrow';
+    arrow.textContent = sortDir === -1 ? ' ↓' : ' ↑';
+    btn.appendChild(arrow);
     applySort();
   });
 });
@@ -364,3 +572,5 @@ window.addEventListener('scroll', () => {
 filterToggleBtn.addEventListener('click', () => {
   filterZone.classList.toggle('dropdown-open');
 });
+
+init();
