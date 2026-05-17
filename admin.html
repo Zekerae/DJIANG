@@ -19,8 +19,7 @@
 }
 @font-face {
   font-family: 'HarmonyOS Sans';
-  src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff2') format('woff2'),
-       url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff') format('woff');
+  src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff') format('woff');
   font-weight: 700 900;
   font-style: normal;
   font-display: swap;
@@ -205,6 +204,27 @@ body::after {
   color: var(--teal);
   border: 1px solid rgba(0,229,192,0.2);
 }
+/* ── SIDEBAR DROPDOWN ── */
+.sidebar-sub-menu { 
+  max-height: 0; 
+  overflow: hidden; 
+  transition: max-height 0.3s ease; 
+  background: rgba(0,0,0,0.2); 
+}
+.sidebar-sub-menu.open { 
+  max-height: 250px; 
+}
+.sidebar-sub-item { 
+  padding: 10px 20px 10px 46px; 
+  color: var(--dim2); 
+  font-family: var(--font-body); 
+  font-size: 12px; 
+  cursor: pointer; 
+  transition: all 0.15s; 
+  border-left: 2px solid transparent; 
+}
+.sidebar-sub-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.sidebar-sub-item.active { color: var(--teal); border-left-color: var(--teal); background: rgba(0,229,192,0.04); }
 
 /* ── MAIN ── */
 .main { flex: 1; padding: 28px 32px; overflow-x: hidden; }
@@ -353,6 +373,9 @@ td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
 .role-badge.admin   { background: rgba(212,148,58,0.12); color: var(--gold2); border: 1px solid rgba(212,148,58,0.3); }
 .role-badge.user    { background: rgba(0,229,192,0.07);  color: var(--teal);  border: 1px solid rgba(0,229,192,0.2); }
 .role-badge.banned  { background: rgba(224,90,90,0.1);   color: #f07070;      border: 1px solid rgba(224,90,90,0.3); }
+
+/* ADD THIS NEW LINE FOR THE ENDMINISTRATOR BADGE */
+.role-badge.super-admin { background: #000000; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
 
 /* Rarity stars */
 .stars { color: var(--gold2); font-size: 11px; letter-spacing: 1px; }
@@ -681,7 +704,20 @@ td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
         Weapons
         <span class="sidebar-badge" id="sidebar-wpn-count">—</span>
       </div>
-    </div>
+      
+      <div class="sidebar-item" onclick="toggleSubMenu('home-editor-menu')" id="nav-home-editor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        Homepage Editor
+        <span style="margin-left:auto; font-size:10px; display:inline-block; transition:transform 0.3s" id="home-editor-chevron">▼</span>
+      </div>
+      <div class="sidebar-sub-menu" id="home-editor-menu">
+        <div class="sidebar-sub-item" onclick="showHpPanel('homepage_events', this)">Operations & Events</div>
+        <div class="sidebar-sub-item" onclick="showHpPanel('homepage_operators', this)">Featured Operators</div>
+        <div class="sidebar-sub-item" onclick="showHpPanel('homepage_weapons', this)">3D Weapon Carousel</div>
+        <div class="sidebar-sub-item" onclick="showHpPanel('homepage_infos', this)">Field Intelligence</div>
+        <div class="sidebar-sub-item" onclick="showHpPanel('site_config', this)">Site Config & Footer</div>
+      </div>
+      </div>
 
     <div class="sidebar-section">
       <div class="sidebar-label">Management</div>
@@ -871,6 +907,28 @@ td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
         </div>
       </div>
     </div>
+    <div class="panel" id="panel-hp-editor">
+      <div class="page-header">
+        <div>
+          <h1 id="hp-page-title">Operations & Events</h1>
+          <div class="sub">Manage front-page showcase content dynamically</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" onclick="openHpModal()"><span>+ Add New Item</span></button>
+        </div>
+      </div>
+
+      <div class="table-card" style="overflow-x:auto">
+        <div class="table-header">
+          <div class="table-title" id="hp-table-subtitle">Current Items</div>
+          <button class="btn-secondary" onclick="hpLoadData()">↺ Refresh</button>
+        </div>
+        <table style="width: 100%;">
+          <thead id="hp-table-head"></thead>
+          <tbody id="hp-table-body"></tbody>
+        </table>
+      </div>
+    </div>
 
   </div></div><div class="modal-overlay" id="invite-modal" onclick="if(event.target===this) closeModal('invite-modal')">
   <div class="modal small-modal">
@@ -1040,6 +1098,22 @@ td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
   </div>
 </div>
 
+<div class="modal-overlay" id="hp-modal" onclick="if(event.target===this) closeModal('hp-modal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('hp-modal')">✕</button>
+    <div class="modal-title" id="hp-modal-title">Edit Item</div>
+    <div class="modal-sub">Data syncs directly to index.html.</div>
+
+    <div id="hp-modal-form" class="form-grid cols-1" style="max-height: 55vh; overflow-y: auto; padding-right: 10px; margin-bottom: 20px;">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('hp-modal')">Cancel</button>
+      <button class="btn-primary" id="btn-hp-save" onclick="saveHpData()"><span>Save Changes</span></button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="wpn-modal" onclick="if(event.target===this) closeModal('wpn-modal')">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('wpn-modal')">✕</button>
@@ -1158,466 +1232,785 @@ td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* ── GLOBAL STATE ── */
-let allUsers     = [];
-let allOperators = [];
-let allWeapons   = [];
-let currentUser  = null;
-let pendingAction = null;
-let editingOpId   = null;
-let editingWpnId  = null;
-
-let roleFilter = 'all';
-let opFilters  = { rarity: 'all' };
-let wpnFilters = { type: 'all' };
-
-/* ════════════════════════════════════
-   AUTH & GENERAL
-════════════════════════════════════ */
-async function authGuard() {
-  const { data: { session } } = await db.auth.getSession();
-  if (!session?.user) { window.location.href = 'auth.html'; return null; }
-
-  const user = session.user;
-  const { data: profile } = await db.from('profiles').select('role,username,display_name').eq('id', user.id).single();
-  const role = profile?.role || user.user_metadata?.role || 'user';
-
-  if (role !== 'admin') {
-    toast('error', 'Access denied. Admin role required.');
-    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
-    return null;
+  const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  
+  /* ── GLOBAL STATE ── */
+  let allUsers      = [];
+  let allOperators  = [];
+  let allWeapons    = [];
+  let currentUser   = null;
+  let pendingAction = null;
+  let editingOpId   = null;
+  let editingWpnId  = null;
+  
+  let roleFilter = 'all';
+  let opFilters  = { rarity: 'all' };
+  let wpnFilters = { type: 'all' };
+  
+  /* ════════════════════════════════════
+     AUTH GUARD & SIGN OUT
+  ════════════════════════════════════ */
+  async function authGuard() {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session?.user) { window.location.href = 'auth.html'; return null; }
+  
+    const user = session.user;
+    const { data: profile } = await db.from('profiles').select('role,username,display_name').eq('id', user.id).single();
+    const role = profile?.role || user.user_metadata?.role || 'user';
+  
+    if (role !== 'admin' && role !== 'super_admin') {
+      toast('error', 'Access denied. Supervisor or Endministrator role required.');
+      setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+      return null;
+    }
+  
+    currentUser = { ...user, profile, role }; 
+  
+    const displayName = profile?.display_name || profile?.username || user.email?.split('@')[0] || 'Admin';
+    document.getElementById('topbar-name').textContent = displayName;
+    document.getElementById('topbar-avatar').textContent = displayName[0].toUpperCase();
+    
+    const topbarRoleEl = document.querySelector('.user-role');
+    if (topbarRoleEl) topbarRoleEl.textContent = role === 'super_admin' ? 'Endministrator' : 'Supervisor';
+  
+    return currentUser;
   }
-
-  currentUser = { ...user, profile };
-  const displayName = profile?.display_name || profile?.username || user.email?.split('@')[0] || 'Admin';
-  document.getElementById('topbar-name').textContent = displayName;
-  document.getElementById('topbar-avatar').textContent = displayName[0].toUpperCase();
-  return user;
-}
-
-async function signOut() {
-  await db.auth.signOut();
-  window.location.href = 'auth.html';
-}
-
-function toast(type, msg) {
-  const c = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.textContent = msg;
-  c.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3500);
-}
-
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function confirmAction() { closeModal('confirm-modal'); pendingAction?.(); pendingAction = null; }
-
-function showPanel(name) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
-  document.getElementById('panel-' + name)?.classList.add('active');
-  document.getElementById('nav-' + name)?.classList.add('active');
-
-  if (name === 'users')  renderUsersTable();
-  if (name === 'admins') renderAdminsTable();
-}
-
-function fmtDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
-function gv(id) { return document.getElementById(id)?.value?.trim() || ''; }
-function sv(id, val) { const el = document.getElementById(id); if (el) el.value = val ?? ''; }
-
-/* ════════════════════════════════════
-   USER MANAGEMENT
-════════════════════════════════════ */
-async function loadProfiles() {
-  const { data, error } = await db.from('profiles').select('*').order('created_at', { ascending: false });
-  if (error) { toast('info', 'Profiles table not found. Showing auth metadata only.'); return []; }
-  return data || [];
-}
-
-async function refreshAll() {
-  allUsers = await loadProfiles();
-  updateStats();
-  renderRecentUsers();
-  document.getElementById('sidebar-user-count').textContent = allUsers.length;
-}
-
-function updateStats() {
-  const total  = allUsers.length;
-  const admins = allUsers.filter(u => u.role === 'admin').length;
-  const banned = allUsers.filter(u => u.role === 'banned').length;
-  const users  = total - admins - banned;
-  document.getElementById('stat-total').textContent  = total;
-  document.getElementById('stat-admins').textContent = admins;
-  document.getElementById('stat-users').textContent  = users;
-  document.getElementById('stat-banned').textContent = banned;
-}
-
-function userRow(u, showActions = true) {
-  const name  = u.display_name || u.username || u.email?.split('@')[0] || 'Unknown';
-  const email = u.email || '—';
-  const role  = u.role || 'user';
-  const roleClass = role === 'admin' ? 'admin' : role === 'banned' ? 'banned' : 'user';
-  const initial = name[0]?.toUpperCase() || '?';
-
-  const actions = showActions ? `
-    <td>
-      <div class="action-row">
-        ${role !== 'admin'  ? `<button class="btn-action promote" onclick="changeRole('${u.id}','admin','${name}')">Promote</button>` : ''}
-        ${role === 'admin'  ? `<button class="btn-action demote"  onclick="changeRole('${u.id}','user','${name}')">Demote</button>` : ''}
-        ${role !== 'banned' ? `<button class="btn-action ban"     onclick="banUser('${u.id}','${name}')">Ban</button>` : ''}
-        ${role === 'banned' ? `<button class="btn-action unban"   onclick="changeRole('${u.id}','user','${name}')">Unban</button>` : ''}
-        <button class="btn-action delete" onclick="deleteUser('${u.id}','${name}')">Delete</button>
-      </div>
-    </td>` : '<td>—</td>';
-
-  return `<tr>
-    <td>
-      <div class="user-cell">
-        <div class="mini-avatar ${roleClass}">${initial}</div>
-        <div><div class="cell-name">${name}</div><div class="cell-email">${email}</div></div>
-      </div>
-    </td>
-    <td><span class="role-badge ${roleClass}">${role.toUpperCase()}</span></td>
-    <td style="color:var(--dim2);font-size:12px">${fmtDate(u.created_at)}</td>
-    ${actions}
-  </tr>`;
-}
-
-function renderRecentUsers() {
-  const recent = allUsers.slice(0, 8);
-  const html = recent.length === 0
-    ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No users found</div></div>`
-    : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${recent.map(u => userRow(u)).join('')}</tbody></table>
-       <div class="pagination"><div class="pagination-info">Showing ${recent.length} of ${allUsers.length} users</div><button class="btn-secondary" onclick="showPanel('users')">View All →</button></div>`;
-  document.getElementById('recent-users-container').innerHTML = html;
-}
-
-function renderUsersTable() {
-  const query  = (document.getElementById('user-search')?.value || '').toLowerCase();
-  let filtered = allUsers;
-  if (roleFilter !== 'all') filtered = filtered.filter(u => (u.role || 'user') === roleFilter);
-  if (query) filtered = filtered.filter(u => (u.display_name||'').toLowerCase().includes(query) || (u.username||'').toLowerCase().includes(query) || (u.email||'').toLowerCase().includes(query));
-
-  const html = filtered.length === 0
-    ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No matching users</div></div>`
-    : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${filtered.map(u => userRow(u)).join('')}</tbody></table>
-       <div class="pagination"><div class="pagination-info">Showing ${filtered.length} of ${allUsers.length} total</div></div>`;
-  document.getElementById('users-table-container').innerHTML = html;
-}
-
-function renderAdminsTable() {
-  const admins = allUsers.filter(u => u.role === 'admin');
-  const html = admins.length === 0
-    ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No admin accounts found</div></div>`
-    : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${admins.map(u => userRow(u)).join('')}</tbody></table>
-       <div class="pagination"><div class="pagination-info">${admins.length} admin(s)</div></div>`;
-  document.getElementById('admins-table-container').innerHTML = html;
-}
-
-function setRoleFilter(role) {
-  roleFilter = role;
-  document.querySelectorAll('#role-filter .filter-pill').forEach(p => p.classList.toggle('active', p.dataset.role === role));
-  renderUsersTable();
-}
-
-function filterUsers() { renderUsersTable(); }
-
-async function changeRole(id, newRole, name) {
-  const { error } = await db.from('profiles').update({ role: newRole }).eq('id', id);
-  if (error) { toast('error', 'Failed: ' + error.message); return; }
-  const u = allUsers.find(u => u.id === id);
-  if (u) u.role = newRole;
-  toast('success', `${name} → ${newRole.toUpperCase()}`);
-  updateStats(); renderRecentUsers(); renderUsersTable(); renderAdminsTable();
-}
-
-function banUser(id, name) {
-  pendingAction = () => changeRole(id, 'banned', name);
-  document.getElementById('confirm-title').textContent = 'Ban User';
-  document.getElementById('confirm-sub').textContent = `Ban "${name}"? They will lose access to the site.`;
-  openModal('confirm-modal');
-}
-
-function deleteUser(id, name) {
-  pendingAction = async () => {
-    const { error } = await db.from('profiles').delete().eq('id', id);
-    if (error) { toast('error', 'Failed: ' + error.message); return; }
-    allUsers = allUsers.filter(u => u.id !== id);
-    toast('success', `${name} deleted.`);
-    updateStats(); refreshAll();
-  };
-  document.getElementById('confirm-title').textContent = 'Delete User';
-  document.getElementById('confirm-sub').textContent = `Permanently delete "${name}"? This cannot be undone.`;
-  openModal('confirm-modal');
-}
-
-function openInviteModal() { document.getElementById('invite-email').value = ''; openModal('invite-modal'); }
-
-async function doInvite() {
-  const email = document.getElementById('invite-email').value.trim();
-  const role  = document.getElementById('invite-role').value;
-  if (!email) { toast('error', 'Enter an email address.'); return; }
-  const { error } = await db.auth.signInWithOtp({ email, options: { data: { role }, emailRedirectTo: window.location.origin + '/auth.html' } });
-  closeModal('invite-modal');
-  if (error) { toast('error', 'Failed: ' + error.message); return; }
-  toast('success', `Invite sent to ${email}`);
-}
-
-/* ════════════════════════════════════
-   CONTENT MANAGEMENT (OP & WPN)
-════════════════════════════════════ */
-function starsHTML(r) {
-  const n = parseInt(r) || 0;
-  const cls = n === 6 ? 'r6' : n === 5 ? 'r5' : n === 4 ? 'r4' : 'r3';
-  return `<span class="stars ${cls}">${'★'.repeat(n)}</span>`;
-}
-function elementTag(el) {
-  if (!el) return '';
-  const key = el.toLowerCase();
-  const cls = ['heat','cryo','electric','physical','nature'].includes(key) ? `tag-${key}` : 'tag-default';
-  return `<span class="tag ${cls}">${el}</span>`;
-}
-function classTag(cl) { return cl ? `<span class="tag tag-default">${cl}</span>` : ''; }
-
-function setOpFilter(key, val, btn) {
-  opFilters[key] = val;
-  btn.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  renderOperators();
-}
-function setWpnFilter(key, val, btn) {
-  wpnFilters[key] = val;
-  btn.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  renderWeapons();
-}
-
-/* ── OPERATORS ── */
-async function loadOperators() {
-  document.getElementById('op-table-container').innerHTML = '<div class="table-loading"><div class="spinner"></div></div>';
-  const { data, error } = await db.from('characters').select('*').order('rarity', { ascending: false });
-  if (error) { toast('error', 'Could not load characters.'); allOperators = []; } 
-  else { allOperators = data || []; }
-  updateOpStats(); renderOperators();
-  document.getElementById('sidebar-op-count').textContent = allOperators.length;
-}
-
-function updateOpStats() {
-  document.getElementById('op-stat-total').textContent = allOperators.length;
-  document.getElementById('op-stat-6').textContent = allOperators.filter(o => String(o.rarity) === '6').length;
-  document.getElementById('op-stat-5').textContent = allOperators.filter(o => String(o.rarity) === '5').length;
-  document.getElementById('op-stat-4').textContent = allOperators.filter(o => String(o.rarity) === '4').length;
-}
-
-function renderOperators() {
-  const q = (document.getElementById('op-search')?.value || '').toLowerCase();
-  let list = allOperators;
-  if (opFilters.rarity !== 'all') list = list.filter(o => String(o.rarity) === opFilters.rarity);
-  if (q) list = list.filter(o => (o.name||'').toLowerCase().includes(q) || (o.class||'').toLowerCase().includes(q) || (o.element||'').toLowerCase().includes(q));
-
-  if (list.length === 0) { document.getElementById('op-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No operators found</div></div>'; return; }
-
-  const rows = list.map(o => `
-    <tr>
-      <td><div class="cell-main">${o.name || '—'}</div><div class="cell-sub">${o.character_key || ''}</div></td>
-      <td>${starsHTML(o.rarity)}</td><td>${classTag(o.class)}</td><td>${elementTag(o.element)}</td>
-      <td style="color:var(--dim2);font-size:12px">${o.weapon_type || '—'}</td>
-      <td>${o.tier ? `<span class="tag tag-default">${o.tier}</span>` : '<span style="color:var(--dim)">—</span>'}</td>
-      <td>
-        <div class="action-row">
-          <button class="btn-action edit"   onclick="editOperator('${o.id}')">Edit</button>
-          <button class="btn-action delete" onclick="deleteOperator('${o.id}','${(o.name||'').replace(/'/g,'&#39;')}')">Delete</button>
-        </div>
-      </td>
-    </tr>`).join('');
-
-  document.getElementById('op-table-container').innerHTML = `<table><thead><tr><th>Operator</th><th>Rarity</th><th>Class</th><th>Element</th><th>Weapon</th><th>Tier</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table><div class="pagination"><div class="pagination-info">Showing ${list.length} of ${allOperators.length} operators</div></div>`;
-}
-
-function resetOpModal() {
-  ['op-name','op-title','op-rarity','op-class','op-element','op-weapon','op-hp','op-atk','op-def','op-primary-type','op-primary-val','op-crit','op-quote','op-key','op-img','op-video','op-tier','op-gacha','op-notes'].forEach(id => sv(id, ''));
-  document.getElementById('op-skills-list').innerHTML  = ''; document.getElementById('op-talents-list').innerHTML = '';
-  sv('op-gacha', 'true'); editingOpId = null;
-}
-
-function openOpModal(data = null) {
-  resetOpModal();
-  document.getElementById('op-modal-title').textContent = data ? 'Edit Operator' : 'Add Operator';
-  document.getElementById('op-save-txt').textContent    = data ? 'Save Changes' : 'Save Operator';
-  if (data) {
-    editingOpId = data.id; sv('op-name', data.name); sv('op-title', data.title); sv('op-rarity', data.rarity); sv('op-class', data.class); sv('op-element', data.element); sv('op-weapon', data.weapon_type); sv('op-hp', data.hp); sv('op-atk', data.atk); sv('op-def', data.def); sv('op-primary-type', data.primary_stat); sv('op-primary-val', data.primary_val); sv('op-crit', data.crit_rate); sv('op-quote', data.quote); sv('op-key', data.character_key); sv('op-img', data.portrait_url); sv('op-video', data.video_id); sv('op-tier', data.tier); sv('op-gacha', data.in_gacha !== false ? 'true' : 'false'); sv('op-notes', data.notes);
-    (data.skills || []).forEach(sk => addSkillRow(sk)); (data.talents || []).forEach(tl => addTalentRow(tl));
+  
+  async function signOut() {
+    await db.auth.signOut();
+    window.location.href = 'auth.html';
   }
-  openModal('op-modal');
-}
-
-function editOperator(id) { const op = allOperators.find(o => o.id === id); if (op) openOpModal(op); }
-function addSkillRow(sk = {}) {
-  const list = document.getElementById('op-skills-list'); const div = document.createElement('div'); div.className = 'dyn-item';
-  div.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;gap:6px"><input class="form-input" placeholder="Skill name" value="${sk.name||''}"><textarea class="form-textarea" placeholder="Skill description / effect..." style="min-height:60px">${sk.desc||''}</textarea><input class="form-input" placeholder="Multiplier at max rank (e.g. 320%)" value="${sk.multiplier||''}"></div><button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
-  list.appendChild(div);
-}
-function addTalentRow(tl = {}) {
-  const list = document.getElementById('op-talents-list'); const div = document.createElement('div'); div.className = 'dyn-item';
-  div.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;gap:6px"><input class="form-input" placeholder="Talent name" value="${tl.name||''}"><textarea class="form-textarea" placeholder="Talent description..." style="min-height:60px">${tl.desc||''}</textarea></div><button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
-  list.appendChild(div);
-}
-
-function collectSkills() { return [...document.getElementById('op-skills-list').children].map(div => { const inputs = div.querySelectorAll('input,textarea'); return { name: inputs[0].value.trim(), desc: inputs[1].value.trim(), multiplier: inputs[2].value.trim() }; }).filter(s => s.name); }
-function collectTalents() { return [...document.getElementById('op-talents-list').children].map(div => { const inputs = div.querySelectorAll('input,textarea'); return { name: inputs[0].value.trim(), desc: inputs[1].value.trim() }; }).filter(t => t.name); }
-
-async function saveOperator() {
-  const name = gv('op-name'); const key = gv('op-key'); const rarity = gv('op-rarity'); const cls = gv('op-class'); const elem = gv('op-element'); const wpn = gv('op-weapon');
-  if (!name || !key || !rarity || !cls || !elem || !wpn) { toast('error', 'Please fill in all required fields (*).'); return; }
-
-  const payload = {
-    name, title: gv('op-title') || null, rarity: parseInt(rarity), class: cls, element: elem, weapon_type: wpn, hp: gv('op-hp') ? parseFloat(gv('op-hp')) : null, atk: gv('op-atk') ? parseFloat(gv('op-atk')) : null, def: gv('op-def') ? parseFloat(gv('op-def')) : null, primary_stat: gv('op-primary-type') || null, primary_val: gv('op-primary-val') ? parseFloat(gv('op-primary-val')) : null, crit_rate: gv('op-crit') ? parseFloat(gv('op-crit')) : null, quote: gv('op-quote') || null, character_key: key, portrait_url: gv('op-img') || null, video_id: gv('op-video') || null, tier: gv('op-tier') || null, in_gacha: gv('op-gacha') !== 'false', notes: gv('op-notes') || null, skills: collectSkills(), talents: collectTalents(),
-  };
-
-  document.getElementById('op-save-txt').textContent = 'Saving…';
-  let error;
-  if (editingOpId) { ({ error } = await db.from('characters').update(payload).eq('id', editingOpId)); } 
-  else { ({ error } = await db.from('characters').insert(payload)); }
-
-  document.getElementById('op-save-txt').textContent = editingOpId ? 'Save Changes' : 'Save Operator';
-  if (error) { toast('error', 'Save failed: ' + error.message); return; }
-  toast('success', editingOpId ? `${name} updated.` : `${name} added to roster.`);
-  closeModal('op-modal'); await loadOperators();
-}
-
-function deleteOperator(id, name) {
-  pendingAction = async () => {
-    const { error } = await db.from('characters').delete().eq('id', id);
-    if (error) { toast('error', 'Delete failed: ' + error.message); return; }
-    allOperators = allOperators.filter(o => o.id !== id);
-    toast('success', `${name} removed.`); updateOpStats(); renderOperators(); document.getElementById('sidebar-op-count').textContent = allOperators.length;
-  };
-  document.getElementById('confirm-title').textContent = 'Delete Operator';
-  document.getElementById('confirm-sub').textContent   = `Permanently delete "${name}"?`;
-  openModal('confirm-modal');
-}
-
-/* ── WEAPONS ── */
-async function loadWeapons() {
-  document.getElementById('wpn-table-container').innerHTML = '<div class="table-loading"><div class="spinner"></div></div>';
-  const { data, error } = await db.from('weapons').select('*').order('rarity', { ascending: false });
-  if (error) { toast('error', 'Could not load weapons.'); allWeapons = []; } 
-  else { allWeapons = data || []; }
-  updateWpnStats(); renderWeapons(); document.getElementById('sidebar-wpn-count').textContent = allWeapons.length;
-}
-
-function updateWpnStats() {
-  document.getElementById('wpn-stat-total').textContent = allWeapons.length;
-  document.getElementById('wpn-stat-6').textContent     = allWeapons.filter(w => String(w.rarity) === '6').length;
-  document.getElementById('wpn-stat-5').textContent     = allWeapons.filter(w => String(w.rarity) === '5').length;
-  document.getElementById('wpn-stat-other').textContent = allWeapons.filter(w => parseInt(w.rarity) < 5).length;
-}
-
-function renderWeapons() {
-  const q = (document.getElementById('wpn-search')?.value || '').toLowerCase();
-  let list = allWeapons;
-  if (wpnFilters.type !== 'all') list = list.filter(w => (w.type||'').toLowerCase() === wpnFilters.type.toLowerCase());
-  if (q) list = list.filter(w => (w.name||'').toLowerCase().includes(q) || (w.type||'').toLowerCase().includes(q));
-
-  if (list.length === 0) { document.getElementById('wpn-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No weapons found</div></div>'; return; }
-
-  const rows = list.map(w => {
-    const sub = w.substat_type ? `${w.substat_type}: ${w.substat_value || '—'}` : '—';
+  
+  /* ════════════════════════════════════
+     UI & UTILITIES
+  ════════════════════════════════════ */
+  function showPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    document.getElementById('panel-' + name)?.classList.add('active');
+    document.getElementById('nav-' + name)?.classList.add('active');
+  
+    if (name === 'users')  renderUsersTable();
+    if (name === 'admins') renderAdminsTable();
+  }
+  
+  function toast(type, msg) {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 3500);
+  }
+  
+  function openModal(id)  { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function confirmAction() { closeModal('confirm-modal'); pendingAction?.(); pendingAction = null; }
+  
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+  
+  function starsHTML(r) {
+    const n = parseInt(r) || 0;
+    const cls = n === 6 ? 'r6' : n === 5 ? 'r5' : n === 4 ? 'r4' : 'r3';
+    return `<span class="stars ${cls}">${'★'.repeat(n)}</span>`;
+  }
+  
+  function elementTag(el) {
+    if (!el) return '';
+    const key = el.toLowerCase();
+    const cls = ['heat','cryo','electric','physical','nature'].includes(key) ? `tag-${key}` : 'tag-default';
+    return `<span class="tag ${cls}">${el}</span>`;
+  }
+  
+  function classTag(cl) { return cl ? `<span class="tag tag-default">${cl}</span>` : ''; }
+  function gv(id) { return document.getElementById(id)?.value?.trim() || ''; }
+  function sv(id, val) { const el = document.getElementById(id); if (el) el.value = val ?? ''; }
+  
+  /* ════════════════════════════════════
+     USER MANAGEMENT
+  ════════════════════════════════════ */
+  async function loadProfiles() {
+    const { data, error } = await db.from('profiles').select('*').order('created_at', { ascending: false });
+    if (error) { toast('info', 'Profiles table not found. Showing auth metadata only.'); return []; }
+    return data || [];
+  }
+  
+  async function refreshAll() {
+    allUsers = await loadProfiles();
+    updateStats();
+    renderRecentUsers();
+    document.getElementById('sidebar-user-count').textContent = allUsers.length;
+  }
+  
+  function updateStats() {
+    const total  = allUsers.length;
+    const admins = allUsers.filter(u => u.role === 'admin' || u.role === 'super_admin').length;
+    const banned = allUsers.filter(u => u.role === 'banned').length;
+    const users  = total - admins - banned;
+    document.getElementById('stat-total').textContent  = total;
+    document.getElementById('stat-admins').textContent = admins;
+    document.getElementById('stat-users').textContent  = users;
+    document.getElementById('stat-banned').textContent = banned;
+  }
+  
+  function renderRecentUsers() {
+    const recent = allUsers.slice(0, 8);
+    const html = recent.length === 0
+      ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No users found</div></div>`
+      : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${recent.map(u => userRow(u, false)).join('')}</tbody></table>
+         <div class="pagination"><div class="pagination-info">Showing ${recent.length} of ${allUsers.length} users</div><button class="btn-secondary" onclick="showPanel('users')">View All →</button></div>`;
+    document.getElementById('recent-users-container').innerHTML = html;
+  }
+  
+  function renderUsersTable() {
+    const query  = (document.getElementById('user-search')?.value || '').toLowerCase();
+    let filtered = allUsers;
+    if (roleFilter !== 'all') filtered = filtered.filter(u => (u.role || 'user') === roleFilter);
+    if (query) filtered = filtered.filter(u => (u.display_name||'').toLowerCase().includes(query) || (u.username||'').toLowerCase().includes(query) || (u.email||'').toLowerCase().includes(query));
+  
+    const html = filtered.length === 0
+      ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No matching users</div></div>`
+      : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${filtered.map(u => userRow(u)).join('')}</tbody></table>
+         <div class="pagination"><div class="pagination-info">Showing ${filtered.length} of ${allUsers.length} total</div></div>`;
+    document.getElementById('users-table-container').innerHTML = html;
+  }
+  
+  function renderAdminsTable() {
+    const admins = allUsers.filter(u => u.role === 'admin' || u.role === 'super_admin');
+    const html = admins.length === 0
+      ? `<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No admin accounts found</div></div>`
+      : `<table><thead><tr><th>User</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>${admins.map(u => userRow(u)).join('')}</tbody></table>
+         <div class="pagination"><div class="pagination-info">${admins.length} management account(s)</div></div>`;
+    document.getElementById('admins-table-container').innerHTML = html;
+  }
+  
+  function userRow(u, showActions = true) {
+    const name  = u.display_name || u.username || u.email?.split('@')[0] || 'Unknown';
+    const email = u.email || '—';
+    const rawRole  = u.role || 'user';
+    
+    let displayRole = 'Operator';
+    let roleClass = 'user';
+  
+    if (rawRole === 'super_admin') {
+      displayRole = 'Endministrator';
+      roleClass = 'super-admin';
+    } else if (rawRole === 'admin') {
+      displayRole = 'Supervisor';
+      roleClass = 'admin';
+    } else if (rawRole === 'banned') {
+      displayRole = 'Suspended';
+      roleClass = 'banned';
+    }
+  
+    const initial = name[0]?.toUpperCase() || '?';
+  
+    const isSuperAdmin = currentUser?.role === 'super_admin';
+    const canManage = isSuperAdmin || rawRole !== 'super_admin'; 
+  
+    let actionsHtml = '';
+    if (showActions) {
+      let btns = '';
+      
+      if (isSuperAdmin) {
+        if (rawRole === 'user') btns += `<button class="btn-action promote" onclick="changeRole('${u.id}','admin','${name}')">Promote to Supervisor</button>`;
+        if (rawRole === 'admin') btns += `<button class="btn-action promote" onclick="changeRole('${u.id}','super_admin','${name}')">Promote to Endministrator</button>`;
+        if (rawRole === 'super_admin') btns += `<button class="btn-action demote" onclick="changeRole('${u.id}','admin','${name}')">Demote to Supervisor</button>`;
+        if (rawRole === 'admin') btns += `<button class="btn-action demote" onclick="changeRole('${u.id}','user','${name}')">Demote to Operator</button>`;
+      }
+      
+      if (canManage) {
+        if (rawRole !== 'banned') btns += `<button class="btn-action ban" onclick="banUser('${u.id}','${name}')">Suspend</button>`;
+        if (rawRole === 'banned') btns += `<button class="btn-action unban" onclick="changeRole('${u.id}','user','${name}')">Unsuspend</button>`;
+        btns += `<button class="btn-action delete" onclick="deleteUser('${u.id}','${name}')">Delete</button>`;
+      }
+      
+      actionsHtml = `<td><div class="action-row">${btns}</div></td>`;
+    } else {
+      actionsHtml = '<td>—</td>';
+    }
+  
     return `<tr>
-      <td><div class="cell-main">${w.name || '—'}</div><div class="cell-sub">${w.skill_name || ''}</div></td>
-      <td>${starsHTML(w.rarity)}</td><td><span class="tag tag-default">${w.type || '—'}</span></td>
-      <td style="color:var(--teal);font-family:'HarmonyOS Sans','Poppins',sans-serif;font-size:16px;font-weight:700">${w.base_atk || '—'}</td>
-      <td style="color:var(--dim2);font-size:12px">${sub}</td>
       <td>
-        <div class="action-row">
-          <button class="btn-action edit"   onclick="editWeapon('${w.id}')">Edit</button>
-          <button class="btn-action delete" onclick="deleteWeapon('${w.id}','${(w.name||'').replace(/'/g,'&#39;')}')">Delete</button>
+        <div class="user-cell">
+          <div class="mini-avatar ${roleClass}">${initial}</div>
+          <div><div class="cell-name">${name}</div><div class="cell-email">${email}</div></div>
         </div>
       </td>
-    </tr>`}).join('');
-
-  document.getElementById('wpn-table-container').innerHTML = `<table><thead><tr><th>Weapon</th><th>Rarity</th><th>Type</th><th>Base ATK</th><th>Sub-stat</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table><div class="pagination"><div class="pagination-info">Showing ${list.length} of ${allWeapons.length} weapons</div></div>`;
-}
-
-function resetWpnModal() {
-  ['wpn-name','wpn-rarity','wpn-type','wpn-atk','wpn-substat-type','wpn-substat-val','wpn-skill-name','wpn-skill-desc','wpn-img','wpn-notes'].forEach(id => sv(id, ''));
-  document.getElementById('wpn-refine-list').innerHTML = ''; editingWpnId = null;
-}
-
-function openWpnModal(data = null) {
-  resetWpnModal();
-  document.getElementById('wpn-modal-title').textContent = data ? 'Edit Weapon' : 'Add Weapon';
-  document.getElementById('wpn-save-txt').textContent    = data ? 'Save Changes' : 'Save Weapon';
-  if (data) {
-    editingWpnId = data.id; sv('wpn-name', data.name); sv('wpn-rarity', data.rarity); sv('wpn-type', data.type); sv('wpn-atk', data.base_atk); sv('wpn-substat-type', data.substat_type); sv('wpn-substat-val', data.substat_value); sv('wpn-skill-name', data.skill_name); sv('wpn-skill-desc', data.skill_desc); sv('wpn-img', data.icon_url); sv('wpn-notes', data.notes);
-    (data.refinements || []).forEach((r, i) => addRefineRow(i + 1, r));
+      <td><span class="role-badge ${roleClass}">${displayRole.toUpperCase()}</span></td>
+      <td style="color:var(--dim2);font-size:12px">${fmtDate(u.created_at)}</td>
+      ${actionsHtml}
+    </tr>`;
   }
-  openModal('wpn-modal');
-}
+  
+  function setRoleFilter(role) {
+    roleFilter = role;
+    document.querySelectorAll('#role-filter .filter-pill').forEach(p => p.classList.toggle('active', p.dataset.role === role));
+    renderUsersTable();
+  }
+  
+  function filterUsers() { renderUsersTable(); }
+  
+  async function changeRole(id, newRole, name) {
+    const { error } = await db.from('profiles').update({ role: newRole }).eq('id', id);
+    if (error) { toast('error', 'Failed: ' + error.message); return; }
+    const u = allUsers.find(u => u.id === id);
+    if (u) u.role = newRole;
+    toast('success', `${name} role updated.`);
+    updateStats(); renderRecentUsers(); renderUsersTable(); renderAdminsTable();
+  }
+  
+  function banUser(id, name) {
+    pendingAction = () => changeRole(id, 'banned', name);
+    document.getElementById('confirm-title').textContent = 'Suspend User';
+    document.getElementById('confirm-sub').textContent = `Suspend "${name}"? They will lose access to the site.`;
+    openModal('confirm-modal');
+  }
+  
+  function deleteUser(id, name) {
+    pendingAction = async () => {
+      const { error } = await db.from('profiles').delete().eq('id', id);
+      if (error) { toast('error', 'Failed: ' + error.message); return; }
+      allUsers = allUsers.filter(u => u.id !== id);
+      toast('success', `${name} deleted.`);
+      updateStats(); refreshAll();
+    };
+    document.getElementById('confirm-title').textContent = 'Delete User';
+    document.getElementById('confirm-sub').textContent = `Permanently delete "${name}"? This cannot be undone.`;
+    openModal('confirm-modal');
+  }
+  
+  function openInviteModal() { document.getElementById('invite-email').value = ''; openModal('invite-modal'); }
+  
+  async function doInvite() {
+    const email = document.getElementById('invite-email').value.trim();
+    const role  = document.getElementById('invite-role').value;
+    if (!email) { toast('error', 'Enter an email address.'); return; }
+    const { error } = await db.auth.signInWithOtp({ email, options: { data: { role }, emailRedirectTo: window.location.origin + '/auth.html' } });
+    closeModal('invite-modal');
+    if (error) { toast('error', 'Failed: ' + error.message); return; }
+    toast('success', `Invite sent to ${email}`);
+  }
+  
+  /* ════════════════════════════════════
+     OPERATORS & WEAPONS MANAGEMENT
+  ════════════════════════════════════ */
+  function setOpFilter(key, val, btn) {
+    opFilters[key] = val;
+    btn.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    renderOperators();
+  }
+  
+  function setWpnFilter(key, val, btn) {
+    wpnFilters[key] = val;
+    btn.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    renderWeapons();
+  }
+  
+  /* ── OPERATORS ── */
+  async function loadOperators() {
+    document.getElementById('op-table-container').innerHTML = '<div class="table-loading"><div class="spinner"></div></div>';
+    const { data, error } = await db.from('characters').select('*').order('rarity', { ascending: false });
+    if (error) { toast('error', 'Could not load characters.'); allOperators = []; } 
+    else { allOperators = data || []; }
+    updateOpStats(); renderOperators();
+    document.getElementById('sidebar-op-count').textContent = allOperators.length;
+  }
+  
+  function updateOpStats() {
+    document.getElementById('op-stat-total').textContent = allOperators.length;
+    document.getElementById('op-stat-6').textContent = allOperators.filter(o => String(o.rarity) === '6').length;
+    document.getElementById('op-stat-5').textContent = allOperators.filter(o => String(o.rarity) === '5').length;
+    document.getElementById('op-stat-4').textContent = allOperators.filter(o => String(o.rarity) === '4').length;
+  }
+  
+  function renderOperators() {
+    const q = (document.getElementById('op-search')?.value || '').toLowerCase();
+    let list = allOperators;
+    if (opFilters.rarity !== 'all') list = list.filter(o => String(o.rarity) === opFilters.rarity);
+    if (q) list = list.filter(o => (o.name||'').toLowerCase().includes(q) || (o.class||'').toLowerCase().includes(q) || (o.element||'').toLowerCase().includes(q));
+  
+    if (list.length === 0) { document.getElementById('op-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No operators found</div></div>'; return; }
+  
+    const rows = list.map(o => `
+      <tr>
+        <td><div class="cell-main">${o.name || '—'}</div><div class="cell-sub">${o.character_key || ''}</div></td>
+        <td>${starsHTML(o.rarity)}</td><td>${classTag(o.class)}</td><td>${elementTag(o.element)}</td>
+        <td style="color:var(--dim2);font-size:12px">${o.weapon_type || '—'}</td>
+        <td>${o.tier ? `<span class="tag tag-default">${o.tier}</span>` : '<span style="color:var(--dim)">—</span>'}</td>
+        <td>
+          <div class="action-row">
+            <button class="btn-action edit"   onclick="editOperator('${o.id}')">Edit</button>
+            <button class="btn-action delete" onclick="deleteOperator('${o.id}','${(o.name||'').replace(/'/g,'&#39;')}')">Delete</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  
+    document.getElementById('op-table-container').innerHTML = `<table><thead><tr><th>Operator</th><th>Rarity</th><th>Class</th><th>Element</th><th>Weapon</th><th>Tier</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table><div class="pagination"><div class="pagination-info">Showing ${list.length} of ${allOperators.length} operators</div></div>`;
+  }
+  
+  function resetOpModal() {
+    ['op-name','op-title','op-rarity','op-class','op-element','op-weapon','op-hp','op-atk','op-def','op-primary-type','op-primary-val','op-crit','op-quote','op-key','op-img','op-video','op-tier','op-gacha','op-notes'].forEach(id => sv(id, ''));
+    document.getElementById('op-skills-list').innerHTML  = ''; document.getElementById('op-talents-list').innerHTML = '';
+    sv('op-gacha', 'true'); editingOpId = null;
+  }
+  
+  function openOpModal(data = null) {
+    resetOpModal();
+    document.getElementById('op-modal-title').textContent = data ? 'Edit Operator' : 'Add Operator';
+    document.getElementById('op-save-txt').textContent    = data ? 'Save Changes' : 'Save Operator';
+    if (data) {
+      editingOpId = data.id; sv('op-name', data.name); sv('op-title', data.title); sv('op-rarity', data.rarity); sv('op-class', data.class); sv('op-element', data.element); sv('op-weapon', data.weapon_type); sv('op-hp', data.hp); sv('op-atk', data.atk); sv('op-def', data.def); sv('op-primary-type', data.primary_stat); sv('op-primary-val', data.primary_val); sv('op-crit', data.crit_rate); sv('op-quote', data.quote); sv('op-key', data.character_key); sv('op-img', data.portrait_url); sv('op-video', data.video_id); sv('op-tier', data.tier); sv('op-gacha', data.in_gacha !== false ? 'true' : 'false'); sv('op-notes', data.notes);
+      (data.skills || []).forEach(sk => addSkillRow(sk)); (data.talents || []).forEach(tl => addTalentRow(tl));
+    }
+    openModal('op-modal');
+  }
+  
+  function editOperator(id) { const op = allOperators.find(o => o.id === id); if (op) openOpModal(op); }
+  
+  function addSkillRow(sk = {}) {
+    const list = document.getElementById('op-skills-list'); const div = document.createElement('div'); div.className = 'dyn-item';
+    div.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;gap:6px"><input class="form-input" placeholder="Skill name" value="${sk.name||''}"><textarea class="form-textarea" placeholder="Skill description / effect..." style="min-height:60px">${sk.desc||''}</textarea><input class="form-input" placeholder="Multiplier at max rank (e.g. 320%)" value="${sk.multiplier||''}"></div><button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
+    list.appendChild(div);
+  }
+  
+  function addTalentRow(tl = {}) {
+    const list = document.getElementById('op-talents-list'); const div = document.createElement('div'); div.className = 'dyn-item';
+    div.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;gap:6px"><input class="form-input" placeholder="Talent name" value="${tl.name||''}"><textarea class="form-textarea" placeholder="Talent description..." style="min-height:60px">${tl.desc||''}</textarea></div><button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
+    list.appendChild(div);
+  }
+  
+  function collectSkills() { return [...document.getElementById('op-skills-list').children].map(div => { const inputs = div.querySelectorAll('input,textarea'); return { name: inputs[0].value.trim(), desc: inputs[1].value.trim(), multiplier: inputs[2].value.trim() }; }).filter(s => s.name); }
+  function collectTalents() { return [...document.getElementById('op-talents-list').children].map(div => { const inputs = div.querySelectorAll('input,textarea'); return { name: inputs[0].value.trim(), desc: inputs[1].value.trim() }; }).filter(t => t.name); }
+  
+  async function saveOperator() {
+    const name = gv('op-name'); const key = gv('op-key'); const rarity = gv('op-rarity'); const cls = gv('op-class'); const elem = gv('op-element'); const wpn = gv('op-weapon');
+    if (!name || !key || !rarity || !cls || !elem || !wpn) { toast('error', 'Please fill in all required fields (*).'); return; }
+  
+    const payload = {
+      name, title: gv('op-title') || null, rarity: parseInt(rarity), class: cls, element: elem, weapon_type: wpn, hp: gv('op-hp') ? parseFloat(gv('op-hp')) : null, atk: gv('op-atk') ? parseFloat(gv('op-atk')) : null, def: gv('op-def') ? parseFloat(gv('op-def')) : null, primary_stat: gv('op-primary-type') || null, primary_val: gv('op-primary-val') ? parseFloat(gv('op-primary-val')) : null, crit_rate: gv('op-crit') ? parseFloat(gv('op-crit')) : null, quote: gv('op-quote') || null, character_key: key, portrait_url: gv('op-img') || null, video_id: gv('op-video') || null, tier: gv('op-tier') || null, in_gacha: gv('op-gacha') !== 'false', notes: gv('op-notes') || null, skills: collectSkills(), talents: collectTalents(),
+    };
+  
+    document.getElementById('op-save-txt').textContent = 'Saving…';
+    let error;
+    if (editingOpId) { ({ error } = await db.from('characters').update(payload).eq('id', editingOpId)); } 
+    else { ({ error } = await db.from('characters').insert(payload)); }
+  
+    document.getElementById('op-save-txt').textContent = editingOpId ? 'Save Changes' : 'Save Operator';
+    if (error) { toast('error', 'Save failed: ' + error.message); return; }
+    toast('success', editingOpId ? `${name} updated.` : `${name} added to roster.`);
+    closeModal('op-modal'); await loadOperators();
+  }
+  
+  function deleteOperator(id, name) {
+    pendingAction = async () => {
+      const { error } = await db.from('characters').delete().eq('id', id);
+      if (error) { toast('error', 'Delete failed: ' + error.message); return; }
+      allOperators = allOperators.filter(o => o.id !== id);
+      toast('success', `${name} removed.`); updateOpStats(); renderOperators(); document.getElementById('sidebar-op-count').textContent = allOperators.length;
+    };
+    document.getElementById('confirm-title').textContent = 'Delete Operator';
+    document.getElementById('confirm-sub').textContent   = `Permanently delete "${name}"?`;
+    openModal('confirm-modal');
+  }
+  
+  /* ── WEAPONS ── */
+  async function loadWeapons() {
+    document.getElementById('wpn-table-container').innerHTML = '<div class="table-loading"><div class="spinner"></div></div>';
+    const { data, error } = await db.from('weapons').select('*').order('rarity', { ascending: false });
+    if (error) { toast('error', 'Could not load weapons.'); allWeapons = []; } 
+    else { allWeapons = data || []; }
+    updateWpnStats(); renderWeapons(); document.getElementById('sidebar-wpn-count').textContent = allWeapons.length;
+  }
+  
+  function updateWpnStats() {
+    document.getElementById('wpn-stat-total').textContent = allWeapons.length;
+    document.getElementById('wpn-stat-6').textContent     = allWeapons.filter(w => String(w.rarity) === '6').length;
+    document.getElementById('wpn-stat-5').textContent     = allWeapons.filter(w => String(w.rarity) === '5').length;
+    document.getElementById('wpn-stat-other').textContent = allWeapons.filter(w => parseInt(w.rarity) < 5).length;
+  }
+  
+  function renderWeapons() {
+    const q = (document.getElementById('wpn-search')?.value || '').toLowerCase();
+    let list = allWeapons;
+    if (wpnFilters.type !== 'all') list = list.filter(w => (w.type||'').toLowerCase() === wpnFilters.type.toLowerCase());
+    if (q) list = list.filter(w => (w.name||'').toLowerCase().includes(q) || (w.type||'').toLowerCase().includes(q));
+  
+    if (list.length === 0) { document.getElementById('wpn-table-container').innerHTML = '<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No weapons found</div></div>'; return; }
+  
+    const rows = list.map(w => {
+      const sub = w.substat_type ? `${w.substat_type}: ${w.substat_value || '—'}` : '—';
+      return `<tr>
+        <td><div class="cell-main">${w.name || '—'}</div><div class="cell-sub">${w.skill_name || ''}</div></td>
+        <td>${starsHTML(w.rarity)}</td><td><span class="tag tag-default">${w.type || '—'}</span></td>
+        <td style="color:var(--teal);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700">${w.base_atk || '—'}</td>
+        <td style="color:var(--dim2);font-size:12px">${sub}</td>
+        <td>
+          <div class="action-row">
+            <button class="btn-action edit"   onclick="editWeapon('${w.id}')">Edit</button>
+            <button class="btn-action delete" onclick="deleteWeapon('${w.id}','${(w.name||'').replace(/'/g,'&#39;')}')">Delete</button>
+          </div>
+        </td>
+      </tr>`}).join('');
+  
+    document.getElementById('wpn-table-container').innerHTML = `<table><thead><tr><th>Weapon</th><th>Rarity</th><th>Type</th><th>Base ATK</th><th>Sub-stat</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table><div class="pagination"><div class="pagination-info">Showing ${list.length} of ${allWeapons.length} weapons</div></div>`;
+  }
+  
+  function resetWpnModal() {
+    ['wpn-name','wpn-rarity','wpn-type','wpn-atk','wpn-substat-type','wpn-substat-val','wpn-skill-name','wpn-skill-desc','wpn-img','wpn-notes'].forEach(id => sv(id, ''));
+    document.getElementById('wpn-refine-list').innerHTML = ''; editingWpnId = null;
+  }
+  
+  function openWpnModal(data = null) {
+    resetWpnModal();
+    document.getElementById('wpn-modal-title').textContent = data ? 'Edit Weapon' : 'Add Weapon';
+    document.getElementById('wpn-save-txt').textContent    = data ? 'Save Changes' : 'Save Weapon';
+    if (data) {
+      editingWpnId = data.id; sv('wpn-name', data.name); sv('wpn-rarity', data.rarity); sv('wpn-type', data.type); sv('wpn-atk', data.base_atk); sv('wpn-substat-type', data.substat_type); sv('wpn-substat-val', data.substat_value); sv('wpn-skill-name', data.skill_name); sv('wpn-skill-desc', data.skill_desc); sv('wpn-img', data.icon_url); sv('wpn-notes', data.notes);
+      (data.refinements || []).forEach((r, i) => addRefineRow(i + 1, r));
+    }
+    openModal('wpn-modal');
+  }
+  
+  function editWeapon(id) { const wpn = allWeapons.find(w => w.id === id); if (wpn) openWpnModal(wpn); }
+  
+  function addRefineRow(level = null, val = '') {
+    const list = document.getElementById('wpn-refine-list');
+    const lvl  = level || (list.children.length + 1);
+    if (lvl > 5) { toast('info', 'Maximum 5 refinement levels.'); return; }
+    const div  = document.createElement('div'); div.className = 'dyn-item'; div.style.alignItems = 'center';
+    div.innerHTML = `<span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--gold2);flex-shrink:0;width:28px">R${lvl}</span><input class="form-input" placeholder="Effect description at refinement ${lvl}..." value="${val}" style="flex:1"><button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
+    list.appendChild(div);
+  }
+  
+  function collectRefinements() { return [...document.getElementById('wpn-refine-list').children].map(div => div.querySelector('input').value.trim()); }
+  
+  async function saveWeapon() {
+    const name = gv('wpn-name'); const rarity = gv('wpn-rarity'); const type = gv('wpn-type');
+    if (!name || !rarity || !type) { toast('error', 'Please fill in all required fields (*).'); return; }
+  
+    const payload = {
+      name, rarity: parseInt(rarity), type, base_atk: gv('wpn-atk') ? parseInt(gv('wpn-atk')) : null, substat_type: gv('wpn-substat-type') || null, substat_value: gv('wpn-substat-val') || null, skill_name: gv('wpn-skill-name') || null, skill_desc: gv('wpn-skill-desc') || null, refinements: collectRefinements(), icon_url: gv('wpn-img') || null, notes: gv('wpn-notes') || null,
+    };
+  
+    document.getElementById('wpn-save-txt').textContent = 'Saving…';
+    let error;
+    if (editingWpnId) { ({ error } = await db.from('weapons').update(payload).eq('id', editingWpnId)); } 
+    else { ({ error } = await db.from('weapons').insert(payload)); }
+  
+    document.getElementById('wpn-save-txt').textContent = editingWpnId ? 'Save Changes' : 'Save Weapon';
+    if (error) { toast('error', 'Save failed: ' + error.message); return; }
+    toast('success', editingWpnId ? `${name} updated.` : `${name} added.`);
+    closeModal('wpn-modal'); await loadWeapons();
+  }
+  
+  function deleteWeapon(id, name) {
+    pendingAction = async () => {
+      const { error } = await db.from('weapons').delete().eq('id', id);
+      if (error) { toast('error', 'Delete failed: ' + error.message); return; }
+      allWeapons = allWeapons.filter(w => w.id !== id);
+      toast('success', `${name} removed.`); updateWpnStats(); renderWeapons(); document.getElementById('sidebar-wpn-count').textContent = allWeapons.length;
+    };
+    document.getElementById('confirm-title').textContent = 'Delete Weapon';
+    document.getElementById('confirm-sub').textContent   = `Permanently delete "${name}"? This cannot be undone.`;
+    openModal('confirm-modal');
+  }
+  
+  /* ════════════════════════════════════
+     HOMEPAGE EDITOR (SMART CRUD)
+  ════════════════════════════════════ */
+  function toggleSubMenu(id) {
+      const menu = document.getElementById(id);
+      const chevron = document.getElementById('home-editor-chevron');
+      menu.classList.toggle('open');
+      chevron.style.transform = menu.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+  }
 
-function editWeapon(id) { const wpn = allWeapons.find(w => w.id === id); if (wpn) openWpnModal(wpn); }
+  let hpCurrentTable = 'homepage_events';
+  let hpCurrentEditId = null;
 
-function addRefineRow(level = null, val = '') {
-  const list = document.getElementById('wpn-refine-list');
-  const lvl  = level || (list.children.length + 1);
-  if (lvl > 5) { toast('info', 'Maximum 5 refinement levels.'); return; }
-  const div  = document.createElement('div'); div.className = 'dyn-item'; div.style.alignItems = 'center';
-  div.innerHTML = `<span style="font-family:'HarmonyOS Sans','Poppins',sans-serif;font-size:18px;color:var(--gold2);flex-shrink:0;width:28px">R${lvl}</span><input class="form-input" placeholder="Effect description at refinement ${lvl}..." value="${val}" style="flex:1"><button class="dyn-remove" onclick="this.closest('.dyn-item').remove()">✕</button>`;
-  list.appendChild(div);
-}
-
-function collectRefinements() { return [...document.getElementById('wpn-refine-list').children].map(div => div.querySelector('input').value.trim()); }
-
-async function saveWeapon() {
-  const name = gv('wpn-name'); const rarity = gv('wpn-rarity'); const type = gv('wpn-type');
-  if (!name || !rarity || !type) { toast('error', 'Please fill in all required fields (*).'); return; }
-
-  const payload = {
-    name, rarity: parseInt(rarity), type, base_atk: gv('wpn-atk') ? parseInt(gv('wpn-atk')) : null, substat_type: gv('wpn-substat-type') || null, substat_value: gv('wpn-substat-val') || null, skill_name: gv('wpn-skill-name') || null, skill_desc: gv('wpn-skill-desc') || null, refinements: collectRefinements(), icon_url: gv('wpn-img') || null, notes: gv('wpn-notes') || null,
+  const HP_SCHEMAS = {
+      homepage_events: {
+          title: "Operations & Events",
+          columns: ['name', 'event_type', 'status', 'start_date'],
+          fields: [
+              { name: 'name', label: 'Event Name *', type: 'text' },
+              { name: 'event_type', label: 'Type (banner, event, rerun, endgame) *', type: 'text' },
+              { name: 'status', label: 'Status (current, upcoming) *', type: 'text' },
+              { name: 'region', label: 'Region', type: 'text', default: 'All' },
+              { name: 'start_date', label: 'Start Date (Format: YYYY-MM-DDTHH:MM:SSZ)', type: 'text', hint: 'Leave blank if permanent. Example: 2026-05-20T10:00:00Z' },
+              { name: 'end_date', label: 'End Date (Format: YYYY-MM-DDTHH:MM:SSZ)', type: 'text', hint: 'Leave blank if permanent.' },
+              { name: 'duration_label', label: 'Duration Text (e.g., APR 17 – MAY 22)', type: 'text' },
+              { name: 'description', label: 'Description', type: 'textarea' },
+              { name: 'tags', label: 'Tags (Comma separated)', type: 'text', isArray: true },
+              { name: 'banner_url', label: 'Banner Image URL', type: 'text' }
+          ]
+      },
+      homepage_operators: {
+          title: "Featured Operators",
+          columns: ['name', 'title', 'sort_order'],
+          fields: [
+              { name: 'name', label: 'Name *', type: 'text' },
+              { name: 'title', label: 'Title (Uppercase)', type: 'text' },
+              { name: 'description', label: 'Description', type: 'textarea' },
+              { name: 'bg_image_url', label: 'Background Image URL', type: 'text' },
+              { name: 'sort_order', label: 'Sort Order (1, 2, 3...)', type: 'number' }
+          ]
+      },
+      homepage_weapons: {
+          title: "3D Weapon Carousel",
+          columns: ['name', 'img_url', 'sort_order'],
+          fields: [
+              { name: 'name', label: 'Weapon Name *', type: 'text' },
+              { name: 'img_url', label: 'Image URL', type: 'text' },
+              { name: 'sort_order', label: 'Sort Order (1, 2, 3...)', type: 'number' }
+          ]
+      },
+      homepage_infos: {
+          title: "Field Intelligence",
+          columns: ['category', 'title', 'sort_order'],
+          fields: [
+              { name: 'category', label: 'Category (classes, elements, reactions, teams, glossary)', type: 'text' },
+              { name: 'title', label: 'Title', type: 'text' },
+              { name: 'subtitle', label: 'Subtitle / Role', type: 'text' },
+              { name: 'description', label: 'Description', type: 'textarea' },
+              { name: 'icon_or_badge', label: 'Icon Text (e.g., DEF, GRD)', type: 'text' },
+              { name: 'metadata', label: 'Metadata (Raw JSON)', type: 'textarea', isJson: true, hint: 'Strict JSON format required for Teams and Operators.' },
+              { name: 'sort_order', label: 'Sort Order', type: 'number' }
+          ]
+      },
+      site_config: {
+          title: "Site Config & Footer",
+          columns: ['section', 'content'],
+          fields: [
+              { name: 'section', label: 'Section Name', type: 'text', readOnlyOnEdit: true },
+              { name: 'content', label: 'Content List (Raw JSON Array)', type: 'textarea', isJson: true, hint: 'Example: ["Item 1", "Item 2"]' }
+          ]
+      }
   };
 
-  document.getElementById('wpn-save-txt').textContent = 'Saving…';
-  let error;
-  if (editingWpnId) { ({ error } = await db.from('weapons').update(payload).eq('id', editingWpnId)); } 
-  else { ({ error } = await db.from('weapons').insert(payload)); }
+  // --- NEW: Variables to track header sorting ---
+  let hpSortColumn = null;
+  let hpSortAscending = true;
 
-  document.getElementById('wpn-save-txt').textContent = editingWpnId ? 'Save Changes' : 'Save Weapon';
-  if (error) { toast('error', 'Save failed: ' + error.message); return; }
-  toast('success', editingWpnId ? `${name} updated.` : `${name} added.`);
-  closeModal('wpn-modal'); await loadWeapons();
-}
+  function showHpPanel(tableName, element) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+      document.getElementById('nav-home-editor').classList.add('active');
+      document.querySelectorAll('.sidebar-sub-item').forEach(s => s.classList.remove('active'));
+      
+      if (element) element.classList.add('active');
+      document.getElementById('panel-hp-editor').classList.add('active');
 
-function deleteWeapon(id, name) {
-  pendingAction = async () => {
-    const { error } = await db.from('weapons').delete().eq('id', id);
-    if (error) { toast('error', 'Delete failed: ' + error.message); return; }
-    allWeapons = allWeapons.filter(w => w.id !== id);
-    toast('success', `${name} removed.`); updateWpnStats(); renderWeapons(); document.getElementById('sidebar-wpn-count').textContent = allWeapons.length;
-  };
-  document.getElementById('confirm-title').textContent = 'Delete Weapon';
-  document.getElementById('confirm-sub').textContent   = `Permanently delete "${name}"? This cannot be undone.`;
-  openModal('confirm-modal');
-}
+      hpCurrentTable = tableName;
+      document.getElementById('hp-page-title').innerText = HP_SCHEMAS[tableName].title;
+      
+      // Reset custom sorting when changing tabs
+      hpSortColumn = null; 
+      hpSortAscending = true;
+      
+      hpLoadData();
+  }
 
-/* ════════════════════════════════════
-   INIT
-════════════════════════════════════ */
-(async () => {
-  const user = await authGuard();
-  if (!user) return;
-  await refreshAll();
-  await Promise.all([loadOperators(), loadWeapons()]);
-})();
-</script>
+  // --- NEW: Function triggered when you click a table header ---
+  function hpSortBy(column) {
+      if (hpSortColumn === column) {
+          hpSortAscending = !hpSortAscending; // Flip direction if clicked again
+      } else {
+          hpSortColumn = column;
+          hpSortAscending = true; // Default to A-Z when a new column is clicked
+      }
+      hpLoadData();
+  }
+
+  async function hpLoadData() {
+      const schema = HP_SCHEMAS[hpCurrentTable];
+      const thead = document.getElementById('hp-table-head');
+      const tbody = document.getElementById('hp-table-body');
+      
+      thead.innerHTML = `<tr>${schema.columns.map(c => {
+          let label = c.replace('_', ' ').toUpperCase();
+          let indicator = '';
+          if (hpSortColumn === c) {
+              indicator = hpSortAscending ? ' <span style="color:var(--teal)">▲</span>' : ' <span style="color:var(--teal)">▼</span>';
+          }
+          return `<th onclick="hpSortBy('${c}')" style="cursor:pointer;" title="Sort by ${label}">${label}${indicator}</th>`;
+      }).join('')}<th>ACTIONS</th></tr>`;
+      
+      tbody.innerHTML = '<tr><td colspan="5" class="table-loading"><div class="spinner"></div></td></tr>';
+
+      // 1. SMART SORTING & GROUPING
+      let query = db.from(hpCurrentTable).select('*');
+      
+      if (hpSortColumn) {
+          query = query.order(hpSortColumn, { ascending: hpSortAscending });
+      } else {
+          if (hpCurrentTable === 'homepage_infos') {
+              query = query.order('category', { ascending: true }).order('sort_order', { ascending: true });
+          } else if (schema.columns.includes('sort_order')) {
+              query = query.order('sort_order', { ascending: true });
+          } else if (hpCurrentTable === 'homepage_events') {
+              query = query.order('start_date', { ascending: false }); 
+          } else {
+              query = query.order('id', { ascending: true });
+          }
+      }
+
+      const { data, error } = await query;
+      
+      if (error) { tbody.innerHTML = `<tr><td colspan="5" style="color:red">Error: ${error.message}</td></tr>`; return; }
+      if (!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><div class="empty-text">No items found.</div></td></tr>'; return; }
+
+      tbody.innerHTML = data.map((row, index) => {
+          const cols = schema.columns.map(c => {
+              let val = row[c];
+              if (typeof val === 'object' && val !== null) val = JSON.stringify(val).substring(0, 30) + '...';
+              return `<td><div class="cell-main">${val || '—'}</div></td>`;
+          }).join('');
+          
+          // 2. Up/Down Buttons 
+          // FIX: Strictly limit these buttons to Operators and Weapons ONLY, and fix the syntax crash!
+          let sortButtons = '';
+          const allowedTables = ['homepage_operators', 'homepage_weapons'];
+          
+          if (allowedTables.includes(hpCurrentTable) && !hpSortColumn) {
+              // Safely check if a category exists without creating a single-quote syntax break
+              const catParam = row.category ? row.category : '';
+              sortButtons = `
+                  <button class="btn-action" style="padding: 4px 8px; font-size: 11px;" onclick="changeHpSortOrder('${row.id}', ${row.sort_order}, -1, '${catParam}')" title="Move Up">▲</button>
+                  <button class="btn-action" style="padding: 4px 8px; font-size: 11px; margin-right: 10px;" onclick="changeHpSortOrder('${row.id}', ${row.sort_order}, 1, '${catParam}')" title="Move Down">▼</button>
+              `;
+          }
+
+          return `<tr>${cols}
+              <td><div class="action-row">
+                  ${sortButtons}
+                  <button class="btn-action edit" onclick='openHpModal(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Edit</button>
+                  <button class="btn-action delete" onclick="deleteHpData('${row.id}')">Delete</button>
+              </div></td>
+          </tr>`;
+      }).join('');
+  }
+
+  // 3. Category-Aware Database Swapping
+  async function changeHpSortOrder(id, currentOrder, direction, category = '') {
+      let query = db.from(hpCurrentTable).select('id, sort_order');
+      
+      // FIX: If the table uses categories, ONLY swap with items in the same category!
+      if (category) {
+          query = query.eq('category', category);
+      }
+      
+      const { data, error } = await query.order('sort_order', { ascending: true });
+
+      if (error || !data) return;
+
+      const currentIndex = data.findIndex(item => item.id === id);
+      const swapIndex = currentIndex + direction;
+
+      // Prevent out-of-bounds errors (like clicking UP on the very first item)
+      if (swapIndex < 0 || swapIndex >= data.length) return; 
+
+      const itemToSwap = data[swapIndex];
+      let newOrderForCurrent = itemToSwap.sort_order;
+      let newOrderForSwap = currentOrder;
+
+      if (newOrderForCurrent === newOrderForSwap) {
+          newOrderForCurrent += direction;
+      }
+
+      await Promise.all([
+          db.from(hpCurrentTable).update({ sort_order: newOrderForCurrent }).eq('id', id),
+          db.from(hpCurrentTable).update({ sort_order: newOrderForSwap }).eq('id', itemToSwap.id)
+      ]);
+
+      toast('info', 'Reordered successfully.');
+      hpLoadData(); 
+  }
+
+  function openHpModal(existingData = null) {
+      hpCurrentEditId = existingData ? existingData.id : null;
+      const schema = HP_SCHEMAS[hpCurrentTable];
+      const form = document.getElementById('hp-modal-form');
+      document.getElementById('hp-modal-title').innerText = existingData ? 'Edit Item' : 'Add New Item';
+      
+      form.innerHTML = schema.fields.map(field => {
+          let value = existingData ? existingData[field.name] : (field.default || '');
+          if (field.isArray && Array.isArray(value)) value = value.join(', ');
+          if (field.isJson && typeof value === 'object' && value !== null) value = JSON.stringify(value, null, 2);
+          if (value === null) value = '';
+
+          const readOnly = (existingData && field.readOnlyOnEdit) ? 'readonly' : '';
+          let inputHtml = field.type === 'textarea' 
+              ? `<textarea class="form-textarea" id="hp-input-${field.name}" ${readOnly}>${value}</textarea>` 
+              : `<input class="form-input" type="${field.type}" id="hp-input-${field.name}" value="${value}" ${readOnly}>`;
+
+          return `<div class="form-group"><label class="form-label">${field.label}</label>${inputHtml}${field.hint ? `<div class="form-hint">${field.hint}</div>` : ''}</div>`;
+      }).join('');
+
+      openModal('hp-modal');
+  }
+
+  async function saveHpData() {
+      const schema = HP_SCHEMAS[hpCurrentTable];
+      const payload = {};
+      const btn = document.getElementById('btn-hp-save');
+      btn.innerHTML = "<span>Saving...</span>";
+
+      try {
+          for (const field of schema.fields) {
+              let val = document.getElementById(`hp-input-${field.name}`).value;
+              if (val === '') val = null;
+              else if (field.isArray) val = val.split(',').map(s => s.trim()).filter(s => s);
+              else if (field.isJson) val = JSON.parse(val);
+              else if (field.type === 'number') val = parseInt(val, 10);
+              payload[field.name] = val;
+          }
+
+          let result = hpCurrentEditId 
+              ? await db.from(hpCurrentTable).update(payload).eq('id', hpCurrentEditId) 
+              : await db.from(hpCurrentTable).insert([payload]);
+
+          if (result.error) throw result.error;
+
+          toast('success', 'Homepage content updated!');
+          closeModal('hp-modal');
+          hpLoadData();
+      } catch (err) {
+          toast('error', err.message);
+      } finally {
+          btn.innerHTML = "<span>Save Changes</span>";
+      }
+  }
+
+  function deleteHpData(id) {
+      pendingAction = async () => {
+          const { error } = await db.from(hpCurrentTable).delete().eq('id', id);
+          if (error) { toast('error', 'Delete failed: ' + error.message); return; }
+          toast('success', 'Item deleted from homepage.');
+          hpLoadData();
+      };
+      document.getElementById('confirm-title').textContent = 'Delete Item';
+      document.getElementById('confirm-sub').textContent   = `Permanently remove this from the homepage?`;
+      openModal('confirm-modal');
+  }
+
+  /* ════════════════════════════════════
+     INIT
+  ════════════════════════════════════ */
+  (async () => {
+    const user = await authGuard();
+    if (!user) return;
+    await refreshAll();
+    await Promise.all([loadOperators(), loadWeapons()]);
+  })();
+  </script>
 </body>
 </html>

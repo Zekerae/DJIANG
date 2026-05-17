@@ -19,8 +19,7 @@
   }
   @font-face {
     font-family: 'HarmonyOS Sans';
-    src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff2') format('woff2'),
-         url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff') format('woff');
+    src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff') format('woff');
     font-weight: 700 900;
     font-style: normal;
     font-display: swap;
@@ -1227,7 +1226,13 @@ async function redirectByRole() {
     .single();
 
   const role = profile?.role || session.user.user_metadata?.role || 'user';
-  window.location.href = role === 'admin' ? 'admin.html' : 'index.html';
+  
+  // Allow BOTH roles into the admin dashboard
+  if (role === 'admin' || role === 'super_admin') {
+    window.location.href = 'admin.html';
+  } else {
+    window.location.href = 'index.html';
+  }
 }
 
 // ── HANDLE EXISTING SESSION ───────────────────────────────────────
