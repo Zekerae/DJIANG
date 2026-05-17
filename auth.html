@@ -11,14 +11,20 @@
   /* ── HARMONY OS FONT FACE ── */
   @font-face {
     font-family: 'HarmonyOS Sans';
-    src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans.woff') format('woff');
+    src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans.woff2') format('woff2'),
+         url('assets/fonts/HarmonyOS/HarmonyOS_Sans.woff') format('woff');
     font-weight: 400;
+    font-style: normal;
+    font-display: swap;
   }
   @font-face {
-    font-family: 'HarmonyOS Sans Black';
-    src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff') format('woff');
-    font-weight: 700;
-}
+    font-family: 'HarmonyOS Sans';
+    src: url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff2') format('woff2'),
+         url('assets/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff') format('woff');
+    font-weight: 700 900;
+    font-style: normal;
+    font-display: swap;
+  }
 
   :root {
     --bg: #06080d;
