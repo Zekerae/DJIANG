@@ -213,13 +213,13 @@ body::before {
   flex-shrink: 0;
 }
 
-/* --- DRAWER --- */
 .card-drawer {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
   opacity: 0;
   pointer-events: none;
+  width: 100%;
 }
 .card-drawer.open {
   max-height: 220px;
@@ -228,17 +228,19 @@ body::before {
 }
 
 .drawer-inner {
-  padding: 12px 14px 14px;
+  padding: 10px;
   background: rgba(12, 13, 18, 0.97);
   border: 1px solid var(--bord2);
   border-top: none;
   border-radius: 0 0 8px 8px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.drawer-row { display: flex; align-items: center; gap: 8px; }
+.drawer-row { display: flex; align-items: center; gap: 8px; width: 100%; }
 
 .drawer-divider {
   height: 1px;
@@ -248,19 +250,22 @@ body::before {
 .drawer-skills {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 5px;
+  width: 100%;
 }
 
 .drawer-field {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 4px;
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--bord);
   border-radius: 5px;
-  padding: 6px 10px;
+  padding: 5px 8px;
   cursor: text;
+  min-width: 0;
+  overflow: hidden;
 }
 .drawer-field:focus-within {
   border-color: rgba(212,148,58,0.45);
@@ -269,23 +274,27 @@ body::before {
 
 .drawer-lbl {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--dim2);
   white-space: nowrap;
-  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .drawer-input {
-  width: 36px;
+  width: 28px;
+  flex-shrink: 0;
   background: transparent;
   border: none;
   outline: none;
   color: var(--gold2);
   font-family: 'Rajdhani', sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
   text-align: right;
   padding: 0;
@@ -297,7 +306,7 @@ body::before {
 
 /* Level field spans full width */
 .drawer-row .drawer-field { flex: 1; }
-.drawer-row .drawer-input { width: 50px; font-size: 1.05rem; }
+.drawer-row .drawer-input { width: 40px; font-size: 1rem; }
 /* --- ROSTER NOTICE (guest users) --- */
 .roster-notice {
   font-family: 'Rajdhani', sans-serif; font-size: 0.72rem; letter-spacing: 1.5px;

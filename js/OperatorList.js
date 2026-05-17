@@ -76,7 +76,8 @@ const OPS = [
 const grid = document.getElementById('cardGrid');
 const searchInput = document.getElementById('opSearch');
 const filters = { rarity: new Set(), class: new Set(), element: new Set(), weapon: new Set() };
-let currentSort = 'rarity'; // Default sort
+let currentSort = 'rarity';
+let sortDir = -1; // -1 = descending, 1 = ascending
 let filterOwned = false;       // true = show only owned
 let filterLevelMin = 1;        // level range min
 let filterLevelMax = 90;       // level range max
@@ -137,86 +138,91 @@ function createCard(op) {
   const entry   = getRosterEntry(op.id);
   const isOwned = !!entry.owned;
 
+  const sk = entry.skill_levels || {};
+  const drawerVisible = isOwned ? ' open' : '';
+
   return `
-    <div class="op-card rarity-${op.rarity} bg-${op.element}${isOwned ? ' card-owned' : ''}" 
+    <div class="card-wrap${isOwned ? ' card-wrap-owned' : ''}"
          data-id="${op.id}"
-         data-name="${op.name.toLowerCase()}" 
-         data-rarity="${op.rarity}" 
+         data-name="${op.name.toLowerCase()}"
+         data-rarity="${op.rarity}"
          data-class="${op.cls}"
          data-element="${op.element}"
          data-weapon="${op.weapon}"
          data-owned="${isOwned}"
-         data-level="${entry.level || ''}"
-         onclick="cardNavigate(event, '${op.id}')">
-      
-      <div class="card-placeholder">${op.name.charAt(0)}</div>
-      ${imgTag}
-      <div class="card-vignette"></div>
+         data-level="${entry.level || ''}">
 
-      <!-- Owned toggle badge -->
-      <div class="owned-badge${isOwned ? ' owned' : ''}"
-           onclick="toggleOwned(event, '${op.id}')"
-           title="${isOwned ? 'Owned — click to unmark' : 'Mark as owned'}">
-        <span class="owned-check">✓</span>
-      </div>
-      
-      <div class="card-elem elem-${op.element}">
-        ${elemIconPath ? `<img src="${elemIconPath}" class="elem-icon">` : ''}
-        ${op.element.substring(0,3).toUpperCase()}
-      </div>
-      
-      <div class="card-info">
-        <div class="card-name">${op.name}</div>
-        
-        <div class="card-meta-icons">
-          <div class="icon-box">
-            ${classIconPath ? `<img src="${classIconPath}">` : ''}
-            <span>${op.cls}</span>
-          </div>
-          <div class="icon-box">
-            ${weaponIconPath ? `<img src="${weaponIconPath}">` : ''}
-            <span>${op.weapon}</span>
-          </div>
-        </div>
-        
-        <div class="card-stars">${stars}</div>
+      <!-- THE CARD (navigate on click) -->
+      <div class="op-card rarity-${op.rarity} bg-${op.element}${isOwned ? ' card-owned' : ''}"
+           onclick="cardNavigate(event, '${op.id}')">
 
-        <!-- Progress tracker — visible only when owned -->
-        <div class="card-tracker${isOwned ? ' visible' : ''}">
-          <label class="tracker-field" onclick="event.stopPropagation()">
-            <span class="tracker-lbl">Lv</span>
-            <input class="tracker-input" type="number" min="1" max="90" placeholder="—"
-              value="${entry.level || ''}"
-              onclick="event.stopPropagation()"
-              onfocus="event.stopPropagation()"
-              oninput="saveTrackerField(event, '${op.id}', 'level')">
-          </label>
+        <div class="card-placeholder">${op.name.charAt(0)}</div>
+        ${imgTag}
+        <div class="card-vignette"></div>
+
+        <div class="owned-badge${isOwned ? ' owned' : ''}"
+             onclick="toggleOwned(event, '${op.id}')"
+             title="${isOwned ? 'Owned — click to unmark' : 'Mark as owned'}">
+          <span class="owned-check">✓</span>
         </div>
-        <div class="card-tracker card-tracker-skills${isOwned ? ' visible' : ''}">
-          ${[
-            ['BA', 'basic_attack',  'Basic Attack'],
-            ['BS', 'battle_skill',  'Battle Skill'],
-            ['CS', 'combo_skill',   'Combo Skill'],
-            ['UL', 'ultimate_skill','Ultimate Skill']
-          ].map(([abbr, key, label]) => `
-            <label class="tracker-field" title="${label}" onclick="event.stopPropagation()">
-              <span class="tracker-lbl">${abbr}</span>
-              <input class="tracker-input" type="number" min="1" max="12" placeholder="—"
-                value="${(entry.skill_levels && entry.skill_levels[key]) || ''}"
-                onclick="event.stopPropagation()"
-                onfocus="event.stopPropagation()"
-                oninput="saveSkillLevel(event, '${op.id}', '${key}')">
+
+        <div class="card-elem elem-${op.element}">
+          ${elemIconPath ? `<img src="${elemIconPath}" class="elem-icon">` : ''}
+          ${op.element.substring(0,3).toUpperCase()}
+        </div>
+
+        <div class="card-info">
+          <div class="card-name">${op.name}</div>
+          <div class="card-meta-icons">
+            <div class="icon-box">
+              ${classIconPath ? `<img src="${classIconPath}">` : ''}
+              <span>${op.cls}</span>
+            </div>
+            <div class="icon-box">
+              ${weaponIconPath ? `<img src="${weaponIconPath}">` : ''}
+              <span>${op.weapon}</span>
+            </div>
+          </div>
+          <div class="card-stars">${stars}</div>
+        </div>
+      </div>
+
+      <!-- DRAWER — expands below the card when owned -->
+      <div class="card-drawer${drawerVisible}">
+        <div class="drawer-inner">
+          <div class="drawer-row">
+            <label class="drawer-field">
+              <span class="drawer-lbl">Level</span>
+              <input class="drawer-input" type="number" min="1" max="90" placeholder="—"
+                value="${entry.level || ''}"
+                oninput="saveTrackerField(event, '${op.id}', 'level')">
             </label>
-          `).join('')}
+          </div>
+          <div class="drawer-divider"></div>
+          <div class="drawer-skills">
+            ${[
+              ['basic_attack',   'Basic Attack'],
+              ['battle_skill',   'Battle Skill'],
+              ['combo_skill',    'Combo Skill'],
+              ['ultimate_skill', 'Ultimate']
+            ].map(([key, label]) => `
+              <label class="drawer-field">
+                <span class="drawer-lbl">${label}</span>
+                <input class="drawer-input" type="number" min="1" max="12" placeholder="—"
+                  value="${sk[key] || ''}"
+                  oninput="saveSkillLevel(event, '${op.id}', '${key}')">
+              </label>
+            `).join('')}
+          </div>
         </div>
       </div>
+
     </div>
   `;
 }
 
 function cardNavigate(event, id) {
-  const t = event.target;
-  if (t.closest('.card-tracker') || t.closest('.owned-badge') || t.tagName === 'INPUT' || t.tagName === 'LABEL') return;
+  if (event.target.closest('.owned-badge')) return;
   window.location.href = `CharacterIntroduction.html?char=${id}`;
 }
 
@@ -228,15 +234,17 @@ async function toggleOwned(event, id) {
   const newOwned = !entry.owned;
   await upsertRosterEntry(id, { owned: newOwned });
 
-  const card  = document.querySelector(`.op-card[data-id="${id}"]`);
-  if (!card) return;
+  const wrap  = document.querySelector(`.card-wrap[data-id="${id}"]`);
+  if (!wrap) return;
+  const card   = wrap.querySelector('.op-card');
+  const drawer = wrap.querySelector('.card-drawer');
   card.classList.toggle('card-owned', newOwned);
-  card.dataset.owned = newOwned;
-  const badge   = card.querySelector('.owned-badge');
-  const trackers = card.querySelectorAll('.card-tracker');
+  wrap.classList.toggle('card-wrap-owned', newOwned);
+  wrap.dataset.owned = newOwned;
+  drawer.classList.toggle('open', newOwned);
+  const badge = wrap.querySelector('.owned-badge');
   badge.classList.toggle('owned', newOwned);
   badge.title = newOwned ? 'Owned — click to unmark' : 'Mark as owned';
-  trackers.forEach(t => t.classList.toggle('visible', newOwned));
 }
 
 // Debounce map to avoid hammering Supabase on every keystroke
@@ -245,8 +253,9 @@ function saveTrackerField(event, id, field) {
   if (!CURRENT_USER) return;
   const val = event.target.value;
   if (field === 'level') {
-    const card = document.querySelector(`.op-card[data-id="${id}"]`);
+    const card = document.querySelector(`.card-wrap[data-id="${id}"]`);
     if (card) card.dataset.level = val;
+    if (currentSort === 'level') applySort();
   }
   clearTimeout(_debounceTimers[id + field]);
   _debounceTimers[id + field] = setTimeout(() => {
@@ -271,7 +280,7 @@ function updateFilters() {
   const query = searchInput.value.toLowerCase();
   let visibleCount = 0;
   
-  document.querySelectorAll('.op-card').forEach(card => {
+  document.querySelectorAll('.card-wrap').forEach(card => {
     const matchesSearch  = card.dataset.name.includes(query);
     const matchesRarity  = filters.rarity.size === 0 || filters.rarity.has(card.dataset.rarity);
     const matchesClass   = filters.class.size === 0 || filters.class.has(card.dataset.class);
@@ -305,19 +314,25 @@ function updateFilters() {
 
 function applySort() {
   const cards = Array.from(grid.children);
-  const opCards = cards.filter(card => card.classList.contains('op-card'));
-  
+  const opCards = cards.filter(card => card.classList.contains('card-wrap'));
+  const d = sortDir; // 1 = asc, -1 = desc
+
   opCards.sort((a, b) => {
     if (currentSort === 'rarity') {
       const rA = parseInt(a.dataset.rarity);
       const rB = parseInt(b.dataset.rarity);
-      if (rA !== rB) return rB - rA; 
+      if (rA !== rB) return (rB - rA) * d;
       return a.dataset.name.localeCompare(b.dataset.name);
     } else if (currentSort === 'name') {
-      return a.dataset.name.localeCompare(b.dataset.name); 
+      return a.dataset.name.localeCompare(b.dataset.name) * d;
+    } else if (currentSort === 'level') {
+      const lA = parseInt(a.dataset.level) || 0;
+      const lB = parseInt(b.dataset.level) || 0;
+      if (lA !== lB) return (lB - lA) * d;
+      return a.dataset.name.localeCompare(b.dataset.name);
     }
   });
-  
+
   opCards.forEach(card => grid.appendChild(card));
 }
 
@@ -391,9 +406,26 @@ document.addEventListener('input', e => {
 
 document.querySelectorAll('.sort-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentSort = btn.dataset.sort;
+    if (currentSort === btn.dataset.sort) {
+      // Same button — flip direction
+      sortDir *= -1;
+    } else {
+      // New button — switch sort, reset to descending
+      document.querySelectorAll('.sort-btn').forEach(b => {
+        b.classList.remove('active');
+        b.querySelector('.sort-arrow')?.remove();
+      });
+      btn.classList.add('active');
+      currentSort = btn.dataset.sort;
+      sortDir = -1;
+    }
+    // Update arrow indicator on active button
+    const existing = btn.querySelector('.sort-arrow');
+    if (existing) existing.remove();
+    const arrow = document.createElement('span');
+    arrow.className = 'sort-arrow';
+    arrow.textContent = sortDir === -1 ? ' ↓' : ' ↑';
+    btn.appendChild(arrow);
     applySort();
   });
 });
