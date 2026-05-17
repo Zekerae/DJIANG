@@ -29,21 +29,28 @@
                 const displayName = profile?.display_name || profile?.username || user.email.split('@')[0];
                 const role = profile?.role || user.user_metadata?.role || 'user';
 
+                // Map the Custom Titles
+                let displayRoleTitle = 'Operator';
+                if (role === 'super_admin') {
+                    displayRoleTitle = 'Endministrator';
+                } else if (role === 'admin') {
+                    displayRoleTitle = 'Supervisor';
+                }
+
                 // Create the Dropdown Toggle Button
                 const dropBtn = document.createElement('button');
                 dropBtn.className = 'auth-btn';
                 dropBtn.innerHTML = `<span>${displayName}</span> <span style="font-size:10px; margin-left:4px;">▼</span>`;
                 
-                // Create the Dropdown Menu container
                 const menu = document.createElement('div');
                 menu.className = 'user-dropdown-menu';
 
-                // If the logged-in user is an Admin, give them a link back to the Dashboard
-                if (role === 'admin') {
+                // Show Admin link to BOTH admin roles
+                if (role === 'admin' || role === 'super_admin') {
                     const adminLink = document.createElement('a');
                     adminLink.href = 'admin.html';
                     adminLink.className = 'user-dropdown-item';
-                    adminLink.textContent = 'Admin Console';
+                    adminLink.textContent = `${displayRoleTitle} Console`; // Uses the customized name!
                     menu.appendChild(adminLink);
                 }
 
