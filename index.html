@@ -12,32 +12,48 @@
     <link rel="stylesheet" href="css/NavBar.css">
     <link rel="stylesheet" href="css/HomepageInfo.css">
     <link rel="stylesheet" href="css/HomepageEventTimeline.css">
+    <style>
+      /* Top Right Login Button Styles */
+      .admin-login-btn {
+    position: fixed;
+    
+    /* 1. Set 'top' to exactly half the total height of your navbar */
+    /* (If your navbar is 70px tall, use 35px. If it's 60px, use 30px) */
+    top: 23px; 
+    
+    /* 2. This pulls the button UP by exactly half of its own height, centering it perfectly */
+    transform: translateY(-50%); 
+    
+    right: 40px;
+    z-index: 2147483647 !important;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 18px;
+    background: rgba(0, 229, 192, 0.1);
+    border: 1px solid rgba(0, 229, 192, 0.4);
+    border-radius: 4px;
+    color: #00e5c0;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.admin-login-btn:hover {
+    background: #00e5c0;
+    color: #07080b;
+    box-shadow: 0 0 15px rgba(0, 229, 192, 0.4);
+}
+    </style>
 </head>
 <body>
 
-  <!-- NAVBAR is injected automatically by NavBarLib.js below -->
-
-    <!-- SECTIONS START -->
-    <div id="landing-page">
-        
-      <!-- 
-      DJIANG Landing Page Section
-      ────────────────────────────────────────────────────────────────
-      Designed to be injected into any parent div via HTML-fetcher.js.
-
-      The parent div controls positioning:
-        • position: relative  → flows in document
-        • position: absolute  → anchored to nearest positioned ancestor
-        • position: fixed     → anchored to viewport
-
-      All internal elements (HUD, hero, etc.) are positioned relative
-      to .lp-root, NOT the viewport, so nothing breaks on injection.
-      ────────────────────────────────────────────────────────────────
-    -->
+  <div id="landing-page">
         <div class="landing-page">
-
-
-            <!-- HERO SECTION -->
             <section id="hero">
                 <div class="hero-bg"></div>
                 <div class="hero-scanlines"></div>
@@ -77,7 +93,6 @@
 
 <section id="endfield-info">
 
-  <!-- ── SECTION HEADER ── -->
   <div class="ei-section-header">
     <div class="ei-section-label">FIELD INTELLIGENCE DATABASE</div>
     <div class="ei-section-title">KNOW<br>YOUR<br>FIELD</div>
@@ -88,7 +103,6 @@
     </p>
   </div>
 
-  <!-- ── TABS NAVIGATION ── -->
   <nav class="ei-tabs-nav" role="tablist" aria-label="Endfield knowledge tabs">
     <button class="ei-tab-btn active" data-tab="classes"   role="tab" aria-selected="true">01 / CLASSES</button>
     <button class="ei-tab-btn"        data-tab="elements"  role="tab" aria-selected="false">02 / ELEMENTS</button>
@@ -97,7 +111,6 @@
     <button class="ei-tab-btn"        data-tab="glossary"  role="tab" aria-selected="false">05 / GLOSSARY</button>
   </nav>
 
-  <!-- TAB 01 — CLASSES -->
   <div class="ei-tab-panel active" id="ei-panel-classes" role="tabpanel">
     <div class="ei-classes-grid">
 
@@ -195,7 +208,6 @@
     </div>
   </div>
 
-  <!-- TAB 02 — ELEMENTS -->
   <div class="ei-tab-panel" id="ei-panel-elements" role="tabpanel">
     <div class="ei-elements-wrapper">
       <p class="ei-elements-intro">
@@ -242,7 +254,6 @@
     </div>
   </div>
 
-  <!-- TAB 03 — REACTIONS -->
   <div class="ei-tab-panel" id="ei-panel-reactions" role="tabpanel">
     <div class="ei-reactions-wrapper">
       <p class="ei-reactions-intro">
@@ -313,7 +324,6 @@
     </div>
   </div>
 
-  <!-- TAB 04 — TEAM BUILDING -->
   <div class="ei-tab-panel" id="ei-panel-teams" role="tabpanel">
     <div class="ei-teams-wrapper">
       <p class="ei-teams-intro">
@@ -399,7 +409,6 @@
     </div>
   </div>
 
-  <!-- TAB 05 — GLOSSARY -->
   <div class="ei-tab-panel" id="ei-panel-glossary" role="tabpanel">
     <div class="ei-glossary-wrapper">
       <div class="ei-glossary-grid">
@@ -419,7 +428,6 @@
     </div>
   </div>
 
-  <!-- BOTTOM BAR -->
   <div class="ei-bottom-bar">
     <span>// DATABASE REV. 1.2 — LAST UPDATED: ENDFIELD PATCH 1.2</span>
     <span>DJIANG FIELD INTELLIGENCE &#9632;</span>
@@ -428,9 +436,6 @@
 </section>
 
 
-<!-- ══════════════════════════════════════════════════════════════════
-     EVENT TIMELINE SECTION
-     ══════════════════════════════════════════════════════════════════ -->
 <section id="event-timeline">
 
   <div class="et-header">
@@ -443,7 +448,6 @@
 
   <div class="et-grid">
 
-    <!-- ══ CURRENT EVENTS ══ -->
     <div class="et-col">
       <div class="et-col-header">
         <span class="et-col-title">CURRENT</span>
@@ -456,7 +460,6 @@
       <div class="et-events-list" id="et-current-list"></div>
     </div>
 
-    <!-- ══ UPCOMING EVENTS ══ -->
     <div class="et-col">
       <div class="et-col-header">
         <span class="et-col-title">UPCOMING</span>
@@ -469,9 +472,7 @@
       <div class="et-events-list" id="et-upcoming-list"></div>
     </div>
 
-  </div><!-- /.et-grid -->
-
-  <div class="et-bottom-bar">
+  </div><div class="et-bottom-bar">
     <span>// LIVE DATA — TIMES ARE APPROXIMATE · SOURCE: GAME8 &amp; OFFICIAL ENDFIELD CALENDARS</span>
     <span>DJIANG OPS LOG &#9632;</span>
   </div>
@@ -1134,35 +1135,25 @@
 
                     </div>
 
-                    <!-- next prev buttons -->
                     <div class="arrows">
                         <button class="prev"><</button>
                         <button class="next">></button>
                     </div>
 
-                    <!-- time running -->
                     <div class="timeRunning"></div>
 
                 </div>
 
                 
 
-            </div><!-- /.cs-root -->
-
-    </div>
+            </div></div>
     <div id="carousel-3D">
-    <!-- =====================================================================
-         CAROUSEL
-         The JavaScript file (carousel.js) builds the cards dynamically, so
-         you do not need to add card elements by hand here.
-    ====================================================================== -->
     <div class="carousel-3D">
         
 
 
         <div class="carousel-wrapper">
 
-                <!-- 3-D stage -->
                 <div class="carousel-scene">
                     <div class="carousel-ring" id="carousel-ring">
 
@@ -1203,10 +1194,8 @@
                     </div>
                 </div>
 
-                <!-- Active-card indicator dots (built by JavaScript) -->
                 <div class="carousel-indicator-dots" id="carousel-indicator-dots"></div>
 
-                <!-- Controls row -->
                 <div class="carousel-controls">
 
                     <button class="carousel-arrow-button" id="carousel-prev-button" aria-label="Previous card">
@@ -1226,12 +1215,6 @@
             
         </div>
     </div>
-
-    <!-- 
-    END CAROUSEL 
-    -->
-
-    <!-- SECTIONS END -->
 
     <div class="sub-footer">
         <div id="sfc1" class="subFooter-container">
@@ -1331,5 +1314,19 @@
             ]
         });
     </script>
+
+    <script>
+    // Wait for the page and NavBar to fully load
+      window.addEventListener('load', () => {
+        // Create the button dynamically
+        const loginBtn = document.createElement('a');
+        loginBtn.href = 'auth.html';
+        loginBtn.className = 'admin-login-btn';
+        loginBtn.textContent = 'LOG IN';
+      
+        // Append it to the very end of the document body, breaking it free of any wrappers
+        document.body.appendChild(loginBtn);
+      });
+</script>
 </body>
 </html>

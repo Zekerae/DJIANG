@@ -933,20 +933,30 @@ async function oauthLogin(provider) {
   if (error) showAlert('login-alert', 'error', error.message);
 }
 
-// ── REDIRECT BY ROLE ──────────────────────────────────────────────
-// After successful sign in
-const { data: profile } = await db
-  .from('profiles')
-  .select('role')
-  .eq('id', session.user.id)
-  .single();
+// --- REDIRECT BY ROLE FUNCTION ---
+async function redirectByRole() {
+    // 1. Get the current active session from Supabase
+    const { data: { session }, error: sessionError } = await db.auth.getSession();
 
-const role = profile?.role || session.user.user_metadata?.role || 'user';
+    // 2. If there is no session, stop right here.
+    if (!session) return;
 
-if (role === 'admin') {
-  window.location.href = 'admin.html';
-} else {
-  window.location.href = 'index.html';
+    // 3. Check their role in the profiles table
+    const { data: profile } = await db
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single();
+
+    // 4. Determine their final role
+    const role = profile?.role || session.user.user_metadata?.role || 'user';
+
+    // 5. Redirect based on role
+    if (role === 'admin') {
+      window.location.href = 'admin.html';
+    } else {
+      window.location.href = 'index.html';
+    }
 }
 
 // ── HANDLE OAUTH CALLBACK & EXISTING SESSION ──────────────────────
