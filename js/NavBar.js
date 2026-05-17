@@ -33,7 +33,7 @@ const NavBar = (() => {
       { label: ['OPERATORS'],             target: 'OperatorList.html',    page: '003' },
       { label: ['TIER LIST'],             target: 'Tierlist.html',        page: '004' },
       { label: ['HEADHUNT', 'TRACKER'],   target: 'HeadhuntTracker.html', page: '005' },
-      { label: ['MATERIAL','TRACKER'],    target: 'footer',               page: '006' },
+      { label: ['MATERIAL','TRACKER'],    target: 'MaterialTracker.html', page: '006' },
     ],
     socials: ['FACEBOOK', 'DISCORD', 'INSTAGRAM'],
   };
