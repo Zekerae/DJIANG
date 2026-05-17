@@ -337,53 +337,84 @@ function applySort() {
 }
 
 // ==========================================
-// FILTER & SORT LISTENERS (wired before init so they're ready)
+// ==========================================
+// FILTER & SORT LISTENERS — all delegated so icons inside pills don't break targeting
 // ==========================================
 
 searchInput.addEventListener('input', updateFilters);
 
-document.querySelectorAll('.filter-row .pill').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const groupElement = btn.closest('[data-group]');
+document.addEventListener('click', e => {
+  const pill = e.target.closest('.filter-row .pill');
+  if (pill) {
+    // Owned pill
+    if (pill.id === 'pill-owned') {
+      filterOwned = !filterOwned;
+      pill.classList.toggle('active', filterOwned);
+      updateFilters();
+      return;
+    }
+    // Standard filter pills
+    const groupElement = pill.closest('[data-group]');
     if (!groupElement) return;
     const group = groupElement.dataset.group;
-    const val   = btn.dataset.val;
-    if (filters[group].has(val)) { filters[group].delete(val); btn.classList.remove('active'); }
-    else                         { filters[group].add(val);    btn.classList.add('active'); }
+    const val   = pill.dataset.val;
+    if (filters[group].has(val)) { filters[group].delete(val); pill.classList.remove('active'); }
+    else                         { filters[group].add(val);    pill.classList.add('active'); }
     updateFilters();
-  });
-});
+    return;
+  }
 
-document.getElementById('clearBtn').addEventListener('click', () => {
-  searchInput.value = '';
-  filters.rarity.clear(); filters.class.clear(); filters.element.clear(); filters.weapon.clear();
-  document.querySelectorAll('.filter-row .pill').forEach(b => b.classList.remove('active'));
-  // Reset owned + level filters
-  filterOwned = false;
-  filterLevelActive = false;
-  filterLevelMin = 1;
-  filterLevelMax = 90;
-  const ownedBtn = document.getElementById('pill-owned');
-  if (ownedBtn) ownedBtn.classList.remove('active');
-  const minEl = document.getElementById('filter-lv-min');
-  const maxEl = document.getElementById('filter-lv-max');
-  const minOut = document.getElementById('filter-lv-min-out');
-  const maxOut = document.getElementById('filter-lv-max-out');
-  if (minEl) { minEl.value = 1; minOut.textContent = '1'; }
-  if (maxEl) { maxEl.value = 90; maxOut.textContent = '90'; }
-  updateFilters();
-});
+  // Sort buttons
+  const sortBtn = e.target.closest('.sort-btn');
+  if (sortBtn) {
+    if (currentSort === sortBtn.dataset.sort) {
+      sortDir *= -1;
+    } else {
+      document.querySelectorAll('.sort-btn').forEach(b => {
+        b.classList.remove('active');
+        b.querySelector('.sort-arrow')?.remove();
+      });
+      sortBtn.classList.add('active');
+      currentSort = sortBtn.dataset.sort;
+      sortDir = -1;
+    }
+    const existing = sortBtn.querySelector('.sort-arrow');
+    if (existing) existing.remove();
+    const arrow = document.createElement('span');
+    arrow.className = 'sort-arrow';
+    arrow.textContent = sortDir === -1 ? ' ↓' : ' ↑';
+    sortBtn.appendChild(arrow);
+    applySort();
+    return;
+  }
 
-// Owned toggle pill
-document.addEventListener('click', e => {
-  if (e.target.id === 'pill-owned') {
-    filterOwned = !filterOwned;
-    e.target.classList.toggle('active', filterOwned);
+  // Clear button
+  if (e.target.closest('#clearBtn')) {
+    searchInput.value = '';
+    filters.rarity.clear(); filters.class.clear(); filters.element.clear(); filters.weapon.clear();
+    document.querySelectorAll('.filter-row .pill').forEach(b => b.classList.remove('active'));
+    filterOwned = false;
+    filterLevelActive = false;
+    filterLevelMin = 1;
+    filterLevelMax = 90;
+    const minEl = document.getElementById('filter-lv-min');
+    const maxEl = document.getElementById('filter-lv-max');
+    const minOut = document.getElementById('filter-lv-min-out');
+    const maxOut = document.getElementById('filter-lv-max-out');
+    if (minEl) { minEl.value = 1; minOut.textContent = '1'; }
+    if (maxEl) { maxEl.value = 90; maxOut.textContent = '90'; }
     updateFilters();
+    return;
+  }
+
+  // Filter toggle button
+  if (e.target.closest('#filterToggleBtn')) {
+    document.getElementById('filterZone').classList.toggle('dropdown-open');
+    return;
   }
 });
 
-// Level range sliders (delegated — elements added after init)
+// Level range sliders
 document.addEventListener('input', e => {
   if (e.target.id === 'filter-lv-min' || e.target.id === 'filter-lv-max') {
     const minEl  = document.getElementById('filter-lv-min');
@@ -392,7 +423,6 @@ document.addEventListener('input', e => {
     const maxOut = document.getElementById('filter-lv-max-out');
     filterLevelMin = parseInt(minEl.value);
     filterLevelMax = parseInt(maxEl.value);
-    // Clamp so min <= max
     if (filterLevelMin > filterLevelMax) {
       if (e.target.id === 'filter-lv-min') { filterLevelMin = filterLevelMax; minEl.value = filterLevelMin; }
       else { filterLevelMax = filterLevelMin; maxEl.value = filterLevelMax; }
@@ -404,32 +434,6 @@ document.addEventListener('input', e => {
   }
 });
 
-document.querySelectorAll('.sort-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (currentSort === btn.dataset.sort) {
-      // Same button — flip direction
-      sortDir *= -1;
-    } else {
-      // New button — switch sort, reset to descending
-      document.querySelectorAll('.sort-btn').forEach(b => {
-        b.classList.remove('active');
-        b.querySelector('.sort-arrow')?.remove();
-      });
-      btn.classList.add('active');
-      currentSort = btn.dataset.sort;
-      sortDir = -1;
-    }
-    // Update arrow indicator on active button
-    const existing = btn.querySelector('.sort-arrow');
-    if (existing) existing.remove();
-    const arrow = document.createElement('span');
-    arrow.className = 'sort-arrow';
-    arrow.textContent = sortDir === -1 ? ' ↓' : ' ↑';
-    btn.appendChild(arrow);
-    applySort();
-  });
-});
-
 const filterZone      = document.getElementById('filterZone');
 const filterToggleBtn = document.getElementById('filterToggleBtn');
 
@@ -437,7 +441,6 @@ window.addEventListener('scroll', () => {
   if (window.scrollY > 150) filterZone.classList.add('scrolled');
   else if (window.scrollY < 80) { filterZone.classList.remove('scrolled'); filterZone.classList.remove('dropdown-open'); }
 });
-filterToggleBtn.addEventListener('click', () => filterZone.classList.toggle('dropdown-open'));
 
 // ==========================================
 // INIT — auth → load roster → render cards
