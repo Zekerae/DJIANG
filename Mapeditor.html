@@ -30,7 +30,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .btn-full{width:100%;justify-content:center}
 .btn:disabled{opacity:0.4;pointer-events:none}
 
-/* STATUS BAR */
 .db-status-bar{position:relative;z-index:10;height:28px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:8px;font-family:var(--font-mono);font-size:9px;flex-shrink:0}
 .db-status-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);transition:background 0.3s}
 .db-status-dot.ok{background:var(--accent)}
@@ -39,7 +38,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .db-status-text{color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
 
-/* UPLOAD PROGRESS */
 .upload-progress-bar{position:fixed;top:28px;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s ease;z-index:100}
 .upload-progress-bar.active{animation:uploadPulse 1.2s ease-in-out infinite}
 @keyframes uploadPulse{0%{transform:scaleX(0)}50%{transform:scaleX(0.7)}100%{transform:scaleX(1);opacity:0}}
@@ -82,7 +80,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .mode-pill.pin-mode{border-color:rgba(255,140,66,0.4);color:var(--accent2);background:rgba(255,140,66,0.08)}
 .mode-pill.crop-mode{border-color:rgba(0,196,163,0.4);color:var(--accent);background:rgba(0,196,163,0.08)}
 
-/* Upload overlay indicator */
 .upload-overlay{position:absolute;inset:0;background:rgba(13,15,18,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:50;backdrop-filter:blur(4px)}
 .upload-overlay.visible{display:flex}
 .upload-overlay-ring{width:56px;height:56px;border:2px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
@@ -134,7 +131,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .canvas-status.visible{display:flex}
 .status-dot{width:6px;height:6px;border-radius:50%}
 
-.admin-right{width:260px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.admin-right{width:280px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
 .prop-body{flex:1;overflow-y:auto;padding:10px 12px}
 .prop-body::-webkit-scrollbar{width:3px}
 .prop-body::-webkit-scrollbar-thumb{background:var(--surface3)}
@@ -143,18 +140,39 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .prop-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-mono);font-size:11px;padding:6px 8px;outline:none;transition:border-color 0.15s}
 .prop-input:focus{border-color:var(--accent)}
 .prop-textarea{resize:vertical;min-height:60px}
-.mat-pick-list{max-height:200px;overflow-y:auto;border:1px solid var(--border);background:var(--surface2)}
+
+/* Custom note section styling */
+.note-mode-tabs{display:flex;gap:0;margin-bottom:6px;border:1px solid var(--border)}
+.note-tab{flex:1;padding:4px 8px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;background:transparent;border:none;color:var(--muted);border-right:1px solid var(--border);transition:all 0.12s;text-align:center}
+.note-tab:last-child{border-right:none}
+.note-tab.active{background:var(--surface2);color:var(--accent)}
+.note-tab:hover:not(.active){color:var(--text);background:var(--surface)}
+.default-note-display{background:var(--surface2);border:1px solid var(--border);padding:7px 9px;font-family:var(--font-mono);font-size:10px;color:var(--muted);line-height:1.5;min-height:54px}
+.default-note-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:8px;padding:2px 6px;border:1px solid rgba(0,196,163,0.3);color:var(--accent);background:rgba(0,196,163,0.06);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:5px}
+.custom-note-indicator{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:8px;padding:2px 6px;border:1px solid rgba(255,140,66,0.4);color:var(--accent2);background:rgba(255,140,66,0.07);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:5px}
+.note-clear-btn{font-family:var(--font-mono);font-size:9px;padding:2px 8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s;margin-top:4px}
+.note-clear-btn:hover{border-color:var(--danger);color:var(--danger)}
+
+.mat-pick-list{max-height:180px;overflow-y:auto;border:1px solid var(--border);background:var(--surface2)}
 .mat-pick-list::-webkit-scrollbar{width:3px}
 .mat-pick-list::-webkit-scrollbar-thumb{background:var(--surface3)}
+/* Group header inside mat-pick-list */
+.mat-group-head{padding:4px 9px;font-family:var(--font-mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent2);background:rgba(255,140,66,0.05);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
 .mat-pick-item{display:flex;align-items:center;gap:7px;padding:6px 9px;cursor:pointer;transition:background 0.1s;border-bottom:1px solid var(--border)}
 .mat-pick-item:last-child{border-bottom:none}
 .mat-pick-item:hover{background:rgba(0,196,163,0.07)}
 .mat-pick-item.selected{background:rgba(0,196,163,0.1)}
 .mat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .mat-name{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;flex:1}
+.mat-sub{font-family:var(--font-mono);font-size:8px;color:var(--muted)}
 .mat-check{width:10px;height:10px;border:1px solid rgba(0,196,163,0.5);background:var(--accent);display:none;align-items:center;justify-content:center;border-radius:1px}
 .mat-pick-item.selected .mat-check{display:flex}
 .mat-check::after{content:'✓';font-size:7px;color:#0d1a18}
+
+/* Mat search */
+.mat-search{width:100%;background:var(--surface2);border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--font-mono);font-size:10px;padding:5px 9px;outline:none}
+.mat-search::placeholder{color:var(--muted)}
+
 .sidebar-pin-item{display:flex;align-items:center;gap:7px;padding:6px 9px;background:var(--surface);border:1px solid var(--border);margin-bottom:4px;cursor:pointer;transition:all 0.12s}
 .sidebar-pin-item:hover{border-color:var(--border2)}
 .sidebar-pin-item.selected{border-color:rgba(0,196,163,0.35);background:rgba(0,196,163,0.05)}
@@ -165,7 +183,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .coord-row .prop-input{width:80px}
 .coord-sep{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
 
-/* Image preview thumbnail in props */
 .img-thumb-wrap{position:relative;width:100%;height:80px;border:1px solid var(--border);overflow:hidden;background:var(--surface2);margin-bottom:6px}
 .img-thumb-wrap img{width:100%;height:100%;object-fit:cover}
 .img-thumb-overlay{position:absolute;inset:0;background:rgba(13,15,18,0.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s}
@@ -191,7 +208,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .user-mid{width:280px;flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
 .mid-head{padding:12px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative}
 .mid-head::after{content:'';position:absolute;bottom:-1px;left:0;width:50px;height:1px;background:var(--accent2)}
-.need-cat-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;padding:6px 0 4px}
 .need-row{display:flex;align-items:center;gap:8px;padding:6px 9px;background:var(--surface2);border:1px solid var(--border);margin-bottom:4px;cursor:pointer;transition:all 0.12s;position:relative}
 .need-row:hover{border-color:var(--border2)}
 .need-row.checked{opacity:0.4}
@@ -232,6 +248,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .map-info-card{background:var(--surface);border:1px solid var(--border2);padding:6px 10px;min-width:120px}
 .map-info-zone{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px}
 .map-info-note{font-family:var(--font-mono);font-size:9px;color:var(--muted);line-height:1.5}
+.map-info-custom-badge{font-family:var(--font-mono);font-size:8px;color:var(--accent2);letter-spacing:0.08em;text-transform:uppercase;margin-top:3px}
 
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:11px;padding:7px 18px;z-index:1000;letter-spacing:0.08em;display:none;animation:fadeIn 0.2s}
 #toast.ok{background:var(--accent);color:#0d1a18}
@@ -327,7 +344,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <span id="sb-filter-count" style="color:var(--accent2)"></span>
         <span style="margin-left:auto;font-size:9px" id="sb-coords">x:— y:—</span>
       </div>
-      <!-- Upload overlay spinner -->
       <div class="upload-overlay" id="upload-overlay">
         <div class="upload-overlay-ring"></div>
         <div class="upload-overlay-text" id="upload-overlay-text">Uploading to Storage…</div>
@@ -394,34 +410,121 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 'use strict';
 
 // ── SUPABASE ──────────────────────────────────────────────
-const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
-const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODQ5NTcxMiwiZXhwIjoyMDk0MDcxNzEyfQ.W0j6nc4221j6Pm-qKerKgMUCkG4kSLLt9MCaeRM-VrM'; // ← paste your service role key
-const STORAGE_BUCKET    = 'map-images';    // ← your bucket name
+const SUPABASE_URL       = 'https://vjcucliqjjljhgbqshmi.supabase.co';
+const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODQ5NTcxMiwiZXhwIjoyMDk0MDcxNzEyfQ.W0j6nc4221j6Pm-qKerKgMUCkG4kSLLt9MCaeRM-VrM';
+const STORAGE_BUCKET     = 'Image_bucket';
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
 
 function setDbStatus(state, msg) {
-  const dot  = document.getElementById('db-dot');
-  const text = document.getElementById('db-status-text');
-  dot.className  = 'db-status-dot ' + state;
-  text.textContent = msg;
+  document.getElementById('db-dot').className  = 'db-status-dot ' + state;
+  document.getElementById('db-status-text').textContent = msg;
 }
 
-// ── MATERIALS ─────────────────────────────────────────────
-const MATERIALS = [
-  {id:'lmd',               name:'LMD',               color:'#f0b840', category:'Currency'},
-  {id:'exp_card',          name:'EXP Cards',          color:'#5ba85b', category:'Currency'},
-  {id:'orirock_cube',      name:'Orirock Cube',        color:'#6b8ec9', category:'Materials'},
-  {id:'orirock_cluster',   name:'Orirock Cluster',     color:'#9b7ec9', category:'Materials'},
-  {id:'damaged_device',    name:'Damaged Device',      color:'#c97b5b', category:'Materials'},
-  {id:'integrated_device', name:'Integrated Device',   color:'#c9a05b', category:'Materials'},
-  {id:'polyester',         name:'Polyester',           color:'#5bc9a0', category:'Materials'},
-  {id:'sugar',             name:'Sugar',               color:'#c9bc5b', category:'Materials'},
-  {id:'skill_book_1',      name:'Skill Summary I',     color:'#8ec9e8', category:'Skill Books'},
-  {id:'skill_book_2',      name:'Skill Summary II',    color:'#5a9fc9', category:'Skill Books'},
-  {id:'skill_book_3',      name:'Skill Summary III',   color:'#2d6ea0', category:'Skill Books'},
+// ── MATERIAL DEFINITIONS ──────────────────────────────────
+// Groups and colors keyed to material_list_materials IDs
+const MAT_GROUPS = [
+  {
+    group: 'Operator EXP',
+    color: '#5ba85b',
+    items: [
+      { id: 'elementary_combat_record', name: 'Elementary Combat Record', sub: 'Operator EXP' },
+      { id: 'intermediate_combat_record', name: 'Intermediate Combat Record', sub: 'Operator EXP' },
+      { id: 'advanced_combat_record', name: 'Advanced Combat Record', sub: 'Operator EXP' },
+      { id: 'elementary_cognitive_carrier', name: 'Elementary Cognitive Carrier', sub: 'Operator EXP Lv61+' },
+      { id: 'advanced_cognitive_carrier', name: 'Advanced Cognitive Carrier', sub: 'Operator EXP Lv61+' },
+    ]
+  },
+  {
+    group: 'Weapon EXP',
+    color: '#7ec9c9',
+    items: [
+      { id: 'arms_inspector', name: 'Arms Inspector', sub: 'Weapon EXP' },
+      { id: 'arms_insp_kit',  name: 'Arms INSP Kit',  sub: 'Weapon EXP' },
+      { id: 'arms_insp_set',  name: 'Arms INSP Set',  sub: 'Weapon EXP Lv61+' },
+    ]
+  },
+  {
+    group: 'Promotion',
+    color: '#c9a05b',
+    items: [
+      { id: 'protodisk',   name: 'Protodisk',   sub: 'Operator Promotion' },
+      { id: 'protoset',    name: 'Protoset',    sub: 'Operator Promotion' },
+      { id: 'protoprism',  name: 'Protoprism',  sub: 'Skill Upgrade' },
+      { id: 'protohedron', name: 'Protohedron', sub: 'Skill Upgrade' },
+    ]
+  },
+  {
+    group: 'Weapon Tuning',
+    color: '#c97b5b',
+    items: [
+      { id: 'cast_die',       name: 'Cast Die',       sub: 'Weapon Tune Lv.20' },
+      { id: 'heavy_cast_die', name: 'Heavy Cast Die', sub: 'Weapon Tune Lv.40+' },
+    ]
+  },
+  {
+    group: 'Mastery',
+    color: '#b870e0',
+    items: [
+      { id: 'mark_of_perseverance', name: 'Mark of Perseverance', sub: 'Mastery' },
+    ]
+  },
+  {
+    group: 'Rare Mats — Operator',
+    color: '#e8c84a',
+    items: [
+      { id: 'd96_steel',   name: 'D96 Steel Sample 4',           sub: 'Adv. Progression I' },
+      { id: 'metadiastima',name: 'Metadiastima Photoemission Tube', sub: 'Adv. Progression II' },
+      { id: 'tachyon',     name: 'Tachyon Screening Lattice',    sub: 'Adv. Progression III' },
+      { id: 'quadrant',    name: 'Quadrant Fitting Fluid',       sub: 'Adv. Progression IV' },
+      { id: 'triphasic',   name: 'Triphasic Nanoflake',          sub: 'Adv. Progression V' },
+    ]
+  },
+  {
+    group: 'Rare Ores — Weapon Tuning',
+    color: '#6b8ec9',
+    items: [
+      { id: 'kalkonyx',   name: 'Kalkonyx',   sub: 'Weapon Tune Lv.20→40' },
+      { id: 'auronyx',    name: 'Auronyx',    sub: 'Weapon Tune Lv.40→60' },
+      { id: 'umbronyx',   name: 'Umbronyx',   sub: 'Weapon Tune Lv.60→80' },
+      { id: 'igneosite',  name: 'Igneosite',  sub: 'Weapon Tune Lv.80+' },
+      { id: 'wulingstone',name: 'Wulingstone',sub: 'Weapon Tune Lv.80+' },
+    ]
+  },
+  {
+    group: 'Boletes — Operator Promotion',
+    color: '#e08060',
+    items: [
+      { id: 'pink_bolete',  name: 'Pink Bolete',  sub: 'Promotion Lv.20' },
+      { id: 'red_bolete',   name: 'Red Bolete',   sub: 'Promotion Lv.40' },
+      { id: 'ruby_bolete',  name: 'Ruby Bolete',  sub: 'Promotion Lv.60' },
+      { id: 'bloodcap',     name: 'Bloodcap',     sub: 'Promotion Lv.80' },
+      { id: 'cosmagaric',   name: 'Cosmagaric',   sub: 'Promotion (Ch.2)' },
+    ]
+  },
+  {
+    group: 'Dendras — Skill Upgrade',
+    color: '#70c98a',
+    items: [
+      { id: 'chrysodendra',    name: 'Chrysodendra',    sub: 'Skill S1–S3' },
+      { id: 'kalkodendra',     name: 'Kalkodendra',     sub: 'Skill S4–S6' },
+      { id: 'vitrodendra',     name: 'Vitrodendra',     sub: 'Skill S7–S9' },
+      { id: 'blighted_jadeleaf',name:'Blighted Jadeleaf',sub: 'Mastery' },
+      { id: 'false_aggela',    name: 'False Aggela',    sub: 'Mastery' },
+    ]
+  },
 ];
-function getMat(id) { return MATERIALS.find(m => m.id === id); }
+
+// Flat lookup maps
+const MAT_BY_ID   = {};
+const MAT_COLOR   = {};
+MAT_GROUPS.forEach(g => g.items.forEach(m => {
+  MAT_BY_ID[m.id] = { ...m, group: g.group };
+  MAT_COLOR[m.id] = g.color;
+}));
+
+function getMat(id)   { return MAT_BY_ID[id] || { id, name: id, group: 'Unknown', sub: '' }; }
+function getColor(id) { return MAT_COLOR[id] || '#6b7280'; }
 
 // ── STATE ─────────────────────────────────────────────────
 let MAPS = [];
@@ -431,6 +534,8 @@ const admin = {
   cropMode:      false,
   dragMode:      false,
   filterMatId:   null,
+  noteTab:       {},   // pinId → 'default' | 'custom'
+  matSearch:     '',
 };
 const user = {
   activeMapId:  null,
@@ -453,144 +558,123 @@ function hideUploadOverlay() {
   document.getElementById('upload-progress-bar').classList.remove('active');
 }
 
-// ── SUPABASE STORAGE UPLOAD ───────────────────────────────
+// ── STORAGE UPLOAD ────────────────────────────────────────
 async function uploadImageToStorage(file, mapId) {
-  // Build a unique path: maps/{mapId}/{timestamp}.{ext}
   const ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
   const path = `maps/${mapId}/${Date.now()}.${ext}`;
-
-  const { data, error } = await db.storage
-    .from(STORAGE_BUCKET)
-    .upload(path, file, {
-      cacheControl: '3600',
-      upsert: true,          // overwrite if exists (re-upload same map)
-      contentType: file.type,
-    });
-
+  const { data, error } = await db.storage.from(STORAGE_BUCKET).upload(path, file, { cacheControl: '3600', upsert: true, contentType: file.type });
   if (error) throw error;
-
-  // Get public URL
-  const { data: urlData } = db.storage
-    .from(STORAGE_BUCKET)
-    .getPublicUrl(path);
-
+  const { data: urlData } = db.storage.from(STORAGE_BUCKET).getPublicUrl(path);
   return urlData.publicUrl;
 }
 
-// ── DELETE OLD IMAGE FROM STORAGE ────────────────────────
 async function deleteImageFromStorage(imageUrl) {
-  if (!imageUrl || imageUrl.startsWith('data:')) return; // skip base64 leftovers
+  if (!imageUrl || imageUrl.startsWith('data:')) return;
   try {
-    // Extract path from the public URL
-    // URL format: .../storage/v1/object/public/{bucket}/{path}
     const marker = `/object/public/${STORAGE_BUCKET}/`;
     const idx = imageUrl.indexOf(marker);
     if (idx === -1) return;
-    const filePath = imageUrl.slice(idx + marker.length);
-    await db.storage.from(STORAGE_BUCKET).remove([filePath]);
-  } catch (e) {
-    console.warn('Could not delete old image:', e.message);
-  }
+    await db.storage.from(STORAGE_BUCKET).remove([imageUrl.slice(idx + marker.length)]);
+  } catch (e) { console.warn('Could not delete old image:', e.message); }
 }
 
-// ── DB: LOAD ALL MAPS + PINS ──────────────────────────────
+// ── DB HELPERS ────────────────────────────────────────────
 async function loadMaps() {
   setDbStatus('loading', 'Loading maps…');
   try {
-    const { data: maps, error: mapErr } = await db
-      .from('material_list_maps')
-      .select('*')
-      .order('sort_order');
+    const { data: maps, error: mapErr } = await db.from('material_list_maps').select('*').order('sort_order');
     if (mapErr) throw mapErr;
-
-    const { data: pins, error: pinErr } = await db
-      .from('material_list_map_pins')
-      .select('*')
-      .order('sort_order');
+    const { data: pins, error: pinErr } = await db.from('material_list_map_pins').select('*').order('sort_order');
     if (pinErr) throw pinErr;
-
-    MAPS = (maps || []).map(m => ({
-      ...m,
-      pins: (pins || []).filter(p => p.map_id === m.id),
-    }));
+    MAPS = (maps || []).map(m => ({ ...m, pins: (pins || []).filter(p => p.map_id === m.id) }));
     setDbStatus('ok', `${MAPS.length} maps loaded`);
   } catch (e) {
-    setDbStatus('err', 'Failed to load maps: ' + e.message);
+    setDbStatus('err', 'Failed: ' + e.message);
     MAPS = [];
   }
 }
 
-// ── DB: UPSERT MAP ────────────────────────────────────────
 async function dbUpsertMap(map) {
-  const payload = {
-    id:           map.id,
-    name:         map.name,
-    slug:         map.slug,
-    image_url:    map.image_url || null,
-    coord_width:  map.coord_width,
-    coord_height: map.coord_height,
-    sort_order:   map.sort_order || 0,
-  };
-  const { error } = await db
-    .from('material_list_maps')
-    .upsert(payload, { onConflict: 'id' });
+  const { error } = await db.from('material_list_maps').upsert({ id: map.id, name: map.name, slug: map.slug, image_url: map.image_url || null, coord_width: map.coord_width, coord_height: map.coord_height, sort_order: map.sort_order || 0 }, { onConflict: 'id' });
   if (error) throw error;
 }
-
 async function dbDeleteMap(id) {
   const { error } = await db.from('material_list_maps').delete().eq('id', id);
   if (error) throw error;
 }
-
 async function dbUpsertPin(pin) {
-  const payload = {
-    id:            pin.id,
-    map_id:        pin.map_id,
-    material_id:   pin.material_id,
-    location_name: pin.location_name,
-    note:          pin.note || null,
-    x:             pin.x,
-    y:             pin.y,
-    sort_order:    pin.sort_order || 0,
-  };
-  const { error } = await db
-    .from('material_list_map_pins')
-    .upsert(payload, { onConflict: 'id' });
+  const { error } = await db.from('material_list_map_pins').upsert({ id: pin.id, map_id: pin.map_id, material_id: pin.material_id, location_name: pin.location_name, note: pin.note || null, x: pin.x, y: pin.y, sort_order: pin.sort_order || 0 }, { onConflict: 'id' });
   if (error) throw error;
 }
-
 async function dbDeletePin(pinId) {
   const { error } = await db.from('material_list_map_pins').delete().eq('id', pinId);
   if (error) throw error;
 }
-
 async function dbPatchMap(id, fields) {
   const { error } = await db.from('material_list_maps').update(fields).eq('id', id);
   if (error) throw error;
 }
-
 async function dbPatchPin(pinId, fields) {
   const { error } = await db.from('material_list_map_pins').update(fields).eq('id', pinId);
   if (error) throw error;
 }
 
+// ── MATERIAL DEFAULT NOTES ────────────────────────────────
+// Keyed by material_id — sourced from material_list_materials.farming_note
+const DEFAULT_NOTES = {
+  elementary_combat_record:   'Protocol Space: Operation EXP (any difficulty); exploration chests throughout the world.',
+  intermediate_combat_record: 'Protocol Space: Operation EXP; Dijiang Manufacturing Cabin (passive production).',
+  advanced_combat_record:     'Protocol Space: Operation EXP Diff 4 — best mix of Advanced Records and Cognitive Carriers.',
+  elementary_cognitive_carrier:'Protocol Space: Operation EXP (higher difficulties). Required for operator Lv 61+.',
+  advanced_cognitive_carrier: 'Protocol Space: Operation EXP Diff 4+. Required for operator Lv 61–90 only.',
+  arms_inspector:             'Protocol Space: any EXP rift difficulty; exploration chests.',
+  arms_insp_kit:              'Protocol Space: EXP runs (mid-diff); AIC trade.',
+  arms_insp_set:              'Protocol Space: EXP runs (higher diff). Required for weapon Lv 61–90.',
+  protodisk:                  'Protocol Space: Promotions (Diff 1–2) near Core AIC Area. Also AIC Quota Exchange with excess character tokens.',
+  protoset:                   'Protocol Space: Promotions (Diff 3+). Also AIC Quota Exchange.',
+  protoprism:                 'Skill node near Core AIC Area; Protocol Space: Promotions (higher diff).',
+  protohedron:                'Core AIC Area skill node (harder difficulty); AIC Quota Exchange; boss drops.',
+  cast_die:                   'Exploration, quests, Protocol Space missions; needed for Weapon Tuning I–II (Lv.20 gate).',
+  heavy_cast_die:             'Wuling City region quests; Protocol Space (higher diff); gates Weapon Tuning III–IV.',
+  mark_of_perseverance:       'Protocol Space endgame content; RE-Crisis rewards.',
+  d96_steel:                  'World node: Mines Cable Car Station, Originium Lodespring (3-day respawn). Also Advanced Progression I and RE-Crisis: Rhodagn.',
+  metadiastima:               'World node: Power Plateau, near Plateau Trunkway, Valley IV (3-day respawn). Also Advanced Progression II and RE-Crisis.',
+  tachyon:                    'World node: Jingyu Valley, near Sky King Flats Sub-PAC, Wuling (3-day respawn). Also Advanced Progression III and RE-Crisis.',
+  quadrant:                   'World node: top of Tianshi Bureau Academy building, Wuling City — reach via south-side stairs (3-day respawn). Also Advanced Progression IV.',
+  triphasic:                  'World node: Bureau of Swordmancers, Wuling City — south ground-level entrance (3-day respawn). Also Advanced Progression V.',
+  kalkonyx:                   'Rare Ore nodes across Valley IV Hub, Aburrey Quarry, Originium Science Park. Manual harvest only — no Mining Rigs. Respawn on daily reset.',
+  auronyx:                    'Rare Ore nodes in Originium Lodespring and Power Plateau. All nodes require industrial explosives to access. 3 total nodes.',
+  umbronyx:                   'Rare Ore nodes in Jingyu Valley (Ch.2). Two locations: Treasure Grotto and Zhailing Islet (bridge repair needed).',
+  igneosite:                  'Endgame Rare Ore nodes — Wuling City region. Used for Weapon Tuning at Lv.80+.',
+  wulingstone:                'Rare Ore nodes — Wuling City region. Used for Weapon Tuning at Lv.80+.',
+  pink_bolete:                'Rare Growths in Valley IV Hub (south of Old Water Plant; west of Hub Base Power Plant). 3-day respawn. Used for Operator Promotion Lv.20.',
+  red_bolete:                 'Rare Growths in Originium Lodespring — 3 nodes total, south of Logistics Area. Daily respawn. Used for Operator Promotion Lv.40.',
+  ruby_bolete:                'Rare Growths in Jingyu Valley (Ch.2). First appears as you progress main story. Used for Promotion Lv.60.',
+  bloodcap:                   'Rare Growths in Jingyu Valley and Chapter 2 areas. Used for Operator Promotion IV. 3-day respawn.',
+  cosmagaric:                 'Rare Growths in Jingyu Valley and Chapter 2 areas. 3-day respawn.',
+  chrysodendra:               'Rare Growth nodes near Originium Science Park / Hub AIC area. Also craftable in AIC. Used for Skill S1–S3.',
+  kalkodendra:                'Rare Growth nodes near Originium Lodespring area. Also AIC craft. Used for Skill S4–S6.',
+  vitrodendra:                'Rare Growth nodes in Jingyu Valley area. Also AIC craft. Used for Skill S7–S9.',
+  blighted_jadeleaf:          'Rare Growth nodes across multiple regions. Use the Rare tag in the Marker system to track nodes. Required for Mastery.',
+  false_aggela:               'Rare Growth nodes in Jingyu Valley area. Required for Mastery. 3-day respawn.',
+};
+
+function getDefaultNote(matId) {
+  return DEFAULT_NOTES[matId] || 'No default farming note available for this material.';
+}
+
 // ── ADMIN LIBRARY ─────────────────────────────────────────
 function renderAdminLibrary() {
   const el = document.getElementById('admin-map-library');
-  if (!MAPS.length) {
-    el.innerHTML = '<div class="lib-empty">No maps yet.<br>Click + New Map to start.</div>';
-    return;
-  }
+  if (!MAPS.length) { el.innerHTML = '<div class="lib-empty">No maps yet.<br>Click + New Map to start.</div>'; return; }
   el.innerHTML = MAPS.map(m => `
     <div class="map-entry ${admin.activeMapId === m.id ? 'active' : ''}" onclick="adminSelectMap('${m.id}')">
       <div class="map-entry-name">${m.name}</div>
       <div class="map-entry-meta">${m.pins.length} pin${m.pins.length !== 1 ? 's' : ''} · ${m.coord_width}×${m.coord_height}</div>
       <div class="map-entry-actions">
-        <button class="btn btn-sm btn-ghost btn-danger"
-          onclick="event.stopPropagation(); adminDeleteMap('${m.id}')">Delete</button>
+        <button class="btn btn-sm btn-ghost btn-danger" onclick="event.stopPropagation();adminDeleteMap('${m.id}')">Delete</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 async function adminCreateMap() {
@@ -598,12 +682,8 @@ async function adminCreateMap() {
   const slug = 'map-' + Date.now();
   const map  = { id, name: 'Unnamed Map', slug, image_url: null, coord_width: 900, coord_height: 600, sort_order: MAPS.length, pins: [] };
   MAPS.push(map);
-  try {
-    await dbUpsertMap(map);
-    showToast('Map created', 'ok');
-  } catch (e) {
-    showToast('Save failed: ' + e.message, 'err');
-  }
+  try { await dbUpsertMap(map); showToast('Map created', 'ok'); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
   adminSelectMap(id);
   renderAdminLibrary();
 }
@@ -611,19 +691,11 @@ async function adminCreateMap() {
 async function adminDeleteMap(id) {
   if (!confirm('Delete this map and all its pins?')) return;
   const map = MAPS.find(m => m.id === id);
-  // Delete image from storage if it exists
   if (map && map.image_url) await deleteImageFromStorage(map.image_url);
   MAPS = MAPS.filter(m => m.id !== id);
-  try {
-    await dbDeleteMap(id);
-    showToast('Map deleted', 'ok');
-  } catch (e) {
-    showToast('Delete failed: ' + e.message, 'err');
-  }
-  if (admin.activeMapId === id) {
-    admin.activeMapId = null; admin.selectedPinId = null;
-    renderAdminCanvas(); renderAdminProps();
-  }
+  try { await dbDeleteMap(id); showToast('Map deleted', 'ok'); }
+  catch (e) { showToast('Delete failed: ' + e.message, 'err'); }
+  if (admin.activeMapId === id) { admin.activeMapId = null; admin.selectedPinId = null; renderAdminCanvas(); renderAdminProps(); }
   renderAdminLibrary();
 }
 
@@ -632,6 +704,7 @@ function adminSelectMap(id) {
   admin.selectedPinId = null;
   admin.cropMode      = false;
   admin.filterMatId   = null;
+  admin.matSearch     = '';
   document.getElementById('drag-toggle-cb').checked = false;
   admin.dragMode = false;
   renderAdminLibrary();
@@ -650,17 +723,17 @@ function renderAdminFilterBar() {
   bar.classList.add('visible');
   const matIds = [...new Set(map.pins.map(p => p.material_id))];
   chips.innerHTML = matIds.map(matId => {
-    const mat = getMat(matId); if (!mat) return '';
+    const color = getColor(matId);
+    const mat   = getMat(matId);
     return `<div class="admin-chip ${admin.filterMatId === matId ? 'active' : ''}" onclick="adminFilterByMat('${matId}')">
-      <div class="admin-chip-dot" style="background:${mat.color}"></div>${mat.name}
+      <div class="admin-chip-dot" style="background:${color}"></div>${mat.name}
     </div>`;
   }).join('');
   allBtn.className = 'admin-chip-all' + (admin.filterMatId === null ? ' active' : '');
   const sbFilter = document.getElementById('sb-filter-count');
   if (admin.filterMatId) {
-    const mat = getMat(admin.filterMatId);
     const cnt = map.pins.filter(p => p.material_id === admin.filterMatId).length;
-    sbFilter.textContent = `Showing: ${mat ? mat.name : '?'} (${cnt})`;
+    sbFilter.textContent = `Showing: ${getMat(admin.filterMatId).name} (${cnt})`;
   } else { sbFilter.textContent = ''; }
 }
 
@@ -736,8 +809,7 @@ function renderAdminPins() {
   const layer = document.getElementById('admin-pins-layer');
   layer.innerHTML = '';
   map.pins.forEach(pin => {
-    const mat      = getMat(pin.material_id);
-    const color    = mat ? mat.color : '#6b7280';
+    const color    = getColor(pin.material_id);
     const pctX     = (pin.x / map.coord_width)  * 100;
     const pctY     = (pin.y / map.coord_height) * 100;
     const sel      = admin.selectedPinId === pin.id;
@@ -746,9 +818,13 @@ function renderAdminPins() {
     el.className = 'admin-pin' + (sel ? ' selected' : '') + (filtered ? ' filtered-out' : '');
     el.style.cssText = `left:${pctX}%;top:${pctY}%;background:${color};pointer-events:all`;
     el.dataset.pinId = pin.id;
+    // Show custom note indicator as a small ring if pin has custom note
+    if (pin.note && pin.note.trim()) {
+      el.style.boxShadow = `0 0 0 2px ${color}, 0 0 0 4px rgba(255,140,66,0.5)`;
+    }
     const label = document.createElement('div');
     label.className = 'admin-pin-label'; label.style.color = color;
-    label.textContent = mat ? mat.name : '?';
+    label.textContent = getMat(pin.material_id).name;
     el.appendChild(label);
     el.addEventListener('click', e => { if (admin.dragMode) return; e.stopPropagation(); adminSelectPin(pin.id); });
     if (admin.dragMode) el.addEventListener('mousedown', e => { if (e.button !== 0) return; e.stopPropagation(); e.preventDefault(); startPinDrag(pin.id, el, e); });
@@ -804,7 +880,7 @@ async function onCanvasClick(e) {
     id:            uid(),
     map_id:        map.id,
     x, y,
-    material_id:   admin.filterMatId || MATERIALS[0].id,
+    material_id:   admin.filterMatId || (MAT_GROUPS[0].items[0].id),
     location_name: 'New Location',
     note:          '',
     sort_order:    map.pins.length,
@@ -846,6 +922,10 @@ async function applyCrop() {
   renderAdminCanvas(); renderAdminLibrary();
 }
 
+// ── NOTE TAB HELPERS ──────────────────────────────────────
+function getNoteTab(pinId) { return admin.noteTab[pinId] || 'default'; }
+function setNoteTab(pinId, tab) { admin.noteTab[pinId] = tab; renderAdminProps(); }
+
 // ── ADMIN PROPS ───────────────────────────────────────────
 function renderAdminProps() {
   const map        = getActiveMap();
@@ -859,33 +939,64 @@ function renderAdminProps() {
   const pin = getPin(map, admin.selectedPinId);
   if (pin) {
     panelTitle.textContent = 'Pin Properties';
+    const mat         = getMat(pin.material_id);
+    const color       = getColor(pin.material_id);
+    const tab         = getNoteTab(pin.id);
+    const defaultNote = getDefaultNote(pin.material_id);
+    const hasCustom   = !!(pin.note && pin.note.trim());
+    const search      = admin.matSearch.toLowerCase();
+
+    // Build grouped material list HTML
+    const matListHtml = MAT_GROUPS.map(g => {
+      const filtered = g.items.filter(m => !search || m.name.toLowerCase().includes(search) || g.group.toLowerCase().includes(search));
+      if (!filtered.length) return '';
+      return `<div class="mat-group-head" style="color:${g.color}">${g.group}</div>` +
+        filtered.map(m => `<div class="mat-pick-item ${m.id === pin.material_id ? 'selected' : ''}" onclick="setPinMat('${pin.id}','${m.id}')">
+          <div class="mat-dot" style="background:${g.color}"></div>
+          <div style="flex:1;min-width:0"><div class="mat-name">${m.name}</div><div class="mat-sub">${m.sub}</div></div>
+          <div class="mat-check"></div>
+        </div>`).join('');
+    }).join('');
+
     body.innerHTML = `
       <div class="prop-section">
         <div class="prop-label">Material</div>
-        <div class="mat-pick-list">
-          ${MATERIALS.map(m => `<div class="mat-pick-item ${m.id === pin.material_id ? 'selected' : ''}" onclick="setPinMat('${pin.id}','${m.id}')">
-            <div class="mat-dot" style="background:${m.color}"></div><div class="mat-name">${m.name}</div><div class="mat-check"></div>
-          </div>`).join('')}
-        </div>
+        <input class="mat-search prop-input" type="text" placeholder="Search materials…" value="${escHtml(admin.matSearch)}"
+          oninput="admin.matSearch=this.value; document.getElementById('mat-pick-list-${pin.id}').innerHTML=rebuildMatList('${pin.id}')">
+        <div class="mat-pick-list" id="mat-pick-list-${pin.id}">${matListHtml}</div>
       </div>
       <div class="prop-section">
         <div class="prop-label">Location Name</div>
-        <input class="prop-input" type="text" value="${pin.location_name}" placeholder="e.g. Mineral Beds"
+        <input class="prop-input" type="text" value="${escHtml(pin.location_name)}" placeholder="e.g. Mineral Beds"
           oninput="updatePinField('${pin.id}','location_name',this.value)">
       </div>
       <div class="prop-section">
         <div class="prop-label">Farming Note</div>
-        <textarea class="prop-input prop-textarea" placeholder="e.g. Respawns daily"
-          oninput="updatePinField('${pin.id}','note',this.value)">${pin.note || ''}</textarea>
+        <div class="note-mode-tabs">
+          <button class="note-tab ${tab === 'default' ? 'active' : ''}" onclick="setNoteTab('${pin.id}','default')">Default</button>
+          <button class="note-tab ${tab === 'custom'  ? 'active' : ''}" onclick="setNoteTab('${pin.id}','custom')">
+            Custom ${hasCustom ? '●' : ''}
+          </button>
+        </div>
+        ${tab === 'default' ? `
+          <div class="default-note-badge">⚙ from material_list_materials</div>
+          <div class="default-note-display">${escHtml(defaultNote)}</div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-top:5px;line-height:1.5">
+            Switch to <b style="color:var(--accent2)">Custom</b> tab to override this note for this specific pin.
+          </div>
+        ` : `
+          ${hasCustom ? '<div class="custom-note-indicator">✎ Custom note active</div>' : '<div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-bottom:5px">No custom note — default will be shown to users.</div>'}
+          <textarea class="prop-input prop-textarea" placeholder="Custom note for this specific pin location…"
+            oninput="updatePinField('${pin.id}','note',this.value)">${escHtml(pin.note || '')}</textarea>
+          ${hasCustom ? `<button class="note-clear-btn" onclick="clearPinNote('${pin.id}')">Clear custom note</button>` : ''}
+        `}
       </div>
       <div class="prop-section">
         <div class="prop-label">Coordinates (${map.coord_width}×${map.coord_height} space)</div>
         <div class="coord-row">
-          <input class="prop-input" type="number" value="${pin.x}" placeholder="X"
-            oninput="updatePinXY('${pin.id}','x',+this.value)">
+          <input class="prop-input" type="number" value="${pin.x}" placeholder="X" oninput="updatePinXY('${pin.id}','x',+this.value)">
           <span class="coord-sep">×</span>
-          <input class="prop-input" type="number" value="${pin.y}" placeholder="Y"
-            oninput="updatePinXY('${pin.id}','y',+this.value)">
+          <input class="prop-input" type="number" value="${pin.y}" placeholder="Y" oninput="updatePinXY('${pin.id}','y',+this.value)">
         </div>
       </div>
       <div class="prop-section">
@@ -894,21 +1005,23 @@ function renderAdminProps() {
       <hr class="sidebar-divider">
       <div class="prop-label">All Pins (${map.pins.length})</div>
       <div>${map.pins.map(p => {
-        const m2 = getMat(p.material_id);
+        const c2    = getColor(p.material_id);
+        const m2    = getMat(p.material_id);
         const faded = admin.filterMatId && p.material_id !== admin.filterMatId;
+        const cust  = p.note && p.note.trim() ? ' <span style="color:var(--accent2);font-size:8px">✎</span>' : '';
         return `<div class="sidebar-pin-item ${p.id === pin.id ? 'selected' : ''}" style="${faded ? 'opacity:0.3' : ''}" onclick="adminSelectPin('${p.id}')">
-          <div class="mat-dot" style="background:${m2 ? m2.color : '#6b7280'}"></div>
-          <div><div class="sidebar-pin-name">${p.location_name}</div><div class="sidebar-pin-sub">${m2 ? m2.name : 'Unknown'} · ${p.x},${p.y}</div></div>
+          <div class="mat-dot" style="background:${c2}"></div>
+          <div><div class="sidebar-pin-name">${escHtml(p.location_name)}${cust}</div><div class="sidebar-pin-sub">${m2.name} · ${p.x},${p.y}</div></div>
         </div>`;
       }).join('')}
-      ${!map.pins.length ? '<div class="lib-empty" style="padding:8px 0">No pins — click the map to add one.</div>' : ''}</div>`;
+      ${!map.pins.length ? '<div class="lib-empty" style="padding:8px 0">No pins yet.</div>' : ''}</div>`;
   } else {
     panelTitle.textContent = 'Map Properties';
     const isStorageUrl = map.image_url && !map.image_url.startsWith('data:');
     body.innerHTML = `
       <div class="prop-section">
         <div class="prop-label">Map Name</div>
-        <input class="prop-input" type="text" value="${map.name}" placeholder="Map name" oninput="updateMapName(this.value)">
+        <input class="prop-input" type="text" value="${escHtml(map.name)}" placeholder="Map name" oninput="updateMapName(this.value)">
       </div>
       <div class="prop-section">
         <div class="prop-label">Coordinate Space (px)</div>
@@ -921,32 +1034,51 @@ function renderAdminProps() {
       <div class="prop-section">
         <div class="prop-label">Image</div>
         ${map.image_url ? `
-          <div class="img-thumb-wrap">
-            <img src="${map.image_url}" alt="Map preview">
-            <div class="img-thumb-overlay">
-              <button class="btn btn-sm" onclick="document.getElementById('file-input').click()">Replace</button>
-            </div>
+          <div class="img-thumb-wrap"><img src="${map.image_url}" alt="Map preview">
+            <div class="img-thumb-overlay"><button class="btn btn-sm" onclick="document.getElementById('file-input').click()">Replace</button></div>
           </div>
-          ${isStorageUrl ? '<div class="img-storage-badge">✓ Supabase Storage</div>' : '<div class="img-storage-badge" style="border-color:rgba(255,140,66,0.3);color:var(--accent2);background:rgba(255,140,66,0.08)">⚠ Legacy base64 — re-upload to migrate</div>'}
+          ${isStorageUrl ? '<div class="img-storage-badge">✓ Supabase Storage</div>' : '<div class="img-storage-badge" style="border-color:rgba(255,140,66,0.3);color:var(--accent2);background:rgba(255,140,66,0.08)">⚠ Legacy — re-upload to migrate</div>'}
           <button class="btn btn-sm btn-ghost btn-danger" style="margin-top:4px" onclick="clearMapImage()">Remove Image</button>
         ` : `<div style="font-family:var(--font-mono);font-size:9px;color:var(--muted)">No image — use Upload button above</div>`}
       </div>
       <hr class="sidebar-divider">
       <div class="prop-label">Pins (${map.pins.length}) — click map to add</div>
       <div>${map.pins.map(p => {
-        const m2 = getMat(p.material_id);
+        const c2    = getColor(p.material_id);
+        const m2    = getMat(p.material_id);
         const faded = admin.filterMatId && p.material_id !== admin.filterMatId;
+        const cust  = p.note && p.note.trim() ? ' <span style="color:var(--accent2);font-size:8px">✎</span>' : '';
         return `<div class="sidebar-pin-item" style="${faded ? 'opacity:0.3' : ''}" onclick="adminSelectPin('${p.id}')">
-          <div class="mat-dot" style="background:${m2 ? m2.color : '#6b7280'}"></div>
-          <div><div class="sidebar-pin-name">${p.location_name}</div><div class="sidebar-pin-sub">${m2 ? m2.name : 'Unknown'} · ${p.x},${p.y}</div></div>
+          <div class="mat-dot" style="background:${c2}"></div>
+          <div><div class="sidebar-pin-name">${escHtml(p.location_name)}${cust}</div><div class="sidebar-pin-sub">${m2.name} · ${p.x},${p.y}</div></div>
         </div>`;
       }).join('')}
       ${!map.pins.length ? '<div class="lib-empty" style="padding:8px 0">No pins yet.</div>' : ''}</div>`;
   }
 }
 
+function rebuildMatList(pinId) {
+  const map = getActiveMap(); if (!map) return '';
+  const pin = getPin(map, pinId); if (!pin) return '';
+  const search = admin.matSearch.toLowerCase();
+  return MAT_GROUPS.map(g => {
+    const filtered = g.items.filter(m => !search || m.name.toLowerCase().includes(search) || g.group.toLowerCase().includes(search));
+    if (!filtered.length) return '';
+    return `<div class="mat-group-head" style="color:${g.color}">${g.group}</div>` +
+      filtered.map(m => `<div class="mat-pick-item ${m.id === pin.material_id ? 'selected' : ''}" onclick="setPinMat('${pin.id}','${m.id}')">
+        <div class="mat-dot" style="background:${g.color}"></div>
+        <div style="flex:1;min-width:0"><div class="mat-name">${m.name}</div><div class="mat-sub">${m.sub}</div></div>
+        <div class="mat-check"></div>
+      </div>`).join('');
+  }).join('');
+}
+
 // ── PROP UPDATE HELPERS ───────────────────────────────────
 let mapNameTimer, pinFieldTimers = {};
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function updateMapName(val) {
   const map = getActiveMap(); if (!map) return;
@@ -971,11 +1103,8 @@ async function clearMapImage() {
   const map = getActiveMap(); if (!map) return;
   const oldUrl = map.image_url;
   map.image_url = null;
-  try {
-    await dbPatchMap(map.id, { image_url: null });
-    await deleteImageFromStorage(oldUrl);
-    showToast('Image removed', 'ok');
-  } catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  try { await dbPatchMap(map.id, { image_url: null }); await deleteImageFromStorage(oldUrl); showToast('Image removed', 'ok'); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
   renderAdminCanvas(); renderAdminProps();
 }
 
@@ -996,7 +1125,17 @@ function updatePinField(pinId, field, val) {
   pinFieldTimers[pinId + field] = setTimeout(async () => {
     try { await dbPatchPin(pin.id, { [field]: val }); }
     catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+    renderAdminPins(); // re-render to update custom note ring indicator
   }, 700);
+}
+
+async function clearPinNote(pinId) {
+  const map = getActiveMap(); if (!map) return;
+  const pin = getPin(map, pinId); if (!pin) return;
+  pin.note = '';
+  try { await dbPatchPin(pin.id, { note: null }); showToast('Custom note cleared', 'ok'); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  renderAdminPins(); renderAdminProps();
 }
 
 function updatePinXY(pinId, axis, val) {
@@ -1020,47 +1159,31 @@ async function adminDeletePin(pinId) {
   renderAdminPins(); renderAdminProps(); renderAdminFilterBar();
 }
 
-// ── IMAGE UPLOAD (Supabase Storage) ──────────────────────
+// ── IMAGE UPLOAD ──────────────────────────────────────────
 async function onImageUpload(e) {
   const file = e.target.files[0]; if (!file) return;
   const map  = getActiveMap();    if (!map)  return;
-
-  // Validate file type & size (max 20MB)
   if (!file.type.startsWith('image/')) { showToast('File must be an image', 'err'); return; }
   if (file.size > 20 * 1024 * 1024)   { showToast('Image must be under 20MB', 'err'); return; }
-
   showUploadOverlay('Uploading to Storage…');
-
   try {
-    // Delete old image first (if any)
     if (map.image_url) await deleteImageFromStorage(map.image_url);
-
-    // Upload to Supabase Storage
     const publicUrl = await uploadImageToStorage(file, map.id);
-
-    // Save URL to DB
     map.image_url = publicUrl;
     await dbPatchMap(map.id, { image_url: publicUrl });
-
-    showToast('Image uploaded to Storage ✓', 'ok');
+    showToast('Image uploaded ✓', 'ok');
   } catch (err) {
     showToast('Upload failed: ' + err.message, 'err');
-    console.error('Storage upload error:', err);
   } finally {
-    hideUploadOverlay();
-    e.target.value = '';
+    hideUploadOverlay(); e.target.value = '';
   }
-
   renderAdminCanvas(); renderAdminProps();
 }
 
 async function adminSaveMap() {
   const map = getActiveMap(); if (!map) return;
-  try {
-    await dbUpsertMap(map);
-    showToast('Map saved!', 'ok');
-    renderAdminLibrary();
-  } catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  try { await dbUpsertMap(map); showToast('Map saved!', 'ok'); renderAdminLibrary(); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
 }
 
 // ── VIEW SWITCHER ─────────────────────────────────────────
@@ -1084,7 +1207,7 @@ function renderUserMapList() {
   if (!MAPS.length) { el.innerHTML = '<div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;padding:10px 0;text-align:center">No maps — create one in Admin.</div>'; return; }
   el.innerHTML = MAPS.map(m => `
     <div class="u-map-card ${user.activeMapId === m.id ? 'active' : ''}" onclick="userSelectMap('${m.id}')">
-      <div class="u-map-name">${m.name}</div>
+      <div class="u-map-name">${escHtml(m.name)}</div>
       <div class="u-map-meta">${m.pins.length} pin${m.pins.length !== 1 ? 's' : ''} · ${m.coord_width}×${m.coord_height}</div>
     </div>`).join('');
 }
@@ -1113,10 +1236,11 @@ function renderUserMap() {
 
   const matIds = [...new Set(map.pins.map(p => p.material_id))];
   legend.innerHTML = matIds.length ? matIds.map(k => {
-    const mat = getMat(k); if (!mat) return '';
-    const isHL = user.highlightMat === k;
+    const mat   = getMat(k);
+    const color = getColor(k);
+    const isHL  = user.highlightMat === k;
     return `<div class="need-row ${isHL ? 'checked' : ''}" onclick="userHighlightMat('${k}')">
-      <div class="need-dot" style="background:${mat.color}"></div>
+      <div class="need-dot" style="background:${color}"></div>
       <div class="need-name">${mat.name}</div>
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted)">${map.pins.filter(p => p.material_id === k).length}</div>
     </div>`;
@@ -1125,9 +1249,10 @@ function renderUserMap() {
   if (matIds.length) {
     filterBar.classList.add('visible');
     chips.innerHTML = matIds.map(k => {
-      const mat = getMat(k); if (!mat) return '';
+      const mat   = getMat(k);
+      const color = getColor(k);
       return `<div class="mat-chip ${user.highlightMat === k ? 'active' : ''}" onclick="userHighlightMat('${k}')">
-        <div class="chip-dot" style="background:${mat.color}"></div>${mat.name}
+        <div class="chip-dot" style="background:${color}"></div>${mat.name}
       </div>`;
     }).join('');
   } else { filterBar.classList.remove('visible'); }
@@ -1138,20 +1263,20 @@ function renderUserMap() {
         <rect width="${map.coord_width}" height="${map.coord_height}" fill="#0b1510"/>
         <defs><pattern id="mg" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="0.6"/></pattern></defs>
         <rect width="${map.coord_width}" height="${map.coord_height}" fill="url(#mg)"/>
-        <text x="${map.coord_width/2}" y="${map.coord_height/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${map.name.toUpperCase()}</text>
+        <text x="${map.coord_width/2}" y="${map.coord_height/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text>
       </svg>`;
 
   const pinsHtml = map.pins.map(pin => {
     const mat   = getMat(pin.material_id);
-    const color = mat ? mat.color : '#6b7280';
+    const color = getColor(pin.material_id);
     const isHL  = user.highlightMat === pin.material_id;
     const isDim = user.highlightMat && !isHL;
     return `<div class="user-pin ${isHL ? 'highlighted' : ''} ${isDim ? 'dimmed' : ''}"
       style="left:${pin.x}px;top:${pin.y}px;border-color:${isHL ? color : 'rgba(255,255,255,0.15)'}"
-      onclick="userHighlightMat('${pin.material_id}')" title="${mat ? mat.name : '?'} — ${pin.location_name}">
+      onclick="userHighlightMat('${pin.material_id}')" title="${escHtml(mat.name)} — ${escHtml(pin.location_name)}">
       <div class="user-pin-dot" style="background:${color}"></div>
-      <div><div class="user-pin-text" style="color:${color}">${mat ? mat.name.replace('Skill Summary','Sk.Sum.') : '?'}</div>
-      <div class="user-pin-sub">${pin.location_name}</div></div>
+      <div><div class="user-pin-text" style="color:${color}">${escHtml(mat.name)}</div>
+      <div class="user-pin-sub">${escHtml(pin.location_name)}</div></div>
     </div>`;
   }).join('');
 
@@ -1162,14 +1287,20 @@ function renderUserMap() {
 
   if (user.highlightMat) {
     const mat       = getMat(user.highlightMat);
+    const color     = getColor(user.highlightMat);
     const matchPins = map.pins.filter(p => p.material_id === user.highlightMat);
     if (mat && matchPins.length) {
-      document.getElementById('u-info-title').innerHTML = `<span style="color:${mat.color}">●</span> ${mat.name} — ${map.name}`;
-      document.getElementById('u-info-cards').innerHTML = matchPins.map(p => `
-        <div class="map-info-card">
-          <div class="map-info-zone" style="color:${mat.color}">${p.location_name}</div>
-          <div class="map-info-note">${p.note || 'No note added'}</div>
-        </div>`).join('');
+      document.getElementById('u-info-title').innerHTML = `<span style="color:${color}">●</span> ${escHtml(mat.name)} — ${escHtml(map.name)}`;
+      document.getElementById('u-info-cards').innerHTML = matchPins.map(p => {
+        // Show custom note if set, otherwise show default note
+        const hasCustom   = !!(p.note && p.note.trim());
+        const displayNote = hasCustom ? p.note : getDefaultNote(p.material_id);
+        return `<div class="map-info-card">
+          <div class="map-info-zone" style="color:${color}">${escHtml(p.location_name)}</div>
+          <div class="map-info-note">${escHtml(displayNote)}</div>
+          ${hasCustom ? '<div class="map-info-custom-badge">✎ custom note</div>' : ''}
+        </div>`;
+      }).join('');
       infoBar.classList.add('visible');
     } else { infoBar.classList.remove('visible'); }
   } else { infoBar.classList.remove('visible'); }
@@ -1188,7 +1319,7 @@ function userUpdateTransform() {
 }
 function userZoom(factor) {
   const vp = document.getElementById('user-map-vp'); if (!vp) return;
-  const s = user.view;
+  const s  = user.view;
   const { width: vpW, height: vpH } = vp.getBoundingClientRect();
   s.tx = vpW/2 + (s.tx - vpW/2) * factor;
   s.ty = vpH/2 + (s.ty - vpH/2) * factor;
@@ -1205,7 +1336,7 @@ function userResetView() { user.view = { tx: 0, ty: 0, scale: 1 }; userUpdateTra
   window.addEventListener('mouseup', () => { drag = false; document.getElementById('user-map-vp').classList.remove('grabbing'); });
   vp.addEventListener('wheel', e => {
     e.preventDefault();
-    const rect = vp.getBoundingClientRect();
+    const rect   = vp.getBoundingClientRect();
     const factor = e.deltaY < 0 ? 1.12 : 0.88;
     user.view.tx    = (e.clientX - rect.left) + (user.view.tx - (e.clientX - rect.left)) * factor;
     user.view.ty    = (e.clientY - rect.top)  + (user.view.ty - (e.clientY - rect.top))  * factor;

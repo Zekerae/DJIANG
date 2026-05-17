@@ -6,8 +6,6 @@
 <title>Endfield — Ascension Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -36,7 +34,6 @@ body::before {
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
-/* HEADER */
 .header {
   position: relative; z-index: 10;
   display: flex; align-items: center; gap: 16px;
@@ -51,6 +48,12 @@ body::before {
 .header-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; }
 .header-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; }
 .header-title span { color: var(--accent); }
+.db-indicator { margin-left: auto; display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+.db-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
+.db-dot.ok { background: var(--accent); }
+.db-dot.err { background: var(--danger); }
+.db-dot.loading { background: var(--accent2); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
 
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -70,7 +73,6 @@ body::before {
 .btn-ghost:hover { border-color: var(--border2); color: var(--text); background: var(--surface); }
 .btn-danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(224,80,96,0.08); }
 
-/* MAIN */
 .main { display: flex; flex: 1; min-height: 0; position: relative; z-index: 1; }
 
 /* LEFT PANEL */
@@ -86,29 +88,6 @@ body::before {
 .add-btns-row { display: flex; gap: 8px; }
 .add-btns-row .btn { flex: 1; justify-content: center; }
 
-.plans-search-wrap { padding: 8px 12px 0; flex-shrink: 0; position: relative; }
-.plans-search-input {
-  width: 100%; background: var(--surface2); border: 1px solid var(--border2);
-  color: var(--text); font-family: var(--font-mono); font-size: 11px;
-  padding: 6px 10px 6px 28px; outline: none; letter-spacing: 0.04em; transition: border-color 0.15s;
-}
-.plans-search-input:focus { border-color: var(--accent); }
-.plans-search-input::placeholder { color: var(--muted); }
-.plans-search-icon { position: absolute; left: 21px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; color: var(--muted); pointer-events: none; }
-.plans-search-dropdown {
-  position: absolute; top: calc(100% + 2px); left: 12px; right: 12px;
-  background: var(--surface2); border: 1px solid var(--border2);
-  z-index: 50; max-height: 200px; overflow-y: auto; display: none;
-}
-.plans-search-dropdown.open { display: block; }
-.plans-dd-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; cursor: pointer; transition: background 0.1s; border-bottom: 1px solid var(--border); }
-.plans-dd-item:last-child { border-bottom: none; }
-.plans-dd-item:hover { background: rgba(0,196,163,0.07); }
-.plans-dd-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.plans-dd-name { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; flex: 1; }
-.plans-dd-sub { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
-.plans-dd-empty { padding: 10px 12px; font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
-
 .plans-tabs-row { display: flex; flex-direction: column; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .plans-tabs { display: flex; align-items: center; padding: 6px 16px 0; }
 .plans-tab {
@@ -119,20 +98,6 @@ body::before {
 }
 .plans-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .plans-tab:hover { color: var(--text); }
-
-.plans-inline-filters {
-  display: flex; gap: 4px; flex-wrap: wrap;
-  padding: 6px 12px 8px; min-height: 0; overflow: hidden;
-  transition: max-height 0.2s, padding 0.2s, opacity 0.2s;
-  max-height: 0; padding-top: 0; padding-bottom: 0; opacity: 0;
-}
-.plans-inline-filters.visible { max-height: 80px; padding-top: 6px; padding-bottom: 8px; opacity: 1; }
-.pf-btn {
-  font-family: var(--font-mono); font-size: 9px; padding: 3px 8px;
-  border: 1px solid var(--border); background: transparent; color: var(--muted);
-  cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.12s; white-space: nowrap;
-}
-.pf-btn:hover, .pf-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.08); }
 
 .plans-body { flex: 1; overflow-y: auto; padding: 10px 12px; }
 .plans-body::-webkit-scrollbar { width: 3px; }
@@ -156,19 +121,9 @@ body::before {
   display: flex; align-items: center; justify-content: center;
   background: var(--surface2);
 }
-.plan-avatar img {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: top center;
-  display: block;
-}
+.plan-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
 .plan-avatar svg { width: 18px; height: 18px; }
-.plan-avatar-rarity {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-}
-.plan-avatar-initials {
-  font-family: var(--font-display); font-size: 15px; font-weight: 700;
-  color: var(--muted); letter-spacing: 0.05em;
-}
+.plan-avatar-rarity { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
 
 .plan-meta { flex: 1; min-width: 0; }
 .plan-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; margin-bottom: 4px; }
@@ -217,7 +172,7 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .mid-body::-webkit-scrollbar-thumb { background: var(--surface3); }
 
 .mid-focus-bar { border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg); display: none; }
-.mid-focus-toggle { display: flex; align-items: center; gap: 7px; padding: 7px 14px; cursor: pointer; user-select: none; transition: background 0.12s; }
+.mid-focus-toggle { display: flex; align-items: center; gap: 7px; padding: 7px 14px; cursor: pointer; user-select: none; }
 .mid-focus-toggle:hover { background: rgba(255,255,255,0.02); }
 .mid-focus-toggle-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; flex: 1; }
 .mid-focus-count { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); }
@@ -236,7 +191,7 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .focus-pill.inactive { opacity: 0.38; border-color: var(--border); background: transparent; }
 .focus-pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 .focus-pill-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
-.focus-pill-check { width: 10px; height: 10px; flex-shrink: 0; border: 1px solid currentColor; border-radius: 1px; display: flex; align-items: center; justify-content: center; color: var(--muted); margin-left: 2px; transition: all 0.12s; }
+.focus-pill-check { width: 10px; height: 10px; flex-shrink: 0; border: 1px solid currentColor; border-radius: 1px; display: flex; align-items: center; justify-content: center; color: var(--muted); margin-left: 2px; }
 .focus-pill.active .focus-pill-check { color: var(--accent); border-color: var(--accent); }
 .focus-pill-check-inner { width: 5px; height: 3px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg) translateY(-0.5px); opacity: 0; }
 .focus-pill.active .focus-pill-check-inner { opacity: 1; }
@@ -253,7 +208,7 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .need-row:hover { border-color: var(--border2); }
 .need-row.checked { opacity: 0.42; }
 .need-row.checked .need-row-name { text-decoration: line-through; color: var(--muted); }
-.need-check { width: 15px; height: 15px; flex-shrink: 0; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+.need-check { width: 15px; height: 15px; flex-shrink: 0; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; }
 .need-row.checked .need-check { background: var(--accent); border-color: var(--accent); }
 .need-check-inner { width: 8px; height: 5px; border-left: 2px solid #0d1a18; border-bottom: 2px solid #0d1a18; transform: rotate(-45deg) translateY(-1px); opacity: 0; }
 .need-row.checked .need-check-inner { opacity: 1; }
@@ -274,75 +229,41 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 
 /* MAP PANEL */
 .map-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); min-width: 0; }
-.map-top-bar {
-  display: flex; align-items: center;
-  padding: 0 16px; border-bottom: 1px solid var(--border);
-  background: var(--surface); flex-shrink: 0;
-}
-.map-tab {
-  padding: 10px 16px;
-  font-family: var(--font-display); font-size: 13px; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  cursor: pointer; background: transparent; border: none; color: var(--muted);
-  border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap;
-}
+.map-top-bar { display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; overflow-x: auto; }
+.map-tab { padding: 10px 14px; font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; background: transparent; border: none; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
 .map-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .map-tab:hover { color: var(--text); }
-.map-hint { margin-left: auto; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+.map-hint { margin-left: auto; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; white-space: nowrap; padding-left: 10px; }
 
-.map-filter-bar {
-  padding: 6px 14px; border-bottom: 1px solid var(--border);
-  display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
-  flex-shrink: 0; background: var(--surface);
-}
+.map-filter-bar { padding: 6px 14px; border-bottom: 1px solid var(--border); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex-shrink: 0; background: var(--surface); display: none; }
+.map-filter-bar.visible { display: flex; }
 .map-filter-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; flex-shrink: 0; }
-.mat-chip {
-  display: flex; align-items: center; gap: 4px;
-  padding: 2px 8px; font-family: var(--font-mono); font-size: 9px;
-  border: 1px solid var(--border); background: transparent; color: var(--muted);
-  cursor: pointer; transition: all 0.12s; letter-spacing: 0.04em;
-}
+.mat-chip { display: flex; align-items: center; gap: 4px; padding: 2px 8px; font-family: var(--font-mono); font-size: 9px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.12s; letter-spacing: 0.04em; }
 .mat-chip:hover { border-color: var(--accent); color: var(--accent); }
 .mat-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.1); }
 .mat-chip-dot { width: 6px; height: 6px; border-radius: 50%; }
 
 .map-area { flex: 1; position: relative; overflow: hidden; }
-.map-canvas-wrap { position: absolute; inset: 0; display: none; flex-direction: column; }
-.map-canvas-wrap.active { display: flex; }
+.map-viewport { position: absolute; inset: 0; cursor: grab; overflow: hidden; }
+.map-viewport.grabbing { cursor: grabbing; }
+.map-inner { position: absolute; transform-origin: 0 0; }
+.map-canvas-wrap { position: absolute; inset: 0; display: none; }
+.map-canvas-wrap.active { display: block; }
 
-.leaflet-map { flex: 1; background: #0a0c0f; }
-.leaflet-container { background: #0a0c0f !important; font-family: var(--font-mono) !important; }
-.leaflet-control-zoom { display: none; }
-.leaflet-control-attribution { display: none !important; }
-
-.map-zoom-controls { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; z-index: 1000; pointer-events: all; }
-.map-zoom-btn {
-  width: 30px; height: 30px; background: var(--surface); border: 1px solid var(--border2);
-  color: var(--text); font-size: 16px; font-weight: 700; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; transition: all 0.12s;
-  font-family: var(--font-mono);
-  clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
-}
+.map-zoom-controls { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; z-index: 20; }
+.map-zoom-btn { width: 30px; height: 30px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; font-family: var(--font-mono); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px)); }
 .map-zoom-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
 .map-zoom-btn.rst { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 4px; }
 
-.map-coords { position: absolute; bottom: 14px; left: 14px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); background: rgba(13,15,18,0.85); border: 1px solid var(--border); padding: 3px 8px; z-index: 1000; letter-spacing: 0.06em; pointer-events: none; }
+.map-coords { position: absolute; bottom: 14px; left: 14px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); background: rgba(13,15,18,0.85); border: 1px solid var(--border); padding: 3px 8px; z-index: 20; letter-spacing: 0.06em; pointer-events: none; }
 
-.endo-pin {
-  display: flex; align-items: center; gap: 5px;
-  padding: 4px 9px 4px 6px;
-  background: rgba(13,15,18,0.95);
-  border: 1px solid rgba(255,255,255,0.18);
-  white-space: nowrap; cursor: pointer;
-  clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%);
-  transition: all 0.15s; pointer-events: all;
-  backdrop-filter: blur(4px);
-}
-.endo-pin:hover { border-color: var(--accent) !important; transform: scale(1.05); }
-.endo-pin.highlighted { border-color: var(--accent) !important; background: rgba(0,196,163,0.12) !important; box-shadow: 0 0 12px rgba(0,196,163,0.25); }
-.endo-pin-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.endo-pin-mat { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1; }
-.endo-pin-zone { font-family: var(--font-mono); font-size: 9px; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; line-height: 1.2; }
+.user-pin { position: absolute; transform: translate(-50%,-50%); display: flex; align-items: center; gap: 5px; padding: 3px 8px 3px 5px; background: rgba(13,15,18,0.92); border: 1px solid rgba(255,255,255,0.15); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%); cursor: pointer; transition: all 0.12s; white-space: nowrap; z-index: 5; }
+.user-pin:hover { border-color: rgba(255,255,255,0.35); z-index: 10; transform: translate(-50%,-50%) scale(1.05); }
+.user-pin.highlighted { z-index: 15; }
+.user-pin.dimmed { opacity: 0.18; pointer-events: none; }
+.user-pin-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.user-pin-text { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.user-pin-sub { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.45); }
 
 .map-info-bar { padding: 10px 14px; background: rgba(13,15,18,0.97); border-top: 1px solid var(--border); flex-shrink: 0; display: none; }
 .map-info-bar.visible { display: block; }
@@ -352,13 +273,18 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .map-info-card-zone { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
 .map-info-card-desc { font-family: var(--font-mono); font-size: 9px; color: var(--muted); line-height: 1.5; }
 
+.map-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: var(--bg); }
+.map-loading-ring { width: 40px; height: 40px; border: 2px solid var(--surface3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.map-loading-text { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
 .map-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
 .map-placeholder-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(0,196,163,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,196,163,0.03) 1px, transparent 1px); background-size: 50px 50px; }
 .map-placeholder-content { position: relative; text-align: center; }
 .map-placeholder-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.06); margin-bottom: 5px; }
 .map-placeholder-sub { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.04); letter-spacing: 0.1em; }
 
-.map-legend { position: absolute; top: 10px; left: 10px; z-index: 1000; background: rgba(13,15,18,0.92); border: 1px solid var(--border2); padding: 8px 12px; min-width: 120px; display: none; }
+.map-legend { position: absolute; top: 10px; left: 10px; z-index: 20; background: rgba(13,15,18,0.92); border: 1px solid var(--border2); padding: 8px 12px; min-width: 120px; display: none; }
 .map-legend.visible { display: block; }
 .map-legend-title { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
 .map-legend-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; cursor: pointer; transition: opacity 0.15s; }
@@ -384,7 +310,7 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .modal-list::-webkit-scrollbar-thumb { background: var(--surface3); }
 .modal-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; background: var(--surface2); border: 1px solid var(--border); cursor: pointer; transition: all 0.12s; text-align: left; width: 100%; }
 .modal-item:hover { border-color: var(--accent); background: rgba(0,196,163,0.06); }
-.modal-item-icon { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border2); overflow: hidden; }
+.modal-item-icon { width: 30px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border2); overflow: hidden; }
 .modal-item-icon img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 .modal-item-icon svg { width: 15px; height: 15px; }
 .modal-item-name { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.1; margin-bottom: 2px; }
@@ -395,31 +321,18 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface3); }
-
-.leaflet-popup-content-wrapper {
-  background: rgba(20,23,32,0.97) !important;
-  border: 1px solid rgba(0,196,163,0.4) !important;
-  border-radius: 0 !important;
-  box-shadow: 0 0 20px rgba(0,196,163,0.15) !important;
-  padding: 0 !important;
-  color: var(--text) !important;
-}
-.leaflet-popup-content { margin: 0 !important; font-family: var(--font-body) !important; }
-.leaflet-popup-tip-container { display: none !important; }
-.leaflet-popup-close-button { color: var(--muted) !important; font-size: 16px !important; right: 8px !important; top: 8px !important; }
-.leaflet-popup-close-button:hover { color: var(--accent) !important; }
-.popup-inner { padding: 12px 14px; }
-.popup-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
-.popup-mat { font-family: var(--font-mono); font-size: 10px; color: var(--muted); margin-bottom: 6px; }
-.popup-note { font-family: var(--font-mono); font-size: 10px; color: var(--muted); line-height: 1.5; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div>
-    <div class="header-eyebrow">Arknights: Endfield // v1.3</div>
+    <div class="header-eyebrow">Arknights: Endfield // v2.0</div>
     <div class="header-title">Ascension <span>Planner</span></div>
+  </div>
+  <div class="db-indicator">
+    <div class="db-dot loading" id="db-dot"></div>
+    <span id="db-status">Connecting…</span>
   </div>
 </div>
 
@@ -441,18 +354,12 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
         </button>
       </div>
     </div>
-    <div class="plans-search-wrap" id="plans-search-wrap">
-      <svg class="plans-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input class="plans-search-input" id="plans-search-input" type="text" placeholder="Search active plans…" oninput="onPlansSearchInput()" onfocus="onPlansSearchFocus()" autocomplete="off">
-      <div class="plans-search-dropdown" id="plans-search-dropdown"></div>
-    </div>
     <div class="plans-tabs-row">
       <div class="plans-tabs">
         <button class="plans-tab active" id="ptab-all" onclick="switchPlanTab('all')">All</button>
         <button class="plans-tab" id="ptab-operator" onclick="switchPlanTab('operator')">Operators</button>
         <button class="plans-tab" id="ptab-weapon" onclick="switchPlanTab('weapon')">Weapons</button>
       </div>
-      <div class="plans-inline-filters" id="plans-inline-filters"></div>
     </div>
     <div class="plans-body" id="plans-body">
       <div class="plans-empty" id="plans-empty">
@@ -504,79 +411,35 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 
   <!-- RIGHT: Map -->
   <div class="map-panel">
-    <div class="map-top-bar">
-      <button class="map-tab active" id="mtab-valley" onclick="switchMap('valley')">Valley IV</button>
-      <button class="map-tab" id="mtab-wuling" onclick="switchMap('wuling')">Wuling</button>
-      <button class="map-tab" id="mtab-marker" onclick="switchMap('marker')">Marker Stone</button>
-      <span class="map-hint">Drag · Scroll to zoom · Click pins for details</span>
+    <div class="map-top-bar" id="map-top-bar">
+      <span class="map-hint" id="map-loading-hint" style="margin-left:0">Loading maps…</span>
+      <span class="map-hint" id="map-drag-hint" style="display:none">Drag · Scroll to zoom · Click pins for details</span>
     </div>
-    <div class="map-filter-bar" id="map-filter-bar" style="display:none">
-      <span class="map-filter-label">Show:</span>
+    <div class="map-filter-bar" id="map-filter-bar">
+      <span class="map-filter-label">Highlight:</span>
       <div id="mat-chips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
       <button class="mat-chip" onclick="highlightMat(null)" style="margin-left:auto">Clear</button>
     </div>
-    <div class="map-area">
-      <!-- Valley IV -->
-      <div class="map-canvas-wrap active" id="mapwrap-valley">
-        <div class="leaflet-map" id="lmap-valley"></div>
-        <div class="map-zoom-controls">
-          <button class="map-zoom-btn" onclick="leafletZoom('valley',1)">+</button>
-          <button class="map-zoom-btn rst" onclick="leafletReset('valley')">RST</button>
-          <button class="map-zoom-btn" onclick="leafletZoom('valley',-1)">−</button>
-        </div>
-        <div class="map-coords" id="coords-valley">0, 0</div>
-        <div class="map-legend" id="legend-valley">
-          <div class="map-legend-title">Materials on map</div>
-          <div id="legend-items-valley"></div>
-        </div>
-        <div class="map-info-bar" id="info-valley">
-          <div class="map-info-title" id="info-title-valley"></div>
-          <div class="map-info-cards" id="info-cards-valley"></div>
-        </div>
+    <div class="map-area" id="map-area">
+      <div class="map-loading" id="map-loading">
+        <div class="map-loading-ring"></div>
+        <div class="map-loading-text">Loading map data…</div>
       </div>
-      <!-- Wuling -->
-      <div class="map-canvas-wrap" id="mapwrap-wuling">
-        <div class="leaflet-map" id="lmap-wuling"></div>
-        <div class="map-zoom-controls">
-          <button class="map-zoom-btn" onclick="leafletZoom('wuling',1)">+</button>
-          <button class="map-zoom-btn rst" onclick="leafletReset('wuling')">RST</button>
-          <button class="map-zoom-btn" onclick="leafletZoom('wuling',-1)">−</button>
-        </div>
-        <div class="map-coords" id="coords-wuling">0, 0</div>
-        <div class="map-legend" id="legend-wuling">
-          <div class="map-legend-title">Materials on map</div>
-          <div id="legend-items-wuling"></div>
-        </div>
-        <div class="map-info-bar" id="info-wuling">
-          <div class="map-info-title" id="info-title-wuling"></div>
-          <div class="map-info-cards" id="info-cards-wuling"></div>
-        </div>
+      <div id="map-canvases"></div>
+      <div class="map-legend" id="map-legend">
+        <div class="map-legend-title">Needs on this map</div>
+        <div id="legend-items"></div>
       </div>
-      <!-- Marker Stone -->
-      <div class="map-canvas-wrap" id="mapwrap-marker">
-        <div class="leaflet-map" id="lmap-marker"></div>
-        <div class="map-zoom-controls">
-          <button class="map-zoom-btn" onclick="leafletZoom('marker',1)">+</button>
-          <button class="map-zoom-btn rst" onclick="leafletReset('marker')">RST</button>
-          <button class="map-zoom-btn" onclick="leafletZoom('marker',-1)">−</button>
-        </div>
-        <div class="map-coords" id="coords-marker">0, 0</div>
-        <div class="map-legend" id="legend-marker">
-          <div class="map-legend-title">Materials on map</div>
-          <div id="legend-items-marker"></div>
-        </div>
-        <div class="map-info-bar" id="info-marker">
-          <div class="map-info-title" id="info-title-marker"></div>
-          <div class="map-info-cards" id="info-cards-marker"></div>
-        </div>
+      <div class="map-zoom-controls" id="map-zoom-controls" style="display:none">
+        <button class="map-zoom-btn" onclick="mapZoom(1.25)">+</button>
+        <button class="map-zoom-btn rst" onclick="mapReset()">RST</button>
+        <button class="map-zoom-btn" onclick="mapZoom(0.8)">−</button>
       </div>
-      <div class="map-placeholder" id="map-placeholder" style="display:none">
-        <div class="map-placeholder-grid"></div>
-        <div class="map-placeholder-content">
-          <div class="map-placeholder-title">Talos-II Field Map</div>
-          <div class="map-placeholder-sub">Add plans to reveal farming locations</div>
-        </div>
-      </div>
+      <div class="map-coords" id="map-coords" style="display:none">x:0 y:0</div>
+    </div>
+    <div class="map-info-bar" id="map-info-bar">
+      <div class="map-info-title" id="map-info-title"></div>
+      <div class="map-info-cards" id="map-info-cards"></div>
     </div>
   </div>
 </div>
@@ -604,37 +467,13 @@ const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODQ5NTcxMiwiZXhwIjoyMDk0MDcxNzEyfQ.W0j6nc4221j6Pm-qKerKgMUCkG4kSLLt9MCaeRM-Vr';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── Portrait cache: name/slug (lowercase) → img_path string or null ──
-const charImgCache = {};
-let imagesLoaded = false;
-
-async function loadCharImages() {
-  try {
-    const { data, error } = await db
-      .from('v_characters_tiered')
-      .select('name, slug, img_path');
-    if (error) throw error;
-    for (const row of (data || [])) {
-      // Use ?? null so an empty string stays as-is (not coerced to null)
-      if (row.name) charImgCache[row.name.toLowerCase()] = row.img_path ?? null;
-      if (row.slug) charImgCache[row.slug] = row.img_path ?? null;
-    }
-  } catch (e) {
-    console.warn('Could not load character images from Supabase:', e.message);
-  } finally {
-    imagesLoaded = true;
-  }
-}
-
-function getCharImg(name) {
-  // Return undefined (not in cache yet) vs null (in cache, confirmed no image)
-  const key = name.toLowerCase();
-  if (!(key in charImgCache)) return undefined;
-  return charImgCache[key] || null;
+function setDbStatus(state, msg) {
+  document.getElementById('db-dot').className = 'db-dot ' + state;
+  document.getElementById('db-status').textContent = msg;
 }
 
 // ────────────────────────────────────────────────
-// DATA
+// OPERATORS & WEAPONS DATA
 // ────────────────────────────────────────────────
 const OPERATORS = [
   {id:"laevatain",name:"Laevatain",element:"Heat",cls:"Striker",rarity:6},
@@ -689,267 +528,255 @@ const WEAPONS = [
   {id:"aggeloslayer",name:"Aggeloslayer",type:"Polearm",rarity:4},
 ];
 
+// ────────────────────────────────────────────────
+// REAL ENDFIELD MATERIALS
+// ────────────────────────────────────────────────
+// Colors from the DB material_list_materials groupings
 const MATS = {
-  lmd:               {name:"LMD",              color:"#f0b840",category:"Currency"},
-  exp_card:          {name:"EXP Cards",         color:"#5ba85b",category:"Currency"},
-  orirock_cube:      {name:"Orirock Cube",      color:"#6b8ec9",category:"Materials"},
-  orirock_cluster:   {name:"Orirock Cluster",   color:"#9b7ec9",category:"Materials"},
-  damaged_device:    {name:"Damaged Device",    color:"#c97b5b",category:"Materials"},
-  integrated_device: {name:"Integrated Device", color:"#c9a05b",category:"Materials"},
-  polyester:         {name:"Polyester",         color:"#5bc9a0",category:"Materials"},
-  sugar:             {name:"Sugar",             color:"#c9bc5b",category:"Materials"},
-  skill_book_1:      {name:"Skill Summary I",   color:"#8ec9e8",category:"Skill Books"},
-  skill_book_2:      {name:"Skill Summary II",  color:"#5a9fc9",category:"Skill Books"},
-  skill_book_3:      {name:"Skill Summary III", color:"#2d6ea0",category:"Skill Books"},
+  // T-Creds (currency)
+  t_creds:              {name:"T-Creds",              color:"#f0c040", category:"Currency"},
+  // Operator EXP
+  elementary_combat_record: {name:"Combat Record (Elem)",color:"#5ba85b", category:"Operator EXP"},
+  intermediate_combat_record:{name:"Combat Record (Int)",color:"#70c870", category:"Operator EXP"},
+  advanced_combat_record:   {name:"Combat Record (Adv)",color:"#90e090", category:"Operator EXP"},
+  elementary_cognitive_carrier:{name:"Cognitive Carrier (Elem)",color:"#5ba85b",category:"Operator EXP (Lv61+)"},
+  advanced_cognitive_carrier:  {name:"Cognitive Carrier (Adv)",color:"#70c870", category:"Operator EXP (Lv61+)"},
+  // Weapon EXP
+  arms_inspector:       {name:"Arms Inspector",        color:"#7ec9c9", category:"Weapon EXP"},
+  arms_insp_kit:        {name:"Arms INSP Kit",          color:"#90dada", category:"Weapon EXP"},
+  arms_insp_set:        {name:"Arms INSP Set",          color:"#a8ecec", category:"Weapon EXP (Lv61+)"},
+  // Promotion
+  protodisk:            {name:"Protodisk",              color:"#c9a05b", category:"Promotion"},
+  protoset:             {name:"Protoset",               color:"#e0b870", category:"Promotion"},
+  // Boletes
+  pink_bolete:          {name:"Pink Bolete",            color:"#e08060", category:"Rare Growth — Boletes"},
+  red_bolete:           {name:"Red Bolete",             color:"#d84040", category:"Rare Growth — Boletes"},
+  ruby_bolete:          {name:"Ruby Bolete",            color:"#c02060", category:"Rare Growth — Boletes"},
+  bloodcap:             {name:"Bloodcap",               color:"#901020", category:"Rare Growth — Boletes"},
+  // Skill materials
+  protoprism:           {name:"Protoprism",             color:"#6b8ec9", category:"Skill Upgrade"},
+  protohedron:          {name:"Protohedron",            color:"#2d6ea0", category:"Skill Upgrade"},
+  // Dendras (skill upgrades)
+  kalkodendra:          {name:"Kalkodendra",            color:"#70c98a", category:"Rare Growth — Dendras"},
+  chrysodendra:         {name:"Chrysodendra",           color:"#50d870", category:"Rare Growth — Dendras"},
+  vitrodendra:          {name:"Vitrodendra",            color:"#20e860", category:"Rare Growth — Dendras"},
+  // Weapon tuning
+  cast_die:             {name:"Cast Die",               color:"#c97b5b", category:"Weapon Tuning"},
+  heavy_cast_die:       {name:"Heavy Cast Die",         color:"#e0956a", category:"Weapon Tuning"},
+  // Rare ores (weapon tuning lv60+)
+  kalkonyx:             {name:"Kalkonyx",               color:"#6b8ec9", category:"Rare Ore"},
+  auronyx:              {name:"Auronyx",                color:"#8090e0", category:"Rare Ore"},
+  umbronyx:             {name:"Umbronyx",               color:"#a070d0", category:"Rare Ore"},
+  igneosite:            {name:"Igneosite",              color:"#e05030", category:"Rare Ore"},
+  wulingstone:          {name:"Wulingstone",            color:"#50a8d0", category:"Rare Ore"},
+  // Operator rare mats
+  d96_steel:            {name:"D96 Steel Sample 4",     color:"#e8c84a", category:"Operator Rare Mat"},
+  metadiastima:         {name:"Metadiastima Tube",      color:"#d4a830", category:"Operator Rare Mat"},
+  tachyon:              {name:"Tachyon Lattice",        color:"#b08820", category:"Operator Rare Mat"},
+  quadrant:             {name:"Quadrant Fluid",         color:"#907010", category:"Operator Rare Mat"},
+  triphasic:            {name:"Triphasic Nanoflake",    color:"#705000", category:"Operator Rare Mat"},
+  // Mastery
+  mark_of_perseverance: {name:"Mark of Perseverance",   color:"#b870e0", category:"Mastery"},
 };
 
-const MAP_CONFIG = {
-  valley: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2, label: 'Valley IV' },
-  wuling: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2, label: 'Wuling' },
-  marker: { w: 2400, h: 1800, initZoom: -1, minZoom: -2, maxZoom: 2, label: 'Marker Stone' },
+// ────────────────────────────────────────────────
+// MATERIAL COST CALCULATION
+// Based on confirmed Endfield data:
+// Operator levels:
+//   1–20:  23k EXP, 0 T-Creds
+//   21–40: 249k EXP, 1,600 T-Creds, 8 Protodisk, 3 Pink Bolete
+//   41–60: 475k EXP, 6,500 T-Creds, 25 Protodisk, 5 Red Bolete
+//   61–80: 465k EXP, 18,000 T-Creds, 24 Protoset, 5 Ruby Bolete
+//   81–90: 580k EXP, 100,000 T-Creds, 36 Protoset, 20 Metadiastima, 8 Bloodcap
+// Skills (per skill, S1–S3 = Kalkodendra, S4–S6 = Chrysodendra, S7–S9 = Vitrodendra)
+//   Early levels use Protoprism + dendra, late use Protohedron
+// ────────────────────────────────────────────────
+
+// EXP amounts (in units; 1 Advanced Combat Record = 1000 EXP)
+// Each segment: [fromLv, toLv, expNeeded, tcreds, ...mats]
+const OP_SEGMENTS = [
+  // from, to, exp (units of AdvRecord≈1000), tcreds, promotionMats
+  [1,  20, 23,    0,      {}],
+  [20, 40, 249,   1600,   {protodisk:8, pink_bolete:3}],
+  [40, 60, 475,   6500,   {protodisk:25, red_bolete:5}],
+  [60, 80, 465,   18000,  {protoset:24, ruby_bolete:5}],
+  [80, 90, 580,   100000, {protoset:36, metadiastima:20, bloodcap:8}],
+];
+
+// Skill upgrade costs per level group (per skill, 4 skills per operator)
+// Skills S1–S3: Kalkodendra; S4–S6: Chrysodendra; S7–S9: Vitrodendra
+// These are per-skill costs to go through that range
+const SKILL_COSTS_BY_LEVEL_RANGE = {
+  // lv1-3: Kalkodendra + Protoprism
+  '1-3':   { protoprism: 22, kalkodendra: 6,   t_creds: 4000 },
+  // lv4-6: Chrysodendra + Protoprism/Protohedron
+  '4-6':   { protoprism: 48, chrysodendra: 6,  t_creds: 12000 },
+  // lv7-9: Vitrodendra + Protohedron
+  '7-9':   { protohedron: 40, vitrodendra: 6,  t_creds: 24000 },
 };
 
-const MAT_LOCATIONS = {
-  lmd: {
-    valley: [
-      {y:600, x:700,  zone:"Main Missions",     note:"Story stages & elite enemy drops"},
-      {y:1200,x:1400, zone:"Combat Rewards",     note:"All combat encounters yield LMD"},
-    ],
-    wuling: [
-      {y:700, x:800,  zone:"Daily Quests",       note:"Daily commissions & trade routes"},
-    ],
-  },
-  exp_card: {
-    valley: [
-      {y:900, x:1100, zone:"Combat Stages",      note:"Elite enemies drop higher-tier records"},
-      {y:800, x:850,  zone:"Originium Lodespring",note:"Run repeatedly for operator records"},
-    ],
-    wuling: [
-      {y:1100,x:1200, zone:"Tactical Ops",       note:"High-difficulty dungeons, Hazard Lv 2+"},
-    ],
-  },
-  orirock_cube: {
-    valley: [
-      {y:400, x:1600, zone:"Mineral Beds North",  note:"Dense ore nodes — set up Mining Rigs here"},
-      {y:300, x:900,  zone:"Power Plateau Mines", note:"Passive mining with Orirock Rigs"},
-      {y:350, x:1100, zone:"Plateau Trunkway",    note:"Secondary mining nodes, respawn daily"},
-    ],
-    wuling: [
-      {y:300, x:300,  zone:"Northern Mineral Beds",note:"Higher density Orirock nodes"},
-    ],
-  },
-  orirock_cluster: {
-    valley: [
-      {y:820, x:870,  zone:"Originium Lodespring",note:"Advanced ore nodes, upgrade Mineral Beds"},
-      {y:900, x:1500, zone:"Deep Mine Zones",     note:"Craft via AIC from Orirock Cubes × 3"},
-    ],
-    wuling: [
-      {y:250, x:320,  zone:"N. Mineral Beds",     note:"Higher-density advanced ore nodes"},
-    ],
-  },
-  damaged_device: {
-    valley: [
-      {y:180, x:200,  zone:"Industrial Ruins",    note:"Mechanical enemies drop frequently here"},
-      {y:280, x:350,  zone:"Automaton Patrols",   note:"Patrol routes in industrial sector"},
-    ],
-    wuling: [
-      {y:800, x:350,  zone:"City Outskirts",      note:"Patrol automaton enemies, respawn daily"},
-    ],
-  },
-  integrated_device: {
-    valley: [
-      {y:850, x:1000, zone:"Processing Center",   note:"Elite automaton enemies drop this"},
-      {y:950, x:750,  zone:"Elite Mechs",         note:"Hard mode drops only (Hazard Lv 3+)"},
-    ],
-    wuling: [
-      {y:1100,x:1000, zone:"Tactical Ops Lv3+",   note:"Higher difficulty operations only"},
-    ],
-  },
-  polyester: {
-    valley: [
-      {y:1300,x:450,  zone:"Gathering Sites",     note:"Plant nodes in green zones, daily reset"},
-    ],
-    wuling: [
-      {y:220, x:900,  zone:"Bamboo Sea",          note:"Dense bamboo plant nodes"},
-      {y:1000,x:1500, zone:"Ecological Station",  note:"Riverside gathering along the river"},
-      {y:400, x:1500, zone:"Stragglers Grove",    note:"Dense vegetation gathering nodes"},
-    ],
-    marker: [
-      {y:320, x:1500, zone:"Eastern Vegetation",  note:"Several gathering nodes in eastern sector"},
-    ],
-  },
-  sugar: {
-    valley: [
-      {y:1050,x:500,  zone:"AIC Factory",         note:"Queue Sugar production in AIC"},
-      {y:1100,x:900,  zone:"Advanced Dungeons",   note:"Higher-tier dungeon drops"},
-    ],
-    wuling: [
-      {y:780, x:700,  zone:"Wuling Market",       note:"Purchase with Stock Bills (limited daily)"},
-      {y:1200,x:1100, zone:"Advanced Stages",     note:"Hard stages in Wuling"},
-    ],
-  },
-  skill_book_1: {
-    valley: [
-      {y:700, x:600,  zone:"Combat Stages",       note:"Standard stages & easy dungeons"},
-    ],
-  },
-  skill_book_2: {
-    valley: [
-      {y:950, x:620,  zone:"Protoprism Node",     note:"Near Core AIC Area — primary spot"},
-      {y:1050,x:750,  zone:"Medium Dungeons",     note:"Medium-difficulty runs, consistent drops"},
-    ],
-    wuling: [
-      {y:720, x:680,  zone:"Daily Operations",    note:"Daily ops & tactical Lv.2"},
-    ],
-  },
-  skill_book_3: {
-    valley: [
-      {y:1000,x:600,  zone:"Core AIC Area",       note:"Primary Protohedron spot — best farming"},
-      {y:1100,x:800,  zone:"Hard Dungeons",        note:"Elite drops, Hazard Lv 3+"},
-    ],
-    wuling: [
-      {y:1050,x:1050, zone:"Hard Mode Ops",       note:"Hazard Level 3+ required"},
-    ],
-    marker: [
-      {y:800, x:600,  zone:"Boss Drops",          note:"Boss encounters yield advanced books"},
-      {y:950, x:1200, zone:"Challenge Zones",     note:"Elite challenge encounters"},
-    ],
-  },
+// Talent node costs (total across all nodes per tier unlock)
+// These unlock at lvl 40, 60, 80, 90
+const TALENT_COSTS = {
+  40: { t_creds: 5000,  protoprism: 23 },
+  60: { t_creds: 10400, protoprism: 50 },
+  80: { t_creds: 18000, protohedron: 30 },
+  90: { t_creds: 32000, protohedron: 48 },
 };
 
-// ── SVG MAP BACKGROUNDS ──
-function buildMapSVG(mapKey) {
-  const cfg = MAP_CONFIG[mapKey];
-  const W = cfg.w, H = cfg.h;
-  const maps = {
-    valley: buildValleySVG(W, H),
-    wuling: buildWulingSVG(W, H),
-    marker: buildMarkerSVG(W, H),
-  };
-  return maps[mapKey];
+function calcMats(fromLv, toLv, type) {
+  const m = {};
+  const add = (k, v) => { if (v > 0) m[k] = (m[k] || 0) + v; };
+
+  if (type === 'operator') {
+    for (const [s, e, exp, tcreds, extraMats] of OP_SEGMENTS) {
+      if (toLv <= s || fromLv >= e) continue;
+      const frac = (Math.min(toLv, e) - Math.max(fromLv, s)) / (e - s);
+
+      // EXP: distribute across record tiers
+      const totalExp = Math.ceil(exp * frac);
+      // Use Advanced Combat Records primarily (1 = ~1000 EXP units here simplified)
+      if (fromLv >= 60) {
+        add('elementary_cognitive_carrier', Math.ceil(totalExp * 0.3));
+        add('advanced_cognitive_carrier', Math.ceil(totalExp * 0.7));
+      } else {
+        add('elementary_combat_record', Math.ceil(totalExp * 0.4));
+        add('intermediate_combat_record', Math.ceil(totalExp * 0.3));
+        add('advanced_combat_record', Math.ceil(totalExp * 0.3));
+      }
+
+      if (tcreds) add('t_creds', Math.ceil(tcreds * frac));
+      for (const [k, v] of Object.entries(extraMats)) add(k, Math.ceil(v * frac));
+    }
+
+    // Talent node costs for milestones crossed
+    for (const [milestone, costs] of Object.entries(TALENT_COSTS)) {
+      const mlv = parseInt(milestone);
+      if (fromLv < mlv && toLv >= mlv) {
+        for (const [k, v] of Object.entries(costs)) add(k, v);
+      }
+    }
+
+    // Skills: 4 skills per operator, plan lv range → skill range
+    // Basic assumption: leveling 1→40 = S1→S3, 40→60 = S4→S6, 60→80 = S7→S9
+    const skillCount = 4;
+    if (fromLv < 40 && toLv > 1) {
+      const frac = Math.min(1, (Math.min(toLv, 40) - Math.max(fromLv, 1)) / 39);
+      add('protoprism',   Math.ceil(22 * frac * skillCount));
+      add('kalkodendra',  Math.ceil(6  * frac * skillCount));
+      add('t_creds',      Math.ceil(4000 * frac * skillCount));
+    }
+    if (fromLv < 60 && toLv > 40) {
+      const frac = Math.min(1, (Math.min(toLv, 60) - Math.max(fromLv, 40)) / 20);
+      add('protoprism',   Math.ceil(48 * frac * skillCount));
+      add('chrysodendra', Math.ceil(6  * frac * skillCount));
+      add('t_creds',      Math.ceil(12000 * frac * skillCount));
+    }
+    if (fromLv < 80 && toLv > 60) {
+      const frac = Math.min(1, (Math.min(toLv, 80) - Math.max(fromLv, 60)) / 20);
+      add('protohedron',  Math.ceil(40 * frac * skillCount));
+      add('vitrodendra',  Math.ceil(6  * frac * skillCount));
+      add('t_creds',      Math.ceil(24000 * frac * skillCount));
+    }
+
+  } else {
+    // WEAPON
+    // 1–20: Arms Inspector
+    // 21–40: +Cast Die, Kalkonyx
+    // 41–60: +Heavy Cast Die, Auronyx
+    // 61–80: +Umbronyx
+    // 81–90: +endgame ore (Igneosite/Wulingstone)
+    const wpnSegs = [
+      [1,  20, {arms_inspector:20,                              t_creds:800}],
+      [20, 40, {arms_insp_kit:30,  cast_die:8,  kalkonyx:4,    t_creds:3000}],
+      [40, 60, {arms_insp_kit:60,  cast_die:16, auronyx:4,     heavy_cast_die:8, t_creds:8000}],
+      [60, 80, {arms_insp_set:80,  heavy_cast_die:16, umbronyx:4, t_creds:18000}],
+      [80, 90, {arms_insp_set:120, igneosite:4, wulingstone:4, t_creds:40000}],
+    ];
+    for (const [s, e, cost] of wpnSegs) {
+      if (toLv <= s || fromLv >= e) continue;
+      const frac = (Math.min(toLv, e) - Math.max(fromLv, s)) / (e - s);
+      for (const [k, v] of Object.entries(cost)) add(k, Math.ceil(v * frac));
+    }
+  }
+
+  return m;
 }
 
-function buildValleySVG(W, H) {
-  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="bgv" cx="35%" cy="45%" r="65%">
-      <stop offset="0%" stop-color="#0e1a10"/>
-      <stop offset="100%" stop-color="#080b0a"/>
-    </radialGradient>
-    <pattern id="grid-v" width="80" height="80" patternUnits="userSpaceOnUse">
-      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(0,196,163,0.04)" stroke-width="0.8"/>
-    </pattern>
-    <pattern id="dots-v" width="40" height="40" patternUnits="userSpaceOnUse">
-      <circle cx="20" cy="20" r="0.8" fill="rgba(255,255,255,0.06)"/>
-    </pattern>
-  </defs>
-  <rect width="${W}" height="${H}" fill="url(#bgv)"/>
-  <rect width="${W}" height="${H}" fill="url(#grid-v)"/>
-  <rect width="${W}" height="${H}" fill="url(#dots-v)"/>
-  <ellipse cx="1200" cy="600" rx="900" ry="450" fill="none" stroke="rgba(0,196,163,0.04)" stroke-width="1"/>
-  <ellipse cx="1200" cy="600" rx="700" ry="320" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="1"/>
-  <ellipse cx="1200" cy="600" rx="500" ry="200" fill="none" stroke="rgba(0,196,163,0.06)" stroke-width="1.2"/>
-  <polygon points="750,100 1600,60 1750,400 1400,480 950,500 700,380" fill="rgba(255,107,53,0.06)" stroke="rgba(255,107,53,0.18)" stroke-width="1.5"/>
-  <text x="1200" y="270" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="22" fill="rgba(255,107,53,0.35)" letter-spacing="6">POWER PLATEAU</text>
-  <polygon points="60,60 520,40 560,380 360,440 100,340" fill="rgba(192,132,252,0.05)" stroke="rgba(192,132,252,0.15)" stroke-width="1.5"/>
-  <text x="300" y="220" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(192,132,252,0.3)" letter-spacing="3">INDUSTRIAL RUINS</text>
-  <polygon points="820,420 1440,360 1560,880 1360,1000 860,980 680,800" fill="rgba(91,186,91,0.07)" stroke="rgba(91,186,91,0.2)" stroke-width="1.5"/>
-  <text x="1120" y="680" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="20" fill="rgba(91,186,91,0.35)" letter-spacing="5">ORIGINIUM LODESPRING</text>
-  <polygon points="1680,80 2300,60 2360,480 2100,560 1760,540 1620,340" fill="rgba(107,142,201,0.07)" stroke="rgba(107,142,201,0.2)" stroke-width="1.5"/>
-  <text x="2000" y="300" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" fill="rgba(107,142,201,0.3)" letter-spacing="4">MINERAL BEDS</text>
-  <polygon points="200,880 760,840 800,1200 560,1300 180,1240" fill="rgba(0,196,163,0.08)" stroke="rgba(0,196,163,0.22)" stroke-width="2"/>
-  <text x="490" y="1060" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(0,196,163,0.5)" letter-spacing="3">CORE AIC AREA</text>
-  <rect x="1700" y="900" width="540" height="380" rx="4" fill="rgba(155,126,201,0.06)" stroke="rgba(155,126,201,0.18)" stroke-width="1.5"/>
-  <text x="1970" y="1100" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(155,126,201,0.32)" letter-spacing="3">DEEP MINE ZONE</text>
-  <rect x="1000" y="1050" width="420" height="260" rx="3" fill="rgba(201,160,91,0.06)" stroke="rgba(201,160,91,0.18)" stroke-width="1.5"/>
-  <text x="1210" y="1180" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(201,160,91,0.32)" letter-spacing="2">PROCESSING CENTER</text>
-  <rect x="280" y="1150" width="380" height="240" rx="3" fill="rgba(0,196,163,0.07)" stroke="rgba(0,196,163,0.2)" stroke-width="1.5"/>
-  <text x="470" y="1272" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(0,196,163,0.4)" letter-spacing="2">AIC FACTORY</text>
-  <path d="M0,1100 C300,1050 500,980 700,1020 S1100,1100 1400,1060 S1900,980 2400,1080" fill="none" stroke="rgba(79,195,247,0.18)" stroke-width="8"/>
-  <text x="900" y="1090" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(79,195,247,0.3)" letter-spacing="4">COOLANT RIVER</text>
-  <text x="600" y="150" font-family="'IBM Plex Mono',monospace" font-size="13" fill="rgba(255,140,66,0.4)" letter-spacing="3">PLATEAU TRUNKWAY</text>
-  <g transform="translate(2300,100)">
-    <circle cx="0" cy="0" r="28" fill="rgba(0,0,0,0.5)" stroke="rgba(0,196,163,0.3)" stroke-width="1"/>
-    <path d="M0,-20 L5,5 L0,2 L-5,5 Z" fill="rgba(0,196,163,0.8)"/>
-    <path d="M0,20 L5,-5 L0,-2 L-5,-5 Z" fill="rgba(255,255,255,0.25)"/>
-    <text x="0" y="-26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="rgba(0,196,163,0.8)">N</text>
-  </g>
-  <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-size="120" font-weight="700" fill="rgba(255,255,255,0.018)" letter-spacing="20">VALLEY IV</text>
-</svg>`;
+function totalMats() {
+  const acc = {};
+  for (const p of plans) {
+    if (!focusedPlanIds.has(p.id)) continue;
+    const m = calcMats(p.fromLv, p.toLv, p.type);
+    for (const [k, v] of Object.entries(m)) acc[k] = (acc[k] || 0) + v;
+  }
+  return acc;
 }
 
-function buildWulingSVG(W, H) {
-  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="bgw" cx="55%" cy="40%" r="65%">
-      <stop offset="0%" stop-color="#0d1118"/>
-      <stop offset="100%" stop-color="#08090e"/>
-    </radialGradient>
-    <pattern id="grid-w" width="80" height="80" patternUnits="userSpaceOnUse">
-      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(91,138,247,0.04)" stroke-width="0.8"/>
-    </pattern>
-  </defs>
-  <rect width="${W}" height="${H}" fill="url(#bgw)"/>
-  <rect width="${W}" height="${H}" fill="url(#grid-w)"/>
-  <polygon points="700,40 1450,20 1560,340 1300,400 780,380" fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.22)" stroke-width="1.5"/>
-  <text x="1100" y="210" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="22" fill="rgba(74,222,128,0.38)" letter-spacing="6">BAMBOO SEA</text>
-  <polygon points="60,60 560,40 600,340 380,400 80,320" fill="rgba(107,142,201,0.07)" stroke="rgba(107,142,201,0.2)" stroke-width="1.5"/>
-  <text x="330" y="210" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="15" fill="rgba(107,142,201,0.32)" letter-spacing="2">N. MINERAL BEDS</text>
-  <rect x="1480" y="120" width="520" height="400" rx="4" fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.15)" stroke-width="1.5"/>
-  <text x="1740" y="340" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(74,222,128,0.3)" letter-spacing="3">STRAGGLERS GROVE</text>
-  <polygon points="380,620 1060,580 1180,1100 900,1200 360,1080" fill="rgba(192,132,252,0.06)" stroke="rgba(192,132,252,0.2)" stroke-width="2"/>
-  <text x="760" y="880" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="20" fill="rgba(192,132,252,0.38)" letter-spacing="4">WULING CITY</text>
-  <rect x="60" y="760" width="420" height="280" rx="3" fill="rgba(201,123,91,0.06)" stroke="rgba(201,123,91,0.15)" stroke-width="1.5"/>
-  <text x="270" y="905" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" fill="rgba(201,123,91,0.3)" letter-spacing="2">CITY OUTSKIRTS</text>
-  <polygon points="1320,840 2000,780 2100,1140 1880,1240 1260,1160" fill="rgba(91,186,91,0.06)" stroke="rgba(91,186,91,0.18)" stroke-width="1.5"/>
-  <text x="1680" y="1000" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="17" fill="rgba(91,186,91,0.3)" letter-spacing="3">ECOLOGICAL STATION</text>
-  <rect x="450" y="640" width="380" height="280" rx="3" fill="rgba(240,184,64,0.06)" stroke="rgba(240,184,64,0.18)" stroke-width="1.5"/>
-  <text x="640" y="790" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(240,184,64,0.38)" letter-spacing="2">WULING MARKET</text>
-  <path d="M0,1380 C400,1320 700,1360 1000,1340 S1600,1300 2000,1360 S2200,1400 2400,1380" fill="none" stroke="rgba(79,195,247,0.18)" stroke-width="10"/>
-  <text x="900" y="1375" font-family="'IBM Plex Mono',monospace" font-size="14" fill="rgba(79,195,247,0.28)" letter-spacing="4">WULING RIVER</text>
-  <g transform="translate(2300,100)">
-    <circle cx="0" cy="0" r="28" fill="rgba(0,0,0,0.5)" stroke="rgba(91,138,247,0.3)" stroke-width="1"/>
-    <path d="M0,-20 L5,5 L0,2 L-5,5 Z" fill="rgba(91,138,247,0.8)"/>
-    <path d="M0,20 L5,-5 L0,-2 L-5,-5 Z" fill="rgba(255,255,255,0.25)"/>
-    <text x="0" y="-26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="rgba(91,138,247,0.8)">N</text>
-  </g>
-  <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-size="120" font-weight="700" fill="rgba(255,255,255,0.015)" letter-spacing="20">WULING</text>
-</svg>`;
+// ────────────────────────────────────────────────
+// DB — Maps and Pins from Supabase
+// ────────────────────────────────────────────────
+let dbMaps = [];      // [{id, name, slug, image_url, coord_width, coord_height, pins:[...]}]
+let dbMatsById = {};  // material_id → {name, farming_note}
+
+async function loadDbData() {
+  setDbStatus('loading', 'Loading maps…');
+  try {
+    // Load materials from material_list_materials for color/name resolution
+    const { data: matsData } = await db.from('material_list_materials').select('id,name,farming_note,img_path');
+    if (matsData) {
+      for (const m of matsData) {
+        dbMatsById[m.id] = m;
+        // Override MATS color/name if we have DB data
+        if (MATS[m.id]) MATS[m.id].name = m.name;
+      }
+    }
+
+    // Load maps
+    const { data: maps, error: mapErr } = await db
+      .from('material_list_maps')
+      .select('*')
+      .order('sort_order');
+    if (mapErr) throw mapErr;
+
+    // Load all pins
+    const { data: pins, error: pinErr } = await db
+      .from('material_list_map_pins')
+      .select('*')
+      .order('sort_order');
+    if (pinErr) throw pinErr;
+
+    dbMaps = (maps || []).map(m => ({
+      ...m,
+      pins: (pins || []).filter(p => p.map_id === m.id)
+    }));
+
+    setDbStatus('ok', `${dbMaps.length} maps loaded`);
+  } catch (e) {
+    setDbStatus('err', 'Map load failed: ' + e.message);
+    dbMaps = [];
+  }
 }
 
-function buildMarkerSVG(W, H) {
-  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="bgm" cx="50%" cy="35%" r="65%">
-      <stop offset="0%" stop-color="#130b1a"/>
-      <stop offset="100%" stop-color="#0a080e"/>
-    </radialGradient>
-    <pattern id="grid-m" width="80" height="80" patternUnits="userSpaceOnUse">
-      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(192,132,252,0.04)" stroke-width="0.8"/>
-    </pattern>
-    <pattern id="hex-m" width="60" height="52" patternUnits="userSpaceOnUse">
-      <polygon points="30,2 58,17 58,47 30,62 2,47 2,17" fill="none" stroke="rgba(192,132,252,0.025)" stroke-width="0.6"/>
-    </pattern>
-  </defs>
-  <rect width="${W}" height="${H}" fill="url(#bgm)"/>
-  <rect width="${W}" height="${H}" fill="url(#grid-m)"/>
-  <rect width="${W}" height="${H}" fill="url(#hex-m)"/>
-  <polygon points="700,500 1400,440 1640,900 1320,1180 720,1140 480,820" fill="rgba(160,160,210,0.06)" stroke="rgba(160,160,210,0.2)" stroke-width="2"/>
-  <text x="1060" y="820" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" fill="rgba(160,160,210,0.32)" letter-spacing="4">MARKER STONE CORE</text>
-  <polygon points="1400,80 2000,60 2200,520 1960,600 1360,560" fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.2)" stroke-width="1.5"/>
-  <text x="1780" y="310" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="16" fill="rgba(74,222,128,0.32)" letter-spacing="3">EASTERN VEGETATION</text>
-  <polygon points="1200,1020 1900,960 2060,1360 1700,1460 1100,1380" fill="rgba(224,80,96,0.06)" stroke="rgba(224,80,96,0.2)" stroke-width="2"/>
-  <text x="1580" y="1200" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="18" fill="rgba(224,80,96,0.32)" letter-spacing="4">CHALLENGE ZONES</text>
-  <rect x="240" y="820" width="500" height="340" rx="4" fill="rgba(224,80,96,0.07)" stroke="rgba(224,80,96,0.28)" stroke-width="2.5"/>
-  <text x="490" y="1000" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="17" fill="rgba(224,80,96,0.45)" letter-spacing="3">BOSS ARENA</text>
-  <g transform="translate(2300,100)">
-    <circle cx="0" cy="0" r="28" fill="rgba(0,0,0,0.5)" stroke="rgba(192,132,252,0.3)" stroke-width="1"/>
-    <path d="M0,-20 L5,5 L0,2 L-5,5 Z" fill="rgba(192,132,252,0.8)"/>
-    <path d="M0,20 L5,-5 L0,-2 L-5,-5 Z" fill="rgba(255,255,255,0.25)"/>
-    <text x="0" y="-26" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="10" fill="rgba(192,132,252,0.8)">N</text>
-  </g>
-  <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="'Rajdhani',sans-serif" font-size="120" font-weight="700" fill="rgba(255,255,255,0.015)" letter-spacing="15">MARKER STONE</text>
-</svg>`;
+// ────────────────────────────────────────────────
+// Portrait Cache
+// ────────────────────────────────────────────────
+const charImgCache = {};
+
+async function loadCharImages() {
+  try {
+    const { data } = await db.from('v_characters_tiered').select('name,slug,img_path');
+    for (const row of (data || [])) {
+      if (row.name) charImgCache[row.name.toLowerCase()] = row.img_path ?? null;
+      if (row.slug) charImgCache[row.slug] = row.img_path ?? null;
+    }
+  } catch (e) { console.warn('Could not load char images:', e.message); }
+}
+
+function getCharImg(name) {
+  const key = name.toLowerCase();
+  if (!(key in charImgCache)) return undefined;
+  return charImgCache[key] || null;
 }
 
 // ────────────────────────────────────────────────
@@ -957,20 +784,17 @@ function buildMarkerSVG(W, H) {
 // ────────────────────────────────────────────────
 let plans = [];
 let planFilter = 'all';
-let planInlineFilter = 'all';
-let planSearchQuery = '';
-let modalType = null;
 let activeFilter = 'all';
-let activeMap = 'valley';
+let modalType = null;
 let highlightedMat = null;
 let checkedMats = {};
 let haveQty = {};
 let focusedPlanIds = new Set();
 let focusPanelOpen = false;
 
-const leafletMaps = {};
-const mapLayers = {};
-const mapInited = {};
+// Map state
+let activeMapId = null;
+let mapView = { tx: 0, ty: 0, scale: 1 };
 
 // ────────────────────────────────────────────────
 // HELPERS
@@ -992,305 +816,314 @@ const EL_ICON = {
 const OP_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
 const WPN_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21l7-7m0 0l2-2m-2 2l2 2m8-14l-7 7"/><path d="M14 3l7 7-3 3-7-7 3-3z"/></svg>`;
 
-function calcMats(fromLv, toLv, type) {
-  const m={};
-  const add=(k,v)=>{m[k]=(m[k]||0)+v;};
-  const s=type==='weapon'?0.85:1;
-  const segs=[
-    [1,20,  {lmd:10000*s,exp_card:5000*s}],
-    [20,40, {lmd:24000*s,exp_card:16000*s,orirock_cube:15,damaged_device:8,skill_book_1:6}],
-    [40,60, {lmd:48000*s,exp_card:32000*s,orirock_cluster:10,integrated_device:6,polyester:12,skill_book_2:4}],
-    [60,80, {lmd:96000*s,exp_card:64000*s,orirock_cluster:20,integrated_device:12,sugar:8,skill_book_3:4}],
-  ];
-  for (const [s2,e,cost] of segs) {
-    if (toLv<=s2||fromLv>=e) continue;
-    const frac=(Math.min(toLv,e)-Math.max(fromLv,s2))/(e-s2);
-    for (const [k,v] of Object.entries(cost)) if (v>0) add(k,Math.ceil(v*frac));
+// ────────────────────────────────────────────────
+// MAP RENDERING
+// ────────────────────────────────────────────────
+function initMaps() {
+  const topBar = document.getElementById('map-top-bar');
+  const hint = document.getElementById('map-loading-hint');
+  const dragHint = document.getElementById('map-drag-hint');
+  document.getElementById('map-loading').style.display = 'none';
+
+  if (!dbMaps.length) {
+    hint.textContent = 'No maps in database';
+    return;
   }
-  return m;
-}
 
-function totalMats() {
-  const acc={};
-  for (const p of plans) {
-    if (!focusedPlanIds.has(p.id)) continue;
-    const m=calcMats(p.fromLv,p.toLv,p.type);
-    for (const [k,v] of Object.entries(m)) acc[k]=(acc[k]||0)+v;
+  hint.style.display = 'none';
+  dragHint.style.display = '';
+
+  // Build tabs
+  dbMaps.forEach((map, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'map-tab' + (i === 0 ? ' active' : '');
+    btn.id = `mtab-${map.id}`;
+    btn.textContent = map.name;
+    btn.onclick = () => switchMap(map.id);
+    topBar.insertBefore(btn, dragHint);
+  });
+
+  // Build canvas wraps
+  const canvasesEl = document.getElementById('map-canvases');
+  dbMaps.forEach((map, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'map-canvas-wrap' + (i === 0 ? ' active' : '');
+    wrap.id = `mapwrap-${map.id}`;
+    wrap.style.cssText = 'position:absolute;inset:0';
+    canvasesEl.appendChild(wrap);
+  });
+
+  document.getElementById('map-zoom-controls').style.display = 'flex';
+  document.getElementById('map-coords').style.display = 'block';
+
+  // Setup pan/zoom
+  setupMapInteraction();
+
+  // Select first map
+  if (dbMaps.length) {
+    activeMapId = dbMaps[0].id;
+    renderMapCanvas(activeMapId);
   }
-  return acc;
 }
 
-// ────────────────────────────────────────────────
-// LEAFLET MAP INIT
-// ────────────────────────────────────────────────
-function initLeafletMap(mapKey) {
-  if (mapInited[mapKey]) return;
-  mapInited[mapKey] = true;
-  const cfg = MAP_CONFIG[mapKey];
-  const W = cfg.w, H = cfg.h;
-  const svgStr = buildMapSVG(mapKey);
-  const svgBlob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
-  const svgUrl = URL.createObjectURL(svgBlob);
-  const map = L.map(`lmap-${mapKey}`, {
-    crs: L.CRS.Simple,
-    minZoom: cfg.minZoom,
-    maxZoom: cfg.maxZoom,
-    zoom: cfg.initZoom,
-    center: [-H/2, W/2],
-    zoomControl: false,
-    attributionControl: false,
-    scrollWheelZoom: true,
+function switchMap(mapId) {
+  activeMapId = mapId;
+  mapView = { tx: 0, ty: 0, scale: 1 };
+  dbMaps.forEach(m => {
+    document.getElementById(`mtab-${m.id}`)?.classList.toggle('active', m.id === mapId);
+    document.getElementById(`mapwrap-${m.id}`)?.classList.toggle('active', m.id === mapId);
   });
-  const bounds = [[-H, 0], [0, W]];
-  L.imageOverlay(svgUrl, bounds, {opacity: 1, interactive: false}).addTo(map);
-  map.fitBounds(bounds);
-  map.on('mousemove', (e) => {
-    const {lat, lng} = e.latlng;
-    const el = document.getElementById(`coords-${mapKey}`);
-    if (el) el.textContent = `X:${Math.round(lng)} Y:${Math.round(-lat)}`;
-  });
-  leafletMaps[mapKey] = map;
-  mapLayers[mapKey] = { pins: {} };
-  setTimeout(() => updateMapPins(mapKey), 50);
+  renderMapCanvas(mapId);
+  document.getElementById('map-info-bar').classList.remove('visible');
 }
 
-// ────────────────────────────────────────────────
-// PIN MANAGEMENT
-// ────────────────────────────────────────────────
-function createPinIcon(matKey, zone, isHighlighted) {
-  const mat = MATS[matKey];
-  const shortName = mat.name.replace(' Summary','').replace('Skill ','Sk.');
-  const borderColor = isHighlighted ? mat.color : 'rgba(255,255,255,0.2)';
-  const bg = isHighlighted ? `rgba(13,15,18,0.98)` : 'rgba(13,15,18,0.9)';
-  const glow = isHighlighted ? `box-shadow:0 0 14px ${mat.color}55,0 0 4px ${mat.color}33;` : '';
-  const html = `<div class="endo-pin ${isHighlighted?'highlighted':''}" style="border-color:${borderColor};background:${bg};${glow}">
-    <div class="endo-pin-dot" style="background:${mat.color};${isHighlighted?`box-shadow:0 0 6px ${mat.color};`:''}"></div>
-    <div class="endo-pin-content">
-      <div class="endo-pin-mat" style="color:${mat.color}">${shortName}</div>
-      <div class="endo-pin-zone">${zone}</div>
-    </div>
-  </div>`;
-  return L.divIcon({ html, className: '', iconAnchor: [0, 20], iconSize: null });
+function getMatColor(matId) {
+  return MATS[matId]?.color || '#6b7280';
+}
+function getMatName(matId) {
+  return MATS[matId]?.name || dbMatsById[matId]?.name || matId;
 }
 
-function createPopupContent(matKey, pin) {
-  const mat = MATS[matKey];
-  return `<div class="popup-inner">
-    <div class="popup-title" style="color:${mat.color}">${pin.zone}</div>
-    <div class="popup-mat">● ${mat.name}</div>
-    <div class="popup-note">${pin.note}</div>
-  </div>`;
-}
-
-function updateMapPins(mapKey) {
-  const map = leafletMaps[mapKey];
+function renderMapCanvas(mapId) {
+  const map = dbMaps.find(m => m.id === mapId);
   if (!map) return;
-  const layers = mapLayers[mapKey];
-  const needMats = totalMats();
-  for (const lg of Object.values(layers.pins)) map.removeLayer(lg);
-  layers.pins = {};
-  const visibleMats = [];
-  for (const [matKey, qty] of Object.entries(needMats)) {
-    if (!MATS[matKey]) continue;
-    const locs = (MAT_LOCATIONS[matKey] || {})[mapKey];
-    if (!locs || !locs.length) continue;
-    visibleMats.push(matKey);
-    const isHighlighted = highlightedMat === matKey;
-    const isDimmed = highlightedMat && !isHighlighted;
-    const lg = L.layerGroup();
-    for (const pin of locs) {
-      const marker = L.marker([-pin.y, pin.x], {
-        icon: createPinIcon(matKey, pin.zone, isHighlighted),
-        opacity: isDimmed ? 0.2 : 1,
-        zIndexOffset: isHighlighted ? 1000 : 0,
-        interactive: true,
-      });
-      marker.bindPopup(createPopupContent(matKey, pin), { closeButton: true, maxWidth: 260, className: '' });
-      marker.on('click', () => { highlightMat(matKey); });
-      lg.addLayer(marker);
-    }
-    lg.addTo(map);
-    layers.pins[matKey] = lg;
-  }
-  updateLegend(mapKey, visibleMats, needMats);
-}
+  const wrap = document.getElementById(`mapwrap-${mapId}`);
+  if (!wrap) return;
 
-function updateLegend(mapKey, visibleMats, needMats) {
-  const legendEl = document.getElementById(`legend-${mapKey}`);
-  const itemsEl = document.getElementById(`legend-items-${mapKey}`);
-  if (!legendEl || !itemsEl) return;
-  if (!visibleMats.length) { legendEl.classList.remove('visible'); return; }
-  legendEl.classList.add('visible');
-  itemsEl.innerHTML = visibleMats.map(k => {
-    const mat = MATS[k];
-    const isHighlighted = highlightedMat === k;
-    const isDimmed = highlightedMat && !isHighlighted;
-    return `<div class="map-legend-item ${isDimmed?'dimmed':''}" onclick="highlightMat('${k}')">
-      <div class="map-legend-dot" style="background:${mat.color};${isHighlighted?`box-shadow:0 0 5px ${mat.color}`:''}"></div>
-      <div class="map-legend-name" style="${isHighlighted?`color:${mat.color}`:''}">
-        ${mat.name.replace(' Summary','').replace('Skill ','Sk.')}
+  const W = map.coord_width, H = map.coord_height;
+  const needMats = totalMats();
+
+  // Build background
+  let bgHtml = map.image_url
+    ? `<img src="${map.image_url}" style="position:absolute;inset:0;width:${W}px;height:${H}px;object-fit:cover;pointer-events:none;display:block" loading="lazy">`
+    : buildFallbackMapSVG(map);
+
+  // Build pins — only show pins for materials we need
+  const pinsHtml = map.pins.map(pin => {
+    const matId = pin.material_id;
+    // Only show pins if this material is in our needs OR no needs (show all)
+    const hasNeed = Object.keys(needMats).length === 0 || needMats[matId];
+    if (!hasNeed) return '';
+
+    const color = getMatColor(matId);
+    const name = getMatName(matId);
+    const shortName = name.replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
+    const isHL = highlightedMat === matId;
+    const isDim = highlightedMat && !isHL;
+    const borderCol = isHL ? color : 'rgba(255,255,255,0.18)';
+    const glow = isHL ? `box-shadow:0 0 12px ${color}55;` : '';
+    return `<div class="user-pin ${isHL?'highlighted':''} ${isDim?'dimmed':''}"
+      style="left:${pin.x}px;top:${pin.y}px;border-color:${borderCol};${glow}"
+      onclick="onPinClick('${matId}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')"
+      title="${escHtml(name)} — ${escHtml(pin.location_name)}">
+      <div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div>
+      <div>
+        <div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div>
+        <div class="user-pin-sub">${escHtml(pin.location_name)}</div>
       </div>
     </div>`;
   }).join('');
+
+  wrap.innerHTML = `<div class="map-viewport" id="map-vp-${mapId}">
+    <div class="map-inner" id="map-inner-${mapId}" style="width:${W}px;height:${H}px;position:relative">
+      ${bgHtml}
+      ${pinsHtml}
+    </div>
+  </div>`;
+
+  updateMapTransform();
+  renderMapLegend(mapId);
+
+  // Attach mousemove for coords
+  const vp = document.getElementById(`map-vp-${mapId}`);
+  if (vp) {
+    vp.addEventListener('mousemove', e => {
+      const inner = document.getElementById(`map-inner-${mapId}`);
+      if (!inner) return;
+      const rect = inner.getBoundingClientRect();
+      const x = Math.round((e.clientX - rect.left) / mapView.scale);
+      const y = Math.round((e.clientY - rect.top)  / mapView.scale);
+      document.getElementById('map-coords').textContent = `x:${x} y:${y}`;
+    });
+  }
 }
 
-// ────────────────────────────────────────────────
-// MAP CONTROLS
-// ────────────────────────────────────────────────
-function leafletZoom(mapKey, dir) {
-  const map = leafletMaps[mapKey];
+function onPinClick(matId, zoneName, note) {
+  highlightMat(matId);
+  // Update info bar
+  const map = dbMaps.find(m => m.id === activeMapId);
   if (!map) return;
-  if (dir > 0) map.zoomIn(); else map.zoomOut();
+  updateInfoBar(map, matId);
 }
-function leafletReset(mapKey) {
-  const map = leafletMaps[mapKey];
-  if (!map) return;
-  const cfg = MAP_CONFIG[mapKey];
-  map.fitBounds([[-cfg.h, 0], [0, cfg.w]]);
-}
-function switchMap(mapKey) {
-  activeMap = mapKey;
-  ['valley','wuling','marker'].forEach(k => {
-    document.getElementById(`mtab-${k}`).classList.toggle('active', k===mapKey);
-    document.getElementById(`mapwrap-${k}`).classList.toggle('active', k===mapKey);
-  });
-  setTimeout(() => {
-    initLeafletMap(mapKey);
-    const map = leafletMaps[mapKey];
-    if (map) map.invalidateSize();
-    updateMapPins(mapKey);
-  }, 20);
-}
-function highlightMat(matKey) {
-  highlightedMat = (highlightedMat === matKey) ? null : matKey;
-  renderMapFilters();
-  updateMapPins(activeMap);
-  renderNeed();
-  updateInfoBar(activeMap, matKey);
-}
-function updateInfoBar(mapKey, matKey) {
-  const bar = document.getElementById(`info-${mapKey}`);
-  const title = document.getElementById(`info-title-${mapKey}`);
-  const cards = document.getElementById(`info-cards-${mapKey}`);
-  if (!bar) return;
-  if (!matKey || matKey !== highlightedMat) { bar.classList.remove('visible'); return; }
-  const mat = MATS[matKey];
-  const locs = (MAT_LOCATIONS[matKey] || {})[mapKey];
-  if (!locs || !locs.length) { bar.classList.remove('visible'); return; }
-  title.innerHTML = `<span style="color:${mat.color}">● ${mat.name}</span> — ${MAP_CONFIG[mapKey].label} Farming Locations`;
-  cards.innerHTML = locs.map(l => `<div class="map-info-card">
-    <div class="map-info-card-zone" style="color:${mat.color}">${l.zone}</div>
-    <div class="map-info-card-desc">${l.note}</div>
-  </div>`).join('');
+
+function updateInfoBar(map, matId) {
+  const bar = document.getElementById('map-info-bar');
+  if (!matId || matId !== highlightedMat) { bar.classList.remove('visible'); return; }
+  const color = getMatColor(matId);
+  const name = getMatName(matId);
+  const pins = map.pins.filter(p => p.material_id === matId);
+  if (!pins.length) { bar.classList.remove('visible'); return; }
+
+  document.getElementById('map-info-title').innerHTML =
+    `<span style="color:${color}">●</span> ${escHtml(name)} — ${escHtml(map.name)} farming locations`;
+  document.getElementById('map-info-cards').innerHTML = pins.map(p => {
+    const displayNote = p.note && p.note.trim()
+      ? p.note
+      : (dbMatsById[matId]?.farming_note || 'See map for details');
+    return `<div class="map-info-card">
+      <div class="map-info-card-zone" style="color:${color}">${escHtml(p.location_name)}</div>
+      <div class="map-info-card-desc">${escHtml(displayNote)}</div>
+    </div>`;
+  }).join('');
   bar.classList.add('visible');
 }
 
-// ────────────────────────────────────────────────
-// PLANS SEARCH
-// ────────────────────────────────────────────────
-function onPlansSearchInput() { planSearchQuery = document.getElementById('plans-search-input').value; renderSearchDropdown(); }
-function onPlansSearchFocus() { renderSearchDropdown(); }
-function renderSearchDropdown() {
-  const dd = document.getElementById('plans-search-dropdown');
-  const q = planSearchQuery.toLowerCase().trim();
-  let visible = q ? plans.filter(p=>p.item.name.toLowerCase().includes(q)) : plans;
-  if (!visible.length) {
-    dd.innerHTML=`<div class="plans-dd-empty">${q?'No matching plans':'No active plans yet'}</div>`;
-    dd.classList.add('open'); return;
-  }
-  dd.innerHTML = visible.map(p=>{
-    const el=p.item.element||null;
-    const color=getElColor(el);
-    const sub=p.type==='operator'
-      ?`${p.item.cls} · ${p.item.element} · Lv ${p.fromLv}→${p.toLv}`
-      :`${p.item.type} · ${p.item.rarity}★ · Lv ${p.fromLv}→${p.toLv}`;
-    return `<div class="plans-dd-item" onclick="jumpToPlan(${p.id})">
-      <div class="plans-dd-dot" style="background:${color}"></div>
-      <div class="plans-dd-name">${p.item.name}</div>
-      <div class="plans-dd-sub">${sub}</div>
+function renderMapLegend(mapId) {
+  const map = dbMaps.find(m => m.id === mapId);
+  const legend = document.getElementById('map-legend');
+  const items = document.getElementById('legend-items');
+  if (!map || !map.pins.length) { legend.classList.remove('visible'); return; }
+
+  const needMats = totalMats();
+  const matIds = [...new Set(map.pins.map(p => p.material_id))].filter(k => {
+    return Object.keys(needMats).length === 0 || needMats[k];
+  });
+
+  if (!matIds.length) { legend.classList.remove('visible'); return; }
+  legend.classList.add('visible');
+  items.innerHTML = matIds.map(k => {
+    const color = getMatColor(k);
+    const name = getMatName(k).replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
+    const isHL = highlightedMat === k;
+    const isDim = highlightedMat && !isHL;
+    return `<div class="map-legend-item ${isDim?'dimmed':''}" onclick="highlightMat('${k}')">
+      <div class="map-legend-dot" style="background:${color};${isHL?`box-shadow:0 0 5px ${color}`:''}"></div>
+      <div class="map-legend-name" style="${isHL?`color:${color}`:''}">${escHtml(name)}</div>
     </div>`;
   }).join('');
-  dd.classList.add('open');
 }
-function jumpToPlan(id) {
-  const plan=plans.find(p=>p.id===id); if(!plan) return;
-  switchPlanTab(plan.type); closeSearchDropdown();
-  document.getElementById('plans-search-input').value=''; planSearchQuery='';
-  setTimeout(()=>{ const card=document.querySelector(`.plan-card[data-id="${id}"]`); if(card) card.scrollIntoView({behavior:'smooth',block:'nearest'}); },60);
+
+function buildFallbackMapSVG(map) {
+  const W = map.coord_width, H = map.coord_height;
+  return `<svg width="${W}" height="${H}" style="position:absolute;inset:0;display:block;pointer-events:none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${W}" height="${H}" fill="#0b1510"/>
+    <defs>
+      <pattern id="mg${map.id.slice(0,8)}" width="60" height="60" patternUnits="userSpaceOnUse">
+        <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="0.6"/>
+      </pattern>
+    </defs>
+    <rect width="${W}" height="${H}" fill="url(#mg${map.id.slice(0,8)})"/>
+    <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text>
+    <text x="${W/2}" y="${H/2+32}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(255,255,255,0.06)" letter-spacing="3">UPLOAD AN IMAGE IN MAP EDITOR</text>
+  </svg>`;
 }
-function closeSearchDropdown() { document.getElementById('plans-search-dropdown').classList.remove('open'); }
-document.addEventListener('click', e => {
-  const wrap=document.getElementById('plans-search-wrap');
-  if(wrap&&!wrap.contains(e.target)) closeSearchDropdown();
-});
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 // ────────────────────────────────────────────────
-// PLAN TABS + INLINE FILTERS
+// MAP PAN/ZOOM
 // ────────────────────────────────────────────────
-function switchPlanTab(tab) {
-  planFilter=tab; planInlineFilter='all';
-  ['all','operator','weapon'].forEach(t=>document.getElementById(`ptab-${t}`).classList.toggle('active',t===tab));
-  renderInlineFilters(); renderPlans();
+function setupMapInteraction() {
+  const area = document.getElementById('map-area');
+  let drag = false, lx = 0, ly = 0;
+
+  area.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    // Don't start drag if clicking a pin
+    if (e.target.closest('.user-pin')) return;
+    drag = true; lx = e.clientX; ly = e.clientY;
+    area.style.cursor = 'grabbing'; e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!drag) return;
+    mapView.tx += e.clientX - lx; mapView.ty += e.clientY - ly;
+    lx = e.clientX; ly = e.clientY;
+    updateMapTransform();
+  });
+  window.addEventListener('mouseup', () => { drag = false; if(document.getElementById('map-area')) document.getElementById('map-area').style.cursor=''; });
+  area.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = area.getBoundingClientRect();
+    const factor = e.deltaY < 0 ? 1.12 : 0.88;
+    mapView.tx = (e.clientX - rect.left) + (mapView.tx - (e.clientX - rect.left)) * factor;
+    mapView.ty = (e.clientY - rect.top)  + (mapView.ty - (e.clientY - rect.top))  * factor;
+    mapView.scale = Math.max(0.15, Math.min(6, mapView.scale * factor));
+    updateMapTransform();
+  }, { passive: false });
 }
-function setInlineFilter(f) { planInlineFilter=f; renderInlineFilters(); renderPlans(); }
-function renderInlineFilters() {
-  const strip=document.getElementById('plans-inline-filters');
-  if (planFilter==='all') { strip.classList.remove('visible'); strip.innerHTML=''; return; }
-  strip.classList.add('visible');
-  let filters=[];
-  if (planFilter==='operator') {
-    filters=[
-      ...['All','Heat','Cryo','Electric','Physical','Nature'].map(e=>({label:e,value:e==='All'?'all':e.toLowerCase()})),
-      {sep:true},{},{},
-      ...['Striker','Guard','Caster','Defender','Supporter','Vanguard'].map(c=>({label:c,value:c.toLowerCase()})),
-    ];
-  } else {
-    filters=[
-      ...['All','Sword','Gt. Sword','Polearm','Arts Unit','Handcannon'].map(t=>({label:t,value:t==='All'?'all':t.toLowerCase()})),
-      {sep:true},{},{},
-      ...['6★','5★','4★'].map(r=>({label:r,value:r.replace('★','star')})),
-    ];
+
+function updateMapTransform() {
+  if (!activeMapId) return;
+  const inner = document.getElementById(`map-inner-${activeMapId}`);
+  if (!inner) return;
+  inner.style.transform = `translate(${mapView.tx}px,${mapView.ty}px) scale(${mapView.scale})`;
+  inner.style.transformOrigin = '0 0';
+}
+
+function mapZoom(factor) {
+  const area = document.getElementById('map-area');
+  const rect = area.getBoundingClientRect();
+  const cx = rect.width / 2, cy = rect.height / 2;
+  mapView.tx = cx + (mapView.tx - cx) * factor;
+  mapView.ty = cy + (mapView.ty - cy) * factor;
+  mapView.scale = Math.max(0.15, Math.min(6, mapView.scale * factor));
+  updateMapTransform();
+}
+
+function mapReset() {
+  mapView = { tx: 0, ty: 0, scale: 1 };
+  updateMapTransform();
+}
+
+// ────────────────────────────────────────────────
+// HIGHLIGHT
+// ────────────────────────────────────────────────
+function highlightMat(matId) {
+  highlightedMat = (highlightedMat === matId) ? null : matId;
+  renderMapFilters();
+  if (activeMapId) {
+    renderMapCanvas(activeMapId);
+    const map = dbMaps.find(m => m.id === activeMapId);
+    if (map) updateInfoBar(map, matId);
+    else document.getElementById('map-info-bar').classList.remove('visible');
   }
-  strip.innerHTML=filters.map(f=>{
-    if(f.sep) return `<span style="color:var(--border2);font-size:11px;padding:2px 1px;font-family:var(--font-mono)">|</span>`;
-    if(!f.label) return '';
-    const active=planInlineFilter===f.value?'active':'';
-    return `<button class="pf-btn ${active}" onclick="setInlineFilter('${f.value}')">${f.label}</button>`;
-  }).join('');
+  renderNeed();
 }
 
 // ────────────────────────────────────────────────
-// PLANS RENDERING
+// PLANS
 // ────────────────────────────────────────────────
 function addPlan(type, item) {
-  const existing=plans.find(p=>p.item.id===item.id&&p.type===type);
+  const existing = plans.find(p => p.item.id === item.id && p.type === type);
   if (existing) { closeModal(); return; }
-  const plan={id:Date.now()+Math.random(),type,item,fromLv:1,toLv:40};
+  const plan = {id: Date.now() + Math.random(), type, item, fromLv: 1, toLv: 40};
   plans.push(plan);
   focusedPlanIds.add(plan.id);
   renderAll();
   closeModal();
 }
 function removePlan(id) {
-  plans=plans.filter(p=>p.id!==id);
+  plans = plans.filter(p => p.id !== id);
   focusedPlanIds.delete(id);
   renderAll();
 }
-function updateFrom(id,val) {
-  const p=plans.find(x=>x.id===id); if(!p) return;
-  p.fromLv=parseInt(val);
-  if(p.fromLv>=p.toLv) p.toLv=Math.min(p.fromLv+1,80);
+function updateFrom(id, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p.fromLv = parseInt(val);
+  if (p.fromLv >= p.toLv) p.toLv = Math.min(p.fromLv + 1, 90);
   renderAll();
 }
-function updateTo(id,val) {
-  const p=plans.find(x=>x.id===id); if(!p) return;
-  p.toLv=parseInt(val);
-  if(p.toLv<=p.fromLv) p.fromLv=Math.max(p.toLv-1,1);
+function updateTo(id, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p.toLv = parseInt(val);
+  if (p.toLv <= p.fromLv) p.fromLv = Math.max(p.toLv - 1, 1);
   renderAll();
 }
-function setRange(id,f,t) {
-  const p=plans.find(x=>x.id===id); if(!p) return;
-  p.fromLv=f; p.toLv=t; renderAll();
+function setRange(id, f, t) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p.fromLv = f; p.toLv = t; renderAll();
 }
 
 function renderAll() {
@@ -1298,92 +1131,73 @@ function renderAll() {
   renderFocusBar();
   renderNeed();
   renderMapFilters();
-  ['valley','wuling','marker'].forEach(k => { if(mapInited[k]) updateMapPins(k); });
+  if (activeMapId) renderMapCanvas(activeMapId);
 }
 
-function getFilteredPlans() {
-  let visible=planFilter==='all'?plans:plans.filter(p=>p.type===planFilter);
-  if (planInlineFilter!=='all'&&planFilter!=='all') {
-    visible=visible.filter(p=>{
-      if(planFilter==='operator') {
-        return (p.item.element||'').toLowerCase()===planInlineFilter||(p.item.cls||'').toLowerCase()===planInlineFilter;
-      } else {
-        return (p.item.type||'').toLowerCase()===planInlineFilter||p.item.rarity+'star'===planInlineFilter;
-      }
-    });
-  }
-  return visible;
+function switchPlanTab(tab) {
+  planFilter = tab;
+  ['all','operator','weapon'].forEach(t => document.getElementById(`ptab-${t}`).classList.toggle('active', t===tab));
+  renderPlans();
 }
 
 function renderPlans() {
-  const visible=getFilteredPlans();
-  const empty=document.getElementById('plans-empty');
-  const container=document.getElementById('plans-container');
-  empty.style.display=plans.length===0?'flex':'none';
-  container.innerHTML='';
-  if(plans.length>0&&visible.length===0) {
-    container.innerHTML=`<div style="padding:20px;text-align:center">
-      <div style="font-family:var(--font-display);font-size:13px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase">No matches</div>
-      <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;margin-top:4px">Try a different filter</div>
-    </div>`; return;
+  const visible = planFilter === 'all' ? plans : plans.filter(p => p.type === planFilter);
+  const empty = document.getElementById('plans-empty');
+  const container = document.getElementById('plans-container');
+  empty.style.display = plans.length === 0 ? 'flex' : 'none';
+  container.innerHTML = '';
+  if (plans.length > 0 && visible.length === 0) {
+    container.innerHTML = `<div style="padding:20px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase">No matches</div></div>`;
+    return;
   }
   for (const plan of visible) container.appendChild(buildPlanCard(plan));
 }
 
-// ────────────────────────────────────────────────
-// BUILD PLAN CARD — portrait image or SVG fallback
-// ────────────────────────────────────────────────
 function buildAvatarHTML(plan) {
   const isOp = plan.type === 'operator';
   const el = plan.item.element || null;
   const elColor = getElColor(el);
   const rarityColor = getRarityColor(plan.item.rarity);
-
   if (isOp) {
     const imgPath = getCharImg(plan.item.name);
-
     if (imgPath) {
-      // Portrait loaded from Supabase
       return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">
         <img src="${imgPath}" alt="${plan.item.name}" loading="lazy">
         <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
       </div>`;
-    } else {
-      // Fallback: element SVG icon
-      const icon = EL_ICON[el] || OP_ICON;
-      return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">
-        ${icon}
-        <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
-      </div>`;
     }
-  } else {
-    // Weapon — SVG icon always
-    return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">
-      ${WPN_ICON}
-      <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+    const icon = EL_ICON[el] || OP_ICON;
+    return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">
+      ${icon}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
     </div>`;
   }
+  return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">
+    ${WPN_ICON}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+  </div>`;
 }
 
 function buildPlanCard(plan) {
-  const el=plan.item.element||null;
-  const elLower=el?el.toLowerCase():'';
-  const isOp=plan.type==='operator';
-  const quickRanges=[[1,40],[1,60],[1,80],[20,60],[40,80]];
-  const qBtns=quickRanges.map(([f,t])=>{
-    const active=plan.fromLv===f&&plan.toLv===t?'active':'';
+  const el = plan.item.element || null;
+  const elLower = el ? el.toLowerCase() : '';
+  const isOp = plan.type === 'operator';
+  const maxLv = 90;
+  // Quick ranges
+  const qRanges = [[1,40],[1,60],[1,80],[1,90],[40,80]];
+  const qBtns = qRanges.map(([f, t]) => {
+    const active = plan.fromLv === f && plan.toLv === t ? 'active' : '';
     return `<button class="quick-btn ${active}" onclick="setRange(${plan.id},${f},${t})">${f}→${t}</button>`;
   }).join('');
 
-  const card=document.createElement('div');
-  card.className='plan-card'; card.dataset.id=plan.id;
-  card.innerHTML=`
+  const card = document.createElement('div');
+  card.className = 'plan-card'; card.dataset.id = plan.id;
+  card.innerHTML = `
     <div class="plan-head">
       ${buildAvatarHTML(plan)}
       <div class="plan-meta">
         <div class="plan-name">${plan.item.name}</div>
         <div class="plan-tags">
-          ${isOp?`<span class="tag tag-${elLower}">${el}</span><span class="tag tag-neutral">${plan.item.cls}</span>`:`<span class="tag tag-neutral">${plan.item.type}</span>`}
+          ${isOp ? `<span class="tag tag-${elLower}">${el}</span><span class="tag tag-neutral">${plan.item.cls}</span>`
+                 : `<span class="tag tag-neutral">${plan.item.type}</span>`}
           <span class="tag tag-rarity">${'★'.repeat(plan.item.rarity)}</span>
         </div>
       </div>
@@ -1396,7 +1210,7 @@ function buildPlanCard(plan) {
         <div class="level-col">
           <label>From</label>
           <div class="level-slider-wrap">
-            <input type="range" min="1" max="79" value="${plan.fromLv}" oninput="updateFrom(${plan.id},this.value)">
+            <input type="range" min="1" max="89" value="${plan.fromLv}" oninput="updateFrom(${plan.id},this.value)">
             <div class="level-num">${plan.fromLv}</div>
           </div>
         </div>
@@ -1404,7 +1218,7 @@ function buildPlanCard(plan) {
         <div class="level-col">
           <label>To</label>
           <div class="level-slider-wrap">
-            <input type="range" min="2" max="80" value="${plan.toLv}" oninput="updateTo(${plan.id},this.value)">
+            <input type="range" min="2" max="90" value="${plan.toLv}" oninput="updateTo(${plan.id},this.value)">
             <div class="level-num">${plan.toLv}</div>
           </div>
         </div>
@@ -1418,34 +1232,32 @@ function buildPlanCard(plan) {
 // FOCUS PANEL
 // ────────────────────────────────────────────────
 function toggleFocusPanel() {
-  focusPanelOpen=!focusPanelOpen;
-  document.getElementById('mid-focus-pills-wrap').classList.toggle('open',focusPanelOpen);
-  document.getElementById('mid-focus-caret').classList.toggle('open',focusPanelOpen);
+  focusPanelOpen = !focusPanelOpen;
+  document.getElementById('mid-focus-pills-wrap').classList.toggle('open', focusPanelOpen);
+  document.getElementById('mid-focus-caret').classList.toggle('open', focusPanelOpen);
 }
-function focusAll() { plans.forEach(p=>focusedPlanIds.add(p.id)); renderAll(); }
+function focusAll() { plans.forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
 function focusNone() { focusedPlanIds.clear(); renderAll(); }
-function focusOnly(type) { focusedPlanIds.clear(); plans.filter(p=>p.type===type).forEach(p=>focusedPlanIds.add(p.id)); renderAll(); }
+function focusOnly(type) { focusedPlanIds.clear(); plans.filter(p => p.type === type).forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
 function toggleFocusPlan(id) {
-  if(focusedPlanIds.has(id)) focusedPlanIds.delete(id); else focusedPlanIds.add(id);
+  if (focusedPlanIds.has(id)) focusedPlanIds.delete(id); else focusedPlanIds.add(id);
   renderAll();
 }
 function renderFocusBar() {
-  const bar=document.getElementById('mid-focus-bar');
-  const pills=document.getElementById('mid-focus-pills');
-  const countEl=document.getElementById('mid-focus-count');
-  const indicator=document.getElementById('mid-focus-indicator');
-  if(!plans.length) { bar.style.display='none'; indicator.classList.remove('visible'); return; }
-  bar.style.display='block';
-  const allFocused=plans.every(p=>focusedPlanIds.has(p.id));
-  const focusedCount=plans.filter(p=>focusedPlanIds.has(p.id)).length;
-  countEl.textContent=`${focusedCount}/${plans.length}`;
-  indicator.classList.toggle('visible',!allFocused);
-  pills.innerHTML=plans.map(p=>{
-    const isFocused=focusedPlanIds.has(p.id);
-    const el=p.item.element||null;
-    const color=getElColor(el);
-    const dotColor=p.type==='weapon'?'#94a3b8':color;
-    return `<div class="focus-pill ${isFocused?'active':'inactive'}" onclick="toggleFocusPlan(${p.id})" title="${p.item.name} · Lv ${p.fromLv}→${p.toLv}">
+  const bar = document.getElementById('mid-focus-bar');
+  const pills = document.getElementById('mid-focus-pills');
+  const countEl = document.getElementById('mid-focus-count');
+  const indicator = document.getElementById('mid-focus-indicator');
+  if (!plans.length) { bar.style.display = 'none'; indicator.classList.remove('visible'); return; }
+  bar.style.display = 'block';
+  const allFocused = plans.every(p => focusedPlanIds.has(p.id));
+  countEl.textContent = `${plans.filter(p => focusedPlanIds.has(p.id)).length}/${plans.length}`;
+  indicator.classList.toggle('visible', !allFocused);
+  pills.innerHTML = plans.map(p => {
+    const isFocused = focusedPlanIds.has(p.id);
+    const el = p.item.element || null;
+    const dotColor = p.type === 'weapon' ? '#94a3b8' : getElColor(el);
+    return `<div class="focus-pill ${isFocused?'active':'inactive'}" onclick="toggleFocusPlan(${p.id})">
       <div class="focus-pill-dot" style="background:${dotColor}"></div>
       <div class="focus-pill-name">${p.item.name}</div>
       <div class="focus-pill-check"><div class="focus-pill-check-inner"></div></div>
@@ -1456,83 +1268,99 @@ function renderFocusBar() {
 // ────────────────────────────────────────────────
 // NEED LIST
 // ────────────────────────────────────────────────
-function toggleCheck(matKey) { checkedMats[matKey]=!checkedMats[matKey]; renderNeed(); }
-function updateHave(matKey,val) { haveQty[matKey]=Math.max(0,parseInt(val)||0); renderNeed(); }
+function toggleCheck(matKey) { checkedMats[matKey] = !checkedMats[matKey]; renderNeed(); }
+function updateHave(matKey, val) { haveQty[matKey] = Math.max(0, parseInt(val) || 0); renderNeed(); }
 
 function renderNeed() {
-  const empty=document.getElementById('mid-empty');
-  const list=document.getElementById('need-list');
-  const badge=document.getElementById('mid-badge-wrap');
-  const badgeLabel=document.getElementById('mid-badge');
-  if(!plans.length) { empty.style.display='flex'; list.innerHTML=''; badge.style.display='none'; return; }
-  empty.style.display='none';
-  if(focusedPlanIds.size===0) {
-    list.innerHTML=`<div style="padding:20px 8px;text-align:center">
-      <div style="font-family:var(--font-display);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">No plans focused</div>
-      <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;margin-top:4px">Select plans above to see materials</div>
-    </div>`; badge.style.display='none'; return;
+  const empty = document.getElementById('mid-empty');
+  const list = document.getElementById('need-list');
+  const badge = document.getElementById('mid-badge-wrap');
+  const badgeLabel = document.getElementById('mid-badge');
+
+  if (!plans.length) { empty.style.display = 'flex'; list.innerHTML = ''; badge.style.display = 'none'; return; }
+  empty.style.display = 'none';
+
+  if (focusedPlanIds.size === 0) {
+    list.innerHTML = `<div style="padding:20px 8px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">No plans focused</div></div>`;
+    badge.style.display = 'none'; return;
   }
-  const mats=totalMats();
-  const entries=Object.entries(mats);
-  if(!entries.length) { list.innerHTML=''; badge.style.display='none'; return; }
-  const byCategory={};
-  for (const [k,qty] of entries) {
-    const mat=MATS[k]; if(!mat) continue;
-    if(!byCategory[mat.category]) byCategory[mat.category]=[];
-    byCategory[mat.category].push({k,qty,mat});
+
+  const mats = totalMats();
+  const entries = Object.entries(mats);
+  if (!entries.length) { list.innerHTML = ''; badge.style.display = 'none'; return; }
+
+  // Group by category
+  const byCategory = {};
+  for (const [k, qty] of entries) {
+    const mat = MATS[k]; if (!mat) continue;
+    if (!byCategory[mat.category]) byCategory[mat.category] = [];
+    byCategory[mat.category].push({k, qty, mat});
   }
-  const checkedCount=entries.filter(([k])=>checkedMats[k]).length;
-  badge.style.display='block'; badgeLabel.textContent=`${checkedCount}/${entries.length}`;
-  let html='';
-  for (const [cat,items] of Object.entries(byCategory)) {
-    html+=`<div class="need-section-label">${cat}</div>`;
-    for (const {k,qty,mat} of items) {
-      const checked=checkedMats[k]?'checked':'';
-      const highlighted=highlightedMat===k?'highlighted':'';
-      const have=haveQty[k]||0;
-      const pct=Math.min(100,Math.round((have/qty)*100));
-      const remaining=Math.max(0,qty-have);
-      html+=`<div class="need-row ${checked} ${highlighted}" onclick="onNeedRowClick('${k}',event)">
+
+  const checkedCount = entries.filter(([k]) => checkedMats[k]).length;
+  badge.style.display = 'block';
+  badgeLabel.textContent = `${checkedCount}/${entries.length}`;
+
+  let html = '';
+  for (const [cat, items] of Object.entries(byCategory)) {
+    html += `<div class="need-section-label">${cat}</div>`;
+    for (const {k, qty, mat} of items) {
+      const checked = checkedMats[k] ? 'checked' : '';
+      const highlighted = highlightedMat === k ? 'highlighted' : '';
+      const have = haveQty[k] || 0;
+      const pct = Math.min(100, Math.round((have / qty) * 100));
+      const remaining = Math.max(0, qty - have);
+      // Format big numbers
+      const fmtQty = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
+      const fmtTotal = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
+
+      html += `<div class="need-row ${checked} ${highlighted}" onclick="onNeedRowClick('${k}',event)">
         <div class="need-check"><div class="need-check-inner"></div></div>
         <div class="need-dot" style="background:${mat.color}"></div>
         <div class="need-row-name">${mat.name}</div>
         <div class="need-row-right" onclick="event.stopPropagation()">
-          <div class="need-row-qty" style="color:${mat.color}">${remaining.toLocaleString()}</div>
+          <div class="need-row-qty" style="color:${mat.color}">${fmtQty}</div>
           <div class="need-have-wrap">
             Have:<input class="need-row-input" type="number" min="0" value="${have}"
               onclick="event.stopPropagation()"
               onchange="updateHave('${k}',this.value)"
-              oninput="updateHave('${k}',this.value)">/ ${qty.toLocaleString()}
+              oninput="updateHave('${k}',this.value)">/${fmtTotal}
           </div>
         </div>
-        ${pct>0&&!checked?`<div class="need-progress" style="width:${pct}%"></div>`:''}
+        ${pct > 0 && !checked ? `<div class="need-progress" style="width:${pct}%"></div>` : ''}
       </div>`;
     }
   }
-  list.innerHTML=html;
+  list.innerHTML = html;
 }
 
 function onNeedRowClick(matKey, e) {
-  if (e.shiftKey || e.ctrlKey || e.metaKey) { highlightMat(matKey); }
-  else { toggleCheck(matKey); }
+  if (e.shiftKey || e.ctrlKey || e.metaKey) {
+    highlightMat(matKey);
+  } else {
+    toggleCheck(matKey);
+  }
 }
 
 // ────────────────────────────────────────────────
-// MAP FILTERS BAR
+// MAP FILTER BAR
 // ────────────────────────────────────────────────
 function renderMapFilters() {
-  const bar=document.getElementById('map-filter-bar');
-  const chipsEl=document.getElementById('mat-chips');
-  if(!plans.length) { bar.style.display='none'; return; }
-  bar.style.display='flex';
-  const mats=totalMats();
-  chipsEl.innerHTML=Object.keys(mats).map(k=>{
-    const mat=MATS[k]; if(!mat) return '';
-    const hasLocs=Object.values(MAT_LOCATIONS[k]||{}).some(a=>a.length>0);
-    if(!hasLocs) return '';
-    const active=highlightedMat===k?'active':'';
+  const bar = document.getElementById('map-filter-bar');
+  const chipsEl = document.getElementById('mat-chips');
+  if (!plans.length || !dbMaps.length) { bar.classList.remove('visible'); return; }
+  bar.classList.add('visible');
+  const needMats = totalMats();
+  // Show chips for materials that have pins on any map
+  const matsWithPins = new Set();
+  for (const map of dbMaps) {
+    for (const pin of map.pins) matsWithPins.add(pin.material_id);
+  }
+  chipsEl.innerHTML = Object.keys(needMats).filter(k => MATS[k] && matsWithPins.has(k)).map(k => {
+    const mat = MATS[k];
+    const active = highlightedMat === k ? 'active' : '';
     return `<div class="mat-chip ${active}" onclick="highlightMat('${k}')">
-      <div class="mat-chip-dot" style="background:${mat.color}"></div>${mat.name}
+      <div class="mat-chip-dot" style="background:${mat.color}"></div>${mat.name.split(' ')[0]}
     </div>`;
   }).join('');
 }
@@ -1541,96 +1369,97 @@ function renderMapFilters() {
 // MODAL
 // ────────────────────────────────────────────────
 function openModal(type) {
-  modalType=type; activeFilter='all';
-  document.getElementById('modal-title').textContent=type==='operator'?'Add Operator':'Add Weapon';
-  document.getElementById('modal-search').value='';
+  modalType = type; activeFilter = 'all';
+  document.getElementById('modal-title').textContent = type === 'operator' ? 'Add Operator' : 'Add Weapon';
+  document.getElementById('modal-search').value = '';
   buildFilterButtons();
-  renderModalList(type==='operator'?OPERATORS:WEAPONS);
+  renderModalList(type === 'operator' ? OPERATORS : WEAPONS);
   document.getElementById('modal').classList.add('open');
-  setTimeout(()=>document.getElementById('modal-search').focus(),50);
+  setTimeout(() => document.getElementById('modal-search').focus(), 50);
 }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
-function handleOverlayClick(e) { if(e.target===document.getElementById('modal')) closeModal(); }
+function handleOverlayClick(e) { if (e.target === document.getElementById('modal')) closeModal(); }
+
 function buildFilterButtons() {
-  const fb=document.getElementById('filter-buttons');
-  if(modalType==='operator') {
-    const elements=['All','Heat','Cryo','Electric','Physical','Nature'];
-    const classes=['Striker','Guard','Caster','Defender','Supporter','Vanguard'];
-    fb.innerHTML=elements.map(e=>`<button class="filter-btn ${activeFilter===e.toLowerCase()||activeFilter===e?'active':''}" onclick="setFilter('${e.toLowerCase()}')">${e}</button>`).join('')
-      +'<span style="color:var(--border2);padding:0 4px">|</span>'
-      +classes.map(c=>`<button class="filter-btn ${activeFilter===c.toLowerCase()?'active':''}" onclick="setFilter('${c.toLowerCase()}')">${c}</button>`).join('');
+  const fb = document.getElementById('filter-buttons');
+  if (modalType === 'operator') {
+    const elements = ['All','Heat','Cryo','Electric','Physical','Nature'];
+    const classes = ['Striker','Guard','Caster','Defender','Supporter','Vanguard'];
+    fb.innerHTML = elements.map(e => `<button class="filter-btn ${activeFilter===e.toLowerCase()||activeFilter===e?'active':''}" onclick="setFilter('${e.toLowerCase()}')">${e}</button>`).join('')
+      + '<span style="color:var(--border2);padding:0 4px">|</span>'
+      + classes.map(c => `<button class="filter-btn ${activeFilter===c.toLowerCase()?'active':''}" onclick="setFilter('${c.toLowerCase()}')">${c}</button>`).join('');
   } else {
-    const types=['All','Sword','Gt. Sword','Polearm','Arts Unit','Handcannon'];
-    const rars=['6★','5★','4★'];
-    fb.innerHTML=types.map(t=>`<button class="filter-btn ${activeFilter===t.toLowerCase()?'active':''}" onclick="setFilter('${t.toLowerCase()}')">${t}</button>`).join('')
-      +'<span style="color:var(--border2);padding:0 4px">|</span>'
-      +rars.map(r=>`<button class="filter-btn ${activeFilter===r.replace('★','star')?'active':''}" onclick="setFilter('${r.replace('★','star')}')">${r}</button>`).join('');
+    const types = ['All','Sword','Gt. Sword','Polearm','Arts Unit','Handcannon'];
+    const rars = ['6★','5★','4★'];
+    fb.innerHTML = types.map(t => `<button class="filter-btn ${activeFilter===t.toLowerCase()?'active':''}" onclick="setFilter('${t.toLowerCase()}')">${t}</button>`).join('')
+      + '<span style="color:var(--border2);padding:0 4px">|</span>'
+      + rars.map(r => `<button class="filter-btn ${activeFilter===r.replace('★','star')?'active':''}" onclick="setFilter('${r.replace('★','star')}')">${r}</button>`).join('');
   }
 }
-function setFilter(f) { activeFilter=f; buildFilterButtons(); filterModal(); }
+
+function setFilter(f) { activeFilter = f; buildFilterButtons(); filterModal(); }
 function filterModal() {
-  const q=document.getElementById('modal-search').value.toLowerCase();
-  const source=modalType==='operator'?OPERATORS:WEAPONS;
-  let filtered=source;
-  if(activeFilter!=='all') {
-    filtered=filtered.filter(x=>{
-      const el=(x.element||'').toLowerCase();
-      const cls=(x.cls||'').toLowerCase();
-      const type=(x.type||'').toLowerCase();
-      return el===activeFilter||cls===activeFilter||type===activeFilter||(x.rarity+'star')===activeFilter;
+  const q = document.getElementById('modal-search').value.toLowerCase();
+  const source = modalType === 'operator' ? OPERATORS : WEAPONS;
+  let filtered = source;
+  if (activeFilter !== 'all') {
+    filtered = filtered.filter(x => {
+      const el = (x.element || '').toLowerCase();
+      const cls = (x.cls || '').toLowerCase();
+      const type = (x.type || '').toLowerCase();
+      return el === activeFilter || cls === activeFilter || type === activeFilter || (x.rarity + 'star') === activeFilter;
     });
   }
-  if(q) filtered=filtered.filter(x=>x.name.toLowerCase().includes(q));
+  if (q) filtered = filtered.filter(x => x.name.toLowerCase().includes(q));
   renderModalList(filtered);
 }
 
 function renderModalList(items) {
-  const list=document.getElementById('modal-list');
-  if(!items.length) { list.innerHTML='<p style="grid-column:1/-1;font-size:12px;color:var(--muted);font-family:var(--font-mono);padding:8px">No results</p>'; return; }
-  list.innerHTML=items.map(item=>{
-    const isOp=modalType==='operator';
-    const el=isOp?item.element:null;
-    const elColor=getElColor(el);
-    const inPlan=plans.some(p=>p.item.id===item.id&&p.type===modalType);
-
+  const list = document.getElementById('modal-list');
+  if (!items.length) { list.innerHTML = '<p style="grid-column:1/-1;font-size:12px;color:var(--muted);font-family:var(--font-mono);padding:8px">No results</p>'; return; }
+  list.innerHTML = items.map(item => {
+    const isOp = modalType === 'operator';
+    const el = isOp ? item.element : null;
+    const elColor = getElColor(el);
+    const inPlan = plans.some(p => p.item.id === item.id && p.type === modalType);
     let iconContent;
     if (isOp) {
       const imgPath = getCharImg(item.name);
-      if (imgPath) {
-        iconContent = `<img src="${imgPath}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`;
-      } else {
-        iconContent = EL_ICON[el] || OP_ICON;
-      }
+      iconContent = imgPath
+        ? `<img src="${imgPath}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`
+        : (EL_ICON[el] || OP_ICON);
     } else {
       iconContent = WPN_ICON;
     }
-
     return `<button class="modal-item" onclick='selectItem(${JSON.stringify(item).replace(/'/g,"&#39;")})' style="${inPlan?'border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)':''}">
-      <div class="modal-item-icon" style="${el?`border-color:${elColor}40;height:36px;`:''}">${iconContent}</div>
+      <div class="modal-item-icon" style="${el?`border-color:${elColor}40;`:''}">${iconContent}</div>
       <div>
         <div class="modal-item-name">${item.name}${inPlan?' <span style="color:var(--accent);font-size:9px">✓</span>':''}</div>
-        <div class="modal-item-sub">${isOp?`${item.cls} · ${item.element}`:item.type} · ${item.rarity}★</div>
+        <div class="modal-item-sub">${isOp ? `${item.cls} · ${item.element}` : item.type} · ${item.rarity}★</div>
       </div>
     </button>`;
   }).join('');
 }
-function selectItem(item) { addPlan(modalType,item); }
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+function selectItem(item) { addPlan(modalType, item); }
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 // ────────────────────────────────────────────────
-// INIT — fixed image loading sequence
+// INIT
 // ────────────────────────────────────────────────
 window.addEventListener('load', async () => {
-  // 1. Render UI immediately with SVG fallbacks
   renderAll();
 
-  // 2. Init the default map
-  setTimeout(() => { initLeafletMap('valley'); }, 100);
+  // Load DB data in parallel
+  await Promise.all([
+    loadDbData(),
+    loadCharImages(),
+  ]);
 
-  // 3. Load portraits from Supabase, then re-render everything
-  //    so cards and the modal both get updated with real images.
-  //    This fires unconditionally — no more "if plans.length" guard.
-  await loadCharImages();
+  // Init maps
+  initMaps();
+
+  // Re-render with portraits
   renderAll();
 });
 </script>
