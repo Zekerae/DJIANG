@@ -1098,3 +1098,49 @@
   .ei-tab-panel.active {
     display: block; /* or flex, grid, depending on your layout */
   }
+
+  /* 1. Setup the main header to hold absolute elements */
+.ei-section-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 450px; /* Gives the header enough height to show the video */
+    padding: 40px; 
+    overflow: hidden; /* Stops the video from spilling out */
+  }
+  
+  /* 2. Keep the text on the left side, above the video */
+  .ei-header-content {
+    position: relative;
+    z-index: 2;
+    width: 55%; /* Forces text to stay on the left half */
+  }
+  
+  /* 3. The wrapper that positions the video on the right and applies the fade */
+  .ei-video-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 65%; /* Takes up the right 65% of the screen */
+    height: 100%;
+    z-index: 1;
+    pointer-events: none; /* Prevents clicking/pausing the video */
+    overflow: hidden;
+    
+    /* The Gradient Mask: Fades from completely transparent on the left to solid on the right */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40%);
+    mask-image: linear-gradient(to right, transparent 0%, black 40%);
+    
+    /* Optional: Dim the video slightly so it blends better with the dark theme */
+    opacity: 0.8; 
+  }
+  
+  /* 4. The Iframe Hack: Forces the YouTube video to fill the space without black bars */
+  .ei-video-bg iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 250%;  /* Make it massive to hide YouTube borders */
+    height: 250%; /* Make it massive to hide YouTube borders */
+    transform: translate(-50%, -50%); /* Center it perfectly */
+  }
