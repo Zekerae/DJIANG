@@ -146,7 +146,7 @@ function createCard(op) {
          data-id="${op.id}"
          data-name="${op.name.toLowerCase()}"
          data-rarity="${op.rarity}"
-         data-cls="${op.cls}"
+         data-class="${op.cls}"
          data-element="${op.element}"
          data-weapon="${op.weapon}"
          data-owned="${isOwned}"
@@ -249,9 +249,19 @@ async function toggleOwned(event, id) {
 
 // Debounce map to avoid hammering Supabase on every keystroke
 const _debounceTimers = {};
+
+function clampInput(input, min, max) {
+  const val = parseInt(input.value);
+  if (isNaN(val) || input.value === '') return null; // allow clearing
+  const clamped = Math.min(max, Math.max(min, val));
+  input.value = clamped;
+  return clamped;
+}
+
 function saveTrackerField(event, id, field) {
   if (!CURRENT_USER) return;
-  const val = event.target.value;
+  const clamped = clampInput(event.target, 1, 90);
+  const val = clamped !== null ? String(clamped) : '';
   if (field === 'level') {
     const card = document.querySelector(`.card-wrap[data-id="${id}"]`);
     if (card) card.dataset.level = val;
@@ -266,9 +276,9 @@ function saveTrackerField(event, id, field) {
 // Saves one key inside the skill_levels JSON object
 function saveSkillLevel(event, id, key) {
   if (!CURRENT_USER) return;
-  const val     = parseInt(event.target.value) || null;
+  const clamped = clampInput(event.target, 1, 12);
   const entry   = getRosterEntry(id);
-  const updated = { ...(entry.skill_levels || {}), [key]: val };
+  const updated = { ...(entry.skill_levels || {}), [key]: clamped };
   ROSTER[id]    = { ...entry, skill_levels: updated };
   clearTimeout(_debounceTimers[id + key]);
   _debounceTimers[id + key] = setTimeout(() => {
@@ -283,7 +293,7 @@ function updateFilters() {
   document.querySelectorAll('.card-wrap').forEach(card => {
     const matchesSearch  = card.dataset.name.includes(query);
     const matchesRarity  = filters.rarity.size === 0 || filters.rarity.has(card.dataset.rarity);
-    const matchesClass   = filters.class.size === 0 || filters.class.has(card.dataset.cls);
+    const matchesClass   = filters.class.size === 0 || filters.class.has(card.dataset.class);
     const matchesElement = filters.element.size === 0 || filters.element.has(card.dataset.element);
     const matchesWeapon  = filters.weapon.size === 0 || filters.weapon.has(card.dataset.weapon);
     const matchesOwned   = !filterOwned || card.dataset.owned === 'true';
