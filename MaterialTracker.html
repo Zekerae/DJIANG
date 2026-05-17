@@ -155,6 +155,60 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 }
 .quick-btn:hover, .quick-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.08); }
 
+/* ── SKILL SECTION (added) ── */
+.skill-section {
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.skill-section-label {
+  font-family: var(--font-mono); font-size: 9px; color: var(--muted);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.skill-toggle-all {
+  font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.06em;
+  color: var(--accent); cursor: pointer; text-transform: uppercase;
+  border: none; background: transparent; padding: 0;
+}
+.skill-toggle-all:hover { opacity: 0.7; }
+.skill-row {
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 5px; padding: 5px 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.skill-row-chk {
+  width: 13px; height: 13px; flex-shrink: 0;
+  border: 1px solid var(--border2); background: var(--surface);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: all 0.12s;
+}
+.skill-row-chk.on { background: var(--accent); border-color: var(--accent); }
+.skill-row-chk-inner {
+  width: 7px; height: 4px;
+  border-left: 1.5px solid #0d1a18; border-bottom: 1.5px solid #0d1a18;
+  transform: rotate(-45deg) translateY(-0.5px); opacity: 0;
+}
+.skill-row-chk.on .skill-row-chk-inner { opacity: 1; }
+.skill-row-name {
+  font-family: var(--font-display); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+  flex: 1; min-width: 0;
+}
+.skill-row.enabled .skill-row-name { color: var(--text); }
+.skill-range-wrap {
+  display: flex; align-items: center; gap: 4px;
+  opacity: 0.3; pointer-events: none; transition: opacity 0.15s;
+}
+.skill-row.enabled .skill-range-wrap { opacity: 1; pointer-events: auto; }
+.skill-lvl-sel {
+  background: var(--surface); border: 1px solid var(--border2);
+  color: var(--text); font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 4px; outline: none; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.skill-lvl-sel:focus { border-color: var(--accent); }
+.skill-range-arrow { font-size: 9px; color: var(--muted); }
+
 .plans-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; }
 .plans-empty svg { opacity: 0.12; margin-bottom: 12px; }
 .plans-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
@@ -272,6 +326,17 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .map-info-card { background: var(--surface); border: 1px solid var(--border2); padding: 7px 11px; min-width: 130px; }
 .map-info-card-zone { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
 .map-info-card-desc { font-family: var(--font-mono); font-size: 9px; color: var(--muted); line-height: 1.5; }
+
+/* ── MAP PIN LIST FALLBACK (added) ── */
+.map-pin-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px; }
+.map-pin-list-item {
+  background: var(--surface); border: 1px solid var(--border2); padding: 7px 11px; min-width: 150px;
+  cursor: pointer; transition: border-color 0.12s;
+}
+.map-pin-list-item:hover { border-color: var(--accent); }
+.map-pin-list-mat { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2px; }
+.map-pin-list-loc { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+.map-pin-list-note { font-family: var(--font-mono); font-size: 8px; color: var(--muted); opacity: 0.6; margin-top: 2px; line-height: 1.4; }
 
 .map-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: var(--bg); }
 .map-loading-ring { width: 40px; height: 40px; border: 2px solid var(--surface3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -460,11 +525,9 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 </div>
 
 <script>
-// ────────────────────────────────────────────────
-// SUPABASE
-// ────────────────────────────────────────────────
+// ── SUPABASE ──
 const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODQ5NTcxMiwiZXhwIjoyMDk0MDcxNzEyfQ.W0j6nc4221j6Pm-qKerKgMUCkG4kSLLt9MCaeRM-Vr';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function setDbStatus(state, msg) {
@@ -472,9 +535,7 @@ function setDbStatus(state, msg) {
   document.getElementById('db-status').textContent = msg;
 }
 
-// ────────────────────────────────────────────────
-// OPERATORS & WEAPONS DATA
-// ────────────────────────────────────────────────
+// ── OPERATORS & WEAPONS ──
 const OPERATORS = [
   {id:"laevatain",name:"Laevatain",element:"Heat",cls:"Striker",rarity:6},
   {id:"ardelia",name:"Ardelia",element:"Nature",cls:"Supporter",rarity:6},
@@ -528,175 +589,234 @@ const WEAPONS = [
   {id:"aggeloslayer",name:"Aggeloslayer",type:"Polearm",rarity:4},
 ];
 
-// ────────────────────────────────────────────────
-// REAL ENDFIELD MATERIALS
-// ────────────────────────────────────────────────
-// Colors from the DB material_list_materials groupings
+// ── MATERIAL DEFINITIONS ──
 const MATS = {
-  // T-Creds (currency)
   t_creds:              {name:"T-Creds",              color:"#f0c040", category:"Currency"},
-  // Operator EXP
   elementary_combat_record: {name:"Combat Record (Elem)",color:"#5ba85b", category:"Operator EXP"},
   intermediate_combat_record:{name:"Combat Record (Int)",color:"#70c870", category:"Operator EXP"},
   advanced_combat_record:   {name:"Combat Record (Adv)",color:"#90e090", category:"Operator EXP"},
   elementary_cognitive_carrier:{name:"Cognitive Carrier (Elem)",color:"#5ba85b",category:"Operator EXP (Lv61+)"},
   advanced_cognitive_carrier:  {name:"Cognitive Carrier (Adv)",color:"#70c870", category:"Operator EXP (Lv61+)"},
-  // Weapon EXP
   arms_inspector:       {name:"Arms Inspector",        color:"#7ec9c9", category:"Weapon EXP"},
   arms_insp_kit:        {name:"Arms INSP Kit",          color:"#90dada", category:"Weapon EXP"},
   arms_insp_set:        {name:"Arms INSP Set",          color:"#a8ecec", category:"Weapon EXP (Lv61+)"},
-  // Promotion
   protodisk:            {name:"Protodisk",              color:"#c9a05b", category:"Promotion"},
   protoset:             {name:"Protoset",               color:"#e0b870", category:"Promotion"},
-  // Boletes
   pink_bolete:          {name:"Pink Bolete",            color:"#e08060", category:"Rare Growth — Boletes"},
   red_bolete:           {name:"Red Bolete",             color:"#d84040", category:"Rare Growth — Boletes"},
   ruby_bolete:          {name:"Ruby Bolete",            color:"#c02060", category:"Rare Growth — Boletes"},
   bloodcap:             {name:"Bloodcap",               color:"#901020", category:"Rare Growth — Boletes"},
-  // Skill materials
+  cosmagaric:           {name:"Cosmagaric",             color:"#a01830", category:"Rare Growth — Boletes"},
   protoprism:           {name:"Protoprism",             color:"#6b8ec9", category:"Skill Upgrade"},
   protohedron:          {name:"Protohedron",            color:"#2d6ea0", category:"Skill Upgrade"},
-  // Dendras (skill upgrades)
   kalkodendra:          {name:"Kalkodendra",            color:"#70c98a", category:"Rare Growth — Dendras"},
   chrysodendra:         {name:"Chrysodendra",           color:"#50d870", category:"Rare Growth — Dendras"},
   vitrodendra:          {name:"Vitrodendra",            color:"#20e860", category:"Rare Growth — Dendras"},
-  // Weapon tuning
+  mark_of_perseverance: {name:"Mark of Perseverance",   color:"#b870e0", category:"Mastery"},
   cast_die:             {name:"Cast Die",               color:"#c97b5b", category:"Weapon Tuning"},
   heavy_cast_die:       {name:"Heavy Cast Die",         color:"#e0956a", category:"Weapon Tuning"},
-  // Rare ores (weapon tuning lv60+)
   kalkonyx:             {name:"Kalkonyx",               color:"#6b8ec9", category:"Rare Ore"},
   auronyx:              {name:"Auronyx",                color:"#8090e0", category:"Rare Ore"},
   umbronyx:             {name:"Umbronyx",               color:"#a070d0", category:"Rare Ore"},
   igneosite:            {name:"Igneosite",              color:"#e05030", category:"Rare Ore"},
   wulingstone:          {name:"Wulingstone",            color:"#50a8d0", category:"Rare Ore"},
-  // Operator rare mats
   d96_steel:            {name:"D96 Steel Sample 4",     color:"#e8c84a", category:"Operator Rare Mat"},
   metadiastima:         {name:"Metadiastima Tube",      color:"#d4a830", category:"Operator Rare Mat"},
   tachyon:              {name:"Tachyon Lattice",        color:"#b08820", category:"Operator Rare Mat"},
   quadrant:             {name:"Quadrant Fluid",         color:"#907010", category:"Operator Rare Mat"},
   triphasic:            {name:"Triphasic Nanoflake",    color:"#705000", category:"Operator Rare Mat"},
-  // Mastery
-  mark_of_perseverance: {name:"Mark of Perseverance",   color:"#b870e0", category:"Mastery"},
 };
 
 // ────────────────────────────────────────────────
-// MATERIAL COST CALCULATION
-// Based on confirmed Endfield data:
-// Operator levels:
-//   1–20:  23k EXP, 0 T-Creds
-//   21–40: 249k EXP, 1,600 T-Creds, 8 Protodisk, 3 Pink Bolete
-//   41–60: 475k EXP, 6,500 T-Creds, 25 Protodisk, 5 Red Bolete
-//   61–80: 465k EXP, 18,000 T-Creds, 24 Protoset, 5 Ruby Bolete
-//   81–90: 580k EXP, 100,000 T-Creds, 36 Protoset, 20 Metadiastima, 8 Bloodcap
-// Skills (per skill, S1–S3 = Kalkodendra, S4–S6 = Chrysodendra, S7–S9 = Vitrodendra)
-//   Early levels use Protoprism + dendra, late use Protohedron
+// COST TABLES — exact values from
+// Arknights_Endfield_Data_Compilation_v1_2_0.xlsx
 // ────────────────────────────────────────────────
 
-// EXP amounts (in units; 1 Advanced Combat Record = 1000 EXP)
-// Each segment: [fromLv, toLv, expNeeded, tcreds, ...mats]
-const OP_SEGMENTS = [
-  // from, to, exp (units of AdvRecord≈1000), tcreds, promotionMats
-  [1,  20, 23,    0,      {}],
-  [20, 40, 249,   1600,   {protodisk:8, pink_bolete:3}],
-  [40, 60, 475,   6500,   {protodisk:25, red_bolete:5}],
-  [60, 80, 465,   18000,  {protoset:24, ruby_bolete:5}],
-  [80, 90, 580,   100000, {protoset:36, metadiastima:20, bloodcap:8}],
+// Operator leveling EXP + T-Creds per band
+// [fromLv, toLv, exp, tcreds]
+// EXP is in raw units; we distribute across record tiers below
+const OP_EXP_BANDS = [
+  [1,  20,  22860,   820],
+  [20, 40,  248540,  12540],
+  [40, 60,  475710,  23900],
+  [60, 80,  465230,  109180],
+  [80, 90,  579950,  238980],
 ];
 
-// Skill upgrade costs per level group (per skill, 4 skills per operator)
-// Skills S1–S3: Kalkodendra; S4–S6: Chrysodendra; S7–S9: Vitrodendra
-// These are per-skill costs to go through that range
-const SKILL_COSTS_BY_LEVEL_RANGE = {
-  // lv1-3: Kalkodendra + Protoprism
-  '1-3':   { protoprism: 22, kalkodendra: 6,   t_creds: 4000 },
-  // lv4-6: Chrysodendra + Protoprism/Protohedron
-  '4-6':   { protoprism: 48, chrysodendra: 6,  t_creds: 12000 },
-  // lv7-9: Vitrodendra + Protohedron
-  '7-9':   { protohedron: 40, vitrodendra: 6,  t_creds: 24000 },
+// Promotion costs — exact from sheet (P1/P2/P3/P4)
+// Also includes O1/O2/O3 T-Cred costs (intermediate outpost)
+// promotionMats indexed 1–4
+const PROMO_COSTS = {
+  P1: {protodisk:8,  protoset:0,  pink_bolete:3, red_bolete:0, ruby_bolete:0, cosmagaric:0, t_creds:1600},
+  O1: {t_creds:1800},
+  P2: {protodisk:25, protoset:0,  pink_bolete:0, red_bolete:5, ruby_bolete:0, cosmagaric:0, t_creds:6500},
+  O2: {t_creds:6500},
+  P3: {protodisk:0,  protoset:24, pink_bolete:0, red_bolete:0, ruby_bolete:5, cosmagaric:0, t_creds:18000},
+  O3: {t_creds:18000},
+  P4: {protodisk:0,  protoset:36, pink_bolete:0, red_bolete:0, ruby_bolete:0, cosmagaric:20, t_creds:100000},
+  // Note: P4 rare_mat=8 is operator-specific (their unique mat); we mark it separately
+  // The "Rare Plant" in P4 is Cosmagaric (20) per the sheet col 20/21
 };
 
-// Talent node costs (total across all nodes per tier unlock)
-// These unlock at lvl 40, 60, 80, 90
-const TALENT_COSTS = {
-  40: { t_creds: 5000,  protoprism: 23 },
-  60: { t_creds: 10400, protoprism: 50 },
-  80: { t_creds: 18000, protohedron: 30 },
-  90: { t_creds: 32000, protohedron: 48 },
+// Talent node (Expertise) costs — E1 to E4
+const TALENT_NODE_COSTS = [
+  {node:1, protoprism:6,  protohedron:0,  t_creds:1600},
+  {node:2, protoprism:10, protohedron:0,  t_creds:1800},
+  {node:3, protoprism:0,  protohedron:10, t_creds:6000},
+  {node:4, protoprism:0,  protohedron:20, t_creds:12000},
+];
+
+// Per-skill upgrade costs — exact from sheet, per level
+// skill goes 1→2→3→…→9→M1→M2→M3
+const SKILL_LEVEL_COSTS = {
+  2:  {protoprism:6,   protohedron:0,  kalkodendra:1, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:1000},
+  3:  {protoprism:12,  protohedron:0,  kalkodendra:2, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:2700},
+  4:  {protoprism:16,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:3200},
+  5:  {protoprism:21,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:4200},
+  6:  {protoprism:27,  protohedron:0,  kalkodendra:0, chrysodendra:2, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:5400},
+  7:  {protoprism:0,   protohedron:6,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:8200},
+  8:  {protoprism:0,   protohedron:8,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:10500},
+  9:  {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:2, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:18000},
+  M1: {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:1, rare_mat_qty:6,  t_creds:24000},
+  M2: {protoprism:0,   protohedron:24, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:2, rare_mat_qty:16, t_creds:30000},
+  M3: {protoprism:0,   protohedron:50, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:3, rare_mat_qty:36, t_creds:65000},
+};
+const SKILL_LVL_ORDER = [2,3,4,5,6,7,8,9,'M1','M2','M3'];
+function skillLvlToNum(v) {
+  if(v==='M1') return 10; if(v==='M2') return 11; if(v==='M3') return 12;
+  return parseInt(v);
+}
+
+// Weapon EXP + T-Creds per band — exact from sheet
+const WPN_EXP_BANDS = [
+  [1,  20,  8890,    640],
+  [20, 40,  96650,   9760],
+  [40, 60,  185000,  18610],
+  [60, 80,  913170,  94840],
+  [80, 90,  1320370, 217540],
+];
+
+// Weapon Tuning — exact from sheet
+// T1: CastDie=5, Kalkonyx=3, T-Creds=2200
+// T2: CastDie=18, Auronyx=5, T-Creds=8500
+// T3: HeavyCastDie=20, Umbronyx=5, T-Creds=25000
+// T4: HeavyCastDie=30, RareMat=16, RareMineral=8, T-Creds=90000
+const TUNING_COSTS = {
+  1: {cast_die:5,   heavy_cast_die:0,  kalkonyx:3, auronyx:0, umbronyx:0, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:2200},
+  2: {cast_die:18,  heavy_cast_die:0,  kalkonyx:0, auronyx:5, umbronyx:0, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:8500},
+  3: {cast_die:0,   heavy_cast_die:20, kalkonyx:0, auronyx:0, umbronyx:5, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:25000},
+  4: {cast_die:0,   heavy_cast_die:30, kalkonyx:0, auronyx:0, umbronyx:0, rare_mat_qty:16, rare_mineral_qty:8, t_creds:90000},
 };
 
-function calcMats(fromLv, toLv, type) {
+// ────────────────────────────────────────────────
+// CALC MATS — corrected
+// plan.skills = [{name, enabled, fromLv, toLv}, ...]
+// plan.promoFrom, plan.promoTo (0=none, 1=P1 … 4=P4)
+// plan.talentFrom, plan.talentTo (0=none, 1=E1 … 4=E4)
+// plan.tuneFrom, plan.tuneTo (0=none, 1=T1 … 4=T4)
+// ────────────────────────────────────────────────
+function calcMats(plan) {
   const m = {};
-  const add = (k, v) => { if (v > 0) m[k] = (m[k] || 0) + v; };
+  const add = (k, v) => { if(v > 0) m[k] = (m[k]||0) + v; };
 
-  if (type === 'operator') {
-    for (const [s, e, exp, tcreds, extraMats] of OP_SEGMENTS) {
-      if (toLv <= s || fromLv >= e) continue;
-      const frac = (Math.min(toLv, e) - Math.max(fromLv, s)) / (e - s);
-
-      // EXP: distribute across record tiers
-      const totalExp = Math.ceil(exp * frac);
-      // Use Advanced Combat Records primarily (1 = ~1000 EXP units here simplified)
-      if (fromLv >= 60) {
-        add('elementary_cognitive_carrier', Math.ceil(totalExp * 0.3));
-        add('advanced_cognitive_carrier', Math.ceil(totalExp * 0.7));
+  if (plan.type === 'operator') {
+    // EXP leveling
+    for (const [s, e, exp, tcreds] of OP_EXP_BANDS) {
+      if (plan.toLv <= s || plan.fromLv >= e) continue;
+      const frac = (Math.min(plan.toLv, e) - Math.max(plan.fromLv, s)) / (e - s);
+      const totalExp = Math.round(exp * frac);
+      if (s >= 60) {
+        add('elementary_cognitive_carrier', Math.round(totalExp * 0.3));
+        add('advanced_cognitive_carrier',   Math.round(totalExp * 0.7));
       } else {
-        add('elementary_combat_record', Math.ceil(totalExp * 0.4));
-        add('intermediate_combat_record', Math.ceil(totalExp * 0.3));
-        add('advanced_combat_record', Math.ceil(totalExp * 0.3));
+        add('elementary_combat_record',    Math.round(totalExp * 0.35));
+        add('intermediate_combat_record',  Math.round(totalExp * 0.3));
+        add('advanced_combat_record',      Math.round(totalExp * 0.35));
       }
-
-      if (tcreds) add('t_creds', Math.ceil(tcreds * frac));
-      for (const [k, v] of Object.entries(extraMats)) add(k, Math.ceil(v * frac));
+      add('t_creds', Math.round(tcreds * frac));
     }
 
-    // Talent node costs for milestones crossed
-    for (const [milestone, costs] of Object.entries(TALENT_COSTS)) {
-      const mlv = parseInt(milestone);
-      if (fromLv < mlv && toLv >= mlv) {
-        for (const [k, v] of Object.entries(costs)) add(k, v);
+    // Promotions
+    const pf = plan.promoFrom || 0;
+    const pt = plan.promoTo   || 0;
+    const promoOrder = ['P1','O1','P2','O2','P3','O3','P4'];
+    // Each Px/Ox step index: P1=idx0, O1=idx1, P2=idx2, O2=idx3, P3=idx4, O3=idx5, P4=idx6
+    // pf=0 means nothing done, pt=1 means P1 done, etc.
+    // Map: promo stage N → we need P(N)'s cost + O(N-1) if N>1
+    for (let stage = pf + 1; stage <= pt; stage++) {
+      const pKey = 'P' + stage;
+      const oKey = 'O' + (stage - 1);
+      if (stage > 1 && PROMO_COSTS[oKey]) {
+        for (const [k,v] of Object.entries(PROMO_COSTS[oKey])) add(k, v);
+      }
+      if (PROMO_COSTS[pKey]) {
+        for (const [k,v] of Object.entries(PROMO_COSTS[pKey])) add(k, v);
       }
     }
 
-    // Skills: 4 skills per operator, plan lv range → skill range
-    // Basic assumption: leveling 1→40 = S1→S3, 40→60 = S4→S6, 60→80 = S7→S9
-    const skillCount = 4;
-    if (fromLv < 40 && toLv > 1) {
-      const frac = Math.min(1, (Math.min(toLv, 40) - Math.max(fromLv, 1)) / 39);
-      add('protoprism',   Math.ceil(22 * frac * skillCount));
-      add('kalkodendra',  Math.ceil(6  * frac * skillCount));
-      add('t_creds',      Math.ceil(4000 * frac * skillCount));
+    // Talent nodes (Expertise)
+    const tf = plan.talentFrom || 0;
+    const tt = plan.talentTo   || 0;
+    for (const n of TALENT_NODE_COSTS) {
+      if (n.node > tf && n.node <= tt) {
+        add('protoprism',  n.protoprism);
+        add('protohedron', n.protohedron);
+        add('t_creds',     n.t_creds);
+      }
     }
-    if (fromLv < 60 && toLv > 40) {
-      const frac = Math.min(1, (Math.min(toLv, 60) - Math.max(fromLv, 40)) / 20);
-      add('protoprism',   Math.ceil(48 * frac * skillCount));
-      add('chrysodendra', Math.ceil(6  * frac * skillCount));
-      add('t_creds',      Math.ceil(12000 * frac * skillCount));
-    }
-    if (fromLv < 80 && toLv > 60) {
-      const frac = Math.min(1, (Math.min(toLv, 80) - Math.max(fromLv, 60)) / 20);
-      add('protohedron',  Math.ceil(40 * frac * skillCount));
-      add('vitrodendra',  Math.ceil(6  * frac * skillCount));
-      add('t_creds',      Math.ceil(24000 * frac * skillCount));
+
+    // Skills
+    for (const sk of (plan.skills || [])) {
+      if (!sk.enabled) continue;
+      const fromN = skillLvlToNum(sk.fromLv);
+      const toN   = skillLvlToNum(sk.toLv);
+      for (const lvl of SKILL_LVL_ORDER) {
+        const lvlN = skillLvlToNum(lvl);
+        if (lvlN > fromN && lvlN <= toN) {
+          const c = SKILL_LEVEL_COSTS[lvl];
+          add('protoprism',          c.protoprism);
+          add('protohedron',         c.protohedron);
+          add('kalkodendra',         c.kalkodendra);
+          add('chrysodendra',        c.chrysodendra);
+          add('vitrodendra',         c.vitrodendra);
+          add('mark_of_perseverance',c.mark_of_perseverance);
+          add('t_creds',             c.t_creds);
+          // rare_mat_qty tracked generically (operator unique mat, shown separately)
+          if (c.rare_mat_qty) add('_skill_rare_mat', c.rare_mat_qty);
+        }
+      }
     }
 
   } else {
-    // WEAPON
-    // 1–20: Arms Inspector
-    // 21–40: +Cast Die, Kalkonyx
-    // 41–60: +Heavy Cast Die, Auronyx
-    // 61–80: +Umbronyx
-    // 81–90: +endgame ore (Igneosite/Wulingstone)
-    const wpnSegs = [
-      [1,  20, {arms_inspector:20,                              t_creds:800}],
-      [20, 40, {arms_insp_kit:30,  cast_die:8,  kalkonyx:4,    t_creds:3000}],
-      [40, 60, {arms_insp_kit:60,  cast_die:16, auronyx:4,     heavy_cast_die:8, t_creds:8000}],
-      [60, 80, {arms_insp_set:80,  heavy_cast_die:16, umbronyx:4, t_creds:18000}],
-      [80, 90, {arms_insp_set:120, igneosite:4, wulingstone:4, t_creds:40000}],
-    ];
-    for (const [s, e, cost] of wpnSegs) {
-      if (toLv <= s || fromLv >= e) continue;
-      const frac = (Math.min(toLv, e) - Math.max(fromLv, s)) / (e - s);
-      for (const [k, v] of Object.entries(cost)) add(k, Math.ceil(v * frac));
+    // WEAPON — EXP
+    for (const [s, e, exp, tcreds] of WPN_EXP_BANDS) {
+      if (plan.toLv <= s || plan.fromLv >= e) continue;
+      const frac = (Math.min(plan.toLv, e) - Math.max(plan.fromLv, s)) / (e - s);
+      const totalExp = Math.round(exp * frac);
+      if (s >= 60) {
+        add('arms_insp_set', totalExp);
+      } else if (s >= 20) {
+        add('arms_insp_kit', totalExp);
+      } else {
+        add('arms_inspector', totalExp);
+      }
+      add('t_creds', Math.round(tcreds * frac));
+    }
+
+    // Tuning stages
+    const tf = plan.tuneFrom || 0;
+    const tt = plan.tuneTo   || 0;
+    for (let stage = tf + 1; stage <= tt; stage++) {
+      const c = TUNING_COSTS[stage];
+      if (!c) continue;
+      add('cast_die',       c.cast_die);
+      add('heavy_cast_die', c.heavy_cast_die);
+      add('kalkonyx',       c.kalkonyx);
+      add('auronyx',        c.auronyx);
+      add('umbronyx',       c.umbronyx);
+      add('t_creds',        c.t_creds);
+      if (c.rare_mat_qty)     add('_tune_rare_mat',     c.rare_mat_qty);
+      if (c.rare_mineral_qty) add('_tune_rare_mineral',  c.rare_mineral_qty);
     }
   }
 
@@ -707,50 +827,46 @@ function totalMats() {
   const acc = {};
   for (const p of plans) {
     if (!focusedPlanIds.has(p.id)) continue;
-    const m = calcMats(p.fromLv, p.toLv, p.type);
-    for (const [k, v] of Object.entries(m)) acc[k] = (acc[k] || 0) + v;
+    const m = calcMats(p);
+    for (const [k, v] of Object.entries(m)) acc[k] = (acc[k]||0) + v;
   }
   return acc;
 }
 
-// ────────────────────────────────────────────────
-// DB — Maps and Pins from Supabase
-// ────────────────────────────────────────────────
-let dbMaps = [];      // [{id, name, slug, image_url, coord_width, coord_height, pins:[...]}]
-let dbMatsById = {};  // material_id → {name, farming_note}
+// ── SKILL DEFINITIONS per operator ──
+const SKILL_NAMES = ['Basic Attack','Battle Skill','Combo Skill','Ultimate'];
+
+function defaultSkills() {
+  return SKILL_NAMES.map((name, i) => ({
+    name,
+    enabled: i > 0,  // Basic Attack off by default
+    fromLv: 1,
+    toLv: 'M3',
+  }));
+}
+
+// ── DB / MAPS ──
+let dbMaps = [];
+let dbMatsById = {};
 
 async function loadDbData() {
   setDbStatus('loading', 'Loading maps…');
   try {
-    // Load materials from material_list_materials for color/name resolution
     const { data: matsData } = await db.from('material_list_materials').select('id,name,farming_note,img_path');
     if (matsData) {
       for (const m of matsData) {
         dbMatsById[m.id] = m;
-        // Override MATS color/name if we have DB data
         if (MATS[m.id]) MATS[m.id].name = m.name;
       }
     }
-
-    // Load maps
-    const { data: maps, error: mapErr } = await db
-      .from('material_list_maps')
-      .select('*')
-      .order('sort_order');
+    const { data: maps, error: mapErr } = await db.from('material_list_maps').select('*').order('sort_order');
     if (mapErr) throw mapErr;
-
-    // Load all pins
-    const { data: pins, error: pinErr } = await db
-      .from('material_list_map_pins')
-      .select('*')
-      .order('sort_order');
+    const { data: pins, error: pinErr } = await db.from('material_list_map_pins').select('*').order('sort_order');
     if (pinErr) throw pinErr;
-
     dbMaps = (maps || []).map(m => ({
       ...m,
       pins: (pins || []).filter(p => p.map_id === m.id)
     }));
-
     setDbStatus('ok', `${dbMaps.length} maps loaded`);
   } catch (e) {
     setDbStatus('err', 'Map load failed: ' + e.message);
@@ -758,11 +874,8 @@ async function loadDbData() {
   }
 }
 
-// ────────────────────────────────────────────────
-// Portrait Cache
-// ────────────────────────────────────────────────
+// ── PORTRAIT CACHE ──
 const charImgCache = {};
-
 async function loadCharImages() {
   try {
     const { data } = await db.from('v_characters_tiered').select('name,slug,img_path');
@@ -772,16 +885,13 @@ async function loadCharImages() {
     }
   } catch (e) { console.warn('Could not load char images:', e.message); }
 }
-
 function getCharImg(name) {
   const key = name.toLowerCase();
   if (!(key in charImgCache)) return undefined;
   return charImgCache[key] || null;
 }
 
-// ────────────────────────────────────────────────
-// STATE
-// ────────────────────────────────────────────────
+// ── STATE ──
 let plans = [];
 let planFilter = 'all';
 let activeFilter = 'all';
@@ -791,21 +901,16 @@ let checkedMats = {};
 let haveQty = {};
 let focusedPlanIds = new Set();
 let focusPanelOpen = false;
-
-// Map state
 let activeMapId = null;
 let mapView = { tx: 0, ty: 0, scale: 1 };
 
-// ────────────────────────────────────────────────
-// HELPERS
-// ────────────────────────────────────────────────
+// ── HELPERS ──
 function getElColor(el) {
   return {Heat:'#ff6b35',Cryo:'#4fc3f7',Electric:'#c084fc',Physical:'#94a3b8',Nature:'#4ade80'}[el]||'#6b7280';
 }
 function getRarityColor(rarity) {
   return {6:'#e8a45a', 5:'#b0b0d8', 4:'#5a8ad8'}[rarity] || '#6b7280';
 }
-
 const EL_ICON = {
   Heat:`<svg viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M12 2c0 6-6 8-6 14a6 6 0 0012 0c0-6-6-8-6-14z"/></svg>`,
   Cryo:`<svg viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2"><path d="M12 2v20M4.93 7l14.14 10M19.07 7L4.93 17M2 12h20"/></svg>`,
@@ -816,289 +921,23 @@ const EL_ICON = {
 const OP_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
 const WPN_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21l7-7m0 0l2-2m-2 2l2 2m8-14l-7 7"/><path d="M14 3l7 7-3 3-7-7 3-3z"/></svg>`;
 
-// ────────────────────────────────────────────────
-// MAP RENDERING
-// ────────────────────────────────────────────────
-function initMaps() {
-  const topBar = document.getElementById('map-top-bar');
-  const hint = document.getElementById('map-loading-hint');
-  const dragHint = document.getElementById('map-drag-hint');
-  document.getElementById('map-loading').style.display = 'none';
-
-  if (!dbMaps.length) {
-    hint.textContent = 'No maps in database';
-    return;
-  }
-
-  hint.style.display = 'none';
-  dragHint.style.display = '';
-
-  // Build tabs
-  dbMaps.forEach((map, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'map-tab' + (i === 0 ? ' active' : '');
-    btn.id = `mtab-${map.id}`;
-    btn.textContent = map.name;
-    btn.onclick = () => switchMap(map.id);
-    topBar.insertBefore(btn, dragHint);
-  });
-
-  // Build canvas wraps
-  const canvasesEl = document.getElementById('map-canvases');
-  dbMaps.forEach((map, i) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'map-canvas-wrap' + (i === 0 ? ' active' : '');
-    wrap.id = `mapwrap-${map.id}`;
-    wrap.style.cssText = 'position:absolute;inset:0';
-    canvasesEl.appendChild(wrap);
-  });
-
-  document.getElementById('map-zoom-controls').style.display = 'flex';
-  document.getElementById('map-coords').style.display = 'block';
-
-  // Setup pan/zoom
-  setupMapInteraction();
-
-  // Select first map
-  if (dbMaps.length) {
-    activeMapId = dbMaps[0].id;
-    renderMapCanvas(activeMapId);
-  }
-}
-
-function switchMap(mapId) {
-  activeMapId = mapId;
-  mapView = { tx: 0, ty: 0, scale: 1 };
-  dbMaps.forEach(m => {
-    document.getElementById(`mtab-${m.id}`)?.classList.toggle('active', m.id === mapId);
-    document.getElementById(`mapwrap-${m.id}`)?.classList.toggle('active', m.id === mapId);
-  });
-  renderMapCanvas(mapId);
-  document.getElementById('map-info-bar').classList.remove('visible');
-}
-
-function getMatColor(matId) {
-  return MATS[matId]?.color || '#6b7280';
-}
-function getMatName(matId) {
-  return MATS[matId]?.name || dbMatsById[matId]?.name || matId;
-}
-
-function renderMapCanvas(mapId) {
-  const map = dbMaps.find(m => m.id === mapId);
-  if (!map) return;
-  const wrap = document.getElementById(`mapwrap-${mapId}`);
-  if (!wrap) return;
-
-  const W = map.coord_width, H = map.coord_height;
-  const needMats = totalMats();
-
-  // Build background
-  let bgHtml = map.image_url
-    ? `<img src="${map.image_url}" style="position:absolute;inset:0;width:${W}px;height:${H}px;object-fit:cover;pointer-events:none;display:block" loading="lazy">`
-    : buildFallbackMapSVG(map);
-
-  // Build pins — only show pins for materials we need
-  const pinsHtml = map.pins.map(pin => {
-    const matId = pin.material_id;
-    // Only show pins if this material is in our needs OR no needs (show all)
-    const hasNeed = Object.keys(needMats).length === 0 || needMats[matId];
-    if (!hasNeed) return '';
-
-    const color = getMatColor(matId);
-    const name = getMatName(matId);
-    const shortName = name.replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
-    const isHL = highlightedMat === matId;
-    const isDim = highlightedMat && !isHL;
-    const borderCol = isHL ? color : 'rgba(255,255,255,0.18)';
-    const glow = isHL ? `box-shadow:0 0 12px ${color}55;` : '';
-    return `<div class="user-pin ${isHL?'highlighted':''} ${isDim?'dimmed':''}"
-      style="left:${pin.x}px;top:${pin.y}px;border-color:${borderCol};${glow}"
-      onclick="onPinClick('${matId}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')"
-      title="${escHtml(name)} — ${escHtml(pin.location_name)}">
-      <div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div>
-      <div>
-        <div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div>
-        <div class="user-pin-sub">${escHtml(pin.location_name)}</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  wrap.innerHTML = `<div class="map-viewport" id="map-vp-${mapId}">
-    <div class="map-inner" id="map-inner-${mapId}" style="width:${W}px;height:${H}px;position:relative">
-      ${bgHtml}
-      ${pinsHtml}
-    </div>
-  </div>`;
-
-  updateMapTransform();
-  renderMapLegend(mapId);
-
-  // Attach mousemove for coords
-  const vp = document.getElementById(`map-vp-${mapId}`);
-  if (vp) {
-    vp.addEventListener('mousemove', e => {
-      const inner = document.getElementById(`map-inner-${mapId}`);
-      if (!inner) return;
-      const rect = inner.getBoundingClientRect();
-      const x = Math.round((e.clientX - rect.left) / mapView.scale);
-      const y = Math.round((e.clientY - rect.top)  / mapView.scale);
-      document.getElementById('map-coords').textContent = `x:${x} y:${y}`;
-    });
-  }
-}
-
-function onPinClick(matId, zoneName, note) {
-  highlightMat(matId);
-  // Update info bar
-  const map = dbMaps.find(m => m.id === activeMapId);
-  if (!map) return;
-  updateInfoBar(map, matId);
-}
-
-function updateInfoBar(map, matId) {
-  const bar = document.getElementById('map-info-bar');
-  if (!matId || matId !== highlightedMat) { bar.classList.remove('visible'); return; }
-  const color = getMatColor(matId);
-  const name = getMatName(matId);
-  const pins = map.pins.filter(p => p.material_id === matId);
-  if (!pins.length) { bar.classList.remove('visible'); return; }
-
-  document.getElementById('map-info-title').innerHTML =
-    `<span style="color:${color}">●</span> ${escHtml(name)} — ${escHtml(map.name)} farming locations`;
-  document.getElementById('map-info-cards').innerHTML = pins.map(p => {
-    const displayNote = p.note && p.note.trim()
-      ? p.note
-      : (dbMatsById[matId]?.farming_note || 'See map for details');
-    return `<div class="map-info-card">
-      <div class="map-info-card-zone" style="color:${color}">${escHtml(p.location_name)}</div>
-      <div class="map-info-card-desc">${escHtml(displayNote)}</div>
-    </div>`;
-  }).join('');
-  bar.classList.add('visible');
-}
-
-function renderMapLegend(mapId) {
-  const map = dbMaps.find(m => m.id === mapId);
-  const legend = document.getElementById('map-legend');
-  const items = document.getElementById('legend-items');
-  if (!map || !map.pins.length) { legend.classList.remove('visible'); return; }
-
-  const needMats = totalMats();
-  const matIds = [...new Set(map.pins.map(p => p.material_id))].filter(k => {
-    return Object.keys(needMats).length === 0 || needMats[k];
-  });
-
-  if (!matIds.length) { legend.classList.remove('visible'); return; }
-  legend.classList.add('visible');
-  items.innerHTML = matIds.map(k => {
-    const color = getMatColor(k);
-    const name = getMatName(k).replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
-    const isHL = highlightedMat === k;
-    const isDim = highlightedMat && !isHL;
-    return `<div class="map-legend-item ${isDim?'dimmed':''}" onclick="highlightMat('${k}')">
-      <div class="map-legend-dot" style="background:${color};${isHL?`box-shadow:0 0 5px ${color}`:''}"></div>
-      <div class="map-legend-name" style="${isHL?`color:${color}`:''}">${escHtml(name)}</div>
-    </div>`;
-  }).join('');
-}
-
-function buildFallbackMapSVG(map) {
-  const W = map.coord_width, H = map.coord_height;
-  return `<svg width="${W}" height="${H}" style="position:absolute;inset:0;display:block;pointer-events:none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${W}" height="${H}" fill="#0b1510"/>
-    <defs>
-      <pattern id="mg${map.id.slice(0,8)}" width="60" height="60" patternUnits="userSpaceOnUse">
-        <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="0.6"/>
-      </pattern>
-    </defs>
-    <rect width="${W}" height="${H}" fill="url(#mg${map.id.slice(0,8)})"/>
-    <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text>
-    <text x="${W/2}" y="${H/2+32}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(255,255,255,0.06)" letter-spacing="3">UPLOAD AN IMAGE IN MAP EDITOR</text>
-  </svg>`;
-}
-
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-// ────────────────────────────────────────────────
-// MAP PAN/ZOOM
-// ────────────────────────────────────────────────
-function setupMapInteraction() {
-  const area = document.getElementById('map-area');
-  let drag = false, lx = 0, ly = 0;
-
-  area.addEventListener('mousedown', e => {
-    if (e.button !== 0) return;
-    // Don't start drag if clicking a pin
-    if (e.target.closest('.user-pin')) return;
-    drag = true; lx = e.clientX; ly = e.clientY;
-    area.style.cursor = 'grabbing'; e.preventDefault();
-  });
-  window.addEventListener('mousemove', e => {
-    if (!drag) return;
-    mapView.tx += e.clientX - lx; mapView.ty += e.clientY - ly;
-    lx = e.clientX; ly = e.clientY;
-    updateMapTransform();
-  });
-  window.addEventListener('mouseup', () => { drag = false; if(document.getElementById('map-area')) document.getElementById('map-area').style.cursor=''; });
-  area.addEventListener('wheel', e => {
-    e.preventDefault();
-    const rect = area.getBoundingClientRect();
-    const factor = e.deltaY < 0 ? 1.12 : 0.88;
-    mapView.tx = (e.clientX - rect.left) + (mapView.tx - (e.clientX - rect.left)) * factor;
-    mapView.ty = (e.clientY - rect.top)  + (mapView.ty - (e.clientY - rect.top))  * factor;
-    mapView.scale = Math.max(0.15, Math.min(6, mapView.scale * factor));
-    updateMapTransform();
-  }, { passive: false });
-}
-
-function updateMapTransform() {
-  if (!activeMapId) return;
-  const inner = document.getElementById(`map-inner-${activeMapId}`);
-  if (!inner) return;
-  inner.style.transform = `translate(${mapView.tx}px,${mapView.ty}px) scale(${mapView.scale})`;
-  inner.style.transformOrigin = '0 0';
-}
-
-function mapZoom(factor) {
-  const area = document.getElementById('map-area');
-  const rect = area.getBoundingClientRect();
-  const cx = rect.width / 2, cy = rect.height / 2;
-  mapView.tx = cx + (mapView.tx - cx) * factor;
-  mapView.ty = cy + (mapView.ty - cy) * factor;
-  mapView.scale = Math.max(0.15, Math.min(6, mapView.scale * factor));
-  updateMapTransform();
-}
-
-function mapReset() {
-  mapView = { tx: 0, ty: 0, scale: 1 };
-  updateMapTransform();
-}
-
-// ────────────────────────────────────────────────
-// HIGHLIGHT
-// ────────────────────────────────────────────────
-function highlightMat(matId) {
-  highlightedMat = (highlightedMat === matId) ? null : matId;
-  renderMapFilters();
-  if (activeMapId) {
-    renderMapCanvas(activeMapId);
-    const map = dbMaps.find(m => m.id === activeMapId);
-    if (map) updateInfoBar(map, matId);
-    else document.getElementById('map-info-bar').classList.remove('visible');
-  }
-  renderNeed();
-}
-
-// ────────────────────────────────────────────────
-// PLANS
-// ────────────────────────────────────────────────
+// ── PLANS ──
 function addPlan(type, item) {
   const existing = plans.find(p => p.item.id === item.id && p.type === type);
   if (existing) { closeModal(); return; }
-  const plan = {id: Date.now() + Math.random(), type, item, fromLv: 1, toLv: 40};
+  const plan = {
+    id: Date.now() + Math.random(),
+    type, item,
+    fromLv: 1, toLv: 40,
+    promoFrom: 0, promoTo: 0,
+    talentFrom: 0, talentTo: 0,
+    tuneFrom: 0, tuneTo: 0,
+    skills: type === 'operator' ? defaultSkills() : [],
+  };
   plans.push(plan);
   focusedPlanIds.add(plan.id);
   renderAll();
@@ -1124,6 +963,37 @@ function updateTo(id, val) {
 function setRange(id, f, t) {
   const p = plans.find(x => x.id === id); if (!p) return;
   p.fromLv = f; p.toLv = t; renderAll();
+}
+function setPromoRange(id, field, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p[field] = parseInt(val); renderAll();
+}
+function setTalentRange(id, field, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p[field] = parseInt(val); renderAll();
+}
+function setTuneRange(id, field, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p[field] = parseInt(val); renderAll();
+}
+function toggleSkill(id, skillIdx) {
+  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
+  p.skills[skillIdx].enabled = !p.skills[skillIdx].enabled;
+  renderAll();
+}
+function setSkillFrom(id, skillIdx, val) {
+  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
+  p.skills[skillIdx].fromLv = val; renderAll();
+}
+function setSkillTo(id, skillIdx, val) {
+  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
+  p.skills[skillIdx].toLv = val; renderAll();
+}
+function toggleAllSkills(id) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  const allOn = p.skills.every(s => s.enabled);
+  p.skills.forEach(s => s.enabled = !allOn);
+  renderAll();
 }
 
 function renderAll() {
@@ -1176,17 +1046,79 @@ function buildAvatarHTML(plan) {
   </div>`;
 }
 
+function buildSkillLvlOptions(selectedVal) {
+  const opts = [1,2,3,4,5,6,7,8,9,'M1','M2','M3'];
+  return opts.map(v => `<option value="${v}" ${String(v)===String(selectedVal)?'selected':''}>${v}</option>`).join('');
+}
+
+function buildPromoOptions(selectedVal, label) {
+  return [0,1,2,3,4].map(v => `<option value="${v}" ${v===selectedVal?'selected':''}>${v===0?'None':label+v}</option>`).join('');
+}
+
 function buildPlanCard(plan) {
   const el = plan.item.element || null;
   const elLower = el ? el.toLowerCase() : '';
   const isOp = plan.type === 'operator';
-  const maxLv = 90;
-  // Quick ranges
   const qRanges = [[1,40],[1,60],[1,80],[1,90],[40,80]];
   const qBtns = qRanges.map(([f, t]) => {
     const active = plan.fromLv === f && plan.toLv === t ? 'active' : '';
     return `<button class="quick-btn ${active}" onclick="setRange(${plan.id},${f},${t})">${f}→${t}</button>`;
   }).join('');
+
+  // Promotion row (operator only)
+  let promoRow = '';
+  if (isOp) {
+    promoRow = `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;flex-wrap:wrap;">
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:64px;">Promotion</div>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoFrom',this.value)">${buildPromoOptions(plan.promoFrom,'P')}</select>
+      <span class="skill-range-arrow">→</span>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoTo',this.value)">${buildPromoOptions(plan.promoTo,'P')}</select>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-left:8px;min-width:48px;">Talents</div>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTalentRange(${plan.id},'talentFrom',this.value)">${buildPromoOptions(plan.talentFrom,'E')}</select>
+      <span class="skill-range-arrow">→</span>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTalentRange(${plan.id},'talentTo',this.value)">${buildPromoOptions(plan.talentTo,'E')}</select>
+    </div>`;
+  }
+
+  // Tuning row (weapon only)
+  let tuneRow = '';
+  if (!isOp) {
+    tuneRow = `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;">
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:54px;">Tuning</div>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneFrom',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneFrom?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select>
+      <span class="skill-range-arrow">→</span>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneTo',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneTo?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select>
+    </div>`;
+  }
+
+  // Skills section (operator only)
+  let skillsSection = '';
+  if (isOp && plan.skills && plan.skills.length) {
+    const allOn = plan.skills.every(s => s.enabled);
+    const skillRows = plan.skills.map((sk, i) => `
+      <div class="skill-row ${sk.enabled?'enabled':''}">
+        <div class="skill-row-chk ${sk.enabled?'on':''}" onclick="toggleSkill(${plan.id},${i})">
+          <div class="skill-row-chk-inner"></div>
+        </div>
+        <div class="skill-row-name">${sk.name}</div>
+        <div class="skill-range-wrap">
+          <select class="skill-lvl-sel" onchange="setSkillFrom(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.fromLv)}</select>
+          <span class="skill-range-arrow">→</span>
+          <select class="skill-lvl-sel" onchange="setSkillTo(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.toLv)}</select>
+        </div>
+      </div>`).join('');
+
+    skillsSection = `
+    <div class="skill-section">
+      <div class="skill-section-label">
+        Skills
+        <button class="skill-toggle-all" onclick="toggleAllSkills(${plan.id})">${allOn?'Uncheck all':'Check all'}</button>
+      </div>
+      ${skillRows}
+    </div>`;
+  }
 
   const card = document.createElement('div');
   card.className = 'plan-card'; card.dataset.id = plan.id;
@@ -1224,19 +1156,20 @@ function buildPlanCard(plan) {
         </div>
       </div>
       <div class="quick-btns">${qBtns}</div>
+      ${promoRow}
+      ${tuneRow}
+      ${skillsSection}
     </div>`;
   return card;
 }
 
-// ────────────────────────────────────────────────
-// FOCUS PANEL
-// ────────────────────────────────────────────────
+// ── FOCUS PANEL ──
 function toggleFocusPanel() {
   focusPanelOpen = !focusPanelOpen;
   document.getElementById('mid-focus-pills-wrap').classList.toggle('open', focusPanelOpen);
   document.getElementById('mid-focus-caret').classList.toggle('open', focusPanelOpen);
 }
-function focusAll() { plans.forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
+function focusAll()  { plans.forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
 function focusNone() { focusedPlanIds.clear(); renderAll(); }
 function focusOnly(type) { focusedPlanIds.clear(); plans.filter(p => p.type === type).forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
 function toggleFocusPlan(id) {
@@ -1255,8 +1188,7 @@ function renderFocusBar() {
   indicator.classList.toggle('visible', !allFocused);
   pills.innerHTML = plans.map(p => {
     const isFocused = focusedPlanIds.has(p.id);
-    const el = p.item.element || null;
-    const dotColor = p.type === 'weapon' ? '#94a3b8' : getElColor(el);
+    const dotColor = p.type === 'weapon' ? '#94a3b8' : getElColor(p.item.element);
     return `<div class="focus-pill ${isFocused?'active':'inactive'}" onclick="toggleFocusPlan(${p.id})">
       <div class="focus-pill-dot" style="background:${dotColor}"></div>
       <div class="focus-pill-name">${p.item.name}</div>
@@ -1265,15 +1197,13 @@ function renderFocusBar() {
   }).join('');
 }
 
-// ────────────────────────────────────────────────
-// NEED LIST
-// ────────────────────────────────────────────────
+// ── NEED LIST ──
 function toggleCheck(matKey) { checkedMats[matKey] = !checkedMats[matKey]; renderNeed(); }
-function updateHave(matKey, val) { haveQty[matKey] = Math.max(0, parseInt(val) || 0); renderNeed(); }
+function updateHave(matKey, val) { haveQty[matKey] = Math.max(0, parseInt(val)||0); renderNeed(); }
 
 function renderNeed() {
   const empty = document.getElementById('mid-empty');
-  const list = document.getElementById('need-list');
+  const list  = document.getElementById('need-list');
   const badge = document.getElementById('mid-badge-wrap');
   const badgeLabel = document.getElementById('mid-badge');
 
@@ -1286,10 +1216,10 @@ function renderNeed() {
   }
 
   const mats = totalMats();
-  const entries = Object.entries(mats);
+  // Filter out internal tracking keys
+  const entries = Object.entries(mats).filter(([k]) => !k.startsWith('_'));
   if (!entries.length) { list.innerHTML = ''; badge.style.display = 'none'; return; }
 
-  // Group by category
   const byCategory = {};
   for (const [k, qty] of entries) {
     const mat = MATS[k]; if (!mat) continue;
@@ -1308,12 +1238,10 @@ function renderNeed() {
       const checked = checkedMats[k] ? 'checked' : '';
       const highlighted = highlightedMat === k ? 'highlighted' : '';
       const have = haveQty[k] || 0;
-      const pct = Math.min(100, Math.round((have / qty) * 100));
+      const pct  = Math.min(100, Math.round((have / qty) * 100));
       const remaining = Math.max(0, qty - have);
-      // Format big numbers
-      const fmtQty = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
-      const fmtTotal = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
-
+      const fmtQty   = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
+      const fmtTotal = qty     >= 1000 ? (qty/1000).toFixed(1)+'k'     : qty.toLocaleString();
       html += `<div class="need-row ${checked} ${highlighted}" onclick="onNeedRowClick('${k}',event)">
         <div class="need-check"><div class="need-check-inner"></div></div>
         <div class="need-dot" style="background:${mat.color}"></div>
@@ -1335,28 +1263,280 @@ function renderNeed() {
 }
 
 function onNeedRowClick(matKey, e) {
-  if (e.shiftKey || e.ctrlKey || e.metaKey) {
-    highlightMat(matKey);
-  } else {
-    toggleCheck(matKey);
-  }
+  if (e.shiftKey || e.ctrlKey || e.metaKey) highlightMat(matKey);
+  else toggleCheck(matKey);
 }
 
-// ────────────────────────────────────────────────
-// MAP FILTER BAR
-// ────────────────────────────────────────────────
+// ── MAP ──
+function initMaps() {
+  const topBar = document.getElementById('map-top-bar');
+  const hint = document.getElementById('map-loading-hint');
+  const dragHint = document.getElementById('map-drag-hint');
+  document.getElementById('map-loading').style.display = 'none';
+
+  if (!dbMaps.length) { hint.textContent = 'No maps in database'; return; }
+
+  hint.style.display = 'none';
+  dragHint.style.display = '';
+
+  dbMaps.forEach((map, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'map-tab' + (i === 0 ? ' active' : '');
+    btn.id = `mtab-${map.id}`;
+    btn.textContent = map.name;
+    btn.onclick = () => switchMap(map.id);
+    topBar.insertBefore(btn, dragHint);
+  });
+
+  const canvasesEl = document.getElementById('map-canvases');
+  dbMaps.forEach((map, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'map-canvas-wrap' + (i === 0 ? ' active' : '');
+    wrap.id = `mapwrap-${map.id}`;
+    wrap.style.cssText = 'position:absolute;inset:0';
+    canvasesEl.appendChild(wrap);
+  });
+
+  document.getElementById('map-zoom-controls').style.display = 'flex';
+  document.getElementById('map-coords').style.display = 'block';
+  setupMapInteraction();
+
+  if (dbMaps.length) { activeMapId = dbMaps[0].id; renderMapCanvas(activeMapId); }
+}
+
+function switchMap(mapId) {
+  activeMapId = mapId;
+  mapView = { tx: 0, ty: 0, scale: 1 };
+  dbMaps.forEach(m => {
+    document.getElementById(`mtab-${m.id}`)?.classList.toggle('active', m.id === mapId);
+    document.getElementById(`mapwrap-${m.id}`)?.classList.toggle('active', m.id === mapId);
+  });
+  renderMapCanvas(mapId);
+  document.getElementById('map-info-bar').classList.remove('visible');
+}
+
+function getMatColor(matId) { return MATS[matId]?.color || '#6b7280'; }
+function getMatName(matId)  { return MATS[matId]?.name || dbMatsById[matId]?.name || matId; }
+
+function renderMapCanvas(mapId) {
+  const map = dbMaps.find(m => m.id === mapId);
+  if (!map) return;
+  const wrap = document.getElementById(`mapwrap-${mapId}`);
+  if (!wrap) return;
+  const W = map.coord_width, H = map.coord_height;
+  const needMats = totalMats();
+
+  const relevantPins = map.pins.filter(pin => {
+    return Object.keys(needMats).length === 0 || needMats[pin.material_id];
+  });
+
+  if (map.image_url) {
+    // Image-based map with pin overlay
+    const pinsHtml = relevantPins.map(pin => {
+      const matId = pin.material_id;
+      const color = getMatColor(matId);
+      const name = getMatName(matId);
+      const shortName = name.replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
+      const isHL = highlightedMat === matId;
+      const isDim = highlightedMat && !isHL;
+      const borderCol = isHL ? color : 'rgba(255,255,255,0.18)';
+      const glow = isHL ? `box-shadow:0 0 12px ${color}55;` : '';
+      return `<div class="user-pin ${isHL?'highlighted':''} ${isDim?'dimmed':''}"
+        style="left:${pin.x}px;top:${pin.y}px;border-color:${borderCol};${glow}"
+        onclick="onPinClick('${matId}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')"
+        title="${escHtml(name)} — ${escHtml(pin.location_name)}">
+        <div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div>
+        <div>
+          <div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div>
+          <div class="user-pin-sub">${escHtml(pin.location_name)}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    wrap.innerHTML = `<div class="map-viewport" id="map-vp-${mapId}">
+      <div class="map-inner" id="map-inner-${mapId}" style="width:${W}px;height:${H}px;position:relative">
+        <img src="${map.image_url}" style="position:absolute;inset:0;width:${W}px;height:${H}px;object-fit:cover;pointer-events:none;display:block" loading="lazy">
+        ${pinsHtml}
+      </div>
+    </div>`;
+
+    const vp = document.getElementById(`map-vp-${mapId}`);
+    if (vp) vp.addEventListener('mousemove', e => {
+      const inner = document.getElementById(`map-inner-${mapId}`);
+      if (!inner) return;
+      const rect = inner.getBoundingClientRect();
+      const x = Math.round((e.clientX - rect.left) / mapView.scale);
+      const y = Math.round((e.clientY - rect.top)  / mapView.scale);
+      document.getElementById('map-coords').textContent = `x:${x} y:${y}`;
+    });
+
+    document.getElementById('map-zoom-controls').style.display = 'flex';
+    document.getElementById('map-coords').style.display = 'block';
+
+  } else {
+    // No image — fallback: SVG background + pin list below
+    const fallbackSVG = buildFallbackMapSVG(map);
+    const pinListHtml = relevantPins.length
+      ? `<div class="map-pin-list">${relevantPins.map(pin => {
+          const color = getMatColor(pin.material_id);
+          const name  = getMatName(pin.material_id);
+          const isHL  = highlightedMat === pin.material_id;
+          return `<div class="map-pin-list-item" style="${isHL?`border-color:${color};background:${color}12`:''}"
+            onclick="onPinClick('${pin.material_id}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')">
+            <div class="map-pin-list-mat" style="color:${color}">${escHtml(name)}</div>
+            <div class="map-pin-list-loc">${escHtml(pin.location_name)}</div>
+            ${pin.note?`<div class="map-pin-list-note">${escHtml(pin.note)}</div>`:''}
+          </div>`;
+        }).join('')}</div>`
+      : `<div style="padding:20px;font-family:var(--font-mono);font-size:10px;color:var(--muted);text-align:center">No pinned locations match your current material needs.</div>`;
+
+    wrap.innerHTML = `<div style="height:100%;overflow-y:auto;">
+      <div style="position:relative;height:160px;overflow:hidden;flex-shrink:0;">${fallbackSVG}</div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;padding:10px 14px 4px;">
+        Pin locations — upload a map image to enable the interactive view
+      </div>
+      ${pinListHtml}
+    </div>`;
+
+    // Hide zoom/coords for list view
+    document.getElementById('map-zoom-controls').style.display = 'none';
+    document.getElementById('map-coords').style.display = 'none';
+  }
+
+  updateMapTransform();
+  renderMapLegend(mapId);
+}
+
+function onPinClick(matId, zoneName, note) {
+  highlightMat(matId);
+  const map = dbMaps.find(m => m.id === activeMapId);
+  if (map) updateInfoBar(map, matId);
+}
+
+function updateInfoBar(map, matId) {
+  const bar = document.getElementById('map-info-bar');
+  if (!matId || matId !== highlightedMat) { bar.classList.remove('visible'); return; }
+  const color = getMatColor(matId);
+  const name  = getMatName(matId);
+  const pins  = map.pins.filter(p => p.material_id === matId);
+  if (!pins.length) { bar.classList.remove('visible'); return; }
+  document.getElementById('map-info-title').innerHTML =
+    `<span style="color:${color}">●</span> ${escHtml(name)} — ${escHtml(map.name)} farming locations`;
+  document.getElementById('map-info-cards').innerHTML = pins.map(p => {
+    const displayNote = p.note && p.note.trim()
+      ? p.note
+      : (dbMatsById[matId]?.farming_note || 'See map for details');
+    return `<div class="map-info-card">
+      <div class="map-info-card-zone" style="color:${color}">${escHtml(p.location_name)}</div>
+      <div class="map-info-card-desc">${escHtml(displayNote)}</div>
+    </div>`;
+  }).join('');
+  bar.classList.add('visible');
+}
+
+function renderMapLegend(mapId) {
+  const map = dbMaps.find(m => m.id === mapId);
+  const legend = document.getElementById('map-legend');
+  const items  = document.getElementById('legend-items');
+  if (!map || !map.pins.length) { legend.classList.remove('visible'); return; }
+  const needMats = totalMats();
+  const matIds = [...new Set(map.pins.map(p => p.material_id))].filter(k => {
+    return Object.keys(needMats).length === 0 || needMats[k];
+  });
+  if (!matIds.length) { legend.classList.remove('visible'); return; }
+  legend.classList.add('visible');
+  items.innerHTML = matIds.map(k => {
+    const color = getMatColor(k);
+    const name  = getMatName(k).replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
+    const isHL  = highlightedMat === k;
+    const isDim = highlightedMat && !isHL;
+    return `<div class="map-legend-item ${isDim?'dimmed':''}" onclick="highlightMat('${k}')">
+      <div class="map-legend-dot" style="background:${color};${isHL?`box-shadow:0 0 5px ${color}`:''}"></div>
+      <div class="map-legend-name" style="${isHL?`color:${color}`:''}">${escHtml(name)}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildFallbackMapSVG(map) {
+  const W = map.coord_width, H = map.coord_height;
+  return `<svg width="100%" height="160" style="display:block;pointer-events:none" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${W}" height="${H}" fill="#0b1510"/>
+    <defs><pattern id="mg${map.id.slice(0,8)}" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="0.6"/>
+    </pattern></defs>
+    <rect width="${W}" height="${H}" fill="url(#mg${map.id.slice(0,8)})"/>
+    <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text>
+    <text x="${W/2}" y="${H/2+32}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(255,255,255,0.06)" letter-spacing="3">UPLOAD MAP IMAGE TO ENABLE INTERACTIVE VIEW</text>
+  </svg>`;
+}
+
+// ── MAP INTERACTION ──
+function setupMapInteraction() {
+  const area = document.getElementById('map-area');
+  let drag = false, lx = 0, ly = 0;
+  area.addEventListener('mousedown', e => {
+    if (e.button !== 0 || e.target.closest('.user-pin')) return;
+    drag = true; lx = e.clientX; ly = e.clientY;
+    area.style.cursor = 'grabbing'; e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!drag) return;
+    mapView.tx += e.clientX - lx; mapView.ty += e.clientY - ly;
+    lx = e.clientX; ly = e.clientY;
+    updateMapTransform();
+  });
+  window.addEventListener('mouseup', () => { drag = false; if(document.getElementById('map-area')) document.getElementById('map-area').style.cursor=''; });
+  area.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = area.getBoundingClientRect();
+    const factor = e.deltaY < 0 ? 1.12 : 0.88;
+    mapView.tx = (e.clientX - rect.left) + (mapView.tx - (e.clientX - rect.left)) * factor;
+    mapView.ty = (e.clientY - rect.top)  + (mapView.ty - (e.clientY - rect.top))  * factor;
+    mapView.scale = Math.max(0.15, Math.min(6, mapView.scale * factor));
+    updateMapTransform();
+  }, { passive: false });
+}
+function updateMapTransform() {
+  if (!activeMapId) return;
+  const inner = document.getElementById(`map-inner-${activeMapId}`);
+  if (!inner) return;
+  inner.style.transform = `translate(${mapView.tx}px,${mapView.ty}px) scale(${mapView.scale})`;
+  inner.style.transformOrigin = '0 0';
+}
+function mapZoom(factor) {
+  const area = document.getElementById('map-area');
+  const rect = area.getBoundingClientRect();
+  const cx = rect.width / 2, cy = rect.height / 2;
+  mapView.tx = cx + (mapView.tx - cx) * factor;
+  mapView.ty = cy + (mapView.ty - cy) * factor;
+  mapView.scale = Math.max(0.15, Math.min(6, mapView.scale * factor));
+  updateMapTransform();
+}
+function mapReset() { mapView = { tx:0, ty:0, scale:1 }; updateMapTransform(); }
+
+// ── HIGHLIGHT ──
+function highlightMat(matId) {
+  highlightedMat = (highlightedMat === matId) ? null : matId;
+  renderMapFilters();
+  if (activeMapId) {
+    renderMapCanvas(activeMapId);
+    const map = dbMaps.find(m => m.id === activeMapId);
+    if (map) updateInfoBar(map, matId);
+    else document.getElementById('map-info-bar').classList.remove('visible');
+  }
+  renderNeed();
+}
+
+// ── MAP FILTER BAR ──
 function renderMapFilters() {
   const bar = document.getElementById('map-filter-bar');
   const chipsEl = document.getElementById('mat-chips');
   if (!plans.length || !dbMaps.length) { bar.classList.remove('visible'); return; }
   bar.classList.add('visible');
   const needMats = totalMats();
-  // Show chips for materials that have pins on any map
   const matsWithPins = new Set();
-  for (const map of dbMaps) {
-    for (const pin of map.pins) matsWithPins.add(pin.material_id);
-  }
-  chipsEl.innerHTML = Object.keys(needMats).filter(k => MATS[k] && matsWithPins.has(k)).map(k => {
+  for (const map of dbMaps) for (const pin of map.pins) matsWithPins.add(pin.material_id);
+  chipsEl.innerHTML = Object.keys(needMats).filter(k => MATS[k] && matsWithPins.has(k) && !k.startsWith('_')).map(k => {
     const mat = MATS[k];
     const active = highlightedMat === k ? 'active' : '';
     return `<div class="mat-chip ${active}" onclick="highlightMat('${k}')">
@@ -1365,9 +1545,7 @@ function renderMapFilters() {
   }).join('');
 }
 
-// ────────────────────────────────────────────────
-// MODAL
-// ────────────────────────────────────────────────
+// ── MODAL ──
 function openModal(type) {
   modalType = type; activeFilter = 'all';
   document.getElementById('modal-title').textContent = type === 'operator' ? 'Add Operator' : 'Add Weapon';
@@ -1384,19 +1562,18 @@ function buildFilterButtons() {
   const fb = document.getElementById('filter-buttons');
   if (modalType === 'operator') {
     const elements = ['All','Heat','Cryo','Electric','Physical','Nature'];
-    const classes = ['Striker','Guard','Caster','Defender','Supporter','Vanguard'];
+    const classes  = ['Striker','Guard','Caster','Defender','Supporter','Vanguard'];
     fb.innerHTML = elements.map(e => `<button class="filter-btn ${activeFilter===e.toLowerCase()||activeFilter===e?'active':''}" onclick="setFilter('${e.toLowerCase()}')">${e}</button>`).join('')
       + '<span style="color:var(--border2);padding:0 4px">|</span>'
       + classes.map(c => `<button class="filter-btn ${activeFilter===c.toLowerCase()?'active':''}" onclick="setFilter('${c.toLowerCase()}')">${c}</button>`).join('');
   } else {
     const types = ['All','Sword','Gt. Sword','Polearm','Arts Unit','Handcannon'];
-    const rars = ['6★','5★','4★'];
+    const rars  = ['6★','5★','4★'];
     fb.innerHTML = types.map(t => `<button class="filter-btn ${activeFilter===t.toLowerCase()?'active':''}" onclick="setFilter('${t.toLowerCase()}')">${t}</button>`).join('')
       + '<span style="color:var(--border2);padding:0 4px">|</span>'
       + rars.map(r => `<button class="filter-btn ${activeFilter===r.replace('★','star')?'active':''}" onclick="setFilter('${r.replace('★','star')}')">${r}</button>`).join('');
   }
 }
-
 function setFilter(f) { activeFilter = f; buildFilterButtons(); filterModal(); }
 function filterModal() {
   const q = document.getElementById('modal-search').value.toLowerCase();
@@ -1404,16 +1581,15 @@ function filterModal() {
   let filtered = source;
   if (activeFilter !== 'all') {
     filtered = filtered.filter(x => {
-      const el = (x.element || '').toLowerCase();
-      const cls = (x.cls || '').toLowerCase();
-      const type = (x.type || '').toLowerCase();
-      return el === activeFilter || cls === activeFilter || type === activeFilter || (x.rarity + 'star') === activeFilter;
+      const el   = (x.element||'').toLowerCase();
+      const cls  = (x.cls||'').toLowerCase();
+      const type = (x.type||'').toLowerCase();
+      return el === activeFilter || cls === activeFilter || type === activeFilter || (x.rarity+'star') === activeFilter;
     });
   }
   if (q) filtered = filtered.filter(x => x.name.toLowerCase().includes(q));
   renderModalList(filtered);
 }
-
 function renderModalList(items) {
   const list = document.getElementById('modal-list');
   if (!items.length) { list.innerHTML = '<p style="grid-column:1/-1;font-size:12px;color:var(--muted);font-family:var(--font-mono);padding:8px">No results</p>'; return; }
@@ -1428,9 +1604,7 @@ function renderModalList(items) {
       iconContent = imgPath
         ? `<img src="${imgPath}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`
         : (EL_ICON[el] || OP_ICON);
-    } else {
-      iconContent = WPN_ICON;
-    }
+    } else { iconContent = WPN_ICON; }
     return `<button class="modal-item" onclick='selectItem(${JSON.stringify(item).replace(/'/g,"&#39;")})' style="${inPlan?'border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)':''}">
       <div class="modal-item-icon" style="${el?`border-color:${elColor}40;`:''}">${iconContent}</div>
       <div>
@@ -1444,22 +1618,11 @@ function selectItem(item) { addPlan(modalType, item); }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-// ────────────────────────────────────────────────
-// INIT
-// ────────────────────────────────────────────────
+// ── INIT ──
 window.addEventListener('load', async () => {
   renderAll();
-
-  // Load DB data in parallel
-  await Promise.all([
-    loadDbData(),
-    loadCharImages(),
-  ]);
-
-  // Init maps
+  await Promise.all([loadDbData(), loadCharImages()]);
   initMaps();
-
-  // Re-render with portraits
   renderAll();
 });
 </script>
