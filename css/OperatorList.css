@@ -108,6 +108,7 @@ body::before {
 .op-card { position: relative; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s; aspect-ratio: 0.72; border: 1px solid var(--bord2); }
 .op-card:hover { transform: translateY(-8px); }
 .op-card.hidden { display: none !important; }
+.card-wrap.hidden { display: none !important; }
 
 /* Element Gradients */
 .bg-Heat     { background: linear-gradient(155deg, #2a1108 0%, #170702 100%); }

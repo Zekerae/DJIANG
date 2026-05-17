@@ -146,7 +146,7 @@ function createCard(op) {
          data-id="${op.id}"
          data-name="${op.name.toLowerCase()}"
          data-rarity="${op.rarity}"
-         data-class="${op.cls}"
+         data-cls="${op.cls}"
          data-element="${op.element}"
          data-weapon="${op.weapon}"
          data-owned="${isOwned}"
@@ -283,7 +283,7 @@ function updateFilters() {
   document.querySelectorAll('.card-wrap').forEach(card => {
     const matchesSearch  = card.dataset.name.includes(query);
     const matchesRarity  = filters.rarity.size === 0 || filters.rarity.has(card.dataset.rarity);
-    const matchesClass   = filters.class.size === 0 || filters.class.has(card.dataset.class);
+    const matchesClass   = filters.class.size === 0 || filters.class.has(card.dataset.cls);
     const matchesElement = filters.element.size === 0 || filters.element.has(card.dataset.element);
     const matchesWeapon  = filters.weapon.size === 0 || filters.weapon.has(card.dataset.weapon);
     const matchesOwned   = !filterOwned || card.dataset.owned === 'true';
