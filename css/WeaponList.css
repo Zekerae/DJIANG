@@ -248,11 +248,11 @@ body::before {
 
 /* Passive toggle button */
 .passive-btn {
-  position: absolute; bottom: 10px; right: 10px; z-index: 10;
+  position: absolute; bottom: 10px; right: 10px; z-index: 15;
   background: rgba(0,0,0,0.7); border: 1px solid var(--bord2); border-radius: 4px;
   width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: all 0.2s; color: var(--dim2); font-size: 0.7rem;
-  pointer-events: auto;
+  pointer-events: auto; overflow: visible;
 }
 .passive-btn:hover { border-color: var(--gold); color: var(--gold2); background: rgba(212,148,58,0.15); }
 .wpn-card.passive-open .passive-btn { background: rgba(212,148,58,0.2); border-color: var(--gold); color: var(--gold2); }
@@ -265,13 +265,15 @@ body::before {
 
 /* ── CARD WRAP (outer shell that includes card + drawer) ── */
 .wpn-card-wrap {
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; align-self: start;
 }
 .wpn-card-wrap.hidden { display: none !important; }
 
 /* Owned glow on the card */
 .wpn-card.card-owned {
   box-shadow: 0 0 0 1px rgba(212,148,58,0.4), 0 0 14px rgba(212,148,58,0.12);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 /* ── OWNED BADGE ── */
