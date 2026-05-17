@@ -182,25 +182,29 @@ function createCard(op) {
         <div class="card-stars">${stars}</div>
 
         <!-- Progress tracker — visible only when owned -->
-        <div class="card-tracker${isOwned ? ' visible' : ''}" onclick="event.stopPropagation()">
-          <label class="tracker-field">
+        <div class="card-tracker${isOwned ? ' visible' : ''}">
+          <label class="tracker-field" onclick="event.stopPropagation()">
             <span class="tracker-lbl">Lv</span>
             <input class="tracker-input" type="number" min="1" max="90" placeholder="—"
               value="${entry.level || ''}"
+              onclick="event.stopPropagation()"
+              onfocus="event.stopPropagation()"
               oninput="saveTrackerField(event, '${op.id}', 'level')">
           </label>
         </div>
-        <div class="card-tracker card-tracker-skills${isOwned ? ' visible' : ''}" onclick="event.stopPropagation()">
+        <div class="card-tracker card-tracker-skills${isOwned ? ' visible' : ''}">
           ${[
             ['BA', 'basic_attack',  'Basic Attack'],
             ['BS', 'battle_skill',  'Battle Skill'],
             ['CS', 'combo_skill',   'Combo Skill'],
             ['UL', 'ultimate_skill','Ultimate Skill']
           ].map(([abbr, key, label]) => `
-            <label class="tracker-field" title="${label}">
+            <label class="tracker-field" title="${label}" onclick="event.stopPropagation()">
               <span class="tracker-lbl">${abbr}</span>
               <input class="tracker-input" type="number" min="1" max="12" placeholder="—"
                 value="${(entry.skill_levels && entry.skill_levels[key]) || ''}"
+                onclick="event.stopPropagation()"
+                onfocus="event.stopPropagation()"
                 oninput="saveSkillLevel(event, '${op.id}', '${key}')">
             </label>
           `).join('')}
@@ -211,7 +215,8 @@ function createCard(op) {
 }
 
 function cardNavigate(event, id) {
-  if (event.target.closest('.card-tracker') || event.target.closest('.owned-badge')) return;
+  const t = event.target;
+  if (t.closest('.card-tracker') || t.closest('.owned-badge') || t.tagName === 'INPUT' || t.tagName === 'LABEL') return;
   window.location.href = `CharacterIntroduction.html?char=${id}`;
 }
 
