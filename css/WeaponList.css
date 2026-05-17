@@ -263,6 +263,67 @@ body::before {
   font-family: 'Rajdhani', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--dim);
 }
 
+/* ── CARD WRAP (outer shell that includes card + drawer) ── */
+.wpn-card-wrap {
+  display: flex; flex-direction: column;
+}
+.wpn-card-wrap.hidden { display: none !important; }
+
+/* Owned glow on the card */
+.wpn-card.card-owned {
+  box-shadow: 0 0 0 1px rgba(212,148,58,0.4), 0 0 14px rgba(212,148,58,0.12);
+}
+
+/* ── OWNED BADGE ── */
+.owned-badge {
+  position: absolute; top: 8px; left: 8px; z-index: 10;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(0,0,0,0.55); border: 1px solid var(--bord2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s;
+}
+.owned-badge:hover { border-color: var(--gold); background: rgba(212,148,58,0.15); }
+.owned-check { font-size: 13px; color: var(--dim); line-height: 1; transition: color 0.2s; }
+.owned-badge.owned { background: rgba(212,148,58,0.22); border-color: var(--gold); }
+.owned-badge.owned .owned-check { color: var(--gold2); }
+
+/* ── WEAPON DRAWER ── */
+.wpn-drawer {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.28s cubic-bezier(0.22,1,0.36,1);
+  background: rgba(8,10,16,0.97); border: 1px solid var(--bord2); border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+.wpn-drawer.open { max-height: 80px; }
+.drawer-inner { padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+.drawer-field { display: flex; align-items: center; gap: 8px; }
+.drawer-lbl {
+  font-family: 'Rajdhani', sans-serif; font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim2); white-space: nowrap;
+}
+.drawer-input {
+  width: 70px; background: rgba(0,0,0,0.35); border: 1px solid var(--bord2); border-radius: 4px;
+  padding: 5px 10px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+  text-align: center; transition: border-color 0.2s;
+}
+.drawer-input:focus { outline: none; border-color: rgba(212,148,58,0.5); background: rgba(0,0,0,0.55); }
+
+/* ── LEVEL FILTER GROUP ── */
+.fgroup-level { min-width: 200px; }
+.level-range-wrap { display: flex; flex-direction: column; gap: 6px; }
+.level-range-labels {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--text);
+}
+.level-range-sep { color: var(--dim); }
+.level-sliders { display: flex; flex-direction: column; gap: 4px; }
+.lv-slider {
+  width: 100%; accent-color: var(--gold); height: 3px; cursor: pointer;
+  -webkit-appearance: none; background: var(--bord2); border-radius: 2px;
+}
+.lv-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+.level-range-hint { font-size: 0.62rem; color: var(--dim); font-style: italic; }
+
 /* --- RESPONSIVE --- */
 @media (max-width: 860px) {
   .hero-left h1 { font-size: 3rem; }
