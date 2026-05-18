@@ -169,9 +169,9 @@ function createCard(w) {
     : '';
 
   const entry   = getWeaponEntry(w.id);
-  const isOwned = !!entry.owned;
-  const drawerVisible = isOwned ? ' open' : '';
   const progressLevel = getProgressLevel(w.id);
+  const isOwned = !!entry.owned || progressLevel !== null;
+  const drawerVisible = isOwned ? ' open' : '';
 
   return `
     <div class="wpn-card-wrap${isOwned ? ' wpn-wrap-owned' : ''}"
