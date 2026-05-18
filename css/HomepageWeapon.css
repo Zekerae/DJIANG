@@ -158,12 +158,93 @@
 .carousel-arrow-button:active { transform: scale(0.92); }
 
 /* ═══════════════════════════════════════════════
-   MOBILE EXCEPTIONS
+   DESKTOP OPTIMIZATION — WEAPON 3D CAROUSEL
 ═══════════════════════════════════════════════ */
-@media (max-width: 768px) {
+
+@media screen and (min-width:769px) {
+    /* 1. Flatten the extreme "fisheye" 3D distortion on desktop */
+    #carousel-3D {
+        perspective: 100px !important; 
+        overflow: hidden;
+    }
+
+    /* 2. Zoom the desktop camera out by 35% */
     .carousel-scene {
-        /* Pushes the 3D 'camera' angle up slightly on phones to make more room for the UI buttons at the bottom */
-        height: 60dvh;
-        perspective-origin: 50% 40%; 
+        /* Adjust this 0.65 up or down to find the perfect size for your laptop */
+        transform: scale(0.65) !important; 
+        transform-origin: center center !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   MOBILE OPTIMIZATION — WEAPON 3D CAROUSEL
+═══════════════════════════════════════════════ */
+@media screen and (max-width: 768px) {
+    /* 1. The Main Container */
+    #carousel-3D {
+        overflow: hidden !important;
+        width: 100vw !important;
+        height: 60vh !important; 
+        min-height: 450px !important;
+        padding: 0 !important;
+        position: relative !important; 
+    }
+
+    /* 2. THE MISSING LINK: Force the inner div to pass the height down */
+    .carousel-3D {
+        width: 100% !important;
+        height: 100% !important;
+        position: relative !important;
+    }
+
+    /* 3. The Wrapper (Now has actual space to push buttons to the bottom!) */
+    .carousel-wrapper {
+        position: relative !important;
+        width: 100% !important;
+        height: 100% !important; 
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-end !important; /* Pushes buttons to the bottom */
+        align-items: center !important;
+        padding-bottom: 30px !important; 
+        perspective: 2000px !important; 
+    }
+
+    /* 4. The 3D Scene (Absolutely Centered) */
+    .carousel-scene {
+        position: absolute !important;
+        top: 45% !important; 
+        left: 50% !important;
+        transform: translate(-50%, -50%) scale(0.22) !important; 
+        transform-origin: center center !important;
+        margin: 0 !important; 
+        z-index: 1 !important;
+    }
+
+    /* 5. The Controls (Absolutely Pinned to the Bottom Center) */
+    .carousel-indicator-dots {
+        position: absolute !important;
+        bottom: 70px !important; /* Distance from the bottom of the section */
+        left: 50% !important;
+        transform: translateX(-50%) !important; /* Guarantees true dead-center */
+        margin: 0 !important;
+        z-index: 10 !important;
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    .carousel-controls {
+        position: absolute !important;
+        bottom: 20px !important; /* Pinned safely right above the footer */
+        left: 50% !important;
+        transform: translateX(-50%) !important; /* Guarantees true dead-center */
+        margin: 0 !important;
+        z-index: 10 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 40px !important; /* Perfect spacing between < and > arrows */
+        width: 100% !important;
     }
 }
