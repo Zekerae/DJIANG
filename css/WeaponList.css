@@ -601,6 +601,139 @@
 .roster-notice a { color: var(--gold2); text-decoration: none; }
 .roster-notice a:hover { text-decoration: underline; }
 
+/* ── HELP BUTTON (hero) ── */
+.page-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.help-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--bord2);
+  color: var(--dim2);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: .2s;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+  user-select: none;
+}
+.help-btn:hover {
+  background: rgba(212,148,58,.18);
+  border-color: var(--gold);
+  color: var(--gold2);
+}
+
+/* ── GUIDED TOUR OVERLAY ── */
+.tour-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.tour-overlay.active { opacity: 1; pointer-events: auto; }
+
+.tour-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(4,3,10,.82);
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+}
+
+.tour-spotlight {
+  position: absolute;
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(4,3,10,.82);
+  border: 2px solid var(--gold);
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+  pointer-events: none;
+  z-index: 9001;
+}
+
+.tour-card {
+  position: absolute;
+  width: 300px;
+  background: linear-gradient(145deg,#16121e,#0e0b16);
+  border: 1px solid rgba(212,148,58,.35);
+  border-radius: 10px;
+  padding: 18px 20px 14px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.04);
+  z-index: 9002;
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+}
+.tour-step-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tour-step-dots { display: flex; gap: 4px; margin-left: auto; }
+.tour-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.15); }
+.tour-dot.active { background: var(--gold); }
+.tour-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  color: #fff;
+  margin-bottom: 7px;
+  line-height: 1.1;
+}
+.tour-desc {
+  font-size: .73rem;
+  color: var(--dim2);
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+.tour-desc b { color: var(--gold2); font-weight: 600; }
+.tour-actions { display: flex; align-items: center; justify-content: space-between; }
+.tour-skip {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--dim);
+  cursor: pointer;
+  transition: .2s;
+  background: transparent;
+  border: none;
+}
+.tour-skip:hover { color: #e05a5a; }
+.tour-nav { display: flex; gap: 8px; }
+.tour-btn {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: .2s;
+  border: 1px solid var(--bord2);
+  background: rgba(255,255,255,.05);
+  color: var(--dim2);
+}
+.tour-btn:hover { background: rgba(255,255,255,.1); color: var(--text); }
+.tour-btn.primary { background: rgba(212,148,58,.18); border-color: var(--gold); color: var(--gold2); }
+.tour-btn.primary:hover { background: rgba(212,148,58,.3); }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 860px) {
   .page-wrap { padding-left: 20px; padding-right: 20px; }
