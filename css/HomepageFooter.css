@@ -25,7 +25,7 @@
     flex-direction: row;
 
     /* 1. Use a very dark, 85% opaque background */
-    background: rgba(8, 10, 14, 0.75) !important; 
+    background: rgba(0, 0, 0, 0.75) !important; 
         
     /* 2. Optional: Add a slight blur to frost the topographic lines underneath */
     backdrop-filter: blur(6px) !important; 
@@ -190,4 +190,89 @@ html, body {
 /* Ensure the sub-footer isn't secretly creating a gap */
 .sub-footer {
     margin-bottom: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════
+   MOBILE OPTIMIZATION — FOOTER (FIXED SCALING)
+═══════════════════════════════════════════════ */
+@media screen and (max-width: 768px) {
+    /* 1. Stack the 4 columns vertically instead of side-by-side */
+    .sub-footer {
+        flex-direction: column !important;
+        height: auto !important;
+        padding-bottom: 20px !important;
+    }
+
+    /* 2. Make each section take up the full width of the phone */
+    .subFooter-container {
+        width: 100% !important;
+        border-left: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding: 30px 5% !important;
+        box-sizing: border-box !important;
+        min-height: auto !important;
+    }
+
+    /* 3. Rescale the microscopic fonts to readable Pixel (px) sizes */
+    .subFooter-container .top {
+        font-size: 16px !important;
+        margin-bottom: 15px !important;
+        height: auto !important;
+        margin-top: 0 !important;
+    }
+
+    .subFooter-container .bottom {
+        font-size: 14px !important;
+        line-height: 1.8 !important;
+        height: auto !important;
+    }
+
+    /* 4. Fix the specific console text block so long file names don't break the screen */
+    .subFooter-container#sfc1 .bottom {
+        font-size: 12px !important;
+        word-wrap: break-word !important; 
+        white-space: normal !important;
+    }
+
+    /* 5. Shrink the bottom-most canvas container so it doesn't leave a massive void */
+    #footer {
+        height: auto !important;
+        min-height: 120px !important;
+    }
+    
+    /* 1. Stop the Glitch Animation from slicing your text! */
+    .subFooter-container .top,
+    .subFooter-container .bottom,
+    .subFooter-container .tglitch-animation {
+        white-space: normal !important; /* Forces text to drop to a new line */
+        word-wrap: break-word !important;
+        overflow: visible !important;
+    }
+
+    /* 2. Shrink the header font slightly so long words fit better */
+    .subFooter-container .top {
+        font-size: 13px !important; /* Scaled down from 16px */
+        letter-spacing: 0.1em !important; /* Slightly tighter spacing */
+        margin-bottom: 15px !important;
+        height: auto !important;
+        margin-top: 0 !important;
+    }
+
+    /* 3. Absolutely crush any remaining space in the bottom footer container */
+    #footer, 
+    .parralax, 
+    .footer-container {
+        position: relative !important;
+        height: auto !important;
+        min-height: 0 !important; /* Kills the artificial height */
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* 4. Ensure the canvas doesn't stretch past its container on mobile */
+    #res-canvas {
+        height: 100% !important;
+        max-height: 100% !important;
+        display: block !important;
+    }
 }
