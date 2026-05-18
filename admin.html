@@ -1569,17 +1569,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   function deleteUser(id, name) {
-    pendingAction = async () => {
-      const { error } = await db.from('profiles').delete().eq('id', id);
-      if (error) { toast('error', 'Failed: ' + error.message); return; }
-      allUsers = allUsers.filter(u => u.id !== id);
-      toast('success', `${name} deleted.`);
-      updateStats(); refreshAll();
-    };
-    document.getElementById('confirm-title').textContent = 'Delete User';
-    document.getElementById('confirm-sub').textContent = `Permanently delete "${name}"? This cannot be undone.`;
-    openModal('confirm-modal');
-  }
+  pendingAction = async () => {
+    // 1. Add .select() so Supabase returns the rows it actually deleted
+    const { data, error } = await db.from('profiles').delete().eq('id', id).select();
+    
+    if (error) { 
+        toast('error', 'Failed: ' + error.message); 
+        return; 
+    }
+    
+    // 2. Catch the "Silent Failure" if RLS blocked the deletion
+    if (!data || data.length === 0) {
+        toast('error', 'Database blocked deletion! Check Supabase RLS Policies.');
+        return;
+    }
+
+    // 3. Update the local array
+    allUsers = allUsers.filter(u => u.id !== id);
+    toast('success', `${name} deleted.`);
+    
+    // 4. Force the UI to actually re-render the tables with the new array!
+    updateStats(); 
+    renderRecentUsers();
+    renderUsersTable(); // This was missing in your original code!
+    renderAdminsTable();
+    document.getElementById('sidebar-user-count').textContent = allUsers.length;
+  };
+
+  document.getElementById('confirm-title').textContent = 'Delete User';
+  document.getElementById('confirm-sub').textContent = `Permanently delete "${name}"? This cannot be undone.`;
+  openModal('confirm-modal');
+}
   
   function openInviteModal() { document.getElementById('invite-email').value = ''; openModal('invite-modal'); }
   
