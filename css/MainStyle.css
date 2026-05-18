@@ -18,7 +18,16 @@ html, body {
 #carousel-3D{
     overflow: hidden;
 }
-#character-slide{
+
+#character-slide {
     position: relative;
-    height: 120%;
+    height: 100vh !important; /* Changed from 120% to lock it exactly to the screen height */
+    margin-bottom: 0 !important; /* Forces the bottom to sit flush */
+    padding-bottom: 0 !important;
+    overflow: hidden;
+}
+
+#carousel-3D {
+    margin-top: 0 !important; /* Pulls the weapon carousel flush against the top */
+    padding-top: 0 !important;
 }

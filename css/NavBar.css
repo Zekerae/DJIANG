@@ -222,6 +222,9 @@ body {
     padding: 6px 40px 6px 26px;
     margin-left: var(--sidebar-item-indent);
     position: relative;
+    width: 90% !important; /* Prevents it from overflowing the sidebar */
+    box-sizing: border-box !important;
+    gap: 16px !important;  /* Creates a permanent physical space between text and page numbers */
     z-index: 1;
     display: inline-flex;
     align-items: center;
@@ -243,6 +246,10 @@ body {
 .sidebar-text {
     display: inline-block;
     color: inherit;
+    flex: 1 !important; /* Pushes the page number to the far right */
+    white-space: normal !important; /* Allows long words to drop to a second line */
+    word-wrap: break-word !important;
+    line-height: 1.1 !important;
 }
 
 .sidebar-page-num {
@@ -254,9 +261,9 @@ body {
     color: rgba(135, 135, 135, 0.5);
     line-height: 1.4;
     white-space: nowrap;
-    flex-shrink: 0;
-    align-self: flex-start;
-    padding-top: 6px;
+    flex-shrink: 0 !important;
+    align-self: center !important;
+    padding-top: 0 !important;
     opacity: 0;
     transform: translateX(6px);
     transition: opacity 0.2s ease, transform 0.2s ease;
