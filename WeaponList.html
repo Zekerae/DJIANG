@@ -14,6 +14,26 @@
 </head>
 <body>
 
+<!-- GUIDED TOUR OVERLAY -->
+<div class="tour-overlay" id="tourOverlay">
+  <div class="tour-spotlight" id="tourSpotlight"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-step-label">
+      <span id="tourStepNum">Step 1 of 6</span>
+      <div class="tour-step-dots" id="tourDots"></div>
+    </div>
+    <div class="tour-title" id="tourTitle">Welcome</div>
+    <div class="tour-desc" id="tourDesc">Let's walk you through the page.</div>
+    <div class="tour-actions">
+      <button class="tour-skip" id="tourSkip" onclick="endTour()">Skip Tour</button>
+      <div class="tour-nav">
+        <button class="tour-btn" id="tourPrev" onclick="tourStep(-1)">← Back</button>
+        <button class="tour-btn primary" id="tourNext" onclick="tourStep(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="page-wrap">
 
   <div class="page-hero">
@@ -21,6 +41,7 @@
       <h1>Weapon Database</h1>
       <div class="sub">Arknights: Endfield · Weapon Overview</div>
     </div>
+    <button class="help-btn" id="helpBtn" onclick="startTour()" title="Page Tour">?</button>
   </div>
 
   <div class="filter-zone" id="filterZone">
