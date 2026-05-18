@@ -679,9 +679,10 @@
   z-index: 9002;
   transition: all .35s cubic-bezier(.4,0,.2,1);
   color: #e8e4f0;
+  font-family: 'DM Sans', sans-serif !important;
 }
 .tour-step-label {
-  font-family: 'Rajdhani', sans-serif;
+  font-family: 'Rajdhani', sans-serif !important;
   font-size: .55rem;
   font-weight: 700;
   letter-spacing: 2px;
@@ -696,7 +697,7 @@
 .tour-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.2); }
 .tour-dot.active { background: #f0b866; box-shadow: 0 0 6px rgba(240,184,102,.8); }
 .tour-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Bebas Neue', sans-serif !important;
   font-size: 1.3rem;
   letter-spacing: 2.5px;
   color: #ffffff;
@@ -705,17 +706,17 @@
   text-shadow: 0 0 20px rgba(212,148,58,.4);
 }
 .tour-desc {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'DM Sans', sans-serif !important;
   font-size: .78rem;
   font-weight: 400;
   color: #d4cfdf !important;
   line-height: 1.7;
   margin-bottom: 14px;
 }
-.tour-desc b { font-family: 'DM Sans', sans-serif; color: #f0b866 !important; font-weight: 600; }
+.tour-desc b { font-family: 'DM Sans', sans-serif !important; color: #f0b866 !important; font-weight: 600; }
 .tour-actions { display: flex; align-items: center; justify-content: space-between; }
 .tour-skip {
-  font-family: 'Rajdhani', sans-serif;
+  font-family: 'Rajdhani', sans-serif !important;
   font-size: .6rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -729,7 +730,7 @@
 .tour-skip:hover { color: #e05a5a !important; }
 .tour-nav { display: flex; gap: 8px; }
 .tour-btn {
-  font-family: 'Rajdhani', sans-serif;
+  font-family: 'Rajdhani', sans-serif !important;
   font-size: .65rem;
   font-weight: 700;
   letter-spacing: 1px;
