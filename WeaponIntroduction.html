@@ -1034,8 +1034,10 @@ const RARITY_STRIPE = {
 };
 
 const MAX_LEVEL  = { 6:90, 5:80, 4:70, 3:60 };
-const ATK_MIN    = { 6:48, 5:38, 4:32, 3:27 };
 const MILESTONES = { 6:[20,40,60,80,90], 5:[20,40,60,80], 4:[20,40,60,70], 3:[20,40,60] };
+
+// Populated from weapon_atk_curve: { [weapon_id]: [ {lv, atk}, ... ] sorted by lv }
+let DB_ATK_CURVES = {};
 
 const SUBSTAT_SCALE = {
   atk_pct:   { min:0.60, label:(v)=>`Attack +${v.toFixed(2)}%` },
@@ -1145,6 +1147,40 @@ async function fetchAllWeaponSkills() {
     DB_WEAPON_SKILLS[row.id].push({ id:row.skill_id, name:row.skill_name, maxLv:row.max_lv, defaultLv:row.default_lv, data, render:renderFn });
   }
 }
+async function fetchAllAtkCurves() {
+  const rows = await sbGet('weapon_atk_curve', 'select=weapon_id,lv,atk&order=weapon_id.asc,lv.asc');
+  DB_ATK_CURVES = {};
+  for (const row of rows) {
+    if (!DB_ATK_CURVES[row.weapon_id]) DB_ATK_CURVES[row.weapon_id] = [];
+    DB_ATK_CURVES[row.weapon_id].push({ lv: row.lv, atk: row.atk });
+  }
+}
+
+// Interpolate ATK at any level using the piecewise breakpoints from weapon_atk_curve.
+// Falls back to lerp against base_atk if curve data isn't available.
+function getAtkAtLevel(weapon, level) {
+  const curve = DB_ATK_CURVES[weapon.id];
+  if (curve && curve.length >= 2) {
+    // Find surrounding breakpoints
+    for (let i = 0; i < curve.length - 1; i++) {
+      const lo = curve[i];
+      const hi = curve[i + 1];
+      if (level >= lo.lv && level <= hi.lv) {
+        const t = (level - lo.lv) / (hi.lv - lo.lv);
+        return Math.round(lo.atk + (hi.atk - lo.atk) * t);
+      }
+    }
+    // Clamp to edges
+    if (level <= curve[0].lv) return curve[0].atk;
+    return curve[curve.length - 1].atk;
+  }
+  // Fallback: linear interpolation using rarity-based min values
+  const atkMin = { 6:48, 5:38, 4:32, 3:27 }[weapon.rarity] || 48;
+  const maxLv  = MAX_LEVEL[weapon.rarity] || 90;
+  const t      = (level - 1) / (maxLv - 1);
+  return Math.round(atkMin + (weapon.base_atk - atkMin) * t);
+}
+
 async function fetchProgress(weaponId) {
   try { const rows = await sbGet('weapon_progress',`select=*&weapon_id=eq.${weaponId}`); return rows[0]||null; }
   catch { return null; }
@@ -1354,9 +1390,7 @@ function updateLevel(lv) {
   document.getElementById('lvDisplay').innerHTML     = `${lv}<span>/ ${maxLv}</span>`;
   document.getElementById('cardLevelBadge').textContent = `LV ${lv}`;
   updateMilestonePips(lv);
-  const atkMin = ATK_MIN[w.rarity]||48;
-  const atkMax = w.base_atk||400;
-  const atk    = Math.round(lerp(atkMin, atkMax, t));
+  const atk    = getAtkAtLevel(w, lv);
   const atkEl  = document.getElementById('atkDisplay');
   atkEl.textContent = atk;
   atkEl.classList.remove('bump'); void atkEl.offsetWidth; atkEl.classList.add('bump');
@@ -1529,7 +1563,7 @@ document.getElementById('trackEnd').addEventListener('input', updateTrackMats);
    INIT
    ========================================================= */
 async function init() {
-  await Promise.all([fetchWeapons(), fetchAllWeaponSkills()]);
+  await Promise.all([fetchWeapons(), fetchAllWeaponSkills(), fetchAllAtkCurves()]);
   document.getElementById('loadingOverlay').classList.add('hide');
   if (WEAPONS.length > 0) {
     const params    = new URLSearchParams(window.location.search);
