@@ -359,17 +359,6 @@ async function toggleOwned(event, id) {
   if (currentSort === 'level') applySort();
 }
 
-  else { val = Math.min(90, Math.max(1, val)); input.value = val; }
-
-  const wrap = document.querySelector(`.wpn-card-wrap[data-id="${id}"]`);
-  if (wrap) wrap.dataset.level = val !== null ? String(val) : '';
-
-  if (currentSort === 'level') applySort();
-  if (filterLevelActive) updateFilters();
-
-  
-}
-
 // ==========================================
 // NAVIGATE (card click — skip badge / drawer / passive)
 // ==========================================
