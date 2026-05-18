@@ -1824,7 +1824,7 @@ function renderEffectDesc(sk, lv, weapon) {
     result = result.replace(' ' + k + ' ', '<span class="hl-atk">' + display + '</span>');
   }
   // Clean any unreplaced placeholders
-  result = result.replace(/ \w+ /g, '?');
+  result = result.replace(/ \w+ /g, ' ');
   return result;
 }
 
