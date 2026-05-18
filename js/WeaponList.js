@@ -35,13 +35,15 @@ async function loadWeaponProgress() {
     } catch { WEAPON_PROGRESS = {}; }
     return;
   }
-  const { data, error } = await db
-    .from('weapon_progress')
-    .select('weapon_id, level')
-    .eq('user_id', CURRENT_USER.id);
-  if (error) { console.warn('Weapon progress load error:', error); return; }
-  WEAPON_PROGRESS = {};
-  (data || []).forEach(row => { if (row.level != null) WEAPON_PROGRESS[row.weapon_id] = { level: row.level }; });
+  try {
+    const { data, error } = await db
+      .from('weapon_progress')
+      .select('weapon_id, level')
+      .eq('user_id', CURRENT_USER.id);
+    if (error) { console.warn('Weapon progress load error:', error); return; }
+    WEAPON_PROGRESS = {};
+    (data || []).forEach(row => { if (row.level != null) WEAPON_PROGRESS[row.weapon_id] = { level: row.level }; });
+  } catch(e) { console.warn('Weapon progress fetch failed:', e); }
 }
 
 function getProgressLevel(id) {
@@ -57,6 +59,7 @@ async function upsertWeaponEntry(weaponId, patch) {
     user_id:    CURRENT_USER.id,
     weapon_id:  weaponId,
     owned:      updated.owned,
+    level:      null,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id,weapon_id' });
   if (error) console.warn('Weapon roster save error:', error);
@@ -300,7 +303,7 @@ async function init() {
 
   await loadWeaponsFromDB();
   if (CURRENT_USER) await loadWeaponRoster();
-  await loadWeaponProgress();
+  try { await loadWeaponProgress(); } catch(e) { console.warn("loadWeaponProgress error:", e); }
 
   grid.innerHTML = WEAPONS.map(createCard).join('');
   applySort();
