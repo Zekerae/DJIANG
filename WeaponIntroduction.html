@@ -754,7 +754,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <div class="logo-mark">DJIANG</div>
+      <div class="logo-mark">EF</div>
       <div class="breadcrumb">
         <a href="index.html">Home</a>
         <span class="sep">/</span>
@@ -1769,17 +1769,17 @@ function renderEffectDesc(sk, lv, weapon) {
   let result = template;
   for (const { k, display } of pairs) {
     // Use word-boundary aware replacement to avoid replacing "4" inside "44.8"
-    result = result.replace(display, ' ' + k + ' ');
+    result = result.replace(display, ' ' + k + ' ');
   }
   for (const { k } of pairs) {
     const v = entry[k];
     const display = typeof v === 'number'
       ? (Number.isInteger(v) ? String(v) : v.toFixed(1))
       : String(v);
-    result = result.replace(' ' + k + ' ', '<span class="hl-atk">' + display + '</span>');
+    result = result.replace(' ' + k + ' ', '<span class="hl-atk">' + display + '</span>');
   }
   // Clean any unreplaced placeholders
-  result = result.replace(/ \w+ /g, '?');
+  result = result.replace(/ \w+ /g, '?');
   return result;
 }
 
