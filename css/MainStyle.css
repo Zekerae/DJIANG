@@ -1,33 +1,55 @@
+/*
+  MainStyle.css — FLUID GLOBAL BASE
+  ══════════════════════════════════════════════════════════════════
+  Because all individual components (LandingPage, Navbar, Operators) 
+  now use native fluid clamp() mathematics, we no longer need the 
+  massive, clunky @media query laptop overrides here!
+  
+  This file is now purely for global resets, body locking, and 
+  establishing the base styling foundation.
+  ══════════════════════════════════════════════════════════════════
+*/
+
 /* ── UNIVERSAL CSS RESET ── */
 html, body {
     margin: 0 !important;
     padding: 0 !important;
     box-sizing: border-box;
+    
+    /* Prevents horizontal scrolling/bouncing on mobile devices */
     overflow-x: hidden;
     overscroll-behavior-x: contain;
-    background-color: #06080d; /* Sets the deep background to dark instead of white */
+    
+    /* The core site background */
+    background-color: #06080d; 
+    
+    /* Native smooth scrolling for anchor links */
+    scroll-behavior: smooth;
+    
+    /* Establishes a clean stacking context for the z-index of the navbar */
+    isolation: isolate; 
 }
 
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
-.landing-page{
-    overflow: hidden;
-}
-#carousel-3D{
-    overflow: hidden;
-}
+/* ── GLOBAL CONTAINER BEHAVIORS ── */
 
-#character-slide {
-    position: relative;
-    height: 100vh !important; /* Changed from 120% to lock it exactly to the screen height */
-    margin-bottom: 0 !important; /* Forces the bottom to sit flush */
-    padding-bottom: 0 !important;
+.landing-page {
     overflow: hidden;
 }
 
 #carousel-3D {
-    margin-top: 0 !important; /* Pulls the weapon carousel flush against the top */
+    overflow: hidden;
+    margin-top: 0 !important; 
     padding-top: 0 !important;
 }
+
+/* NOTE: The 100vh lock for #character-slide has been safely moved to 
+  HomepageOperator.css (using 100dvh for mobile support). 
+  
+  All previous @media screen and (max-height: 900px) and 
+  (max-height: 768px) blocks have been safely deleted because 
+  your components now resize themselves mathematically!
+*/

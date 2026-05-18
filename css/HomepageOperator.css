@@ -1,13 +1,9 @@
 /*
-  Character-slide.css — SCOPED VERSION
+  Character-slide.css — FLUID SCOPED VERSION
   ══════════════════════════════════════════════════════════════════
-  All selectors namespaced under .cs-root so this stylesheet is
-  safe to inject into any page without polluting global styles.
-
-  .cs-root sizing/position is controlled from OUTSIDE:
-    Inline in document  →  position: relative; width: 100%; height: 100vh;
-    Anchored to parent  →  position: absolute; inset: 0;
-    Anchored to screen  →  position: fixed;    inset: 0;
+  All selectors namespaced under .cs-root.
+  Rigid pixel math has been replaced with CSS Variables and clamp()
+  to ensure the 3D thumbnails and text scale infinitely.
   ══════════════════════════════════════════════════════════════════
 */
 
@@ -22,16 +18,14 @@
 }
 
 /* ── ROOT WRAPPER ─────────────────────────────────────────────── */
-/*
-  Replaces body styles. Sets the positioning context for all
-  internal absolute children. Width/height intentionally set
-  here as sensible defaults — override from outside as needed.
-*/
 .cs-root {
     position: sticky;
     top: 0;
     width: 100%;
-    height: 100vh;
+    
+    /* FLUID: dvh prevents mobile browser bars from clipping the bottom */
+    height: 100dvh; 
+    
     background-color: #0f0f0f;
     display: flex;
     justify-content: center;
@@ -40,7 +34,11 @@
     --cs-green: #14ff72cb;
     --cs-dark:  #2c2c2ccb;
 
-    /* Whole-list fade (v1): sync FADE_MS in js/OperatorSlide.js */
+    /* FLUID VARIABLES: Math that automatically adjusts to screen width! */
+    --cs-thumb-width: clamp(120px, 12vw, 180px);
+    --cs-thumb-gap: clamp(140px, 14vw, 200px); /* Thumbnail width + 20px gap */
+    --cs-thumb-start: clamp(55%, 60vw, 67%); /* Starting left position */
+
     --cs-list-fade-duration: 0.6s;
     --cs-list-fade-ease: cubic-bezier(0.33, 1, 0.68, 1);
 }
@@ -73,13 +71,13 @@
     pointer-events: none;
 }
 
+/* FLUID: Thumbnail sizing */
 .cs-root .carousel .list .item {
-    width: 180px;
-    height: 250px;
+    width: var(--cs-thumb-width);
+    height: clamp(180px, 18vw, 250px);
     position: absolute;
-    top: 80%;
+    top: clamp(70%, 80vh, 80%);
     transform: translateY(-70%);
-    left: 70%;
     border-radius: 20px;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     background-position: 50% 50%;
@@ -87,11 +85,11 @@
     z-index: 100;
 }
 
-/* Thumbnail strip: smooth horizontal shift when order changes. */
 .cs-root .carousel .list .item:nth-child(n+3) {
     transition: left var(--cs-list-fade-duration) var(--cs-list-fade-ease);
 }
 
+/* Active Main Background Slide */
 .cs-root .carousel .list .item:nth-child(1),
 .cs-root .carousel .list .item:nth-child(2) {
     top: 0;
@@ -102,22 +100,24 @@
     height: 100%;
 }
 
-.cs-root .carousel .list .item:nth-child(3) { left: 67%; }
-.cs-root .carousel .list .item:nth-child(4) { left: calc(67% + 200px); }
-.cs-root .carousel .list .item:nth-child(5) { left: calc(67% + 400px); }
-.cs-root .carousel .list .item:nth-child(6) { left: calc(67% + 600px); }
-.cs-root .carousel .list .item:nth-child(n+7) {
-    left: calc(67% + 800px);
-    opacity: 0;
+/* FLUID MATH: Replaced rigid +200px gaps with dynamic multiplier math! */
+.cs-root .carousel .list .item:nth-child(3) { left: var(--cs-thumb-start); }
+.cs-root .carousel .list .item:nth-child(4) { left: calc(var(--cs-thumb-start) + var(--cs-thumb-gap)); }
+.cs-root .carousel .list .item:nth-child(5) { left: calc(var(--cs-thumb-start) + var(--cs-thumb-gap) * 2); }
+.cs-root .carousel .list .item:nth-child(6) { left: calc(var(--cs-thumb-start) + var(--cs-thumb-gap) * 3); }
+.cs-root .carousel .list .item:nth-child(n+7) { 
+    left: calc(var(--cs-thumb-start) + var(--cs-thumb-gap) * 4); 
+    opacity: 0; 
 }
 
 /* ── SLIDE CONTENT ────────────────────────────────────────────── */
 .cs-root .list .item .content {
     position: absolute;
     top: 50%;
-    left: 100px;
     transform: translateY(-50%);
-    width: 400px;
+    /* FLUID: Text box scales with screen */
+    width: clamp(300px, 35vw, 500px);
+    left: clamp(30px, 6vw, 100px);
     text-align: left;
     color: #fff;
     display: none;
@@ -131,8 +131,9 @@
     position: relative;
     color: #ffffff;
     text-shadow: 0 0 20px #000000;
-    top: -50px;
-    font-size: clamp(40px, 8vw, 80px);
+    top: clamp(-30px, -5vh, -50px);
+    /* FLUID FONTS */
+    font-size: clamp(35px, 6vw, 80px);
     font-weight: 900;
     letter-spacing: 2px;
     margin: 0;
@@ -147,7 +148,8 @@
     left: 0px;
     color: transparent;
     -webkit-text-stroke: 2px rgba(0, 0, 0, 0.67);
-    font-size: clamp(80px, 12vw, 150px);
+    /* FLUID FONTS */
+    font-size: clamp(60px, 10vw, 150px);
     font-weight: 900;
     letter-spacing: 4px;
     margin: 0;
@@ -158,11 +160,13 @@
 }
 
 .cs-root .content .des {
-    margin-top: 50px;
-    margin-bottom: 20px;
-    font-size: 18px;
+    margin-top: clamp(20px, 5vh, 50px);
+    margin-bottom: clamp(10px, 2vh, 20px);
+    /* FLUID FONTS */
+    font-size: clamp(14px, 1.2vw, 18px);
     margin-left: 5px;
     text-shadow: 0 0 10px #000000;
+    line-height: 1.6;
     opacity: 0;
     animation: cs-animate 1s ease-in-out 0.9s 1 forwards;
 }
@@ -173,61 +177,26 @@
     animation: cs-animate 1s ease-in-out 1.2s 1 forwards;
 }
 
-.cs-root .content .btn button {
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border: 2px solid #fff;
-}
-
-.cs-root .content .btn button:nth-child(1) {
-    margin-right: 15px;
-}
-
-.cs-root .content .btn button:nth-child(2) {
-    background: transparent;
-    color: var(--cs-dark);
-    border: 2px solid #fff;
-    transition: 0.3s;
-}
-
-.cs-root .content .btn button:nth-child(2):hover {
-    background-color: var(--cs-dark);
-    color: #fff;
-    border-color: var(--cs-dark);
-}
-
-/* Prefixed keyframe — no collision with host page */
 @keyframes cs-animate {
-    from {
-        opacity: 0;
-        transform: translate(0, 100px);
-        filter: blur(33px);
-    }
-    to {
-        opacity: 1;
-        transform: translate(0);
-        filter: blur(0);
-    }
+    from { opacity: 0; transform: translate(0, 100px); filter: blur(33px); }
+    to   { opacity: 1; transform: translate(0); filter: blur(0); }
 }
 
 /* ── ARROWS ───────────────────────────────────────────────────── */
 .cs-root .arrows {
     position: absolute;
-    top: 80%;
-    right: 52%;
+    /* FLUID: Arrows placed cleanly relative to the text content */
+    top: clamp(70%, 80vh, 80%);
+    left: clamp(30px, 6vw, 100px);
     z-index: 100;
-    width: 300px;
-    max-width: 30%;
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
 .cs-root .arrows button {
-    width: 50px;
-    height: 50px;
+    width: clamp(40px, 4vw, 50px);
+    height: clamp(40px, 4vw, 50px);
     border-radius: 50%;
     background-color: var(--cs-dark);
     color: #fff;
@@ -262,197 +231,111 @@
     to   { width: 100%; }
 }
 
-/* ── RESPONSIVE ───────────────────────────────────────────────── */
-@media screen and (max-width: 999px) {
-    .cs-root .list .item .content { left: 50px; }
-    .cs-root .content .title,
-    .cs-root .content .name       { font-size: 70px; }
-    .cs-root .content .des        { font-size: 16px; }
-}
-
-@media screen and (max-width: 690px) {
-    .cs-root .list .item .content { top: 40%; }
-
-    .cs-root .content .title {
-        font-size: 35px;
-        top: -145px;
-        left: -20px;
-    }
-
-    .cs-root .content .name {
-        font-size: 35px;
-        top: -115px;
-    }
-
-    .cs-root .content .des {
-        font-size: 14px;
-        width: 300px;
-        top: 0px;
-    }
-
-    .cs-root .content .btn button {
-        padding: 10px 15px;
-        font-size: 14px;
-    }
-}
-
 /* ═══════════════════════════════════════════════
-   GLOBAL OPTIMIZATION — THEMATIC TECH BUTTONS
+   THEMATIC TECH BUTTONS
 ═══════════════════════════════════════════════ */
-
 #character-slide .btn button {
     background: rgba(10, 12, 18, 0.75) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: rgba(255, 255, 255, 0.8) !important;
-    padding: 10px 28px !important;
+    padding: clamp(8px, 1vw, 10px) clamp(16px, 2vw, 28px) !important;
     font-family: 'Rajdhani', sans-serif !important;
-    font-size: 13px !important;
+    font-size: clamp(11px, 1vw, 13px) !important;
     font-weight: 700 !important;
     letter-spacing: 0.15em !important;
     text-transform: uppercase !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
-    backdrop-filter: blur(4px) !important; /* Gives it that frosted glass tech look */
+    backdrop-filter: blur(4px) !important;
 }
 
-/* Make the "Profile" button pop with the site's signature Teal theme */
 #character-slide .btn button:nth-child(1) {
     border-color: #00e5c0 !important;
     color: #00e5c0 !important;
     background: rgba(0, 229, 192, 0.08) !important;
+    margin-right: 15px !important;
 }
 
-/* Hover Effects */
-#character-slide .btn button:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: #ffffff !important;
-    color: #ffffff !important;
-}
-
-#character-slide .btn button:nth-child(1):hover {
-    background: rgba(0, 229, 192, 0.2) !important;
-    box-shadow: 0 0 12px rgba(0, 229, 192, 0.4) !important;
-    color: #ffffff !important;
-}
+#character-slide .btn button:hover { background: rgba(255, 255, 255, 0.1) !important; border-color: #ffffff !important; color: #ffffff !important; }
+#character-slide .btn button:nth-child(1):hover { background: rgba(0, 229, 192, 0.2) !important; box-shadow: 0 0 12px rgba(0, 229, 192, 0.4) !important; color: #ffffff !important; }
 
 /* ═══════════════════════════════════════════════
-   MOBILE OPTIMIZATION — CHARACTER CAROUSEL (FINAL)
+   MOBILE OPTIMIZATION — THE ULTIMATE STACK
 ═══════════════════════════════════════════════ */
 @media screen and (max-width: 768px) {
-    /* 0. Fix the massive zooming issue by locking the height to the phone screen */
-    #character-slide {
-        height: 100vh !important; 
-    }
+    #character-slide { height: 100dvh !important; }
 
-    /* 1. Let the image fill the entire screen, but push the camera DOWN to find the face */
     #character-slide .item:nth-child(1) {
         position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100vh !important; 
-        border-radius: 0 !important;
-        z-index: 1 !important;
-        background-size: cover !important;
-        background-color: #06080d !important; /* Hides any weird loading gaps */
-        
-        /* THE FIX: 25% points the camera lower, pushing the top border off-screen and bringing faces into view! */
+        top: 0 !important; left: 0 !important;
+        width: 100% !important; height: 100dvh !important; 
+        border-radius: 0 !important; z-index: 1 !important;
+        background-size: cover !important; background-color: #06080d !important;
         background-position: 35% 25% !important;
     }
 
-    /* Create a cinematic gradient that only darkens the bottom text area */
     #character-slide .item:nth-child(1)::after {
-        content: '' !important;
-        position: absolute !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
+        content: '' !important; position: absolute !important;
+        bottom: 0 !important; left: 0 !important; right: 0 !important;
         height: 60% !important; 
-        /* Fades smoothly from invisible -> dark -> pitch black at the very bottom */
         background: linear-gradient(to bottom, rgba(6,8,13,0) 0%, rgba(6,8,13,0.85) 60%, #06080d 100%) !important;
-        pointer-events: none !important;
-        z-index: 2 !important;
+        pointer-events: none !important; z-index: 2 !important;
     }
 
-    /* 2. Anchor the text perfectly over the dark gradient, right above the thumbnails */
     #character-slide .item:nth-child(1) .content {
         position: absolute !important;
         top: auto !important;
-        bottom: 180px !important; /* Sits safely above the 120px thumbnails */
-        left: 50% !important;
-        width: 90% !important;
+        /* FLUID: Safely floats above mobile thumbnails */
+        bottom: clamp(150px, 22dvh, 180px) !important; 
+        left: 50% !important; width: 90% !important;
         transform: translateX(-50%) !important; 
-        padding: 0 !important;
-        text-align: center !important;
-        z-index: 100 !important;
-        display: block !important;
+        padding: 0 !important; text-align: center !important;
+        z-index: 100 !important; display: block !important;
     }
 
-    /* 3. Hide the glitchy ghost text */
     #character-slide .title { display: none !important; }
 
-    /* 4. Format the Name (Dynamic scaling for long names like Zhuang Fangyi) */
     #character-slide .name {
-        font-size: clamp(28px, 10vw, 46px) !important; 
-        white-space: normal !important;
-        word-wrap: break-word !important;
+        font-size: clamp(32px, 10vw, 46px) !important; 
+        white-space: normal !important; word-wrap: break-word !important;
         text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.6) !important;
-        margin-bottom: 12px !important;
-        line-height: 1.1 !important;
-        color: #ffffff !important;
+        margin-bottom: 12px !important; line-height: 1.1 !important; color: #ffffff !important;
     }
 
-    /* 5. Fix the Description: Made larger and readable */
     #character-slide .des {
-        font-size: 16px !important; 
-        line-height: 1.6 !important;
+        font-size: 14px !important; line-height: 1.5 !important;
         text-shadow: 0 2px 10px rgba(0,0,0,1), 0 0 5px rgba(0,0,0,0.8) !important;
-        color: #f0f0f0 !important;
-        display: -webkit-box !important;
-        -webkit-line-clamp: 4 !important;
-        -webkit-box-orient: vertical !important;
-        overflow: hidden !important;
-        margin: 0 auto 20px !important;
+        color: #f0f0f0 !important; display: -webkit-box !important;
+        -webkit-line-clamp: 4 !important; -webkit-box-orient: vertical !important;
+        overflow: hidden !important; margin: 0 auto 16px !important;
     }
 
-    /* 6. Center the Buttons */
-    #character-slide .btn {
-        display: flex !important;
-        justify-content: center !important;
-        gap: 12px !important;
-    }
+    #character-slide .btn { display: flex !important; justify-content: center !important; gap: 12px !important; }
 
-    /* 7. FORCE the next characters to be small thumbnails */
+    /* Thumbnails perfectly sized and spaced for phones */
     #character-slide .item:nth-child(2),
     #character-slide .item:nth-child(3) {
         position: absolute !important;
-        width: 85px !important;
-        height: 120px !important;
+        width: clamp(75px, 20vw, 95px) !important;
+        height: clamp(100px, 28vw, 130px) !important;
         top: auto !important; 
-        bottom: 30px !important;
-        transform: none !important;
-        margin: 0 !important;
-        border-radius: 8px !important;
-        z-index: 10 !important;
+        bottom: clamp(20px, 4dvh, 30px) !important;
+        transform: none !important; margin: 0 !important;
+        border-radius: 8px !important; z-index: 10 !important;
     }
     
     #character-slide .item:nth-child(2) { left: 5% !important; }
-    #character-slide .item:nth-child(3) { left: calc(5% + 95px) !important; }
+    /* Uses exact percentage calc to sit right next to the first thumb */
+    #character-slide .item:nth-child(3) { left: calc(5% + clamp(75px, 20vw, 95px) + 10px) !important; }
     
-    /* 8. CRITICAL FIX: Hide text on the thumbnails, and hide 4th+ items */
     #character-slide .item:nth-child(n+2) .content { display: none !important; }
     #character-slide .item:nth-child(n+4) { display: none !important; }
 
-    /* 9. Anchor navigation arrows to bottom right */
     #character-slide .arrows {
-        position: absolute !important;
-        top: auto !important;
-        bottom: 30px !important;
-        left: auto !important;
-        right: 5% !important;
-        width: auto !important;
-        gap: 10px !important;
-        transform: none !important;
-        z-index: 100 !important;
+        position: absolute !important; top: auto !important;
+        bottom: clamp(20px, 4dvh, 30px) !important;
+        left: auto !important; right: 5% !important;
+        width: auto !important; gap: 10px !important;
+        transform: none !important; z-index: 100 !important;
     }
 }

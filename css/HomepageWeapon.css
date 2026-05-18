@@ -1,10 +1,17 @@
-/* =============================================================================
-   CAROUSEL — CLEANED & FIXED STYLESHEET
-============================================================================= */
+/*
+  HomepageWeapon.css — FLUID SCOPED VERSION
+  ══════════════════════════════════════════════════════════════════
+  3D Carousel styled with dynamic viewport units (vmin, dvh) to 
+  ensure perfect scaling and perspective across all devices.
+  ══════════════════════════════════════════════════════════════════
+*/
 
 :root {
-    --carousel-height:         100vh;
-    --carousel-perspective:    1000px;
+    /* FLUID: dvh adapts dynamically to mobile browser URL bars hiding/showing */
+    --carousel-height:         100dvh;
+    
+    /* FLUID: Perspective shifts based on screen width for a better 3D depth effect on phones */
+    --carousel-perspective:    clamp(600px, 90vw, 1200px);
     --carousel-perspective-y:  50%;
     --weapon-section-background-image: url(../assets/HomepageAssets/ArknightsEndfieldLogoMesh.png);
 }
@@ -28,13 +35,13 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100vh; 
-    /* FIX: Removed overflow:hidden so the buttons are no longer clipped! */
+    height: var(--carousel-height); 
 }
 
 .carousel-scene {
     width: 100%;
-    height: 75vh; /* Leaves safe room at the bottom for the buttons */
+    /* FLUID: Height dynamically adjusts so buttons are never pushed off-screen */
+    height: clamp(50vh, 65dvh, 75vh); 
     perspective: var(--carousel-perspective);
     perspective-origin: 50% var(--carousel-perspective-y);
     position: relative;
@@ -53,14 +60,11 @@
     left: 50%;
     top: 50%;
     
-    /* Perfect Card Size */
-    width: 280px; 
-    height: 420px;
+    /* FLUID MAGIC: vmin ensures the card scales perfectly regardless of landscape or portrait orientation */
+    width: clamp(160px, 28vmin, 350px); 
+    aspect-ratio: 2 / 3; 
     
-    /* Must be exactly negative half of width/height to center */
-    margin-top: -210px; 
-    margin-left: -140px; 
-    
+    transform: translate(-50%, -50%); 
     transform-style: preserve-3d;
 }
 
@@ -68,13 +72,14 @@
 .carousel-card {
     width: 100%;
     height: 100%; 
-    border-radius: 12px;
+    /* FLUID: Corner rounding scales with the card size */
+    border-radius: clamp(8px, 1.5vmin, 16px);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     cursor: pointer;
-    background: transparent; /* Removed dark background so your image shows purely */
+    background: transparent; 
 }
 
 .carousel-card-content {
@@ -85,25 +90,27 @@
 .carousel-card-content img {
     width: 100%;
     height: 100%;
-    /* FIX: 'contain' ensures the full card image fits without zooming/cropping */
     object-fit: contain; 
     display: block;
+    /* Added a subtle drop shadow to give the 3D transparent weapon PNGs depth! */
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
 }
 
-/* ── 4. INDICATOR DOTS (Safely positioned below 3D) ── */
+/* ── 4. INDICATOR DOTS ── */
 .carousel-indicator-dots {
     position: relative;
     z-index: 9999;
     display: flex;
-    gap: 8px;
+    /* FLUID: Spacing and sizing adjust automatically */
+    gap: clamp(6px, 1vw, 10px);
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: clamp(10px, 2vh, 20px);
 }
 
 .carousel-dot {
-    width: 8px;
-    height: 8px;
+    width: clamp(6px, 1.5vw, 10px);
+    height: clamp(6px, 1.5vw, 10px);
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
     transition: background 0.3s, transform 0.3s;
@@ -115,24 +122,25 @@
     transform: scale(1.4);
 }
 
-/* ── 5. NAVIGATION CONTROLS (Safely positioned below 3D) ── */
+/* ── 5. NAVIGATION CONTROLS ── */
 .carousel-controls {
     position: relative;
     z-index: 9999;
     display: flex;
-    gap: 20px;
+    gap: clamp(16px, 3vw, 30px);
     align-items: center;
-    margin-top: 20px;
+    margin-top: clamp(16px, 3vh, 30px);
 }
 
 .carousel-arrow-button {
-    width: 44px;
-    height: 44px;
+    /* FLUID: Buttons are slightly smaller on phones, larger on desktops */
+    width: clamp(40px, 5vw, 54px);
+    height: clamp(40px, 5vw, 54px);
     border-radius: 50%;
     border: 1px solid rgba(0, 229, 192, 0.4);
     background: rgba(0, 229, 192, 0.1);
     color: #00e5c0;
-    font-size: 20px;
+    font-size: clamp(18px, 2vw, 24px);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -148,3 +156,14 @@
 }
 
 .carousel-arrow-button:active { transform: scale(0.92); }
+
+/* ═══════════════════════════════════════════════
+   MOBILE EXCEPTIONS
+═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .carousel-scene {
+        /* Pushes the 3D 'camera' angle up slightly on phones to make more room for the UI buttons at the bottom */
+        height: 60dvh;
+        perspective-origin: 50% 40%; 
+    }
+}
