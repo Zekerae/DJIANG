@@ -8,6 +8,110 @@ const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Authenticated user — set in DOMContentLoaded
+let CURRENT_USER = null;
+
+// ─── MULTI-USER ROSTER HELPERS ────────────────────────────────
+// Mirrors the same pattern used in OperatorList.js
+
+/** Load this user's roster entry for a single character. */
+async function loadRosterEntry(characterId) {
+  if (!CURRENT_USER || !characterId) return null;
+  const { data, error } = await db
+    .from('user_roster')
+    .select('owned, level, skill_levels')
+    .eq('user_id', CURRENT_USER.id)
+    .eq('character_id', characterId)
+    .single();
+  if (error) return null;
+  return data || null;
+}
+
+/** Upsert a partial patch for this user's roster entry. */
+async function saveRosterEntry(characterId, patch) {
+  if (!CURRENT_USER || !characterId) return;
+  const { error } = await db.from('user_roster').upsert({
+    user_id:      CURRENT_USER.id,
+    character_id: characterId,
+    ...patch,
+    updated_at:   new Date().toISOString(),
+  }, { onConflict: 'user_id,character_id' });
+  if (error) console.warn('Roster save error:', error);
+}
+
+/** Debounce timers shared across all tracker saves. */
+const _charDebounce = {};
+function debouncedSave(key, fn, delay = 600) {
+  clearTimeout(_charDebounce[key]);
+  _charDebounce[key] = setTimeout(fn, delay);
+}
+
+/**
+ * Pre-fill all Tracker inputs from a saved roster entry.
+ * Called after renderCharacter() has built the DOM.
+ */
+function applyRosterToTracker(entry) {
+  if (!entry) return;
+
+  // Character level slider (m-lv-c is "current", default to saved level)
+  if (entry.level) {
+    const lvEl = document.getElementById('m-lv-c');
+    if (lvEl) { lvEl.value = entry.level; }
+    // Also update the damage calc level slider
+    const cLvEl = document.getElementById('c-level');
+    if (cLvEl) { cLvEl.value = entry.level; }
+  }
+
+  // Skill levels — keys: basic_attack, battle_skill, combo_skill, ultimate_skill
+  const sk = entry.skill_levels || {};
+  const skKeyMap = {
+    basic_attack:   1,
+    battle_skill:   2,
+    combo_skill:    3,
+    ultimate_skill: 4,
+  };
+  Object.entries(skKeyMap).forEach(([key, idx]) => {
+    if (!sk[key]) return;
+    const curEl = document.getElementById(`m-sk-${idx}-c`);
+    if (curEl) curEl.value = sk[key];
+  });
+
+  // Re-run calcs so displayed numbers reflect loaded values
+  recalcMats();
+  recalcDmg();
+}
+
+/**
+ * Called by tracker level slider oninput to persist the new level.
+ * Wraps the existing recalcMats() call and adds a debounced save.
+ */
+function onTrackerLevelChange() {
+  recalcMats();
+  if (!CHAR || !CURRENT_USER) return;
+  const lvEl = document.getElementById('m-lv-c');
+  const level = parseInt(lvEl?.value) || null;
+  debouncedSave('tracker-level', () => saveRosterEntry(CHAR.id, { level }));
+}
+
+/**
+ * Called by tracker skill-rank sliders oninput to persist skill levels.
+ * idx is 1-based (matches the slider IDs m-sk-1-c … m-sk-4-c).
+ */
+function onTrackerSkillChange(idx) {
+  recalcMats();
+  if (!CHAR || !CURRENT_USER) return;
+  const skKeyMap = ['basic_attack', 'battle_skill', 'combo_skill', 'ultimate_skill'];
+  const key = skKeyMap[idx - 1];
+  if (!key) return;
+  const val = parseInt(document.getElementById(`m-sk-${idx}-c`)?.value) || null;
+  // Merge with latest known skill_levels to avoid overwriting other skills
+  debouncedSave(`tracker-sk-${idx}`, async () => {
+    const existing = await loadRosterEntry(CHAR.id);
+    const merged = { ...(existing?.skill_levels || {}), [key]: val };
+    saveRosterEntry(CHAR.id, { skill_levels: merged });
+  });
+}
+
 function emojiToTwemojiUrl(emoji) {
   const codePoints = [...emoji]
     .map(c => c.codePointAt(0).toString(16))
@@ -144,6 +248,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   const overlay = document.getElementById('loading-overlay');
   document.getElementById('load-msg').textContent = 'Connecting to Database...';
 
+  // Resolve auth session
+  const { data: { session } } = await db.auth.getSession();
+  CURRENT_USER = session?.user || null;
+
+  // ── Guest notice (mirrors OperatorList.js) ──────────────────────
+  if (!CURRENT_USER) {
+    const notice = document.createElement('div');
+    notice.className = 'roster-notice';
+    notice.style.cssText = 'font-size:12px;color:var(--text3);padding:6px 16px;background:var(--card);border-bottom:1px solid var(--border);text-align:center';
+    notice.innerHTML = `<a href="auth.html" style="color:var(--primary-text)">Sign in</a> to save your tracker progress and roster across devices.`;
+    document.querySelector('.topbar')?.insertAdjacentElement('afterend', notice);
+  }
+
   const params   = new URLSearchParams(window.location.search);
   const charSlug = params.get('char') || null;
 
@@ -165,6 +282,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!charErr && char) {
         selector.value = targetId;
         renderCharacter(char);
+
+        // ── Multi-user: load & apply this user's saved tracker data ──
+        if (CURRENT_USER) {
+          const entry = await loadRosterEntry(char.id);
+          if (entry) applyRosterToTracker(entry);
+        }
       } else {
         console.error('Character load error:', charErr);
       }
@@ -236,7 +359,19 @@ function renderCharacter(char) {
     <div class="hero-pill">${iconImg(char.icon_star || '⭐', 16, 'has-char-img')}<strong>${char.rarity || 6}-Star</strong></div>
     <div class="hero-pill">${iconImg(char.icon_weapon_type || '⚔️', 16, 'has-char-img')}<strong>${char.weapon || ''}</strong></div>
     <div class="hero-pill">${iconImg(char.icon_role || '🎯', 16, 'has-char-img')}<strong>${char.role || ''}</strong></div>
+    <div class="hero-pill owned-pill" id="dom-owned-pill" onclick="toggleCharOwned()" title="Toggle owned status" style="cursor:pointer;user-select:none">
+      <span id="dom-owned-check" style="font-size:13px">○</span>
+      <strong id="dom-owned-label">Not Owned</strong>
+    </div>
   `;
+
+  // Reflect saved owned status once the pill is in the DOM
+  if (CURRENT_USER) {
+    loadRosterEntry(char.id).then(entry => {
+      _ownedState = !!entry?.owned;
+      _syncOwnedPill();
+    });
+  }
 
   if (char.video_url) {
     document.getElementById('dom-video').src = char.video_url;
@@ -499,30 +634,86 @@ function renderSkillTracks(skills) {
     return `<div class="skill-track-row">
       <div style="font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);width:100px;flex-shrink:0">${label}</div>
       <div class="slider-grid" style="flex:1">
-        <div class="calc-row-std" style="margin-bottom:0"><span class="calc-label">Current <span id="sk-${i+1}-c-out" class="highlight">1</span></span><input type="range" id="m-sk-${i+1}-c" min="1" max="12" value="1" step="1" oninput="recalcMats()"></div>
+        <div class="calc-row-std" style="margin-bottom:0"><span class="calc-label">Current <span id="sk-${i+1}-c-out" class="highlight">1</span></span><input type="range" id="m-sk-${i+1}-c" min="1" max="12" value="1" step="1" oninput="onTrackerSkillChange(${i+1})"></div>
         <div class="calc-row-std" style="margin-bottom:0"><span class="calc-label">Target <span id="sk-${i+1}-t-out" class="highlight">12</span></span><input type="range" id="m-sk-${i+1}-t" min="1" max="12" value="12" step="1" oninput="recalcMats()"></div>
       </div>
     </div>`;
   }).join('');
 }
 
-function renderChecklist(char) {
+// ─── CHECKLIST — Supabase persistence ────────────────────────
+async function loadChecklistState(charId) {
+  if (!CURRENT_USER) return {};
+  const { data, error } = await db
+    .from('user_checklists')
+    .select('checked_ids')
+    .eq('user_id', CURRENT_USER.id)
+    .eq('character_id', charId)
+    .single();
+  if (error || !data) return {};
+  // checked_ids is stored as a JSON array of strings
+  const ids = data.checked_ids || [];
+  return Object.fromEntries(ids.map(id => [id, true]));
+}
+
+async function saveChecklistState(charId) {
+  if (!CURRENT_USER) return;
+  const checked = [];
+  document.querySelectorAll('.check-row[data-check-id]').forEach(row => {
+    if (row.classList.contains('done')) checked.push(row.dataset.checkId);
+  });
+  const { error } = await db.from('user_checklists').upsert({
+    user_id:      CURRENT_USER.id,
+    character_id: charId,
+    checked_ids:  checked,
+    updated_at:   new Date().toISOString(),
+  }, { onConflict: 'user_id,character_id' });
+  if (error) console.warn('Checklist save error:', error);
+}
+
+async function renderChecklist(char) {
   const shared = char.checklist_shared || [];
   const f2p    = char.checklist_f2p    || [];
   const spend  = char.checklist_spend  || [];
   const el = document.getElementById('dom-checklist');
   el.innerHTML =
-    shared.map(c => checkRow(c, '')).join('') +
-    f2p.map(c   => checkRow(c, 'route-f2p')).join('') +
-    spend.map(c  => checkRow(c, 'route-spend', true)).join('');
+    shared.map((c, i) => checkRow(c, '',            false, `shared-${i}`)).join('') +
+    f2p.map(   (c, i) => checkRow(c, 'route-f2p',   false, `f2p-${i}`)).join('') +
+    spend.map( (c, i) => checkRow(c, 'route-spend',  true, `spend-${i}`)).join('');
+
+  // Restore saved state from Supabase
+  const state = await loadChecklistState(char.id);
+  document.querySelectorAll('.check-row[data-check-id]').forEach(row => {
+    if (state[row.dataset.checkId]) row.classList.add('done');
+  });
+  updateCheckProgress();
 }
 
-function checkRow(c, routeClass, hidden = false) {
-  return `<div class="check-row${routeClass ? ' ' + routeClass : ''}" onclick="toggleCheck(this)"${hidden ? ' style="display:none"' : ''}>
+function checkRow(c, routeClass, hidden, checkId) {
+  if (hidden === undefined) hidden = false;
+  if (!checkId) checkId = '';
+  return `<div class="check-row${routeClass ? ' ' + routeClass : ''}"
+    data-check-id="${checkId}"
+    onclick="toggleCheck(this)"${hidden ? ' style="display:none"' : ''}>
     <div class="check-box">✓</div>
     <span class="check-label">${c.label}</span>
     <span class="check-cost">${c.cost}</span>
   </div>`;
+}
+
+function toggleCheck(row) {
+  row.classList.toggle('done');
+  updateCheckProgress();
+  if (CHAR && CHAR.id) saveChecklistState(CHAR.id);
+}
+
+function updateCheckProgress() {
+  const rows = [...document.querySelectorAll('.check-row')].filter(r => r.style.display !== 'none');
+  const done = rows.filter(r => r.classList.contains('done')).length;
+  const fill  = document.getElementById('check-fill');
+  const label = document.getElementById('check-label');
+  if (fill)  fill.style.width  = rows.length ? `${(done/rows.length)*100}%` : '0%';
+  if (label) label.textContent = `${done} / ${rows.length}`;
 }
 
 function updateProfileStats() {
@@ -633,15 +824,24 @@ function switchRoute(route) {
   updateCheckProgress();
 }
 
-function toggleCheck(row) {
-  row.classList.toggle('done');
-  updateCheckProgress();
+// ─── OWNED TOGGLE (Character Introduction page) ───────────────
+let _ownedState = false;
+
+function _syncOwnedPill() {
+  const check = document.getElementById('dom-owned-check');
+  const label = document.getElementById('dom-owned-label');
+  const pill  = document.getElementById('dom-owned-pill');
+  if (!check || !label || !pill) return;
+  check.textContent = _ownedState ? '✓' : '○';
+  label.textContent = _ownedState ? 'Owned' : 'Not Owned';
+  pill.style.color  = _ownedState ? 'var(--primary-text)' : 'var(--text3)';
+  pill.style.borderColor = _ownedState ? 'var(--primary-border)' : 'transparent';
 }
-function updateCheckProgress() {
-  const rows = [...document.querySelectorAll('.check-row')].filter(r => r.style.display !== 'none');
-  const done = rows.filter(r => r.classList.contains('done')).length;
-  const fill  = document.getElementById('check-fill');
-  const label = document.getElementById('check-label');
-  if (fill)  fill.style.width  = rows.length ? `${(done/rows.length)*100}%` : '0%';
-  if (label) label.textContent = `${done} / ${rows.length}`;
+
+async function toggleCharOwned() {
+  if (!CURRENT_USER) { alert('Please sign in to track your roster.'); return; }
+  if (!CHAR) return;
+  _ownedState = !_ownedState;
+  _syncOwnedPill();
+  await saveRosterEntry(CHAR.id, { owned: _ownedState });
 }

@@ -12,6 +12,34 @@
     --sidebar-page-count-offset: 0px;
 }
 
+/* 1. Import the Font */
+@font-face {
+    font-family: 'HarmonyOS Sans Regular';
+    font-style: normal;
+    font-weight: normal;
+    src: local('HarmonyOS Sans Regular'), url('../assets/fonts/HarmonyOS/HarmonyOS_Sans_Regular.woff') format('woff');
+}
+
+/* 2. Apply it to the Navbar */
+/* Target the navbar container and its links (adjust the class names if NavBar.js uses different ones like .nav-item or .nav-menu) */
+#navbar, 
+.navbar, 
+/* Fix for clipped Navbar font */
+.nav-links a, 
+.navbar a {
+    /* Increases the invisible box around the text so the bottom doesn't cut off */
+    line-height: 1.5 !important; 
+    
+    /* Ensures the links behave like blocks so vertical spacing applies correctly */
+    display: center !important;
+    align-items: center !important;
+    
+    /* Optional: Add a tiny bit of bottom padding if it's still clipping the bottom pixel */
+    padding-bottom: 2px !important; 
+}
+.navbar button {
+    font-family: 'HarmonyOS Sans Regular', sans-serif !important;
+}
 /* ─────────────────────────────────────────────────────────────────────────────
    STACKING CONTEXT FIX
    Any element with transform/filter/will-change/opacity creates its own
@@ -354,3 +382,4 @@ body {
     .sidebar-page-count { padding: 10px 20px; font-size: 8px; }
     .progress-bar { height: 2px; }
 }
+

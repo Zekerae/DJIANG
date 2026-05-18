@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Endfield — Map Pin Editor</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0f12;--surface:#141720;--surface2:#1a1e2a;--surface3:#1f2433;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e8eaf0;--muted:#6b7280;--accent:#00c4a3;--accent2:#ff8c42;
+  --danger:#e05060;
+  --font-display:'Rajdhani',sans-serif;--font-body:'IBM Plex Sans',sans-serif;--font-mono:'IBM Plex Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));transition:all 0.15s}
+.btn:hover{background:var(--surface3);border-color:var(--accent);color:var(--accent)}
+.btn-accent{background:var(--accent);border-color:var(--accent);color:#0d1a18}
+.btn-accent:hover{background:#00e0ba;border-color:#00e0ba;color:#0d1a18}
+.btn-sm{padding:4px 9px;font-size:11px;clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px))}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--muted)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);background:var(--surface)}
+.btn-danger:hover{border-color:var(--danger);color:var(--danger);background:rgba(224,80,96,0.08)}
+.btn-full{width:100%;justify-content:center}
+.btn:disabled{opacity:0.4;pointer-events:none}
+
+.db-status-bar{position:relative;z-index:10;height:28px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:8px;font-family:var(--font-mono);font-size:9px;flex-shrink:0}
+.db-status-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);transition:background 0.3s}
+.db-status-dot.ok{background:var(--accent)}
+.db-status-dot.err{background:var(--danger)}
+.db-status-dot.loading{background:var(--accent2);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.db-status-text{color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+
+.upload-progress-bar{position:fixed;top:28px;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.3s ease;z-index:100}
+.upload-progress-bar.active{animation:uploadPulse 1.2s ease-in-out infinite}
+@keyframes uploadPulse{0%{transform:scaleX(0)}50%{transform:scaleX(0.7)}100%{transform:scaleX(1);opacity:0}}
+
+.header{position:relative;z-index:10;display:flex;align-items:center;gap:16px;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.header::after{content:'';position:absolute;bottom:-1px;left:0;width:100px;height:1px;background:var(--accent)}
+.header-eyebrow{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase}
+.header-title{font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;line-height:1}
+.header-title span{color:var(--accent)}
+.header-tabs{display:flex;gap:0;margin-left:auto}
+.htab{padding:6px 18px;font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;background:transparent;border:none;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.15s}
+.htab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.htab:hover{color:var(--text)}
+
+.view{position:relative;z-index:1;flex:1;min-height:0;display:none}
+.view.active{display:flex}
+
+/* ADMIN */
+.admin-layout{flex:1;display:flex;min-height:0;width:100%}
+.admin-left{width:260px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.panel-head{padding:14px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-eyebrow{font-family:var(--font-mono);font-size:9px;color:var(--accent2);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:3px}
+.panel-title{font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;line-height:1;margin-bottom:10px}
+.map-library{flex:1;overflow-y:auto;padding:8px}
+.map-library::-webkit-scrollbar{width:3px}
+.map-library::-webkit-scrollbar-thumb{background:var(--surface3)}
+.map-entry{padding:9px 11px;background:var(--surface);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:all 0.12s;position:relative}
+.map-entry::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:var(--accent2);opacity:0;transition:opacity 0.2s}
+.map-entry:hover::before,.map-entry.active::before{opacity:1}
+.map-entry.active{border-color:rgba(255,140,66,0.3);background:rgba(255,140,66,0.04)}
+.map-entry-name{font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px}
+.map-entry-meta{font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-bottom:7px}
+.map-entry-actions{display:flex;gap:4px}
+.lib-empty{padding:20px;text-align:center;font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5}
+
+.admin-center{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--surface)}
+.center-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.center-title{font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mode-pill{font-family:var(--font-mono);font-size:9px;padding:2px 8px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap}
+.mode-pill.pin-mode{border-color:rgba(255,140,66,0.4);color:var(--accent2);background:rgba(255,140,66,0.08)}
+.mode-pill.crop-mode{border-color:rgba(0,196,163,0.4);color:var(--accent);background:rgba(0,196,163,0.08)}
+
+.upload-overlay{position:absolute;inset:0;background:rgba(13,15,18,0.85);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:50;backdrop-filter:blur(4px)}
+.upload-overlay.visible{display:flex}
+.upload-overlay-ring{width:56px;height:56px;border:2px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.upload-overlay-text{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase}
+
+.admin-filter-bar{padding:6px 12px;background:rgba(255,140,66,0.04);border-bottom:1px solid rgba(255,140,66,0.14);display:none;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.admin-filter-bar.visible{display:flex}
+.filter-label-sm{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;flex-shrink:0}
+.admin-chip{display:flex;align-items:center;gap:4px;padding:2px 8px;font-family:var(--font-mono);font-size:9px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s;letter-spacing:0.04em}
+.admin-chip:hover,.admin-chip.active{border-color:var(--accent2);color:var(--accent2)}
+.admin-chip.active{background:rgba(255,140,66,0.1)}
+.admin-chip-dot{width:6px;height:6px;border-radius:50%}
+.admin-chip-all{font-family:var(--font-mono);font-size:9px;padding:2px 8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s}
+.admin-chip-all:hover,.admin-chip-all.active{border-color:var(--accent2);color:var(--accent2);background:rgba(255,140,66,0.1)}
+.drag-toggle{margin-left:auto;display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase}
+.drag-toggle input[type=checkbox]{display:none}
+.drag-toggle-track{width:28px;height:14px;background:var(--surface3);border:1px solid var(--border2);border-radius:7px;cursor:pointer;position:relative;transition:background 0.2s,border-color 0.2s}
+.drag-toggle-track::after{content:'';position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;background:var(--muted);transition:left 0.2s,background 0.2s}
+.drag-toggle input:checked + .drag-toggle-track{background:rgba(255,140,66,0.2);border-color:rgba(255,140,66,0.5)}
+.drag-toggle input:checked + .drag-toggle-track::after{left:16px;background:var(--accent2)}
+
+.crop-toolbar{padding:7px 12px;background:rgba(0,196,163,0.06);border-bottom:1px solid rgba(0,196,163,0.18);display:none;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0}
+.crop-toolbar.active{display:flex}
+.crop-info{font-family:var(--font-mono);font-size:9px;color:var(--accent);flex:1}
+.preset-btn{font-family:var(--font-mono);font-size:9px;padding:3px 7px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s}
+.preset-btn:hover,.preset-btn.active{border-color:var(--accent);color:var(--accent)}
+
+.canvas-wrap{flex:1;position:relative;overflow:hidden;cursor:crosshair;background:repeating-conic-gradient(rgba(255,255,255,0.025) 0% 25%,transparent 0% 50%) 0 0/24px 24px}
+.canvas-wrap.drag-mode{cursor:default}
+.canvas-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.canvas-placeholder-ring{width:72px;height:72px;border:1.5px dashed rgba(255,140,66,0.3);border-radius:2px;display:flex;align-items:center;justify-content:center;color:rgba(255,140,66,0.45)}
+.canvas-placeholder-title{font-family:var(--font-display);font-size:14px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.canvas-placeholder-sub{font-family:var(--font-mono);font-size:9px;color:var(--muted);opacity:0.5}
+.map-img-wrap{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
+.map-img-wrap.visible{display:flex}
+.map-img-container{position:relative;display:inline-block;flex-shrink:0}
+.map-img-container img{display:block;user-select:none;pointer-events:none;object-fit:cover}
+.admin-pin{position:absolute;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);z-index:10;transition:transform 0.1s,box-shadow 0.1s}
+.canvas-wrap:not(.drag-mode) .admin-pin{cursor:pointer}
+.canvas-wrap:not(.drag-mode) .admin-pin:hover{transform:translate(-50%,-50%) scale(1.4)}
+.canvas-wrap.drag-mode .admin-pin{cursor:grab}
+.canvas-wrap.drag-mode .admin-pin:active{cursor:grabbing}
+.canvas-wrap.drag-mode .admin-pin.dragging{cursor:grabbing !important;transform:translate(-50%,-50%) scale(1.5) !important;box-shadow:0 0 0 4px rgba(255,140,66,0.3)}
+.admin-pin.selected{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,0.15)}
+.admin-pin.filtered-out{opacity:0.08;pointer-events:none}
+.admin-pin-label{position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);background:rgba(13,15,18,0.93);border:1px solid rgba(255,255,255,0.12);padding:2px 7px;white-space:nowrap;font-family:var(--font-mono);font-size:9px;pointer-events:none;z-index:20}
+.canvas-status{position:absolute;bottom:0;left:0;right:0;background:rgba(13,15,18,0.9);border-top:1px solid var(--border);padding:4px 12px;display:none;align-items:center;gap:14px;font-family:var(--font-mono);font-size:9px;color:var(--muted);z-index:30}
+.canvas-status.visible{display:flex}
+.status-dot{width:6px;height:6px;border-radius:50%}
+
+.admin-right{width:280px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.prop-body{flex:1;overflow-y:auto;padding:10px 12px}
+.prop-body::-webkit-scrollbar{width:3px}
+.prop-body::-webkit-scrollbar-thumb{background:var(--surface3)}
+.prop-section{margin-bottom:14px}
+.prop-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:5px}
+.prop-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-mono);font-size:11px;padding:6px 8px;outline:none;transition:border-color 0.15s}
+.prop-input:focus{border-color:var(--accent)}
+.prop-textarea{resize:vertical;min-height:60px}
+
+/* Custom note section styling */
+.note-mode-tabs{display:flex;gap:0;margin-bottom:6px;border:1px solid var(--border)}
+.note-tab{flex:1;padding:4px 8px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;background:transparent;border:none;color:var(--muted);border-right:1px solid var(--border);transition:all 0.12s;text-align:center}
+.note-tab:last-child{border-right:none}
+.note-tab.active{background:var(--surface2);color:var(--accent)}
+.note-tab:hover:not(.active){color:var(--text);background:var(--surface)}
+.default-note-display{background:var(--surface2);border:1px solid var(--border);padding:7px 9px;font-family:var(--font-mono);font-size:10px;color:var(--muted);line-height:1.5;min-height:54px}
+.default-note-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:8px;padding:2px 6px;border:1px solid rgba(0,196,163,0.3);color:var(--accent);background:rgba(0,196,163,0.06);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:5px}
+.custom-note-indicator{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:8px;padding:2px 6px;border:1px solid rgba(255,140,66,0.4);color:var(--accent2);background:rgba(255,140,66,0.07);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:5px}
+.note-clear-btn{font-family:var(--font-mono);font-size:9px;padding:2px 8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s;margin-top:4px}
+.note-clear-btn:hover{border-color:var(--danger);color:var(--danger)}
+
+.mat-pick-list{max-height:180px;overflow-y:auto;border:1px solid var(--border);background:var(--surface2)}
+.mat-pick-list::-webkit-scrollbar{width:3px}
+.mat-pick-list::-webkit-scrollbar-thumb{background:var(--surface3)}
+/* Group header inside mat-pick-list */
+.mat-group-head{padding:4px 9px;font-family:var(--font-mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent2);background:rgba(255,140,66,0.05);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
+.mat-pick-item{display:flex;align-items:center;gap:7px;padding:6px 9px;cursor:pointer;transition:background 0.1s;border-bottom:1px solid var(--border)}
+.mat-pick-item:last-child{border-bottom:none}
+.mat-pick-item:hover{background:rgba(0,196,163,0.07)}
+.mat-pick-item.selected{background:rgba(0,196,163,0.1)}
+.mat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.mat-name{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;flex:1}
+.mat-sub{font-family:var(--font-mono);font-size:8px;color:var(--muted)}
+.mat-check{width:10px;height:10px;border:1px solid rgba(0,196,163,0.5);background:var(--accent);display:none;align-items:center;justify-content:center;border-radius:1px}
+.mat-pick-item.selected .mat-check{display:flex}
+.mat-check::after{content:'✓';font-size:7px;color:#0d1a18}
+
+/* Mat search */
+.mat-search{width:100%;background:var(--surface2);border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--font-mono);font-size:10px;padding:5px 9px;outline:none}
+.mat-search::placeholder{color:var(--muted)}
+
+.sidebar-pin-item{display:flex;align-items:center;gap:7px;padding:6px 9px;background:var(--surface);border:1px solid var(--border);margin-bottom:4px;cursor:pointer;transition:all 0.12s}
+.sidebar-pin-item:hover{border-color:var(--border2)}
+.sidebar-pin-item.selected{border-color:rgba(0,196,163,0.35);background:rgba(0,196,163,0.05)}
+.sidebar-pin-name{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar-pin-sub{font-family:var(--font-mono);font-size:9px;color:var(--muted)}
+.sidebar-divider{border:none;border-top:1px solid var(--border);margin:10px 0 8px}
+.coord-row{display:flex;gap:6px;align-items:center}
+.coord-row .prop-input{width:80px}
+.coord-sep{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+
+.img-thumb-wrap{position:relative;width:100%;height:80px;border:1px solid var(--border);overflow:hidden;background:var(--surface2);margin-bottom:6px}
+.img-thumb-wrap img{width:100%;height:100%;object-fit:cover}
+.img-thumb-overlay{position:absolute;inset:0;background:rgba(13,15,18,0.7);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s}
+.img-thumb-wrap:hover .img-thumb-overlay{opacity:1}
+.img-storage-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:8px;padding:2px 6px;border:1px solid rgba(0,196,163,0.3);color:var(--accent);background:rgba(0,196,163,0.08);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px}
+
+/* USER VIEW */
+.user-layout{flex:1;display:flex;min-height:0;width:100%}
+.user-left{width:300px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.section-head{padding:10px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.section-eyebrow{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:2px}
+.section-title{font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase}
+.scroll-body{flex:1;overflow-y:auto;padding:8px 10px}
+.scroll-body::-webkit-scrollbar{width:3px}
+.scroll-body::-webkit-scrollbar-thumb{background:var(--surface3)}
+.u-map-card{background:var(--surface);border:1px solid var(--border);margin-bottom:7px;padding:9px 11px;cursor:pointer;transition:all 0.12s;position:relative}
+.u-map-card::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:var(--accent);opacity:0;transition:opacity 0.2s}
+.u-map-card:hover::before,.u-map-card.active::before{opacity:1}
+.u-map-card.active{border-color:rgba(0,196,163,0.25);background:rgba(0,196,163,0.04)}
+.u-map-name{font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px}
+.u-map-meta{font-family:var(--font-mono);font-size:9px;color:var(--muted)}
+
+.user-mid{width:280px;flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
+.mid-head{padding:12px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0;position:relative}
+.mid-head::after{content:'';position:absolute;bottom:-1px;left:0;width:50px;height:1px;background:var(--accent2)}
+.need-row{display:flex;align-items:center;gap:8px;padding:6px 9px;background:var(--surface2);border:1px solid var(--border);margin-bottom:4px;cursor:pointer;transition:all 0.12s;position:relative}
+.need-row:hover{border-color:var(--border2)}
+.need-row.checked{opacity:0.4}
+.need-row.checked .need-name{text-decoration:line-through}
+.need-check{width:14px;height:14px;flex-shrink:0;border:1px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;transition:all 0.12s}
+.need-row.checked .need-check{background:var(--accent);border-color:var(--accent)}
+.need-check::after{content:'✓';font-size:8px;color:#0d1a18;opacity:0}
+.need-row.checked .need-check::after{opacity:1}
+.need-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.need-name{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;flex:1;min-width:0}
+.need-qty{font-family:var(--font-display);font-size:14px;font-weight:700;flex-shrink:0}
+
+.user-right{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.map-filter-bar{padding:5px 12px;border-bottom:1px solid var(--border);background:var(--surface);display:none;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.map-filter-bar.visible{display:flex}
+.filter-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;flex-shrink:0}
+.mat-chip{display:flex;align-items:center;gap:4px;padding:2px 8px;font-family:var(--font-mono);font-size:9px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.12s;letter-spacing:0.04em}
+.mat-chip:hover{border-color:var(--accent);color:var(--accent)}
+.mat-chip.active{border-color:var(--accent);color:var(--accent);background:rgba(0,196,163,0.1)}
+.chip-dot{width:6px;height:6px;border-radius:50%}
+.map-viewport{flex:1;position:relative;overflow:hidden;cursor:grab}
+.map-viewport.grabbing{cursor:grabbing}
+.map-inner{position:absolute;transform-origin:0 0;will-change:transform}
+.user-pin{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:5px;padding:3px 8px 3px 5px;background:rgba(13,15,18,0.92);border:1px solid rgba(255,255,255,0.15);clip-path:polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,0 100%);cursor:pointer;transition:all 0.12s;white-space:nowrap;z-index:5}
+.user-pin:hover{border-color:rgba(255,255,255,0.35);z-index:10}
+.user-pin.highlighted{z-index:15}
+.user-pin.dimmed{opacity:0.18}
+.user-pin-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.user-pin-text{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+.user-pin-sub{font-family:var(--font-mono);font-size:8px;color:rgba(255,255,255,0.5)}
+.zoom-controls{position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:3px;z-index:20}
+.zoom-btn{width:28px;height:28px;background:var(--surface);border:1px solid var(--border2);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.12s;clip-path:polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px))}
+.zoom-btn:hover{border-color:var(--accent);color:var(--accent)}
+.map-info-bar{padding:8px 14px;background:rgba(13,15,18,0.97);border-top:1px solid var(--border);flex-shrink:0;display:none}
+.map-info-bar.visible{display:block}
+.map-info-title{font-family:var(--font-mono);font-size:9px;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:6px}
+.map-info-cards{display:flex;gap:6px;flex-wrap:wrap}
+.map-info-card{background:var(--surface);border:1px solid var(--border2);padding:6px 10px;min-width:120px}
+.map-info-zone{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px}
+.map-info-note{font-family:var(--font-mono);font-size:9px;color:var(--muted);line-height:1.5}
+.map-info-custom-badge{font-family:var(--font-mono);font-size:8px;color:var(--accent2);letter-spacing:0.08em;text-transform:uppercase;margin-top:3px}
+
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:11px;padding:7px 18px;z-index:1000;letter-spacing:0.08em;display:none;animation:fadeIn 0.2s}
+#toast.ok{background:var(--accent);color:#0d1a18}
+#toast.err{background:var(--danger);color:#fff}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface3)}
+</style>
+</head>
+<body>
+
+<div class="upload-progress-bar" id="upload-progress-bar"></div>
+
+<div class="db-status-bar">
+  <div class="db-status-dot loading" id="db-dot"></div>
+  <span class="db-status-text" id="db-status-text">Connecting…</span>
+</div>
+
+<header class="header">
+  <div>
+    <div class="header-eyebrow">Arknights: Endfield // Map System</div>
+    <div class="header-title">Field <span>Map Editor</span></div>
+  </div>
+  <nav class="header-tabs">
+    <button class="htab active" onclick="switchView('admin',this)">Admin</button>
+    <button class="htab"        onclick="switchView('user',this)">User Preview</button>
+  </nav>
+</header>
+
+<!-- ADMIN VIEW -->
+<div class="view active" id="view-admin">
+<div class="admin-layout">
+
+  <aside class="admin-left">
+    <div class="panel-head">
+      <div class="panel-eyebrow">Saved Maps</div>
+      <div class="panel-title">Map Library</div>
+      <button class="btn btn-accent btn-full" onclick="adminCreateMap()">+ New Map</button>
+    </div>
+    <div class="map-library" id="admin-map-library"></div>
+  </aside>
+
+  <main class="admin-center" style="position:relative">
+    <div class="center-head">
+      <span class="center-title" id="canvas-title">Select or Create a Map</span>
+      <span class="mode-pill" id="mode-pill">No Map</span>
+      <input type="file" id="file-input" accept="image/*" onchange="onImageUpload(event)" style="display:none">
+      <button class="btn btn-sm" id="btn-upload" onclick="document.getElementById('file-input').click()" style="display:none">Upload Image</button>
+      <button class="btn btn-sm" id="btn-crop"   onclick="toggleCropMode()"  style="display:none">Crop</button>
+      <button class="btn btn-sm btn-accent" id="btn-save" onclick="adminSaveMap()" style="display:none">Save</button>
+    </div>
+    <div class="admin-filter-bar" id="admin-filter-bar">
+      <span class="filter-label-sm">Filter Pins:</span>
+      <div id="admin-filter-chips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+      <button class="admin-chip-all active" id="admin-chip-all" onclick="adminFilterAll()">All</button>
+      <label class="drag-toggle" title="Enable drag mode to reposition pins">
+        <input type="checkbox" id="drag-toggle-cb" onchange="toggleDragMode(this.checked)">
+        <span class="drag-toggle-track"></span>
+        Drag Pins
+      </label>
+    </div>
+    <div class="crop-toolbar" id="crop-toolbar">
+      <span class="crop-info" id="crop-info">Set the coordinate space for pins</span>
+      <span style="font-family:var(--font-mono);font-size:9px;color:var(--muted)">Presets:</span>
+      <button class="preset-btn" onclick="applyPreset(1200,900)">1200×900</button>
+      <button class="preset-btn" onclick="applyPreset(1600,900)">1600×900</button>
+      <button class="preset-btn" onclick="applyPreset(1000,800)">1000×800</button>
+      <button class="preset-btn" onclick="applyPreset(800,600)">800×600</button>
+      <button class="btn btn-sm btn-accent" onclick="applyCrop()">Apply</button>
+      <button class="btn btn-sm btn-ghost"  onclick="cancelCrop()">Cancel</button>
+    </div>
+    <div class="canvas-wrap" id="canvas-wrap" onclick="onCanvasClick(event)">
+      <div class="canvas-placeholder" id="canvas-placeholder">
+        <div class="canvas-placeholder-ring">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l9-6 9 6M9 21V12h6v9"/></svg>
+        </div>
+        <div class="canvas-placeholder-title" id="placeholder-title">Select or Create a Map</div>
+        <div class="canvas-placeholder-sub"   id="placeholder-sub">Use the panel on the left to begin</div>
+      </div>
+      <div class="map-img-wrap" id="map-img-wrap">
+        <div class="map-img-container" id="map-img-container">
+          <img id="map-preview-img" src="" alt="Map preview" draggable="false">
+          <div id="admin-pins-layer" style="position:absolute;inset:0;pointer-events:none"></div>
+        </div>
+      </div>
+      <div class="canvas-status" id="canvas-status">
+        <span style="display:flex;align-items:center;gap:5px">
+          <span class="status-dot" style="background:var(--accent2)"></span>
+          <span id="sb-mode">Pin Mode</span>
+        </span>
+        <span>Pins: <b id="sb-pin-count">0</b></span>
+        <span id="sb-filter-count" style="color:var(--accent2)"></span>
+        <span style="margin-left:auto;font-size:9px" id="sb-coords">x:— y:—</span>
+      </div>
+      <div class="upload-overlay" id="upload-overlay">
+        <div class="upload-overlay-ring"></div>
+        <div class="upload-overlay-text" id="upload-overlay-text">Uploading to Storage…</div>
+      </div>
+    </div>
+  </main>
+
+  <aside class="admin-right">
+    <div class="panel-head" style="border-bottom:1px solid var(--border)">
+      <div class="panel-eyebrow">Properties</div>
+      <div class="panel-title" id="prop-panel-title">No Selection</div>
+    </div>
+    <div class="prop-body" id="prop-body">
+      <p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;padding:8px 0">Select a map, then click the image to place pins.</p>
+    </div>
+  </aside>
+</div>
+</div>
+
+<!-- USER VIEW -->
+<div class="view" id="view-user">
+<div class="user-layout">
+  <aside class="user-left">
+    <div class="section-head">
+      <div class="section-eyebrow">Saved Maps</div>
+      <div class="section-title">Map Library</div>
+    </div>
+    <div class="scroll-body" id="user-map-list"></div>
+  </aside>
+  <section class="user-mid">
+    <div class="mid-head">
+      <div class="section-eyebrow" style="color:var(--accent2)">Materials on Map</div>
+      <div class="section-title">Legend</div>
+    </div>
+    <div class="scroll-body" id="user-legend-body">
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;padding:10px 0;text-align:center">Select a map to see materials.</div>
+    </div>
+  </section>
+  <section class="user-right">
+    <div class="map-filter-bar" id="u-filter-bar">
+      <span class="filter-label">Filter:</span>
+      <div id="u-chips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+      <button class="mat-chip" onclick="userHighlightMat(null)" style="margin-left:auto">Clear</button>
+    </div>
+    <div class="map-viewport" id="user-map-vp">
+      <div class="map-inner" id="user-map-inner"></div>
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="userZoom(1.25)">+</button>
+        <button class="zoom-btn" style="font-size:9px;font-family:var(--font-mono);letter-spacing:.05em" onclick="userResetView()">RST</button>
+        <button class="zoom-btn" onclick="userZoom(0.8)">−</button>
+      </div>
+    </div>
+    <div class="map-info-bar" id="u-info-bar">
+      <div class="map-info-title" id="u-info-title"></div>
+      <div class="map-info-cards" id="u-info-cards"></div>
+    </div>
+  </section>
+</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+// ── SUPABASE ──────────────────────────────────────────────
+const SUPABASE_URL       = 'https://vjcucliqjjljhgbqshmi.supabase.co';
+const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODQ5NTcxMiwiZXhwIjoyMDk0MDcxNzEyfQ.W0j6nc4221j6Pm-qKerKgMUCkG4kSLLt9MCaeRM-VrM';
+const STORAGE_BUCKET     = 'Image_bucket';
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
+
+function setDbStatus(state, msg) {
+  document.getElementById('db-dot').className  = 'db-status-dot ' + state;
+  document.getElementById('db-status-text').textContent = msg;
+}
+
+// ── MATERIAL DEFINITIONS ──────────────────────────────────
+// Groups and colors keyed to material_list_materials IDs
+const MAT_GROUPS = [
+  {
+    group: 'Operator EXP',
+    color: '#5ba85b',
+    items: [
+      { id: 'elementary_combat_record', name: 'Elementary Combat Record', sub: 'Operator EXP' },
+      { id: 'intermediate_combat_record', name: 'Intermediate Combat Record', sub: 'Operator EXP' },
+      { id: 'advanced_combat_record', name: 'Advanced Combat Record', sub: 'Operator EXP' },
+      { id: 'elementary_cognitive_carrier', name: 'Elementary Cognitive Carrier', sub: 'Operator EXP Lv61+' },
+      { id: 'advanced_cognitive_carrier', name: 'Advanced Cognitive Carrier', sub: 'Operator EXP Lv61+' },
+    ]
+  },
+  {
+    group: 'Weapon EXP',
+    color: '#7ec9c9',
+    items: [
+      { id: 'arms_inspector', name: 'Arms Inspector', sub: 'Weapon EXP' },
+      { id: 'arms_insp_kit',  name: 'Arms INSP Kit',  sub: 'Weapon EXP' },
+      { id: 'arms_insp_set',  name: 'Arms INSP Set',  sub: 'Weapon EXP Lv61+' },
+    ]
+  },
+  {
+    group: 'Promotion',
+    color: '#c9a05b',
+    items: [
+      { id: 'protodisk',   name: 'Protodisk',   sub: 'Operator Promotion' },
+      { id: 'protoset',    name: 'Protoset',    sub: 'Operator Promotion' },
+      { id: 'protoprism',  name: 'Protoprism',  sub: 'Skill Upgrade' },
+      { id: 'protohedron', name: 'Protohedron', sub: 'Skill Upgrade' },
+    ]
+  },
+  {
+    group: 'Weapon Tuning',
+    color: '#c97b5b',
+    items: [
+      { id: 'cast_die',       name: 'Cast Die',       sub: 'Weapon Tune Lv.20' },
+      { id: 'heavy_cast_die', name: 'Heavy Cast Die', sub: 'Weapon Tune Lv.40+' },
+    ]
+  },
+  {
+    group: 'Mastery',
+    color: '#b870e0',
+    items: [
+      { id: 'mark_of_perseverance', name: 'Mark of Perseverance', sub: 'Mastery' },
+    ]
+  },
+  {
+    group: 'Rare Mats — Operator',
+    color: '#e8c84a',
+    items: [
+      { id: 'd96_steel',   name: 'D96 Steel Sample 4',           sub: 'Adv. Progression I' },
+      { id: 'metadiastima',name: 'Metadiastima Photoemission Tube', sub: 'Adv. Progression II' },
+      { id: 'tachyon',     name: 'Tachyon Screening Lattice',    sub: 'Adv. Progression III' },
+      { id: 'quadrant',    name: 'Quadrant Fitting Fluid',       sub: 'Adv. Progression IV' },
+      { id: 'triphasic',   name: 'Triphasic Nanoflake',          sub: 'Adv. Progression V' },
+    ]
+  },
+  {
+    group: 'Rare Ores — Weapon Tuning',
+    color: '#6b8ec9',
+    items: [
+      { id: 'kalkonyx',   name: 'Kalkonyx',   sub: 'Weapon Tune Lv.20→40' },
+      { id: 'auronyx',    name: 'Auronyx',    sub: 'Weapon Tune Lv.40→60' },
+      { id: 'umbronyx',   name: 'Umbronyx',   sub: 'Weapon Tune Lv.60→80' },
+      { id: 'igneosite',  name: 'Igneosite',  sub: 'Weapon Tune Lv.80+' },
+      { id: 'wulingstone',name: 'Wulingstone',sub: 'Weapon Tune Lv.80+' },
+    ]
+  },
+  {
+    group: 'Boletes — Operator Promotion',
+    color: '#e08060',
+    items: [
+      { id: 'pink_bolete',  name: 'Pink Bolete',  sub: 'Promotion Lv.20' },
+      { id: 'red_bolete',   name: 'Red Bolete',   sub: 'Promotion Lv.40' },
+      { id: 'ruby_bolete',  name: 'Ruby Bolete',  sub: 'Promotion Lv.60' },
+      { id: 'bloodcap',     name: 'Bloodcap',     sub: 'Promotion Lv.80' },
+      { id: 'cosmagaric',   name: 'Cosmagaric',   sub: 'Promotion (Ch.2)' },
+    ]
+  },
+  {
+    group: 'Dendras — Skill Upgrade',
+    color: '#70c98a',
+    items: [
+      { id: 'chrysodendra',    name: 'Chrysodendra',    sub: 'Skill S1–S3' },
+      { id: 'kalkodendra',     name: 'Kalkodendra',     sub: 'Skill S4–S6' },
+      { id: 'vitrodendra',     name: 'Vitrodendra',     sub: 'Skill S7–S9' },
+      { id: 'blighted_jadeleaf',name:'Blighted Jadeleaf',sub: 'Mastery' },
+      { id: 'false_aggela',    name: 'False Aggela',    sub: 'Mastery' },
+    ]
+  },
+];
+
+// Flat lookup maps
+const MAT_BY_ID   = {};
+const MAT_COLOR   = {};
+MAT_GROUPS.forEach(g => g.items.forEach(m => {
+  MAT_BY_ID[m.id] = { ...m, group: g.group };
+  MAT_COLOR[m.id] = g.color;
+}));
+
+function getMat(id)   { return MAT_BY_ID[id] || { id, name: id, group: 'Unknown', sub: '' }; }
+function getColor(id) { return MAT_COLOR[id] || '#6b7280'; }
+
+// ── STATE ─────────────────────────────────────────────────
+let MAPS = [];
+const admin = {
+  activeMapId:   null,
+  selectedPinId: null,
+  cropMode:      false,
+  dragMode:      false,
+  filterMatId:   null,
+  noteTab:       {},   // pinId → 'default' | 'custom'
+  matSearch:     '',
+};
+const user = {
+  activeMapId:  null,
+  highlightMat: null,
+  view:         { tx: 0, ty: 0, scale: 1 },
+};
+
+function getActiveMap()     { return MAPS.find(m => m.id === admin.activeMapId) || null; }
+function getPin(map, pinId) { return map ? map.pins.find(p => p.id === pinId) : null; }
+function uid()              { return crypto.randomUUID(); }
+
+// ── UPLOAD OVERLAY ────────────────────────────────────────
+function showUploadOverlay(msg = 'Uploading to Storage…') {
+  document.getElementById('upload-overlay-text').textContent = msg;
+  document.getElementById('upload-overlay').classList.add('visible');
+  document.getElementById('upload-progress-bar').classList.add('active');
+}
+function hideUploadOverlay() {
+  document.getElementById('upload-overlay').classList.remove('visible');
+  document.getElementById('upload-progress-bar').classList.remove('active');
+}
+
+// ── STORAGE UPLOAD ────────────────────────────────────────
+async function uploadImageToStorage(file, mapId) {
+  const ext  = file.name.split('.').pop().toLowerCase() || 'jpg';
+  const path = `maps/${mapId}/${Date.now()}.${ext}`;
+  const { data, error } = await db.storage.from(STORAGE_BUCKET).upload(path, file, { cacheControl: '3600', upsert: true, contentType: file.type });
+  if (error) throw error;
+  const { data: urlData } = db.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+  return urlData.publicUrl;
+}
+
+async function deleteImageFromStorage(imageUrl) {
+  if (!imageUrl || imageUrl.startsWith('data:')) return;
+  try {
+    const marker = `/object/public/${STORAGE_BUCKET}/`;
+    const idx = imageUrl.indexOf(marker);
+    if (idx === -1) return;
+    await db.storage.from(STORAGE_BUCKET).remove([imageUrl.slice(idx + marker.length)]);
+  } catch (e) { console.warn('Could not delete old image:', e.message); }
+}
+
+// ── DB HELPERS ────────────────────────────────────────────
+async function loadMaps() {
+  setDbStatus('loading', 'Loading maps…');
+  try {
+    const { data: maps, error: mapErr } = await db.from('material_list_maps').select('*').order('sort_order');
+    if (mapErr) throw mapErr;
+    const { data: pins, error: pinErr } = await db.from('material_list_map_pins').select('*').order('sort_order');
+    if (pinErr) throw pinErr;
+    MAPS = (maps || []).map(m => ({ ...m, pins: (pins || []).filter(p => p.map_id === m.id) }));
+    setDbStatus('ok', `${MAPS.length} maps loaded`);
+  } catch (e) {
+    setDbStatus('err', 'Failed: ' + e.message);
+    MAPS = [];
+  }
+}
+
+async function dbUpsertMap(map) {
+  const { error } = await db.from('material_list_maps').upsert({ id: map.id, name: map.name, slug: map.slug, image_url: map.image_url || null, coord_width: map.coord_width, coord_height: map.coord_height, sort_order: map.sort_order || 0 }, { onConflict: 'id' });
+  if (error) throw error;
+}
+async function dbDeleteMap(id) {
+  const { error } = await db.from('material_list_maps').delete().eq('id', id);
+  if (error) throw error;
+}
+async function dbUpsertPin(pin) {
+  const { error } = await db.from('material_list_map_pins').upsert({ id: pin.id, map_id: pin.map_id, material_id: pin.material_id, location_name: pin.location_name, note: pin.note || null, x: pin.x, y: pin.y, sort_order: pin.sort_order || 0 }, { onConflict: 'id' });
+  if (error) throw error;
+}
+async function dbDeletePin(pinId) {
+  const { error } = await db.from('material_list_map_pins').delete().eq('id', pinId);
+  if (error) throw error;
+}
+async function dbPatchMap(id, fields) {
+  const { error } = await db.from('material_list_maps').update(fields).eq('id', id);
+  if (error) throw error;
+}
+async function dbPatchPin(pinId, fields) {
+  const { error } = await db.from('material_list_map_pins').update(fields).eq('id', pinId);
+  if (error) throw error;
+}
+
+// ── MATERIAL DEFAULT NOTES ────────────────────────────────
+// Keyed by material_id — sourced from material_list_materials.farming_note
+const DEFAULT_NOTES = {
+  elementary_combat_record:   'Protocol Space: Operation EXP (any difficulty); exploration chests throughout the world.',
+  intermediate_combat_record: 'Protocol Space: Operation EXP; Dijiang Manufacturing Cabin (passive production).',
+  advanced_combat_record:     'Protocol Space: Operation EXP Diff 4 — best mix of Advanced Records and Cognitive Carriers.',
+  elementary_cognitive_carrier:'Protocol Space: Operation EXP (higher difficulties). Required for operator Lv 61+.',
+  advanced_cognitive_carrier: 'Protocol Space: Operation EXP Diff 4+. Required for operator Lv 61–90 only.',
+  arms_inspector:             'Protocol Space: any EXP rift difficulty; exploration chests.',
+  arms_insp_kit:              'Protocol Space: EXP runs (mid-diff); AIC trade.',
+  arms_insp_set:              'Protocol Space: EXP runs (higher diff). Required for weapon Lv 61–90.',
+  protodisk:                  'Protocol Space: Promotions (Diff 1–2) near Core AIC Area. Also AIC Quota Exchange with excess character tokens.',
+  protoset:                   'Protocol Space: Promotions (Diff 3+). Also AIC Quota Exchange.',
+  protoprism:                 'Skill node near Core AIC Area; Protocol Space: Promotions (higher diff).',
+  protohedron:                'Core AIC Area skill node (harder difficulty); AIC Quota Exchange; boss drops.',
+  cast_die:                   'Exploration, quests, Protocol Space missions; needed for Weapon Tuning I–II (Lv.20 gate).',
+  heavy_cast_die:             'Wuling City region quests; Protocol Space (higher diff); gates Weapon Tuning III–IV.',
+  mark_of_perseverance:       'Protocol Space endgame content; RE-Crisis rewards.',
+  d96_steel:                  'World node: Mines Cable Car Station, Originium Lodespring (3-day respawn). Also Advanced Progression I and RE-Crisis: Rhodagn.',
+  metadiastima:               'World node: Power Plateau, near Plateau Trunkway, Valley IV (3-day respawn). Also Advanced Progression II and RE-Crisis.',
+  tachyon:                    'World node: Jingyu Valley, near Sky King Flats Sub-PAC, Wuling (3-day respawn). Also Advanced Progression III and RE-Crisis.',
+  quadrant:                   'World node: top of Tianshi Bureau Academy building, Wuling City — reach via south-side stairs (3-day respawn). Also Advanced Progression IV.',
+  triphasic:                  'World node: Bureau of Swordmancers, Wuling City — south ground-level entrance (3-day respawn). Also Advanced Progression V.',
+  kalkonyx:                   'Rare Ore nodes across Valley IV Hub, Aburrey Quarry, Originium Science Park. Manual harvest only — no Mining Rigs. Respawn on daily reset.',
+  auronyx:                    'Rare Ore nodes in Originium Lodespring and Power Plateau. All nodes require industrial explosives to access. 3 total nodes.',
+  umbronyx:                   'Rare Ore nodes in Jingyu Valley (Ch.2). Two locations: Treasure Grotto and Zhailing Islet (bridge repair needed).',
+  igneosite:                  'Endgame Rare Ore nodes — Wuling City region. Used for Weapon Tuning at Lv.80+.',
+  wulingstone:                'Rare Ore nodes — Wuling City region. Used for Weapon Tuning at Lv.80+.',
+  pink_bolete:                'Rare Growths in Valley IV Hub (south of Old Water Plant; west of Hub Base Power Plant). 3-day respawn. Used for Operator Promotion Lv.20.',
+  red_bolete:                 'Rare Growths in Originium Lodespring — 3 nodes total, south of Logistics Area. Daily respawn. Used for Operator Promotion Lv.40.',
+  ruby_bolete:                'Rare Growths in Jingyu Valley (Ch.2). First appears as you progress main story. Used for Promotion Lv.60.',
+  bloodcap:                   'Rare Growths in Jingyu Valley and Chapter 2 areas. Used for Operator Promotion IV. 3-day respawn.',
+  cosmagaric:                 'Rare Growths in Jingyu Valley and Chapter 2 areas. 3-day respawn.',
+  chrysodendra:               'Rare Growth nodes near Originium Science Park / Hub AIC area. Also craftable in AIC. Used for Skill S1–S3.',
+  kalkodendra:                'Rare Growth nodes near Originium Lodespring area. Also AIC craft. Used for Skill S4–S6.',
+  vitrodendra:                'Rare Growth nodes in Jingyu Valley area. Also AIC craft. Used for Skill S7–S9.',
+  blighted_jadeleaf:          'Rare Growth nodes across multiple regions. Use the Rare tag in the Marker system to track nodes. Required for Mastery.',
+  false_aggela:               'Rare Growth nodes in Jingyu Valley area. Required for Mastery. 3-day respawn.',
+};
+
+function getDefaultNote(matId) {
+  return DEFAULT_NOTES[matId] || 'No default farming note available for this material.';
+}
+
+// ── ADMIN LIBRARY ─────────────────────────────────────────
+function renderAdminLibrary() {
+  const el = document.getElementById('admin-map-library');
+  if (!MAPS.length) { el.innerHTML = '<div class="lib-empty">No maps yet.<br>Click + New Map to start.</div>'; return; }
+  el.innerHTML = MAPS.map(m => `
+    <div class="map-entry ${admin.activeMapId === m.id ? 'active' : ''}" onclick="adminSelectMap('${m.id}')">
+      <div class="map-entry-name">${m.name}</div>
+      <div class="map-entry-meta">${m.pins.length} pin${m.pins.length !== 1 ? 's' : ''} · ${m.coord_width}×${m.coord_height}</div>
+      <div class="map-entry-actions">
+        <button class="btn btn-sm btn-ghost btn-danger" onclick="event.stopPropagation();adminDeleteMap('${m.id}')">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+async function adminCreateMap() {
+  const id   = uid();
+  const slug = 'map-' + Date.now();
+  const map  = { id, name: 'Unnamed Map', slug, image_url: null, coord_width: 900, coord_height: 600, sort_order: MAPS.length, pins: [] };
+  MAPS.push(map);
+  try { await dbUpsertMap(map); showToast('Map created', 'ok'); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  adminSelectMap(id);
+  renderAdminLibrary();
+}
+
+async function adminDeleteMap(id) {
+  if (!confirm('Delete this map and all its pins?')) return;
+  const map = MAPS.find(m => m.id === id);
+  if (map && map.image_url) await deleteImageFromStorage(map.image_url);
+  MAPS = MAPS.filter(m => m.id !== id);
+  try { await dbDeleteMap(id); showToast('Map deleted', 'ok'); }
+  catch (e) { showToast('Delete failed: ' + e.message, 'err'); }
+  if (admin.activeMapId === id) { admin.activeMapId = null; admin.selectedPinId = null; renderAdminCanvas(); renderAdminProps(); }
+  renderAdminLibrary();
+}
+
+function adminSelectMap(id) {
+  admin.activeMapId   = id;
+  admin.selectedPinId = null;
+  admin.cropMode      = false;
+  admin.filterMatId   = null;
+  admin.matSearch     = '';
+  document.getElementById('drag-toggle-cb').checked = false;
+  admin.dragMode = false;
+  renderAdminLibrary();
+  renderAdminCanvas();
+  renderAdminProps();
+  renderAdminFilterBar();
+}
+
+// ── ADMIN FILTER BAR ──────────────────────────────────────
+function renderAdminFilterBar() {
+  const map    = getActiveMap();
+  const bar    = document.getElementById('admin-filter-bar');
+  const chips  = document.getElementById('admin-filter-chips');
+  const allBtn = document.getElementById('admin-chip-all');
+  if (!map || !map.pins.length) { bar.classList.remove('visible'); return; }
+  bar.classList.add('visible');
+  const matIds = [...new Set(map.pins.map(p => p.material_id))];
+  chips.innerHTML = matIds.map(matId => {
+    const color = getColor(matId);
+    const mat   = getMat(matId);
+    return `<div class="admin-chip ${admin.filterMatId === matId ? 'active' : ''}" onclick="adminFilterByMat('${matId}')">
+      <div class="admin-chip-dot" style="background:${color}"></div>${mat.name}
+    </div>`;
+  }).join('');
+  allBtn.className = 'admin-chip-all' + (admin.filterMatId === null ? ' active' : '');
+  const sbFilter = document.getElementById('sb-filter-count');
+  if (admin.filterMatId) {
+    const cnt = map.pins.filter(p => p.material_id === admin.filterMatId).length;
+    sbFilter.textContent = `Showing: ${getMat(admin.filterMatId).name} (${cnt})`;
+  } else { sbFilter.textContent = ''; }
+}
+
+function adminFilterByMat(matId) {
+  admin.filterMatId   = admin.filterMatId === matId ? null : matId;
+  admin.selectedPinId = null;
+  renderAdminPins(); renderAdminProps(); renderAdminFilterBar();
+}
+function adminFilterAll() {
+  admin.filterMatId = null; admin.selectedPinId = null;
+  renderAdminPins(); renderAdminProps(); renderAdminFilterBar();
+}
+
+// ── ADMIN DRAG MODE ───────────────────────────────────────
+function toggleDragMode(enabled) {
+  admin.dragMode = enabled;
+  document.getElementById('canvas-wrap').classList.toggle('drag-mode', enabled);
+  const pill = document.getElementById('mode-pill');
+  if (enabled) { pill.textContent = 'Drag Mode'; pill.className = 'mode-pill crop-mode'; document.getElementById('sb-mode').textContent = 'Drag Mode'; }
+  else         { pill.textContent = 'Pin Mode';  pill.className = 'mode-pill pin-mode';  document.getElementById('sb-mode').textContent = 'Pin Mode'; }
+  renderAdminPins();
+}
+
+// ── ADMIN CANVAS ──────────────────────────────────────────
+function renderAdminCanvas() {
+  const map         = getActiveMap();
+  const placeholder = document.getElementById('canvas-placeholder');
+  const imgWrap     = document.getElementById('map-img-wrap');
+  const status      = document.getElementById('canvas-status');
+  const btnUpload   = document.getElementById('btn-upload');
+  const btnCrop     = document.getElementById('btn-crop');
+  const btnSave     = document.getElementById('btn-save');
+  const cropBar     = document.getElementById('crop-toolbar');
+  const pill        = document.getElementById('mode-pill');
+  const title       = document.getElementById('canvas-title');
+  if (!map) {
+    placeholder.style.display = 'flex';
+    document.getElementById('placeholder-title').textContent = 'Select or Create a Map';
+    document.getElementById('placeholder-sub').textContent   = 'Use the panel on the left to begin';
+    imgWrap.classList.remove('visible'); status.classList.remove('visible');
+    btnUpload.style.display = btnCrop.style.display = btnSave.style.display = 'none';
+    cropBar.classList.remove('active'); pill.textContent = 'No Map'; pill.className = 'mode-pill';
+    title.textContent = 'Select or Create a Map';
+    document.getElementById('admin-filter-bar').classList.remove('visible');
+    return;
+  }
+  title.textContent = map.name;
+  btnUpload.style.display = btnSave.style.display = '';
+  btnCrop.style.display   = map.image_url ? '' : 'none';
+  status.classList.add('visible');
+  document.getElementById('sb-pin-count').textContent = map.pins.length;
+  if (admin.dragMode)      { pill.textContent = 'Drag Mode'; pill.className = 'mode-pill crop-mode'; document.getElementById('sb-mode').textContent = 'Drag Mode'; }
+  else if (admin.cropMode) { pill.textContent = 'Crop Mode'; pill.className = 'mode-pill crop-mode'; document.getElementById('sb-mode').textContent = 'Crop Mode'; cropBar.classList.add('active'); }
+  else                     { pill.textContent = 'Pin Mode';  pill.className = 'mode-pill pin-mode';  document.getElementById('sb-mode').textContent = 'Pin Mode';  cropBar.classList.remove('active'); }
+  if (!map.image_url) {
+    placeholder.style.display = 'flex';
+    document.getElementById('placeholder-title').textContent = map.name;
+    document.getElementById('placeholder-sub').textContent   = 'Upload an image to start placing pins';
+    imgWrap.classList.remove('visible');
+  } else {
+    placeholder.style.display = 'none';
+    imgWrap.classList.add('visible');
+    const img = document.getElementById('map-preview-img');
+    img.src = map.image_url; img.style.width = map.coord_width + 'px'; img.style.height = map.coord_height + 'px';
+    renderAdminPins();
+  }
+  document.getElementById('canvas-wrap').classList.toggle('drag-mode', admin.dragMode);
+  renderAdminFilterBar();
+}
+
+function renderAdminPins() {
+  const map = getActiveMap(); if (!map) return;
+  const layer = document.getElementById('admin-pins-layer');
+  layer.innerHTML = '';
+  map.pins.forEach(pin => {
+    const color    = getColor(pin.material_id);
+    const pctX     = (pin.x / map.coord_width)  * 100;
+    const pctY     = (pin.y / map.coord_height) * 100;
+    const sel      = admin.selectedPinId === pin.id;
+    const filtered = admin.filterMatId !== null && pin.material_id !== admin.filterMatId;
+    const el = document.createElement('div');
+    el.className = 'admin-pin' + (sel ? ' selected' : '') + (filtered ? ' filtered-out' : '');
+    el.style.cssText = `left:${pctX}%;top:${pctY}%;background:${color};pointer-events:all`;
+    el.dataset.pinId = pin.id;
+    // Show custom note indicator as a small ring if pin has custom note
+    if (pin.note && pin.note.trim()) {
+      el.style.boxShadow = `0 0 0 2px ${color}, 0 0 0 4px rgba(255,140,66,0.5)`;
+    }
+    const label = document.createElement('div');
+    label.className = 'admin-pin-label'; label.style.color = color;
+    label.textContent = getMat(pin.material_id).name;
+    el.appendChild(label);
+    el.addEventListener('click', e => { if (admin.dragMode) return; e.stopPropagation(); adminSelectPin(pin.id); });
+    if (admin.dragMode) el.addEventListener('mousedown', e => { if (e.button !== 0) return; e.stopPropagation(); e.preventDefault(); startPinDrag(pin.id, el, e); });
+    layer.appendChild(el);
+  });
+  document.getElementById('sb-pin-count').textContent = map.pins.length;
+}
+
+function startPinDrag(pinId, el, startEvt) {
+  const map = getActiveMap(); if (!map) return;
+  const pin = getPin(map, pinId); if (!pin) return;
+  const img = document.getElementById('map-preview-img'); if (!img) return;
+  el.classList.add('dragging');
+  admin.selectedPinId = pinId;
+  renderAdminProps();
+  const onMove = e => {
+    const rect = img.getBoundingClientRect();
+    let relX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    let relY = Math.max(0, Math.min(e.clientY - rect.top,  rect.height));
+    pin.x = Math.round((relX / rect.width)  * map.coord_width);
+    pin.y = Math.round((relY / rect.height) * map.coord_height);
+    el.style.left = ((pin.x / map.coord_width)  * 100) + '%';
+    el.style.top  = ((pin.y / map.coord_height) * 100) + '%';
+    document.getElementById('sb-coords').textContent = `x:${pin.x}  y:${pin.y}`;
+    const xIn = document.querySelector('#prop-body input[placeholder="X"]');
+    const yIn = document.querySelector('#prop-body input[placeholder="Y"]');
+    if (xIn) xIn.value = pin.x;
+    if (yIn) yIn.value = pin.y;
+  };
+  const onUp = async () => {
+    el.classList.remove('dragging');
+    window.removeEventListener('mousemove', onMove);
+    window.removeEventListener('mouseup', onUp);
+    try { await dbPatchPin(pin.id, { x: pin.x, y: pin.y }); showToast(`Moved to ${pin.x}, ${pin.y}`, 'ok'); }
+    catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+    renderAdminProps();
+  };
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+}
+
+async function onCanvasClick(e) {
+  const map = getActiveMap();
+  if (!map || !map.image_url || admin.cropMode || admin.dragMode) return;
+  const img = document.getElementById('map-preview-img'); if (!img) return;
+  const rect = img.getBoundingClientRect();
+  const relX = e.clientX - rect.left;
+  const relY = e.clientY - rect.top;
+  if (relX < 0 || relY < 0 || relX > rect.width || relY > rect.height) return;
+  const x = Math.round((relX / rect.width)  * map.coord_width);
+  const y = Math.round((relY / rect.height) * map.coord_height);
+  const pin = {
+    id:            uid(),
+    map_id:        map.id,
+    x, y,
+    material_id:   admin.filterMatId || (MAT_GROUPS[0].items[0].id),
+    location_name: 'New Location',
+    note:          '',
+    sort_order:    map.pins.length,
+  };
+  map.pins.push(pin);
+  admin.selectedPinId = pin.id;
+  try { await dbUpsertPin(pin); }
+  catch (err) { showToast('Pin save failed: ' + err.message, 'err'); }
+  renderAdminPins(); renderAdminProps(); renderAdminFilterBar();
+}
+
+document.getElementById('canvas-wrap').addEventListener('mousemove', e => {
+  const map = getActiveMap(); if (!map || !map.image_url) return;
+  const img = document.getElementById('map-preview-img'); if (!img) return;
+  const rect = img.getBoundingClientRect();
+  const relX = e.clientX - rect.left; const relY = e.clientY - rect.top;
+  if (relX < 0 || relY < 0 || relX > rect.width || relY > rect.height) return;
+  document.getElementById('sb-coords').textContent =
+    `x:${Math.round((relX / rect.width)  * map.coord_width)}  y:${Math.round((relY / rect.height) * map.coord_height)}`;
+});
+
+function adminSelectPin(id) { admin.selectedPinId = id; renderAdminPins(); renderAdminProps(); }
+
+// ── CROP ──────────────────────────────────────────────────
+function toggleCropMode() { admin.cropMode = !admin.cropMode; renderAdminCanvas(); }
+function cancelCrop() { admin.cropMode = false; document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active')); renderAdminCanvas(); }
+function applyPreset(w, h) {
+  const map = getActiveMap(); if (!map) return;
+  map.coord_width = w; map.coord_height = h;
+  document.getElementById('crop-info').textContent = `Coordinate space: ${w}×${h}`;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+async function applyCrop() {
+  const map = getActiveMap(); if (!map) return;
+  admin.cropMode = false;
+  try { await dbPatchMap(map.id, { coord_width: map.coord_width, coord_height: map.coord_height }); showToast(`Saved — ${map.coord_width}×${map.coord_height}`, 'ok'); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  renderAdminCanvas(); renderAdminLibrary();
+}
+
+// ── NOTE TAB HELPERS ──────────────────────────────────────
+function getNoteTab(pinId) { return admin.noteTab[pinId] || 'default'; }
+function setNoteTab(pinId, tab) { admin.noteTab[pinId] = tab; renderAdminProps(); }
+
+// ── ADMIN PROPS ───────────────────────────────────────────
+function renderAdminProps() {
+  const map        = getActiveMap();
+  const panelTitle = document.getElementById('prop-panel-title');
+  const body       = document.getElementById('prop-body');
+  if (!map) {
+    panelTitle.textContent = 'No Selection';
+    body.innerHTML = '<p style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;padding:8px 0">Select a map to begin.</p>';
+    return;
+  }
+  const pin = getPin(map, admin.selectedPinId);
+  if (pin) {
+    panelTitle.textContent = 'Pin Properties';
+    const mat         = getMat(pin.material_id);
+    const color       = getColor(pin.material_id);
+    const tab         = getNoteTab(pin.id);
+    const defaultNote = getDefaultNote(pin.material_id);
+    const hasCustom   = !!(pin.note && pin.note.trim());
+    const search      = admin.matSearch.toLowerCase();
+
+    // Build grouped material list HTML
+    const matListHtml = MAT_GROUPS.map(g => {
+      const filtered = g.items.filter(m => !search || m.name.toLowerCase().includes(search) || g.group.toLowerCase().includes(search));
+      if (!filtered.length) return '';
+      return `<div class="mat-group-head" style="color:${g.color}">${g.group}</div>` +
+        filtered.map(m => `<div class="mat-pick-item ${m.id === pin.material_id ? 'selected' : ''}" onclick="setPinMat('${pin.id}','${m.id}')">
+          <div class="mat-dot" style="background:${g.color}"></div>
+          <div style="flex:1;min-width:0"><div class="mat-name">${m.name}</div><div class="mat-sub">${m.sub}</div></div>
+          <div class="mat-check"></div>
+        </div>`).join('');
+    }).join('');
+
+    body.innerHTML = `
+      <div class="prop-section">
+        <div class="prop-label">Material</div>
+        <input class="mat-search prop-input" type="text" placeholder="Search materials…" value="${escHtml(admin.matSearch)}"
+          oninput="admin.matSearch=this.value; document.getElementById('mat-pick-list-${pin.id}').innerHTML=rebuildMatList('${pin.id}')">
+        <div class="mat-pick-list" id="mat-pick-list-${pin.id}">${matListHtml}</div>
+      </div>
+      <div class="prop-section">
+        <div class="prop-label">Location Name</div>
+        <input class="prop-input" type="text" value="${escHtml(pin.location_name)}" placeholder="e.g. Mineral Beds"
+          oninput="updatePinField('${pin.id}','location_name',this.value)">
+      </div>
+      <div class="prop-section">
+        <div class="prop-label">Farming Note</div>
+        <div class="note-mode-tabs">
+          <button class="note-tab ${tab === 'default' ? 'active' : ''}" onclick="setNoteTab('${pin.id}','default')">Default</button>
+          <button class="note-tab ${tab === 'custom'  ? 'active' : ''}" onclick="setNoteTab('${pin.id}','custom')">
+            Custom ${hasCustom ? '●' : ''}
+          </button>
+        </div>
+        ${tab === 'default' ? `
+          <div class="default-note-badge">⚙ from material_list_materials</div>
+          <div class="default-note-display">${escHtml(defaultNote)}</div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-top:5px;line-height:1.5">
+            Switch to <b style="color:var(--accent2)">Custom</b> tab to override this note for this specific pin.
+          </div>
+        ` : `
+          ${hasCustom ? '<div class="custom-note-indicator">✎ Custom note active</div>' : '<div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);margin-bottom:5px">No custom note — default will be shown to users.</div>'}
+          <textarea class="prop-input prop-textarea" placeholder="Custom note for this specific pin location…"
+            oninput="updatePinField('${pin.id}','note',this.value)">${escHtml(pin.note || '')}</textarea>
+          ${hasCustom ? `<button class="note-clear-btn" onclick="clearPinNote('${pin.id}')">Clear custom note</button>` : ''}
+        `}
+      </div>
+      <div class="prop-section">
+        <div class="prop-label">Coordinates (${map.coord_width}×${map.coord_height} space)</div>
+        <div class="coord-row">
+          <input class="prop-input" type="number" value="${pin.x}" placeholder="X" oninput="updatePinXY('${pin.id}','x',+this.value)">
+          <span class="coord-sep">×</span>
+          <input class="prop-input" type="number" value="${pin.y}" placeholder="Y" oninput="updatePinXY('${pin.id}','y',+this.value)">
+        </div>
+      </div>
+      <div class="prop-section">
+        <button class="btn btn-sm btn-danger" onclick="adminDeletePin('${pin.id}')">Delete Pin</button>
+      </div>
+      <hr class="sidebar-divider">
+      <div class="prop-label">All Pins (${map.pins.length})</div>
+      <div>${map.pins.map(p => {
+        const c2    = getColor(p.material_id);
+        const m2    = getMat(p.material_id);
+        const faded = admin.filterMatId && p.material_id !== admin.filterMatId;
+        const cust  = p.note && p.note.trim() ? ' <span style="color:var(--accent2);font-size:8px">✎</span>' : '';
+        return `<div class="sidebar-pin-item ${p.id === pin.id ? 'selected' : ''}" style="${faded ? 'opacity:0.3' : ''}" onclick="adminSelectPin('${p.id}')">
+          <div class="mat-dot" style="background:${c2}"></div>
+          <div><div class="sidebar-pin-name">${escHtml(p.location_name)}${cust}</div><div class="sidebar-pin-sub">${m2.name} · ${p.x},${p.y}</div></div>
+        </div>`;
+      }).join('')}
+      ${!map.pins.length ? '<div class="lib-empty" style="padding:8px 0">No pins yet.</div>' : ''}</div>`;
+  } else {
+    panelTitle.textContent = 'Map Properties';
+    const isStorageUrl = map.image_url && !map.image_url.startsWith('data:');
+    body.innerHTML = `
+      <div class="prop-section">
+        <div class="prop-label">Map Name</div>
+        <input class="prop-input" type="text" value="${escHtml(map.name)}" placeholder="Map name" oninput="updateMapName(this.value)">
+      </div>
+      <div class="prop-section">
+        <div class="prop-label">Coordinate Space (px)</div>
+        <div class="coord-row">
+          <input class="prop-input" type="number" value="${map.coord_width}"  placeholder="W" oninput="updateMapDim('coord_width',+this.value)">
+          <span class="coord-sep">×</span>
+          <input class="prop-input" type="number" value="${map.coord_height}" placeholder="H" oninput="updateMapDim('coord_height',+this.value)">
+        </div>
+      </div>
+      <div class="prop-section">
+        <div class="prop-label">Image</div>
+        ${map.image_url ? `
+          <div class="img-thumb-wrap"><img src="${map.image_url}" alt="Map preview">
+            <div class="img-thumb-overlay"><button class="btn btn-sm" onclick="document.getElementById('file-input').click()">Replace</button></div>
+          </div>
+          ${isStorageUrl ? '<div class="img-storage-badge">✓ Supabase Storage</div>' : '<div class="img-storage-badge" style="border-color:rgba(255,140,66,0.3);color:var(--accent2);background:rgba(255,140,66,0.08)">⚠ Legacy — re-upload to migrate</div>'}
+          <button class="btn btn-sm btn-ghost btn-danger" style="margin-top:4px" onclick="clearMapImage()">Remove Image</button>
+        ` : `<div style="font-family:var(--font-mono);font-size:9px;color:var(--muted)">No image — use Upload button above</div>`}
+      </div>
+      <hr class="sidebar-divider">
+      <div class="prop-label">Pins (${map.pins.length}) — click map to add</div>
+      <div>${map.pins.map(p => {
+        const c2    = getColor(p.material_id);
+        const m2    = getMat(p.material_id);
+        const faded = admin.filterMatId && p.material_id !== admin.filterMatId;
+        const cust  = p.note && p.note.trim() ? ' <span style="color:var(--accent2);font-size:8px">✎</span>' : '';
+        return `<div class="sidebar-pin-item" style="${faded ? 'opacity:0.3' : ''}" onclick="adminSelectPin('${p.id}')">
+          <div class="mat-dot" style="background:${c2}"></div>
+          <div><div class="sidebar-pin-name">${escHtml(p.location_name)}${cust}</div><div class="sidebar-pin-sub">${m2.name} · ${p.x},${p.y}</div></div>
+        </div>`;
+      }).join('')}
+      ${!map.pins.length ? '<div class="lib-empty" style="padding:8px 0">No pins yet.</div>' : ''}</div>`;
+  }
+}
+
+function rebuildMatList(pinId) {
+  const map = getActiveMap(); if (!map) return '';
+  const pin = getPin(map, pinId); if (!pin) return '';
+  const search = admin.matSearch.toLowerCase();
+  return MAT_GROUPS.map(g => {
+    const filtered = g.items.filter(m => !search || m.name.toLowerCase().includes(search) || g.group.toLowerCase().includes(search));
+    if (!filtered.length) return '';
+    return `<div class="mat-group-head" style="color:${g.color}">${g.group}</div>` +
+      filtered.map(m => `<div class="mat-pick-item ${m.id === pin.material_id ? 'selected' : ''}" onclick="setPinMat('${pin.id}','${m.id}')">
+        <div class="mat-dot" style="background:${g.color}"></div>
+        <div style="flex:1;min-width:0"><div class="mat-name">${m.name}</div><div class="mat-sub">${m.sub}</div></div>
+        <div class="mat-check"></div>
+      </div>`).join('');
+  }).join('');
+}
+
+// ── PROP UPDATE HELPERS ───────────────────────────────────
+let mapNameTimer, pinFieldTimers = {};
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function updateMapName(val) {
+  const map = getActiveMap(); if (!map) return;
+  map.name = val;
+  document.getElementById('canvas-title').textContent = val;
+  renderAdminLibrary();
+  clearTimeout(mapNameTimer);
+  mapNameTimer = setTimeout(async () => {
+    const slugBase = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    map.slug = slugBase || ('map-' + Date.now());
+    try { await dbPatchMap(map.id, { name: map.name, slug: map.slug }); }
+    catch (e) { showToast('Name save failed: ' + e.message, 'err'); }
+  }, 800);
+}
+
+function updateMapDim(key, val) {
+  const map = getActiveMap(); if (!map || val <= 0) return;
+  map[key] = val;
+}
+
+async function clearMapImage() {
+  const map = getActiveMap(); if (!map) return;
+  const oldUrl = map.image_url;
+  map.image_url = null;
+  try { await dbPatchMap(map.id, { image_url: null }); await deleteImageFromStorage(oldUrl); showToast('Image removed', 'ok'); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  renderAdminCanvas(); renderAdminProps();
+}
+
+async function setPinMat(pinId, matId) {
+  const map = getActiveMap(); if (!map) return;
+  const pin = getPin(map, pinId); if (!pin) return;
+  pin.material_id = matId;
+  try { await dbPatchPin(pin.id, { material_id: matId }); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  renderAdminPins(); renderAdminProps(); renderAdminFilterBar();
+}
+
+function updatePinField(pinId, field, val) {
+  const map = getActiveMap(); if (!map) return;
+  const pin = getPin(map, pinId); if (!pin) return;
+  pin[field] = val;
+  clearTimeout(pinFieldTimers[pinId + field]);
+  pinFieldTimers[pinId + field] = setTimeout(async () => {
+    try { await dbPatchPin(pin.id, { [field]: val }); }
+    catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+    renderAdminPins(); // re-render to update custom note ring indicator
+  }, 700);
+}
+
+async function clearPinNote(pinId) {
+  const map = getActiveMap(); if (!map) return;
+  const pin = getPin(map, pinId); if (!pin) return;
+  pin.note = '';
+  try { await dbPatchPin(pin.id, { note: null }); showToast('Custom note cleared', 'ok'); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  renderAdminPins(); renderAdminProps();
+}
+
+function updatePinXY(pinId, axis, val) {
+  const map = getActiveMap(); if (!map) return;
+  const pin = getPin(map, pinId); if (!pin) return;
+  pin[axis] = val;
+  renderAdminPins();
+  clearTimeout(pinFieldTimers[pinId + axis]);
+  pinFieldTimers[pinId + axis] = setTimeout(async () => {
+    try { await dbPatchPin(pin.id, { [axis]: val }); }
+    catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+  }, 700);
+}
+
+async function adminDeletePin(pinId) {
+  const map = getActiveMap(); if (!map) return;
+  map.pins = map.pins.filter(p => p.id !== pinId);
+  admin.selectedPinId = null;
+  try { await dbDeletePin(pinId); showToast('Pin deleted', 'ok'); }
+  catch (e) { showToast('Delete failed: ' + e.message, 'err'); }
+  renderAdminPins(); renderAdminProps(); renderAdminFilterBar();
+}
+
+// ── IMAGE UPLOAD ──────────────────────────────────────────
+async function onImageUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const map  = getActiveMap();    if (!map)  return;
+  if (!file.type.startsWith('image/')) { showToast('File must be an image', 'err'); return; }
+  if (file.size > 20 * 1024 * 1024)   { showToast('Image must be under 20MB', 'err'); return; }
+  showUploadOverlay('Uploading to Storage…');
+  try {
+    if (map.image_url) await deleteImageFromStorage(map.image_url);
+    const publicUrl = await uploadImageToStorage(file, map.id);
+    map.image_url = publicUrl;
+    await dbPatchMap(map.id, { image_url: publicUrl });
+    showToast('Image uploaded ✓', 'ok');
+  } catch (err) {
+    showToast('Upload failed: ' + err.message, 'err');
+  } finally {
+    hideUploadOverlay(); e.target.value = '';
+  }
+  renderAdminCanvas(); renderAdminProps();
+}
+
+async function adminSaveMap() {
+  const map = getActiveMap(); if (!map) return;
+  try { await dbUpsertMap(map); showToast('Map saved!', 'ok'); renderAdminLibrary(); }
+  catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+}
+
+// ── VIEW SWITCHER ─────────────────────────────────────────
+function switchView(v, btn) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelectorAll('.htab').forEach(el => el.classList.remove('active'));
+  btn.classList.add('active');
+  if (v === 'user') renderUserView();
+}
+
+// ── USER VIEW ─────────────────────────────────────────────
+function renderUserView() {
+  renderUserMapList();
+  if (!user.activeMapId && MAPS.length) user.activeMapId = MAPS[0].id;
+  renderUserMap();
+}
+
+function renderUserMapList() {
+  const el = document.getElementById('user-map-list');
+  if (!MAPS.length) { el.innerHTML = '<div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;padding:10px 0;text-align:center">No maps — create one in Admin.</div>'; return; }
+  el.innerHTML = MAPS.map(m => `
+    <div class="u-map-card ${user.activeMapId === m.id ? 'active' : ''}" onclick="userSelectMap('${m.id}')">
+      <div class="u-map-name">${escHtml(m.name)}</div>
+      <div class="u-map-meta">${m.pins.length} pin${m.pins.length !== 1 ? 's' : ''} · ${m.coord_width}×${m.coord_height}</div>
+    </div>`).join('');
+}
+
+function userSelectMap(id) {
+  user.activeMapId = id;
+  user.highlightMat = null;
+  user.view = { tx: 0, ty: 0, scale: 1 };
+  renderUserMapList();
+  renderUserMap();
+}
+
+function renderUserMap() {
+  const inner     = document.getElementById('user-map-inner');
+  const infoBar   = document.getElementById('u-info-bar');
+  const legend    = document.getElementById('user-legend-body');
+  const filterBar = document.getElementById('u-filter-bar');
+  const chips     = document.getElementById('u-chips');
+  if (!inner) return;
+  const map = MAPS.find(m => m.id === user.activeMapId);
+  if (!map) {
+    inner.innerHTML = '';
+    legend.innerHTML = '<div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;padding:10px 0;text-align:center">Select a map.</div>';
+    return;
+  }
+
+  const matIds = [...new Set(map.pins.map(p => p.material_id))];
+  legend.innerHTML = matIds.length ? matIds.map(k => {
+    const mat   = getMat(k);
+    const color = getColor(k);
+    const isHL  = user.highlightMat === k;
+    return `<div class="need-row ${isHL ? 'checked' : ''}" onclick="userHighlightMat('${k}')">
+      <div class="need-dot" style="background:${color}"></div>
+      <div class="need-name">${mat.name}</div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted)">${map.pins.filter(p => p.material_id === k).length}</div>
+    </div>`;
+  }).join('') : '<div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);opacity:0.5;padding:10px 0;text-align:center">No pins on this map.</div>';
+
+  if (matIds.length) {
+    filterBar.classList.add('visible');
+    chips.innerHTML = matIds.map(k => {
+      const mat   = getMat(k);
+      const color = getColor(k);
+      return `<div class="mat-chip ${user.highlightMat === k ? 'active' : ''}" onclick="userHighlightMat('${k}')">
+        <div class="chip-dot" style="background:${color}"></div>${mat.name}
+      </div>`;
+    }).join('');
+  } else { filterBar.classList.remove('visible'); }
+
+  const bgHtml = map.image_url
+    ? `<img src="${map.image_url}" style="position:absolute;inset:0;width:${map.coord_width}px;height:${map.coord_height}px;object-fit:cover;pointer-events:none" loading="lazy">`
+    : `<svg width="${map.coord_width}" height="${map.coord_height}" style="position:absolute;inset:0;display:block;pointer-events:none">
+        <rect width="${map.coord_width}" height="${map.coord_height}" fill="#0b1510"/>
+        <defs><pattern id="mg" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="0.6"/></pattern></defs>
+        <rect width="${map.coord_width}" height="${map.coord_height}" fill="url(#mg)"/>
+        <text x="${map.coord_width/2}" y="${map.coord_height/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text>
+      </svg>`;
+
+  const pinsHtml = map.pins.map(pin => {
+    const mat   = getMat(pin.material_id);
+    const color = getColor(pin.material_id);
+    const isHL  = user.highlightMat === pin.material_id;
+    const isDim = user.highlightMat && !isHL;
+    return `<div class="user-pin ${isHL ? 'highlighted' : ''} ${isDim ? 'dimmed' : ''}"
+      style="left:${pin.x}px;top:${pin.y}px;border-color:${isHL ? color : 'rgba(255,255,255,0.15)'}"
+      onclick="userHighlightMat('${pin.material_id}')" title="${escHtml(mat.name)} — ${escHtml(pin.location_name)}">
+      <div class="user-pin-dot" style="background:${color}"></div>
+      <div><div class="user-pin-text" style="color:${color}">${escHtml(mat.name)}</div>
+      <div class="user-pin-sub">${escHtml(pin.location_name)}</div></div>
+    </div>`;
+  }).join('');
+
+  inner.style.width  = map.coord_width  + 'px';
+  inner.style.height = map.coord_height + 'px';
+  inner.innerHTML    = bgHtml + pinsHtml;
+  userUpdateTransform();
+
+  if (user.highlightMat) {
+    const mat       = getMat(user.highlightMat);
+    const color     = getColor(user.highlightMat);
+    const matchPins = map.pins.filter(p => p.material_id === user.highlightMat);
+    if (mat && matchPins.length) {
+      document.getElementById('u-info-title').innerHTML = `<span style="color:${color}">●</span> ${escHtml(mat.name)} — ${escHtml(map.name)}`;
+      document.getElementById('u-info-cards').innerHTML = matchPins.map(p => {
+        // Show custom note if set, otherwise show default note
+        const hasCustom   = !!(p.note && p.note.trim());
+        const displayNote = hasCustom ? p.note : getDefaultNote(p.material_id);
+        return `<div class="map-info-card">
+          <div class="map-info-zone" style="color:${color}">${escHtml(p.location_name)}</div>
+          <div class="map-info-note">${escHtml(displayNote)}</div>
+          ${hasCustom ? '<div class="map-info-custom-badge">✎ custom note</div>' : ''}
+        </div>`;
+      }).join('');
+      infoBar.classList.add('visible');
+    } else { infoBar.classList.remove('visible'); }
+  } else { infoBar.classList.remove('visible'); }
+}
+
+function userHighlightMat(k) {
+  user.highlightMat = user.highlightMat === k ? null : k;
+  renderUserMap();
+}
+
+function userUpdateTransform() {
+  const inner = document.getElementById('user-map-inner'); if (!inner) return;
+  const { tx, ty, scale } = user.view;
+  inner.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+  inner.style.transformOrigin = '0 0';
+}
+function userZoom(factor) {
+  const vp = document.getElementById('user-map-vp'); if (!vp) return;
+  const s  = user.view;
+  const { width: vpW, height: vpH } = vp.getBoundingClientRect();
+  s.tx = vpW/2 + (s.tx - vpW/2) * factor;
+  s.ty = vpH/2 + (s.ty - vpH/2) * factor;
+  s.scale = Math.max(0.2, Math.min(5, s.scale * factor));
+  userUpdateTransform();
+}
+function userResetView() { user.view = { tx: 0, ty: 0, scale: 1 }; userUpdateTransform(); }
+
+(function setupUserPan() {
+  const vp = document.getElementById('user-map-vp');
+  let drag = false, lx = 0, ly = 0;
+  vp.addEventListener('mousedown', e => { if (e.button !== 0) return; drag = true; lx = e.clientX; ly = e.clientY; vp.classList.add('grabbing'); e.preventDefault(); });
+  window.addEventListener('mousemove', e => { if (!drag) return; user.view.tx += e.clientX - lx; user.view.ty += e.clientY - ly; lx = e.clientX; ly = e.clientY; userUpdateTransform(); });
+  window.addEventListener('mouseup', () => { drag = false; document.getElementById('user-map-vp').classList.remove('grabbing'); });
+  vp.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect   = vp.getBoundingClientRect();
+    const factor = e.deltaY < 0 ? 1.12 : 0.88;
+    user.view.tx    = (e.clientX - rect.left) + (user.view.tx - (e.clientX - rect.left)) * factor;
+    user.view.ty    = (e.clientY - rect.top)  + (user.view.ty - (e.clientY - rect.top))  * factor;
+    user.view.scale = Math.max(0.2, Math.min(5, user.view.scale * factor));
+    userUpdateTransform();
+  }, { passive: false });
+})();
+
+// ── TOAST ─────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = type; t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 2400);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+(async () => {
+  await loadMaps();
+  renderAdminLibrary();
+  renderAdminCanvas();
+  renderAdminProps();
+  if (MAPS.length) adminSelectMap(MAPS[0].id);
+})();
+</script>
+</body>
+</html>

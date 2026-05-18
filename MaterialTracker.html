@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Endfield — Ascension Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg: #0d0f12; --surface: #141720; --surface2: #1a1e2a; --surface3: #1f2433;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13);
+  --text: #e8eaf0; --muted: #6b7280; --accent: #00c4a3; --accent2: #ff8c42;
+  --accent3: #5b8af7; --danger: #e05060;
+  --heat: #ff6b35; --cryo: #4fc3f7; --electric: #c084fc;
+  --physical: #94a3b8; --nature: #4ade80;
+  --font-display: 'Rajdhani', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--font-body);
+  height: 100vh; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 40px 40px; pointer-events: none; z-index: 0;
+}
+
+.header {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; gap: 16px;
+  padding: 10px 20px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.header::after {
+  content: ''; position: absolute; bottom: -1px; left: 0;
+  width: 100px; height: 1px; background: var(--accent);
+}
+.header-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; }
+.header-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; }
+.header-title span { color: var(--accent); }
+.db-indicator { margin-left: auto; display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+.db-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
+.db-dot.ok { background: var(--accent); }
+.db-dot.err { background: var(--danger); }
+.db-dot.loading { background: var(--accent2); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border: 1px solid var(--border2);
+  background: var(--surface2); color: var(--text);
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+  transition: all 0.15s;
+}
+.btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.btn:hover { background: var(--surface3); border-color: var(--accent); color: var(--accent); }
+.btn-accent { background: var(--accent); border-color: var(--accent); color: #0d1a18; }
+.btn-accent:hover { background: #00e0ba; color: #0d1a18; border-color: #00e0ba; }
+.btn-sm { padding: 4px 9px; font-size: 11px; clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px)); }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--muted); }
+.btn-ghost:hover { border-color: var(--border2); color: var(--text); background: var(--surface); }
+.btn-danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(224,80,96,0.08); }
+
+.main { display: flex; flex: 1; min-height: 0; position: relative; z-index: 1; }
+
+/* LEFT PANEL */
+.left-panel {
+  width: 350px; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--bg); overflow: hidden;
+}
+.plans-header { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.plans-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 3px; }
+.plans-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; margin-bottom: 10px; }
+.add-btns-row { display: flex; gap: 8px; }
+.add-btns-row .btn { flex: 1; justify-content: center; }
+
+.plans-tabs-row { display: flex; flex-direction: column; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.plans-tabs { display: flex; align-items: center; padding: 6px 16px 0; }
+.plans-tab {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 6px 12px; cursor: pointer; background: transparent; border: none;
+  color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s;
+}
+.plans-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.plans-tab:hover { color: var(--text); }
+
+.plans-body { flex: 1; overflow-y: auto; padding: 10px 12px; }
+.plans-body::-webkit-scrollbar { width: 3px; }
+.plans-body::-webkit-scrollbar-thumb { background: var(--surface3); }
+
+.plan-card {
+  background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 8px; position: relative; animation: slideIn 0.18s ease;
+}
+.plan-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%;
+  background: var(--accent); opacity: 0; transition: opacity 0.2s;
+}
+.plan-card:hover::before { opacity: 1; }
+.plan-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px 6px; }
+
+.plan-avatar {
+  width: 48px; height: 54px; flex-shrink: 0;
+  border: 1px solid var(--border2); border-radius: 2px;
+  overflow: hidden; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface2);
+}
+.plan-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.plan-avatar svg { width: 18px; height: 18px; }
+.plan-avatar-rarity { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
+
+.plan-meta { flex: 1; min-width: 0; }
+.plan-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; margin-bottom: 4px; }
+.plan-tags { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; padding: 1px 6px; border: 1px solid; text-transform: uppercase; }
+.tag-heat     { color: var(--heat);     border-color: rgba(255,107,53,0.4);  background: rgba(255,107,53,0.1); }
+.tag-cryo     { color: var(--cryo);     border-color: rgba(79,195,247,0.4);  background: rgba(79,195,247,0.1); }
+.tag-electric { color: var(--electric); border-color: rgba(192,132,252,0.4); background: rgba(192,132,252,0.1); }
+.tag-physical { color: var(--physical); border-color: rgba(148,163,184,0.35);background: rgba(148,163,184,0.07); }
+.tag-nature   { color: var(--nature);   border-color: rgba(74,222,128,0.4);  background: rgba(74,222,128,0.1); }
+.tag-neutral  { color: var(--muted);    border-color: var(--border2);        background: var(--surface2); }
+.tag-rarity   { color: #f0b840;         border-color: rgba(240,184,64,0.3);  background: rgba(240,184,64,0.07); }
+
+.plan-body { padding: 0 12px 10px; }
+.level-row { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 6px; align-items: end; margin-bottom: 8px; }
+.level-col label { display: block; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+.level-slider-wrap { display: flex; align-items: center; gap: 7px; }
+.level-num { font-family: var(--font-display); font-size: 22px; font-weight: 700; min-width: 28px; text-align: right; line-height: 1; }
+.level-arrow { text-align: center; color: var(--muted); font-size: 14px; padding-bottom: 2px; }
+input[type=range] { -webkit-appearance: none; width: 100%; height: 2px; background: var(--surface3); border-radius: 0; outline: none; border: none; cursor: pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 11px; height: 11px; background: var(--accent); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); cursor: pointer; transition: transform 0.1s; }
+input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
+.quick-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+.quick-btn {
+  font-family: var(--font-mono); font-size: 9px; padding: 3px 7px;
+  border: 1px solid var(--border); background: transparent; color: var(--muted);
+  cursor: pointer; letter-spacing: 0.04em; transition: all 0.12s;
+  clip-path: polygon(0 0, calc(100% - 3px) 0, 100% 3px, 100% 100%, 3px 100%, 0 calc(100% - 3px));
+}
+.quick-btn:hover, .quick-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.08); }
+
+/* ── SKILL SECTION (added) ── */
+.skill-section {
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.skill-section-label {
+  font-family: var(--font-mono); font-size: 9px; color: var(--muted);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.skill-toggle-all {
+  font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.06em;
+  color: var(--accent); cursor: pointer; text-transform: uppercase;
+  border: none; background: transparent; padding: 0;
+}
+.skill-toggle-all:hover { opacity: 0.7; }
+.skill-row {
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 5px; padding: 5px 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+}
+.skill-row-chk {
+  width: 13px; height: 13px; flex-shrink: 0;
+  border: 1px solid var(--border2); background: var(--surface);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: all 0.12s;
+}
+.skill-row-chk.on { background: var(--accent); border-color: var(--accent); }
+.skill-row-chk-inner {
+  width: 7px; height: 4px;
+  border-left: 1.5px solid #0d1a18; border-bottom: 1.5px solid #0d1a18;
+  transform: rotate(-45deg) translateY(-0.5px); opacity: 0;
+}
+.skill-row-chk.on .skill-row-chk-inner { opacity: 1; }
+.skill-row-name {
+  font-family: var(--font-display); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+  flex: 1; min-width: 0;
+}
+.skill-row.enabled .skill-row-name { color: var(--text); }
+.skill-range-wrap {
+  display: flex; align-items: center; gap: 4px;
+  opacity: 0.3; pointer-events: none; transition: opacity 0.15s;
+}
+.skill-row.enabled .skill-range-wrap { opacity: 1; pointer-events: auto; }
+.skill-lvl-sel {
+  background: var(--surface); border: 1px solid var(--border2);
+  color: var(--text); font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 4px; outline: none; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.skill-lvl-sel:focus { border-color: var(--accent); }
+.skill-range-arrow { font-size: 9px; color: var(--muted); }
+
+.plans-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; }
+.plans-empty svg { opacity: 0.12; margin-bottom: 12px; }
+.plans-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.plans-empty-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); opacity: 0.5; }
+
+/* MID PANEL */
+.mid-panel { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--surface); overflow: hidden; }
+.mid-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
+.mid-head::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 50px; height: 1px; background: var(--accent2); }
+.mid-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 3px; }
+.mid-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1; }
+.mid-badge { font-family: var(--font-mono); font-size: 9px; background: rgba(255,140,66,0.12); color: var(--accent2); padding: 2px 8px; border: 1px solid rgba(255,140,66,0.25); white-space: nowrap; }
+.mid-body { flex: 1; overflow-y: auto; padding: 10px 12px; }
+.mid-body::-webkit-scrollbar { width: 3px; }
+.mid-body::-webkit-scrollbar-thumb { background: var(--surface3); }
+
+.mid-focus-bar { border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg); display: none; }
+.mid-focus-toggle { display: flex; align-items: center; gap: 7px; padding: 7px 14px; cursor: pointer; user-select: none; }
+.mid-focus-toggle:hover { background: rgba(255,255,255,0.02); }
+.mid-focus-toggle-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; flex: 1; }
+.mid-focus-count { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); }
+.mid-focus-caret { width: 10px; height: 10px; color: var(--muted); transition: transform 0.2s; flex-shrink: 0; }
+.mid-focus-caret.open { transform: rotate(180deg); }
+.mid-focus-pills-wrap { overflow: hidden; max-height: 0; transition: max-height 0.22s ease; }
+.mid-focus-pills-wrap.open { max-height: 300px; }
+.mid-focus-pills { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px 12px 10px; }
+.mid-focus-actions { display: flex; gap: 6px; padding: 0 12px 8px; }
+.mid-focus-act { font-family: var(--font-mono); font-size: 9px; padding: 2px 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.12s; }
+.mid-focus-act:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.06); }
+
+.focus-pill { display: flex; align-items: center; gap: 5px; padding: 3px 9px 3px 6px; border: 1px solid var(--border2); background: var(--surface2); cursor: pointer; transition: all 0.12s; clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%); white-space: nowrap; }
+.focus-pill.active { border-color: var(--accent); background: rgba(0,196,163,0.08); }
+.focus-pill.active .focus-pill-name { color: var(--text); }
+.focus-pill.inactive { opacity: 0.38; border-color: var(--border); background: transparent; }
+.focus-pill-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.focus-pill-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
+.focus-pill-check { width: 10px; height: 10px; flex-shrink: 0; border: 1px solid currentColor; border-radius: 1px; display: flex; align-items: center; justify-content: center; color: var(--muted); margin-left: 2px; }
+.focus-pill.active .focus-pill-check { color: var(--accent); border-color: var(--accent); }
+.focus-pill-check-inner { width: 5px; height: 3px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg) translateY(-0.5px); opacity: 0; }
+.focus-pill.active .focus-pill-check-inner { opacity: 1; }
+.mid-focus-indicator { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.06em; padding: 1px 6px; border: 1px solid rgba(255,140,66,0.25); background: rgba(255,140,66,0.08); display: none; }
+.mid-focus-indicator.visible { display: inline-block; }
+
+.need-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 0 5px; }
+.need-section-label:first-child { padding-top: 2px; }
+.need-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 10px; background: var(--surface2); border: 1px solid var(--border);
+  margin-bottom: 4px; cursor: pointer; transition: all 0.12s; position: relative;
+}
+.need-row:hover { border-color: var(--border2); }
+.need-row.checked { opacity: 0.42; }
+.need-row.checked .need-row-name { text-decoration: line-through; color: var(--muted); }
+.need-check { width: 15px; height: 15px; flex-shrink: 0; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; }
+.need-row.checked .need-check { background: var(--accent); border-color: var(--accent); }
+.need-check-inner { width: 8px; height: 5px; border-left: 2px solid #0d1a18; border-bottom: 2px solid #0d1a18; transform: rotate(-45deg) translateY(-1px); opacity: 0; }
+.need-row.checked .need-check-inner { opacity: 1; }
+.need-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.need-row-name { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.need-row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.need-row-qty { font-family: var(--font-display); font-size: 15px; font-weight: 700; line-height: 1; }
+.need-have-wrap { display: flex; align-items: center; gap: 3px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+.need-row-input { width: 42px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 10px; padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s; }
+.need-row-input:focus { border-color: var(--accent); }
+.need-row.highlighted { border-color: var(--accent) !important; background: rgba(0,196,163,0.06); }
+.need-row.highlighted .need-row-name { color: var(--accent); }
+.need-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); transition: width 0.25s; opacity: 0.6; }
+.mid-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; }
+.mid-empty svg { opacity: 0.12; margin-bottom: 12px; }
+.mid-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.mid-empty-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); opacity: 0.5; }
+
+/* MAP PANEL */
+.map-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); min-width: 0; }
+.map-top-bar { display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; overflow-x: auto; }
+.map-tab { padding: 10px 14px; font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; background: transparent; border: none; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+.map-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.map-tab:hover { color: var(--text); }
+.map-hint { margin-left: auto; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; white-space: nowrap; padding-left: 10px; }
+
+.map-filter-bar { padding: 6px 14px; border-bottom: 1px solid var(--border); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex-shrink: 0; background: var(--surface); display: none; }
+.map-filter-bar.visible { display: flex; }
+.map-filter-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; flex-shrink: 0; }
+.mat-chip { display: flex; align-items: center; gap: 4px; padding: 2px 8px; font-family: var(--font-mono); font-size: 9px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.12s; letter-spacing: 0.04em; }
+.mat-chip:hover { border-color: var(--accent); color: var(--accent); }
+.mat-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.1); }
+.mat-chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+.map-area { flex: 1; position: relative; overflow: hidden; }
+.map-viewport { position: absolute; inset: 0; cursor: grab; overflow: hidden; }
+.map-viewport.grabbing { cursor: grabbing; }
+.map-inner { position: absolute; transform-origin: 0 0; }
+.map-canvas-wrap { position: absolute; inset: 0; display: none; }
+.map-canvas-wrap.active { display: block; }
+
+.map-zoom-controls { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; z-index: 20; }
+.map-zoom-btn { width: 30px; height: 30px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; font-family: var(--font-mono); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px)); }
+.map-zoom-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
+.map-zoom-btn.rst { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 4px; }
+
+.map-coords { position: absolute; bottom: 14px; left: 14px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); background: rgba(13,15,18,0.85); border: 1px solid var(--border); padding: 3px 8px; z-index: 20; letter-spacing: 0.06em; pointer-events: none; }
+
+.user-pin { position: absolute; transform: translate(-50%,-50%); display: flex; align-items: center; gap: 5px; padding: 3px 8px 3px 5px; background: rgba(13,15,18,0.92); border: 1px solid rgba(255,255,255,0.15); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%); cursor: pointer; transition: all 0.12s; white-space: nowrap; z-index: 5; }
+.user-pin:hover { border-color: rgba(255,255,255,0.35); z-index: 10; transform: translate(-50%,-50%) scale(1.05); }
+.user-pin.highlighted { z-index: 15; }
+.user-pin.dimmed { opacity: 0.18; pointer-events: none; }
+.user-pin-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.user-pin-text { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.user-pin-sub { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.45); }
+
+.map-info-bar { padding: 10px 14px; background: rgba(13,15,18,0.97); border-top: 1px solid var(--border); flex-shrink: 0; display: none; }
+.map-info-bar.visible { display: block; }
+.map-info-title { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 7px; }
+.map-info-cards { display: flex; gap: 8px; flex-wrap: wrap; }
+.map-info-card { background: var(--surface); border: 1px solid var(--border2); padding: 7px 11px; min-width: 130px; }
+.map-info-card-zone { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+.map-info-card-desc { font-family: var(--font-mono); font-size: 9px; color: var(--muted); line-height: 1.5; }
+
+/* ── MAP PIN LIST FALLBACK (added) ── */
+.map-pin-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px; }
+.map-pin-list-item {
+  background: var(--surface); border: 1px solid var(--border2); padding: 7px 11px; min-width: 150px;
+  cursor: pointer; transition: border-color 0.12s;
+}
+.map-pin-list-item:hover { border-color: var(--accent); }
+.map-pin-list-mat { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2px; }
+.map-pin-list-loc { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+.map-pin-list-note { font-family: var(--font-mono); font-size: 8px; color: var(--muted); opacity: 0.6; margin-top: 2px; line-height: 1.4; }
+
+.map-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: var(--bg); }
+.map-loading-ring { width: 40px; height: 40px; border: 2px solid var(--surface3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.map-loading-text { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+.map-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+.map-placeholder-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(0,196,163,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,196,163,0.03) 1px, transparent 1px); background-size: 50px 50px; }
+.map-placeholder-content { position: relative; text-align: center; }
+.map-placeholder-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.06); margin-bottom: 5px; }
+.map-placeholder-sub { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.04); letter-spacing: 0.1em; }
+
+.map-legend { position: absolute; top: 10px; left: 10px; z-index: 20; background: rgba(13,15,18,0.92); border: 1px solid var(--border2); padding: 8px 12px; min-width: 120px; display: none; }
+.map-legend.visible { display: block; }
+.map-legend-title { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+.map-legend-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; cursor: pointer; transition: opacity 0.15s; }
+.map-legend-item:hover { opacity: 0.75; }
+.map-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.map-legend-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); }
+.map-legend-item.dimmed .map-legend-name { color: var(--muted); }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border2); border-top: 2px solid var(--accent); width: 100%; max-width: 580px; max-height: 82vh; display: flex; flex-direction: column; animation: modalIn 0.18s ease; }
+.modal-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.modal-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.modal-filters { padding: 10px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.modal-search { flex: 1; min-width: 130px; background: var(--surface2); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 12px; padding: 7px 10px; outline: none; letter-spacing: 0.04em; transition: border-color 0.15s; }
+.modal-search:focus { border-color: var(--accent); }
+.modal-search::placeholder { color: var(--muted); }
+.filter-btn { font-family: var(--font-mono); font-size: 9px; padding: 4px 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.12s; }
+.filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.08); }
+.modal-list { overflow-y: auto; padding: 10px; flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-content: start; }
+.modal-list::-webkit-scrollbar { width: 3px; }
+.modal-list::-webkit-scrollbar-thumb { background: var(--surface3); }
+.modal-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; background: var(--surface2); border: 1px solid var(--border); cursor: pointer; transition: all 0.12s; text-align: left; width: 100%; }
+.modal-item:hover { border-color: var(--accent); background: rgba(0,196,163,0.06); }
+.modal-item-icon { width: 30px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border2); overflow: hidden; }
+.modal-item-icon img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.modal-item-icon svg { width: 15px; height: 15px; }
+.modal-item-name { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; line-height: 1.1; margin-bottom: 2px; }
+.modal-item-sub { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+
+@keyframes slideIn { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes modalIn { from { opacity: 0; transform: scale(0.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface3); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-eyebrow">Arknights: Endfield // v2.0</div>
+    <div class="header-title">Ascension <span>Planner</span></div>
+  </div>
+  <div class="db-indicator">
+    <div class="db-dot loading" id="db-dot"></div>
+    <span id="db-status">Connecting…</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT: Plans -->
+  <div class="left-panel">
+    <div class="plans-header">
+      <div class="plans-eyebrow">Ascension Goals</div>
+      <div class="plans-title">Active Plans</div>
+      <div class="add-btns-row">
+        <button class="btn btn-accent" onclick="openModal('operator')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Add Operator
+        </button>
+        <button class="btn" onclick="openModal('weapon')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l7-7"/><path d="M14 3l7 7-3 3-7-7 3-3z"/></svg>
+          Add Weapon
+        </button>
+      </div>
+    </div>
+    <div class="plans-tabs-row">
+      <div class="plans-tabs">
+        <button class="plans-tab active" id="ptab-all" onclick="switchPlanTab('all')">All</button>
+        <button class="plans-tab" id="ptab-operator" onclick="switchPlanTab('operator')">Operators</button>
+        <button class="plans-tab" id="ptab-weapon" onclick="switchPlanTab('weapon')">Weapons</button>
+      </div>
+    </div>
+    <div class="plans-body" id="plans-body">
+      <div class="plans-empty" id="plans-empty">
+        <svg width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="10" width="32" height="32" rx="2"/><path d="M16 18h16M16 24h12M16 30h8"/><circle cx="36" cy="12" r="6" fill="currentColor" opacity="0.3"/><path d="M33 12h6M36 9v6"/></svg>
+        <div class="plans-empty-title">No Plans Yet</div>
+        <div class="plans-empty-sub">Click Add Operator or<br>Add Weapon above to begin</div>
+      </div>
+      <div id="plans-container"></div>
+    </div>
+  </div>
+
+  <!-- MID: Materials -->
+  <div class="mid-panel">
+    <div class="mid-head">
+      <div>
+        <div class="mid-eyebrow">Materials Required</div>
+        <div class="mid-title">Need</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div id="mid-badge-wrap" style="display:none"><div class="mid-badge" id="mid-badge">0/0</div></div>
+        <div class="mid-focus-indicator" id="mid-focus-indicator">Focused</div>
+      </div>
+    </div>
+    <div class="mid-focus-bar" id="mid-focus-bar">
+      <div class="mid-focus-toggle" onclick="toggleFocusPanel()">
+        <svg class="mid-focus-caret" id="mid-focus-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="mid-focus-toggle-label">Focus Plans</span>
+        <span class="mid-focus-count" id="mid-focus-count"></span>
+      </div>
+      <div class="mid-focus-pills-wrap" id="mid-focus-pills-wrap">
+        <div class="mid-focus-actions">
+          <button class="mid-focus-act" onclick="focusAll()">All</button>
+          <button class="mid-focus-act" onclick="focusNone()">None</button>
+          <button class="mid-focus-act" onclick="focusOnly('operator')">Operators</button>
+          <button class="mid-focus-act" onclick="focusOnly('weapon')">Weapons</button>
+        </div>
+        <div class="mid-focus-pills" id="mid-focus-pills"></div>
+      </div>
+    </div>
+    <div class="mid-body" id="mid-body">
+      <div class="mid-empty" id="mid-empty">
+        <svg width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="10" width="32" height="32" rx="2"/><path d="M16 20l4 4 8-8"/><path d="M16 30h16"/></svg>
+        <div class="mid-empty-title">Nothing Needed</div>
+        <div class="mid-empty-sub">Add plans to see your<br>material checklist</div>
+      </div>
+      <div id="need-list"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Map -->
+  <div class="map-panel">
+    <div class="map-top-bar" id="map-top-bar">
+      <span class="map-hint" id="map-loading-hint" style="margin-left:0">Loading maps…</span>
+      <span class="map-hint" id="map-drag-hint" style="display:none">Drag · Scroll to zoom · Click pins for details</span>
+    </div>
+    <div class="map-filter-bar" id="map-filter-bar">
+      <span class="map-filter-label">Highlight:</span>
+      <div id="mat-chips" style="display:flex;gap:5px;flex-wrap:wrap"></div>
+      <button class="mat-chip" onclick="highlightMat(null)" style="margin-left:auto">Clear</button>
+    </div>
+    <div class="map-area" id="map-area">
+      <div class="map-loading" id="map-loading">
+        <div class="map-loading-ring"></div>
+        <div class="map-loading-text">Loading map data…</div>
+      </div>
+      <div id="map-canvases"></div>
+      <div class="map-legend" id="map-legend">
+        <div class="map-legend-title">Needs on this map</div>
+        <div id="legend-items"></div>
+      </div>
+      <div class="map-zoom-controls" id="map-zoom-controls" style="display:none">
+        <button class="map-zoom-btn" onclick="mapZoom(1.25)">+</button>
+        <button class="map-zoom-btn rst" onclick="mapReset()">RST</button>
+        <button class="map-zoom-btn" onclick="mapZoom(0.8)">−</button>
+      </div>
+      <div class="map-coords" id="map-coords" style="display:none">x:0 y:0</div>
+    </div>
+    <div class="map-info-bar" id="map-info-bar">
+      <div class="map-info-title" id="map-info-title"></div>
+      <div class="map-info-cards" id="map-info-cards"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title">Add Operator</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕ Close</button>
+    </div>
+    <div class="modal-filters">
+      <input class="modal-search" id="modal-search" type="text" placeholder="Search by name…" oninput="filterModal()" autocomplete="off">
+      <div id="filter-buttons" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+    </div>
+    <div class="modal-list" id="modal-list"></div>
+  </div>
+</div>
+
+<script>
+// ── SUPABASE ──
+const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function setDbStatus(state, msg) {
+  document.getElementById('db-dot').className = 'db-dot ' + state;
+  document.getElementById('db-status').textContent = msg;
+}
+
+// ── OPERATORS & WEAPONS ──
+const OPERATORS = [
+  {id:"laevatain",name:"Laevatain",element:"Heat",cls:"Striker",rarity:6},
+  {id:"ardelia",name:"Ardelia",element:"Nature",cls:"Supporter",rarity:6},
+  {id:"last-rite",name:"Last Rite",element:"Cryo",cls:"Striker",rarity:6},
+  {id:"pogranichnik",name:"Pogranichnik",element:"Physical",cls:"Vanguard",rarity:6},
+  {id:"endministrator",name:"Endministrator",element:"Physical",cls:"Guard",rarity:6},
+  {id:"perlica",name:"Perlica",element:"Electric",cls:"Caster",rarity:6},
+  {id:"zhuang-fangyi",name:"Zhuang Fangyi",element:"Electric",cls:"Striker",rarity:6},
+  {id:"lifeng",name:"Lifeng",element:"Physical",cls:"Guard",rarity:6},
+  {id:"yvonne",name:"Yvonne",element:"Cryo",cls:"Striker",rarity:6},
+  {id:"gilberta",name:"Gilberta",element:"Nature",cls:"Supporter",rarity:6},
+  {id:"snowshine",name:"Snowshine",element:"Cryo",cls:"Defender",rarity:6},
+  {id:"ember",name:"Ember",element:"Heat",cls:"Defender",rarity:5},
+  {id:"wulfgard",name:"Wulfgard",element:"Heat",cls:"Caster",rarity:5},
+  {id:"tangtang",name:"Tangtang",element:"Cryo",cls:"Caster",rarity:5},
+  {id:"rossi",name:"Rossi",element:"Physical",cls:"Guard",rarity:5},
+  {id:"xaihi",name:"Xaihi",element:"Cryo",cls:"Supporter",rarity:5},
+  {id:"avywenna",name:"Avywenna",element:"Electric",cls:"Striker",rarity:5},
+  {id:"chen-qianyu",name:"Chen Qianyu",element:"Physical",cls:"Guard",rarity:5},
+  {id:"alesh",name:"Alesh",element:"Cryo",cls:"Vanguard",rarity:5},
+  {id:"arclight",name:"Arclight",element:"Electric",cls:"Vanguard",rarity:5},
+  {id:"da-pan",name:"Da Pan",element:"Physical",cls:"Striker",rarity:5},
+  {id:"akekuri",name:"Akekuri",element:"Heat",cls:"Vanguard",rarity:4},
+  {id:"antal",name:"Antal",element:"Electric",cls:"Supporter",rarity:4},
+  {id:"catcher",name:"Catcher",element:"Physical",cls:"Defender",rarity:4},
+  {id:"estella",name:"Estella",element:"Cryo",cls:"Guard",rarity:4},
+  {id:"fluorite",name:"Fluorite",element:"Nature",cls:"Caster",rarity:4},
+];
+const WEAPONS = [
+  {id:"forgeborn-scathe",name:"Forgeborn Scathe",type:"Sword",rarity:6},
+  {id:"lupine-scarlet",name:"Lupine Scarlet",type:"Sword",rarity:6},
+  {id:"glorious-memory",name:"Glorious Memory",type:"Sword",rarity:6},
+  {id:"grand-vision",name:"Grand Vision",type:"Sword",rarity:6},
+  {id:"thermite-cutter",name:"Thermite Cutter",type:"Sword",rarity:6},
+  {id:"eminent-repute",name:"Eminent Repute",type:"Sword",rarity:6},
+  {id:"never-rest",name:"Never Rest",type:"Sword",rarity:6},
+  {id:"rapid-ascent",name:"Rapid Ascent",type:"Sword",rarity:6},
+  {id:"exemplar",name:"Exemplar",type:"Gt. Sword",rarity:6},
+  {id:"khravengger",name:"Khravengger",type:"Gt. Sword",rarity:6},
+  {id:"jet",name:"JET",type:"Polearm",rarity:6},
+  {id:"mountain-bearer",name:"Mountain Bearer",type:"Polearm",rarity:6},
+  {id:"valiant",name:"Valiant",type:"Polearm",rarity:6},
+  {id:"artzy-tyrannical",name:"Artzy Tyrannical",type:"Arts Unit",rarity:6},
+  {id:"chivalric-virtues",name:"Chivalric Virtues",type:"Arts Unit",rarity:6},
+  {id:"delivery-guaranteed",name:"Delivery Guaranteed",type:"Arts Unit",rarity:6},
+  {id:"brigands-calling",name:"Brigand's Calling",type:"Handcannon",rarity:6},
+  {id:"clannibal",name:"Clannibal",type:"Handcannon",rarity:6},
+  {id:"navigator",name:"Navigator",type:"Handcannon",rarity:6},
+  {id:"aspirant",name:"Aspirant",type:"Sword",rarity:5},
+  {id:"finchaser-3",name:"Finchaser 3.0",type:"Sword",rarity:5},
+  {id:"aggeloslayer",name:"Aggeloslayer",type:"Polearm",rarity:4},
+];
+
+// ── MATERIAL DEFINITIONS ──
+const MATS = {
+  t_creds:              {name:"T-Creds",              color:"#f0c040", category:"Currency"},
+  elementary_combat_record: {name:"Combat Record (Elem)",color:"#5ba85b", category:"Operator EXP"},
+  intermediate_combat_record:{name:"Combat Record (Int)",color:"#70c870", category:"Operator EXP"},
+  advanced_combat_record:   {name:"Combat Record (Adv)",color:"#90e090", category:"Operator EXP"},
+  elementary_cognitive_carrier:{name:"Cognitive Carrier (Elem)",color:"#5ba85b",category:"Operator EXP (Lv61+)"},
+  advanced_cognitive_carrier:  {name:"Cognitive Carrier (Adv)",color:"#70c870", category:"Operator EXP (Lv61+)"},
+  arms_inspector:       {name:"Arms Inspector",        color:"#7ec9c9", category:"Weapon EXP"},
+  arms_insp_kit:        {name:"Arms INSP Kit",          color:"#90dada", category:"Weapon EXP"},
+  arms_insp_set:        {name:"Arms INSP Set",          color:"#a8ecec", category:"Weapon EXP (Lv61+)"},
+  protodisk:            {name:"Protodisk",              color:"#c9a05b", category:"Promotion"},
+  protoset:             {name:"Protoset",               color:"#e0b870", category:"Promotion"},
+  pink_bolete:          {name:"Pink Bolete",            color:"#e08060", category:"Rare Growth — Boletes"},
+  red_bolete:           {name:"Red Bolete",             color:"#d84040", category:"Rare Growth — Boletes"},
+  ruby_bolete:          {name:"Ruby Bolete",            color:"#c02060", category:"Rare Growth — Boletes"},
+  bloodcap:             {name:"Bloodcap",               color:"#901020", category:"Rare Growth — Boletes"},
+  cosmagaric:           {name:"Cosmagaric",             color:"#a01830", category:"Rare Growth — Boletes"},
+  protoprism:           {name:"Protoprism",             color:"#6b8ec9", category:"Skill Upgrade"},
+  protohedron:          {name:"Protohedron",            color:"#2d6ea0", category:"Skill Upgrade"},
+  kalkodendra:          {name:"Kalkodendra",            color:"#70c98a", category:"Rare Growth — Dendras"},
+  chrysodendra:         {name:"Chrysodendra",           color:"#50d870", category:"Rare Growth — Dendras"},
+  vitrodendra:          {name:"Vitrodendra",            color:"#20e860", category:"Rare Growth — Dendras"},
+  mark_of_perseverance: {name:"Mark of Perseverance",   color:"#b870e0", category:"Mastery"},
+  cast_die:             {name:"Cast Die",               color:"#c97b5b", category:"Weapon Tuning"},
+  heavy_cast_die:       {name:"Heavy Cast Die",         color:"#e0956a", category:"Weapon Tuning"},
+  kalkonyx:             {name:"Kalkonyx",               color:"#6b8ec9", category:"Rare Ore"},
+  auronyx:              {name:"Auronyx",                color:"#8090e0", category:"Rare Ore"},
+  umbronyx:             {name:"Umbronyx",               color:"#a070d0", category:"Rare Ore"},
+  igneosite:            {name:"Igneosite",              color:"#e05030", category:"Rare Ore"},
+  wulingstone:          {name:"Wulingstone",            color:"#50a8d0", category:"Rare Ore"},
+  d96_steel:            {name:"D96 Steel Sample 4",     color:"#e8c84a", category:"Operator Rare Mat"},
+  metadiastima:         {name:"Metadiastima Tube",      color:"#d4a830", category:"Operator Rare Mat"},
+  tachyon:              {name:"Tachyon Lattice",        color:"#b08820", category:"Operator Rare Mat"},
+  quadrant:             {name:"Quadrant Fluid",         color:"#907010", category:"Operator Rare Mat"},
+  triphasic:            {name:"Triphasic Nanoflake",    color:"#705000", category:"Operator Rare Mat"},
+};
+
+// ────────────────────────────────────────────────
+// COST TABLES — exact values from
+// Arknights_Endfield_Data_Compilation_v1_2_0.xlsx
+// ────────────────────────────────────────────────
+
+// Operator leveling EXP + T-Creds per band
+// [fromLv, toLv, exp, tcreds]
+// EXP is in raw units; we distribute across record tiers below
+const OP_EXP_BANDS = [
+  [1,  20,  22860,   820],
+  [20, 40,  248540,  12540],
+  [40, 60,  475710,  23900],
+  [60, 80,  465230,  109180],
+  [80, 90,  579950,  238980],
+];
+
+// Promotion costs — exact from sheet (P1/P2/P3/P4)
+// Also includes O1/O2/O3 T-Cred costs (intermediate outpost)
+// promotionMats indexed 1–4
+const PROMO_COSTS = {
+  P1: {protodisk:8,  protoset:0,  pink_bolete:3, red_bolete:0, ruby_bolete:0, cosmagaric:0, t_creds:1600},
+  O1: {t_creds:1800},
+  P2: {protodisk:25, protoset:0,  pink_bolete:0, red_bolete:5, ruby_bolete:0, cosmagaric:0, t_creds:6500},
+  O2: {t_creds:6500},
+  P3: {protodisk:0,  protoset:24, pink_bolete:0, red_bolete:0, ruby_bolete:5, cosmagaric:0, t_creds:18000},
+  O3: {t_creds:18000},
+  P4: {protodisk:0,  protoset:36, pink_bolete:0, red_bolete:0, ruby_bolete:0, cosmagaric:20, t_creds:100000},
+  // Note: P4 rare_mat=8 is operator-specific (their unique mat); we mark it separately
+  // The "Rare Plant" in P4 is Cosmagaric (20) per the sheet col 20/21
+};
+
+// Talent node (Expertise) costs — E1 to E4
+const TALENT_NODE_COSTS = [
+  {node:1, protoprism:6,  protohedron:0,  t_creds:1600},
+  {node:2, protoprism:10, protohedron:0,  t_creds:1800},
+  {node:3, protoprism:0,  protohedron:10, t_creds:6000},
+  {node:4, protoprism:0,  protohedron:20, t_creds:12000},
+];
+
+// Per-skill upgrade costs — exact from sheet, per level
+// skill goes 1→2→3→…→9→M1→M2→M3
+const SKILL_LEVEL_COSTS = {
+  2:  {protoprism:6,   protohedron:0,  kalkodendra:1, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:1000},
+  3:  {protoprism:12,  protohedron:0,  kalkodendra:2, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:2700},
+  4:  {protoprism:16,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:3200},
+  5:  {protoprism:21,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:4200},
+  6:  {protoprism:27,  protohedron:0,  kalkodendra:0, chrysodendra:2, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:5400},
+  7:  {protoprism:0,   protohedron:6,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:8200},
+  8:  {protoprism:0,   protohedron:8,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:10500},
+  9:  {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:2, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:18000},
+  M1: {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:1, rare_mat_qty:6,  t_creds:24000},
+  M2: {protoprism:0,   protohedron:24, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:2, rare_mat_qty:16, t_creds:30000},
+  M3: {protoprism:0,   protohedron:50, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:3, rare_mat_qty:36, t_creds:65000},
+};
+const SKILL_LVL_ORDER = [2,3,4,5,6,7,8,9,'M1','M2','M3'];
+function skillLvlToNum(v) {
+  if(v==='M1') return 10; if(v==='M2') return 11; if(v==='M3') return 12;
+  return parseInt(v);
+}
+
+// Weapon EXP + T-Creds per band — exact from sheet
+const WPN_EXP_BANDS = [
+  [1,  20,  8890,    640],
+  [20, 40,  96650,   9760],
+  [40, 60,  185000,  18610],
+  [60, 80,  913170,  94840],
+  [80, 90,  1320370, 217540],
+];
+
+// Weapon Tuning — exact from sheet
+// T1: CastDie=5, Kalkonyx=3, T-Creds=2200
+// T2: CastDie=18, Auronyx=5, T-Creds=8500
+// T3: HeavyCastDie=20, Umbronyx=5, T-Creds=25000
+// T4: HeavyCastDie=30, RareMat=16, RareMineral=8, T-Creds=90000
+const TUNING_COSTS = {
+  1: {cast_die:5,   heavy_cast_die:0,  kalkonyx:3, auronyx:0, umbronyx:0, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:2200},
+  2: {cast_die:18,  heavy_cast_die:0,  kalkonyx:0, auronyx:5, umbronyx:0, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:8500},
+  3: {cast_die:0,   heavy_cast_die:20, kalkonyx:0, auronyx:0, umbronyx:5, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:25000},
+  4: {cast_die:0,   heavy_cast_die:30, kalkonyx:0, auronyx:0, umbronyx:0, rare_mat_qty:16, rare_mineral_qty:8, t_creds:90000},
+};
+
+// ────────────────────────────────────────────────
+// CALC MATS — corrected
+// plan.skills = [{name, enabled, fromLv, toLv}, ...]
+// plan.promoFrom, plan.promoTo (0=none, 1=P1 … 4=P4)
+// plan.talentFrom, plan.talentTo (0=none, 1=E1 … 4=E4)
+// plan.tuneFrom, plan.tuneTo (0=none, 1=T1 … 4=T4)
+// ────────────────────────────────────────────────
+function calcMats(plan) {
+  const m = {};
+  const add = (k, v) => { if(v > 0) m[k] = (m[k]||0) + v; };
+
+  if (plan.type === 'operator') {
+    // EXP leveling
+    for (const [s, e, exp, tcreds] of OP_EXP_BANDS) {
+      if (plan.toLv <= s || plan.fromLv >= e) continue;
+      const frac = (Math.min(plan.toLv, e) - Math.max(plan.fromLv, s)) / (e - s);
+      const totalExp = Math.round(exp * frac);
+      if (s >= 60) {
+        add('elementary_cognitive_carrier', Math.round(totalExp * 0.3));
+        add('advanced_cognitive_carrier',   Math.round(totalExp * 0.7));
+      } else {
+        add('elementary_combat_record',    Math.round(totalExp * 0.35));
+        add('intermediate_combat_record',  Math.round(totalExp * 0.3));
+        add('advanced_combat_record',      Math.round(totalExp * 0.35));
+      }
+      add('t_creds', Math.round(tcreds * frac));
+    }
+
+    // Promotions
+    const pf = plan.promoFrom || 0;
+    const pt = plan.promoTo   || 0;
+    const promoOrder = ['P1','O1','P2','O2','P3','O3','P4'];
+    // Each Px/Ox step index: P1=idx0, O1=idx1, P2=idx2, O2=idx3, P3=idx4, O3=idx5, P4=idx6
+    // pf=0 means nothing done, pt=1 means P1 done, etc.
+    // Map: promo stage N → we need P(N)'s cost + O(N-1) if N>1
+    for (let stage = pf + 1; stage <= pt; stage++) {
+      const pKey = 'P' + stage;
+      const oKey = 'O' + (stage - 1);
+      if (stage > 1 && PROMO_COSTS[oKey]) {
+        for (const [k,v] of Object.entries(PROMO_COSTS[oKey])) add(k, v);
+      }
+      if (PROMO_COSTS[pKey]) {
+        for (const [k,v] of Object.entries(PROMO_COSTS[pKey])) add(k, v);
+      }
+    }
+
+    // Talent nodes (Expertise)
+    const tf = plan.talentFrom || 0;
+    const tt = plan.talentTo   || 0;
+    for (const n of TALENT_NODE_COSTS) {
+      if (n.node > tf && n.node <= tt) {
+        add('protoprism',  n.protoprism);
+        add('protohedron', n.protohedron);
+        add('t_creds',     n.t_creds);
+      }
+    }
+
+    // Skills
+    for (const sk of (plan.skills || [])) {
+      if (!sk.enabled) continue;
+      const fromN = skillLvlToNum(sk.fromLv);
+      const toN   = skillLvlToNum(sk.toLv);
+      for (const lvl of SKILL_LVL_ORDER) {
+        const lvlN = skillLvlToNum(lvl);
+        if (lvlN > fromN && lvlN <= toN) {
+          const c = SKILL_LEVEL_COSTS[lvl];
+          add('protoprism',          c.protoprism);
+          add('protohedron',         c.protohedron);
+          add('kalkodendra',         c.kalkodendra);
+          add('chrysodendra',        c.chrysodendra);
+          add('vitrodendra',         c.vitrodendra);
+          add('mark_of_perseverance',c.mark_of_perseverance);
+          add('t_creds',             c.t_creds);
+          // rare_mat_qty tracked generically (operator unique mat, shown separately)
+          if (c.rare_mat_qty) add('_skill_rare_mat', c.rare_mat_qty);
+        }
+      }
+    }
+
+  } else {
+    // WEAPON — EXP
+    for (const [s, e, exp, tcreds] of WPN_EXP_BANDS) {
+      if (plan.toLv <= s || plan.fromLv >= e) continue;
+      const frac = (Math.min(plan.toLv, e) - Math.max(plan.fromLv, s)) / (e - s);
+      const totalExp = Math.round(exp * frac);
+      if (s >= 60) {
+        add('arms_insp_set', totalExp);
+      } else if (s >= 20) {
+        add('arms_insp_kit', totalExp);
+      } else {
+        add('arms_inspector', totalExp);
+      }
+      add('t_creds', Math.round(tcreds * frac));
+    }
+
+    // Tuning stages
+    const tf = plan.tuneFrom || 0;
+    const tt = plan.tuneTo   || 0;
+    for (let stage = tf + 1; stage <= tt; stage++) {
+      const c = TUNING_COSTS[stage];
+      if (!c) continue;
+      add('cast_die',       c.cast_die);
+      add('heavy_cast_die', c.heavy_cast_die);
+      add('kalkonyx',       c.kalkonyx);
+      add('auronyx',        c.auronyx);
+      add('umbronyx',       c.umbronyx);
+      add('t_creds',        c.t_creds);
+      if (c.rare_mat_qty)     add('_tune_rare_mat',     c.rare_mat_qty);
+      if (c.rare_mineral_qty) add('_tune_rare_mineral',  c.rare_mineral_qty);
+    }
+  }
+
+  return m;
+}
+
+function totalMats() {
+  const acc = {};
+  for (const p of plans) {
+    if (!focusedPlanIds.has(p.id)) continue;
+    const m = calcMats(p);
+    for (const [k, v] of Object.entries(m)) acc[k] = (acc[k]||0) + v;
+  }
+  return acc;
+}
+
+// ── SKILL DEFINITIONS per operator ──
+const SKILL_NAMES = ['Basic Attack','Battle Skill','Combo Skill','Ultimate'];
+
+function defaultSkills() {
+  return SKILL_NAMES.map((name, i) => ({
+    name,
+    enabled: i > 0,  // Basic Attack off by default
+    fromLv: 1,
+    toLv: 'M3',
+  }));
+}
+
+// ── DB / MAPS ──
+let dbMaps = [];
+let dbMatsById = {};
+
+async function loadDbData() {
+  setDbStatus('loading', 'Loading maps…');
+  try {
+    const { data: matsData } = await db.from('material_list_materials').select('id,name,farming_note,img_path');
+    if (matsData) {
+      for (const m of matsData) {
+        dbMatsById[m.id] = m;
+        if (MATS[m.id]) MATS[m.id].name = m.name;
+      }
+    }
+    const { data: maps, error: mapErr } = await db.from('material_list_maps').select('*').order('sort_order');
+    if (mapErr) throw mapErr;
+    const { data: pins, error: pinErr } = await db.from('material_list_map_pins').select('*').order('sort_order');
+    if (pinErr) throw pinErr;
+    dbMaps = (maps || []).map(m => ({
+      ...m,
+      pins: (pins || []).filter(p => p.map_id === m.id)
+    }));
+    setDbStatus('ok', `${dbMaps.length} maps loaded`);
+  } catch (e) {
+    setDbStatus('err', 'Map load failed: ' + e.message);
+    dbMaps = [];
+  }
+}
+
+// ── PORTRAIT CACHE ──
+const charImgCache = {};
+async function loadCharImages() {
+  try {
+    const { data } = await db.from('v_characters_tiered').select('name,slug,img_path');
+    for (const row of (data || [])) {
+      if (row.name) charImgCache[row.name.toLowerCase()] = row.img_path ?? null;
+      if (row.slug) charImgCache[row.slug] = row.img_path ?? null;
+    }
+  } catch (e) { console.warn('Could not load char images:', e.message); }
+}
+function getCharImg(name) {
+  const key = name.toLowerCase();
+  if (!(key in charImgCache)) return undefined;
+  return charImgCache[key] || null;
+}
+
+// ── STATE ──
+let plans = [];
+let planFilter = 'all';
+let activeFilter = 'all';
+let modalType = null;
+let highlightedMat = null;
+let checkedMats = {};
+let haveQty = {};
+let focusedPlanIds = new Set();
+let focusPanelOpen = false;
+let activeMapId = null;
+let mapView = { tx: 0, ty: 0, scale: 1 };
+
+// ── HELPERS ──
+function getElColor(el) {
+  return {Heat:'#ff6b35',Cryo:'#4fc3f7',Electric:'#c084fc',Physical:'#94a3b8',Nature:'#4ade80'}[el]||'#6b7280';
+}
+function getRarityColor(rarity) {
+  return {6:'#e8a45a', 5:'#b0b0d8', 4:'#5a8ad8'}[rarity] || '#6b7280';
+}
+const EL_ICON = {
+  Heat:`<svg viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M12 2c0 6-6 8-6 14a6 6 0 0012 0c0-6-6-8-6-14z"/></svg>`,
+  Cryo:`<svg viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2"><path d="M12 2v20M4.93 7l14.14 10M19.07 7L4.93 17M2 12h20"/></svg>`,
+  Electric:`<svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>`,
+  Physical:`<svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`,
+  Nature:`<svg viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><path d="M12 22V12M5 3s0 7 7 9c7-2 7-9 7-9"/></svg>`,
+};
+const OP_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
+const WPN_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21l7-7m0 0l2-2m-2 2l2 2m8-14l-7 7"/><path d="M14 3l7 7-3 3-7-7 3-3z"/></svg>`;
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── PLANS ──
+function addPlan(type, item) {
+  const existing = plans.find(p => p.item.id === item.id && p.type === type);
+  if (existing) { closeModal(); return; }
+  const plan = {
+    id: Date.now() + Math.random(),
+    type, item,
+    fromLv: 1, toLv: 40,
+    promoFrom: 0, promoTo: 0,
+    talentFrom: 0, talentTo: 0,
+    tuneFrom: 0, tuneTo: 0,
+    skills: type === 'operator' ? defaultSkills() : [],
+  };
+  plans.push(plan);
+  focusedPlanIds.add(plan.id);
+  renderAll();
+  closeModal();
+}
+function removePlan(id) {
+  plans = plans.filter(p => p.id !== id);
+  focusedPlanIds.delete(id);
+  renderAll();
+}
+function updateFrom(id, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p.fromLv = parseInt(val);
+  if (p.fromLv >= p.toLv) p.toLv = Math.min(p.fromLv + 1, 90);
+  renderAll();
+}
+function updateTo(id, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p.toLv = parseInt(val);
+  if (p.toLv <= p.fromLv) p.fromLv = Math.max(p.toLv - 1, 1);
+  renderAll();
+}
+function setRange(id, f, t) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p.fromLv = f; p.toLv = t; renderAll();
+}
+function setPromoRange(id, field, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p[field] = parseInt(val); renderAll();
+}
+function setTalentRange(id, field, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p[field] = parseInt(val); renderAll();
+}
+function setTuneRange(id, field, val) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  p[field] = parseInt(val); renderAll();
+}
+function toggleSkill(id, skillIdx) {
+  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
+  p.skills[skillIdx].enabled = !p.skills[skillIdx].enabled;
+  renderAll();
+}
+function setSkillFrom(id, skillIdx, val) {
+  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
+  p.skills[skillIdx].fromLv = val; renderAll();
+}
+function setSkillTo(id, skillIdx, val) {
+  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
+  p.skills[skillIdx].toLv = val; renderAll();
+}
+function toggleAllSkills(id) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  const allOn = p.skills.every(s => s.enabled);
+  p.skills.forEach(s => s.enabled = !allOn);
+  renderAll();
+}
+
+function renderAll() {
+  renderPlans();
+  renderFocusBar();
+  renderNeed();
+  renderMapFilters();
+  if (activeMapId) renderMapCanvas(activeMapId);
+}
+
+function switchPlanTab(tab) {
+  planFilter = tab;
+  ['all','operator','weapon'].forEach(t => document.getElementById(`ptab-${t}`).classList.toggle('active', t===tab));
+  renderPlans();
+}
+
+function renderPlans() {
+  const visible = planFilter === 'all' ? plans : plans.filter(p => p.type === planFilter);
+  const empty = document.getElementById('plans-empty');
+  const container = document.getElementById('plans-container');
+  empty.style.display = plans.length === 0 ? 'flex' : 'none';
+  container.innerHTML = '';
+  if (plans.length > 0 && visible.length === 0) {
+    container.innerHTML = `<div style="padding:20px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase">No matches</div></div>`;
+    return;
+  }
+  for (const plan of visible) container.appendChild(buildPlanCard(plan));
+}
+
+function buildAvatarHTML(plan) {
+  const isOp = plan.type === 'operator';
+  const el = plan.item.element || null;
+  const elColor = getElColor(el);
+  const rarityColor = getRarityColor(plan.item.rarity);
+  if (isOp) {
+    const imgPath = getCharImg(plan.item.name);
+    if (imgPath) {
+      return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">
+        <img src="${imgPath}" alt="${plan.item.name}" loading="lazy">
+        <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+      </div>`;
+    }
+    const icon = EL_ICON[el] || OP_ICON;
+    return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">
+      ${icon}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+    </div>`;
+  }
+  return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">
+    ${WPN_ICON}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+  </div>`;
+}
+
+function buildSkillLvlOptions(selectedVal) {
+  const opts = [1,2,3,4,5,6,7,8,9,'M1','M2','M3'];
+  return opts.map(v => `<option value="${v}" ${String(v)===String(selectedVal)?'selected':''}>${v}</option>`).join('');
+}
+
+function buildPromoOptions(selectedVal, label) {
+  return [0,1,2,3,4].map(v => `<option value="${v}" ${v===selectedVal?'selected':''}>${v===0?'None':label+v}</option>`).join('');
+}
+
+function buildPlanCard(plan) {
+  const el = plan.item.element || null;
+  const elLower = el ? el.toLowerCase() : '';
+  const isOp = plan.type === 'operator';
+  const qRanges = [[1,40],[1,60],[1,80],[1,90],[40,80]];
+  const qBtns = qRanges.map(([f, t]) => {
+    const active = plan.fromLv === f && plan.toLv === t ? 'active' : '';
+    return `<button class="quick-btn ${active}" onclick="setRange(${plan.id},${f},${t})">${f}→${t}</button>`;
+  }).join('');
+
+  // Promotion row (operator only)
+  let promoRow = '';
+  if (isOp) {
+    promoRow = `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;flex-wrap:wrap;">
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:64px;">Promotion</div>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoFrom',this.value)">${buildPromoOptions(plan.promoFrom,'P')}</select>
+      <span class="skill-range-arrow">→</span>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoTo',this.value)">${buildPromoOptions(plan.promoTo,'P')}</select>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-left:8px;min-width:48px;">Talents</div>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTalentRange(${plan.id},'talentFrom',this.value)">${buildPromoOptions(plan.talentFrom,'E')}</select>
+      <span class="skill-range-arrow">→</span>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTalentRange(${plan.id},'talentTo',this.value)">${buildPromoOptions(plan.talentTo,'E')}</select>
+    </div>`;
+  }
+
+  // Tuning row (weapon only)
+  let tuneRow = '';
+  if (!isOp) {
+    tuneRow = `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;">
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:54px;">Tuning</div>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneFrom',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneFrom?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select>
+      <span class="skill-range-arrow">→</span>
+      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneTo',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneTo?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select>
+    </div>`;
+  }
+
+  // Skills section (operator only)
+  let skillsSection = '';
+  if (isOp && plan.skills && plan.skills.length) {
+    const allOn = plan.skills.every(s => s.enabled);
+    const skillRows = plan.skills.map((sk, i) => `
+      <div class="skill-row ${sk.enabled?'enabled':''}">
+        <div class="skill-row-chk ${sk.enabled?'on':''}" onclick="toggleSkill(${plan.id},${i})">
+          <div class="skill-row-chk-inner"></div>
+        </div>
+        <div class="skill-row-name">${sk.name}</div>
+        <div class="skill-range-wrap">
+          <select class="skill-lvl-sel" onchange="setSkillFrom(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.fromLv)}</select>
+          <span class="skill-range-arrow">→</span>
+          <select class="skill-lvl-sel" onchange="setSkillTo(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.toLv)}</select>
+        </div>
+      </div>`).join('');
+
+    skillsSection = `
+    <div class="skill-section">
+      <div class="skill-section-label">
+        Skills
+        <button class="skill-toggle-all" onclick="toggleAllSkills(${plan.id})">${allOn?'Uncheck all':'Check all'}</button>
+      </div>
+      ${skillRows}
+    </div>`;
+  }
+
+  const card = document.createElement('div');
+  card.className = 'plan-card'; card.dataset.id = plan.id;
+  card.innerHTML = `
+    <div class="plan-head">
+      ${buildAvatarHTML(plan)}
+      <div class="plan-meta">
+        <div class="plan-name">${plan.item.name}</div>
+        <div class="plan-tags">
+          ${isOp ? `<span class="tag tag-${elLower}">${el}</span><span class="tag tag-neutral">${plan.item.cls}</span>`
+                 : `<span class="tag tag-neutral">${plan.item.type}</span>`}
+          <span class="tag tag-rarity">${'★'.repeat(plan.item.rarity)}</span>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm btn-danger" onclick="removePlan(${plan.id})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+      </button>
+    </div>
+    <div class="plan-body">
+      <div class="level-row">
+        <div class="level-col">
+          <label>From</label>
+          <div class="level-slider-wrap">
+            <input type="range" min="1" max="89" value="${plan.fromLv}" oninput="updateFrom(${plan.id},this.value)">
+            <div class="level-num">${plan.fromLv}</div>
+          </div>
+        </div>
+        <div class="level-arrow">→</div>
+        <div class="level-col">
+          <label>To</label>
+          <div class="level-slider-wrap">
+            <input type="range" min="2" max="90" value="${plan.toLv}" oninput="updateTo(${plan.id},this.value)">
+            <div class="level-num">${plan.toLv}</div>
+          </div>
+        </div>
+      </div>
+      <div class="quick-btns">${qBtns}</div>
+      ${promoRow}
+      ${tuneRow}
+      ${skillsSection}
+    </div>`;
+  return card;
+}
+
+// ── FOCUS PANEL ──
+function toggleFocusPanel() {
+  focusPanelOpen = !focusPanelOpen;
+  document.getElementById('mid-focus-pills-wrap').classList.toggle('open', focusPanelOpen);
+  document.getElementById('mid-focus-caret').classList.toggle('open', focusPanelOpen);
+}
+function focusAll()  { plans.forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
+function focusNone() { focusedPlanIds.clear(); renderAll(); }
+function focusOnly(type) { focusedPlanIds.clear(); plans.filter(p => p.type === type).forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
+function toggleFocusPlan(id) {
+  if (focusedPlanIds.has(id)) focusedPlanIds.delete(id); else focusedPlanIds.add(id);
+  renderAll();
+}
+function renderFocusBar() {
+  const bar = document.getElementById('mid-focus-bar');
+  const pills = document.getElementById('mid-focus-pills');
+  const countEl = document.getElementById('mid-focus-count');
+  const indicator = document.getElementById('mid-focus-indicator');
+  if (!plans.length) { bar.style.display = 'none'; indicator.classList.remove('visible'); return; }
+  bar.style.display = 'block';
+  const allFocused = plans.every(p => focusedPlanIds.has(p.id));
+  countEl.textContent = `${plans.filter(p => focusedPlanIds.has(p.id)).length}/${plans.length}`;
+  indicator.classList.toggle('visible', !allFocused);
+  pills.innerHTML = plans.map(p => {
+    const isFocused = focusedPlanIds.has(p.id);
+    const dotColor = p.type === 'weapon' ? '#94a3b8' : getElColor(p.item.element);
+    return `<div class="focus-pill ${isFocused?'active':'inactive'}" onclick="toggleFocusPlan(${p.id})">
+      <div class="focus-pill-dot" style="background:${dotColor}"></div>
+      <div class="focus-pill-name">${p.item.name}</div>
+      <div class="focus-pill-check"><div class="focus-pill-check-inner"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── NEED LIST ──
+function toggleCheck(matKey) { checkedMats[matKey] = !checkedMats[matKey]; renderNeed(); }
+function updateHave(matKey, val) { haveQty[matKey] = Math.max(0, parseInt(val)||0); renderNeed(); }
+
+function renderNeed() {
+  const empty = document.getElementById('mid-empty');
+  const list  = document.getElementById('need-list');
+  const badge = document.getElementById('mid-badge-wrap');
+  const badgeLabel = document.getElementById('mid-badge');
+
+  if (!plans.length) { empty.style.display = 'flex'; list.innerHTML = ''; badge.style.display = 'none'; return; }
+  empty.style.display = 'none';
+
+  if (focusedPlanIds.size === 0) {
+    list.innerHTML = `<div style="padding:20px 8px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">No plans focused</div></div>`;
+    badge.style.display = 'none'; return;
+  }
+
+  const mats = totalMats();
+  // Filter out internal tracking keys
+  const entries = Object.entries(mats).filter(([k]) => !k.startsWith('_'));
+  if (!entries.length) { list.innerHTML = ''; badge.style.display = 'none'; return; }
+
+  const byCategory = {};
+  for (const [k, qty] of entries) {
+    const mat = MATS[k]; if (!mat) continue;
+    if (!byCategory[mat.category]) byCategory[mat.category] = [];
+    byCategory[mat.category].push({k, qty, mat});
+  }
+
+  const checkedCount = entries.filter(([k]) => checkedMats[k]).length;
+  badge.style.display = 'block';
+  badgeLabel.textContent = `${checkedCount}/${entries.length}`;
+
+  let html = '';
+  for (const [cat, items] of Object.entries(byCategory)) {
+    html += `<div class="need-section-label">${cat}</div>`;
+    for (const {k, qty, mat} of items) {
+      const checked = checkedMats[k] ? 'checked' : '';
+      const highlighted = highlightedMat === k ? 'highlighted' : '';
+      const have = haveQty[k] || 0;
+      const pct  = Math.min(100, Math.round((have / qty) * 100));
+      const remaining = Math.max(0, qty - have);
+      const fmtQty   = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
+      const fmtTotal = qty     >= 1000 ? (qty/1000).toFixed(1)+'k'     : qty.toLocaleString();
+      html += `<div class="need-row ${checked} ${highlighted}" onclick="onNeedRowClick('${k}',event)">
+        <div class="need-check"><div class="need-check-inner"></div></div>
+        <div class="need-dot" style="background:${mat.color}"></div>
+        <div class="need-row-name">${mat.name}</div>
+        <div class="need-row-right" onclick="event.stopPropagation()">
+          <div class="need-row-qty" style="color:${mat.color}">${fmtQty}</div>
+          <div class="need-have-wrap">
+            Have:<input class="need-row-input" type="number" min="0" value="${have}"
+              onclick="event.stopPropagation()"
+              onchange="updateHave('${k}',this.value)"
+              oninput="updateHave('${k}',this.value)">/${fmtTotal}
+          </div>
+        </div>
+        ${pct > 0 && !checked ? `<div class="need-progress" style="width:${pct}%"></div>` : ''}
+      </div>`;
+    }
+  }
+  list.innerHTML = html;
+}
+
+function onNeedRowClick(matKey, e) {
+  if (e.shiftKey || e.ctrlKey || e.metaKey) highlightMat(matKey);
+  else toggleCheck(matKey);
+}
+
+// ── MAP ──
+function initMaps() {
+  const topBar = document.getElementById('map-top-bar');
+  const hint = document.getElementById('map-loading-hint');
+  const dragHint = document.getElementById('map-drag-hint');
+  document.getElementById('map-loading').style.display = 'none';
+
+  if (!dbMaps.length) { hint.textContent = 'No maps in database'; return; }
+
+  hint.style.display = 'none';
+  dragHint.style.display = '';
+
+  dbMaps.forEach((map, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'map-tab' + (i === 0 ? ' active' : '');
+    btn.id = `mtab-${map.id}`;
+    btn.textContent = map.name;
+    btn.onclick = () => switchMap(map.id);
+    topBar.insertBefore(btn, dragHint);
+  });
+
+  const canvasesEl = document.getElementById('map-canvases');
+  dbMaps.forEach((map, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'map-canvas-wrap' + (i === 0 ? ' active' : '');
+    wrap.id = `mapwrap-${map.id}`;
+    wrap.style.cssText = 'position:absolute;inset:0';
+    canvasesEl.appendChild(wrap);
+  });
+
+  document.getElementById('map-zoom-controls').style.display = 'flex';
+  document.getElementById('map-coords').style.display = 'block';
+  setupMapInteraction();
+
+  if (dbMaps.length) { activeMapId = dbMaps[0].id; renderMapCanvas(activeMapId); }
+}
+
+function switchMap(mapId) {
+  activeMapId = mapId;
+  mapView = { tx: 0, ty: 0, scale: 1 };
+  dbMaps.forEach(m => {
+    document.getElementById(`mtab-${m.id}`)?.classList.toggle('active', m.id === mapId);
+    document.getElementById(`mapwrap-${m.id}`)?.classList.toggle('active', m.id === mapId);
+  });
+  renderMapCanvas(mapId);
+  document.getElementById('map-info-bar').classList.remove('visible');
+}
+
+function getMatColor(matId) { return MATS[matId]?.color || '#6b7280'; }
+function getMatName(matId)  { return MATS[matId]?.name || dbMatsById[matId]?.name || matId; }
+
+function renderMapCanvas(mapId) {
+  const map = dbMaps.find(m => m.id === mapId);
+  if (!map) return;
+  const wrap = document.getElementById(`mapwrap-${mapId}`);
+  if (!wrap) return;
+  const W = map.coord_width, H = map.coord_height;
+  const needMats = totalMats();
+
+  const relevantPins = map.pins.filter(pin => {
+    return Object.keys(needMats).length === 0 || needMats[pin.material_id];
+  });
+
+  if (map.image_url) {
+    // Image-based map with pin overlay
+    const pinsHtml = relevantPins.map(pin => {
+      const matId = pin.material_id;
+      const color = getMatColor(matId);
+      const name = getMatName(matId);
+      const shortName = name.replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
+      const isHL = highlightedMat === matId;
+      const isDim = highlightedMat && !isHL;
+      const borderCol = isHL ? color : 'rgba(255,255,255,0.18)';
+      const glow = isHL ? `box-shadow:0 0 12px ${color}55;` : '';
+      return `<div class="user-pin ${isHL?'highlighted':''} ${isDim?'dimmed':''}"
+        style="left:${pin.x}px;top:${pin.y}px;border-color:${borderCol};${glow}"
+        onclick="onPinClick('${matId}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')"
+        title="${escHtml(name)} — ${escHtml(pin.location_name)}">
+        <div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div>
+        <div>
+          <div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div>
+          <div class="user-pin-sub">${escHtml(pin.location_name)}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    wrap.innerHTML = `<div class="map-viewport" id="map-vp-${mapId}">
+      <div class="map-inner" id="map-inner-${mapId}" style="width:${W}px;height:${H}px;position:relative">
+        <img src="${map.image_url}" style="position:absolute;inset:0;width:${W}px;height:${H}px;object-fit:cover;pointer-events:none;display:block" loading="lazy">
+        ${pinsHtml}
+      </div>
+    </div>`;
+
+    const vp = document.getElementById(`map-vp-${mapId}`);
+    if (vp) vp.addEventListener('mousemove', e => {
+      const inner = document.getElementById(`map-inner-${mapId}`);
+      if (!inner) return;
+      const rect = inner.getBoundingClientRect();
+      const x = Math.round((e.clientX - rect.left) / mapView.scale);
+      const y = Math.round((e.clientY - rect.top)  / mapView.scale);
+      document.getElementById('map-coords').textContent = `x:${x} y:${y}`;
+    });
+
+    document.getElementById('map-zoom-controls').style.display = 'flex';
+    document.getElementById('map-coords').style.display = 'block';
+
+  } else {
+    // No image — fallback: SVG background + pin list below
+    const fallbackSVG = buildFallbackMapSVG(map);
+    const pinListHtml = relevantPins.length
+      ? `<div class="map-pin-list">${relevantPins.map(pin => {
+          const color = getMatColor(pin.material_id);
+          const name  = getMatName(pin.material_id);
+          const isHL  = highlightedMat === pin.material_id;
+          return `<div class="map-pin-list-item" style="${isHL?`border-color:${color};background:${color}12`:''}"
+            onclick="onPinClick('${pin.material_id}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')">
+            <div class="map-pin-list-mat" style="color:${color}">${escHtml(name)}</div>
+            <div class="map-pin-list-loc">${escHtml(pin.location_name)}</div>
+            ${pin.note?`<div class="map-pin-list-note">${escHtml(pin.note)}</div>`:''}
+          </div>`;
+        }).join('')}</div>`
+      : `<div style="padding:20px;font-family:var(--font-mono);font-size:10px;color:var(--muted);text-align:center">No pinned locations match your current material needs.</div>`;
+
+    wrap.innerHTML = `<div style="height:100%;overflow-y:auto;">
+      <div style="position:relative;height:160px;overflow:hidden;flex-shrink:0;">${fallbackSVG}</div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;padding:10px 14px 4px;">
+        Pin locations — upload a map image to enable the interactive view
+      </div>
+      ${pinListHtml}
+    </div>`;
+
+    // Hide zoom/coords for list view
+    document.getElementById('map-zoom-controls').style.display = 'none';
+    document.getElementById('map-coords').style.display = 'none';
+  }
+
+  updateMapTransform();
+  renderMapLegend(mapId);
+}
+
+function onPinClick(matId, zoneName, note) {
+  highlightMat(matId);
+  const map = dbMaps.find(m => m.id === activeMapId);
+  if (map) updateInfoBar(map, matId);
+}
+
+function updateInfoBar(map, matId) {
+  const bar = document.getElementById('map-info-bar');
+  if (!matId || matId !== highlightedMat) { bar.classList.remove('visible'); return; }
+  const color = getMatColor(matId);
+  const name  = getMatName(matId);
+  const pins  = map.pins.filter(p => p.material_id === matId);
+  if (!pins.length) { bar.classList.remove('visible'); return; }
+  document.getElementById('map-info-title').innerHTML =
+    `<span style="color:${color}">●</span> ${escHtml(name)} — ${escHtml(map.name)} farming locations`;
+  document.getElementById('map-info-cards').innerHTML = pins.map(p => {
+    const displayNote = p.note && p.note.trim()
+      ? p.note
+      : (dbMatsById[matId]?.farming_note || 'See map for details');
+    return `<div class="map-info-card">
+      <div class="map-info-card-zone" style="color:${color}">${escHtml(p.location_name)}</div>
+      <div class="map-info-card-desc">${escHtml(displayNote)}</div>
+    </div>`;
+  }).join('');
+  bar.classList.add('visible');
+}
+
+function renderMapLegend(mapId) {
+  const map = dbMaps.find(m => m.id === mapId);
+  const legend = document.getElementById('map-legend');
+  const items  = document.getElementById('legend-items');
+  if (!map || !map.pins.length) { legend.classList.remove('visible'); return; }
+  const needMats = totalMats();
+  const matIds = [...new Set(map.pins.map(p => p.material_id))].filter(k => {
+    return Object.keys(needMats).length === 0 || needMats[k];
+  });
+  if (!matIds.length) { legend.classList.remove('visible'); return; }
+  legend.classList.add('visible');
+  items.innerHTML = matIds.map(k => {
+    const color = getMatColor(k);
+    const name  = getMatName(k).replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
+    const isHL  = highlightedMat === k;
+    const isDim = highlightedMat && !isHL;
+    return `<div class="map-legend-item ${isDim?'dimmed':''}" onclick="highlightMat('${k}')">
+      <div class="map-legend-dot" style="background:${color};${isHL?`box-shadow:0 0 5px ${color}`:''}"></div>
+      <div class="map-legend-name" style="${isHL?`color:${color}`:''}">${escHtml(name)}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildFallbackMapSVG(map) {
+  const W = map.coord_width, H = map.coord_height;
+  return `<svg width="100%" height="160" style="display:block;pointer-events:none" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${W}" height="${H}" fill="#0b1510"/>
+    <defs><pattern id="mg${map.id.slice(0,8)}" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="0.6"/>
+    </pattern></defs>
+    <rect width="${W}" height="${H}" fill="url(#mg${map.id.slice(0,8)})"/>
+    <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text>
+    <text x="${W/2}" y="${H/2+32}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(255,255,255,0.06)" letter-spacing="3">UPLOAD MAP IMAGE TO ENABLE INTERACTIVE VIEW</text>
+  </svg>`;
+}
+
+// ── MAP INTERACTION ──
+function setupMapInteraction() {
+  const area = document.getElementById('map-area');
+  let drag = false, lx = 0, ly = 0;
+  area.addEventListener('mousedown', e => {
+    if (e.button !== 0 || e.target.closest('.user-pin')) return;
+    drag = true; lx = e.clientX; ly = e.clientY;
+    area.style.cursor = 'grabbing'; e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!drag) return;
+    mapView.tx += e.clientX - lx; mapView.ty += e.clientY - ly;
+    lx = e.clientX; ly = e.clientY;
+    updateMapTransform();
+  });
+  window.addEventListener('mouseup', () => { drag = false; if(document.getElementById('map-area')) document.getElementById('map-area').style.cursor=''; });
+  area.addEventListener('wheel', e => {
+    e.preventDefault();
+    const rect = area.getBoundingClientRect();
+    const factor = e.deltaY < 0 ? 1.12 : 0.88;
+    mapView.tx = (e.clientX - rect.left) + (mapView.tx - (e.clientX - rect.left)) * factor;
+    mapView.ty = (e.clientY - rect.top)  + (mapView.ty - (e.clientY - rect.top))  * factor;
+    mapView.scale = Math.max(0.15, Math.min(6, mapView.scale * factor));
+    updateMapTransform();
+  }, { passive: false });
+}
+function updateMapTransform() {
+  if (!activeMapId) return;
+  const inner = document.getElementById(`map-inner-${activeMapId}`);
+  if (!inner) return;
+  inner.style.transform = `translate(${mapView.tx}px,${mapView.ty}px) scale(${mapView.scale})`;
+  inner.style.transformOrigin = '0 0';
+}
+function mapZoom(factor) {
+  const area = document.getElementById('map-area');
+  const rect = area.getBoundingClientRect();
+  const cx = rect.width / 2, cy = rect.height / 2;
+  mapView.tx = cx + (mapView.tx - cx) * factor;
+  mapView.ty = cy + (mapView.ty - cy) * factor;
+  mapView.scale = Math.max(0.15, Math.min(6, mapView.scale * factor));
+  updateMapTransform();
+}
+function mapReset() { mapView = { tx:0, ty:0, scale:1 }; updateMapTransform(); }
+
+// ── HIGHLIGHT ──
+function highlightMat(matId) {
+  highlightedMat = (highlightedMat === matId) ? null : matId;
+  renderMapFilters();
+  if (activeMapId) {
+    renderMapCanvas(activeMapId);
+    const map = dbMaps.find(m => m.id === activeMapId);
+    if (map) updateInfoBar(map, matId);
+    else document.getElementById('map-info-bar').classList.remove('visible');
+  }
+  renderNeed();
+}
+
+// ── MAP FILTER BAR ──
+function renderMapFilters() {
+  const bar = document.getElementById('map-filter-bar');
+  const chipsEl = document.getElementById('mat-chips');
+  if (!plans.length || !dbMaps.length) { bar.classList.remove('visible'); return; }
+  bar.classList.add('visible');
+  const needMats = totalMats();
+  const matsWithPins = new Set();
+  for (const map of dbMaps) for (const pin of map.pins) matsWithPins.add(pin.material_id);
+  chipsEl.innerHTML = Object.keys(needMats).filter(k => MATS[k] && matsWithPins.has(k) && !k.startsWith('_')).map(k => {
+    const mat = MATS[k];
+    const active = highlightedMat === k ? 'active' : '';
+    return `<div class="mat-chip ${active}" onclick="highlightMat('${k}')">
+      <div class="mat-chip-dot" style="background:${mat.color}"></div>${mat.name.split(' ')[0]}
+    </div>`;
+  }).join('');
+}
+
+// ── MODAL ──
+function openModal(type) {
+  modalType = type; activeFilter = 'all';
+  document.getElementById('modal-title').textContent = type === 'operator' ? 'Add Operator' : 'Add Weapon';
+  document.getElementById('modal-search').value = '';
+  buildFilterButtons();
+  renderModalList(type === 'operator' ? OPERATORS : WEAPONS);
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('modal-search').focus(), 50);
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function handleOverlayClick(e) { if (e.target === document.getElementById('modal')) closeModal(); }
+
+function buildFilterButtons() {
+  const fb = document.getElementById('filter-buttons');
+  if (modalType === 'operator') {
+    const elements = ['All','Heat','Cryo','Electric','Physical','Nature'];
+    const classes  = ['Striker','Guard','Caster','Defender','Supporter','Vanguard'];
+    fb.innerHTML = elements.map(e => `<button class="filter-btn ${activeFilter===e.toLowerCase()||activeFilter===e?'active':''}" onclick="setFilter('${e.toLowerCase()}')">${e}</button>`).join('')
+      + '<span style="color:var(--border2);padding:0 4px">|</span>'
+      + classes.map(c => `<button class="filter-btn ${activeFilter===c.toLowerCase()?'active':''}" onclick="setFilter('${c.toLowerCase()}')">${c}</button>`).join('');
+  } else {
+    const types = ['All','Sword','Gt. Sword','Polearm','Arts Unit','Handcannon'];
+    const rars  = ['6★','5★','4★'];
+    fb.innerHTML = types.map(t => `<button class="filter-btn ${activeFilter===t.toLowerCase()?'active':''}" onclick="setFilter('${t.toLowerCase()}')">${t}</button>`).join('')
+      + '<span style="color:var(--border2);padding:0 4px">|</span>'
+      + rars.map(r => `<button class="filter-btn ${activeFilter===r.replace('★','star')?'active':''}" onclick="setFilter('${r.replace('★','star')}')">${r}</button>`).join('');
+  }
+}
+function setFilter(f) { activeFilter = f; buildFilterButtons(); filterModal(); }
+function filterModal() {
+  const q = document.getElementById('modal-search').value.toLowerCase();
+  const source = modalType === 'operator' ? OPERATORS : WEAPONS;
+  let filtered = source;
+  if (activeFilter !== 'all') {
+    filtered = filtered.filter(x => {
+      const el   = (x.element||'').toLowerCase();
+      const cls  = (x.cls||'').toLowerCase();
+      const type = (x.type||'').toLowerCase();
+      return el === activeFilter || cls === activeFilter || type === activeFilter || (x.rarity+'star') === activeFilter;
+    });
+  }
+  if (q) filtered = filtered.filter(x => x.name.toLowerCase().includes(q));
+  renderModalList(filtered);
+}
+function renderModalList(items) {
+  const list = document.getElementById('modal-list');
+  if (!items.length) { list.innerHTML = '<p style="grid-column:1/-1;font-size:12px;color:var(--muted);font-family:var(--font-mono);padding:8px">No results</p>'; return; }
+  list.innerHTML = items.map(item => {
+    const isOp = modalType === 'operator';
+    const el = isOp ? item.element : null;
+    const elColor = getElColor(el);
+    const inPlan = plans.some(p => p.item.id === item.id && p.type === modalType);
+    let iconContent;
+    if (isOp) {
+      const imgPath = getCharImg(item.name);
+      iconContent = imgPath
+        ? `<img src="${imgPath}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`
+        : (EL_ICON[el] || OP_ICON);
+    } else { iconContent = WPN_ICON; }
+    return `<button class="modal-item" onclick='selectItem(${JSON.stringify(item).replace(/'/g,"&#39;")})' style="${inPlan?'border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)':''}">
+      <div class="modal-item-icon" style="${el?`border-color:${elColor}40;`:''}">${iconContent}</div>
+      <div>
+        <div class="modal-item-name">${item.name}${inPlan?' <span style="color:var(--accent);font-size:9px">✓</span>':''}</div>
+        <div class="modal-item-sub">${isOp ? `${item.cls} · ${item.element}` : item.type} · ${item.rarity}★</div>
+      </div>
+    </button>`;
+  }).join('');
+}
+function selectItem(item) { addPlan(modalType, item); }
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── INIT ──
+window.addEventListener('load', async () => {
+  renderAll();
+  await Promise.all([loadDbData(), loadCharImages()]);
+  initMaps();
+  renderAll();
+});
+</script>
+</body>
+</html>

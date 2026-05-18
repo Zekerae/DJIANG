@@ -6,7 +6,9 @@
 <title id="page-title">Operator — Arknights: Endfield</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/NavBar.css">
 <link rel="stylesheet" href="css/CharacterIntroduction.css">
+<link rel="stylesheet" href="css/LogIn.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -60,6 +62,19 @@
 </div>
 
 <div class="content">
+
+  <div class="panel-control-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+    <div class="breadcrumbs-log" style="font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; color: var(--dim2, #7e7c8e);">
+      OPERATOR PROFILE SYSTEM / <span id="nav-name" style="color: #fff;">LOADING...</span>
+    </div>
+    
+    <div class="selector-field" style="display: flex; align-items: center; gap: 12px;">
+      <label style="font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #00e5c0; text-transform: uppercase;">Switch File:</label>
+      <select class="character-select" id="char-selector" onchange="navigateToCharacter(this.value)" style="background: #0e1017; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; outline: none; min-width: 180px; border-radius: 2px; cursor: pointer;">
+        <option value="" disabled selected>Select Operator...</option>
+      </select>
+    </div>
+  </div>
 
   <div class="panel active" id="panel-profile">
     <div class="video-plug mb-20" id="dom-video-wrap">
@@ -192,7 +207,7 @@
       <div class="range-row">
         <div class="range-group">
           <div class="range-label">Current Level <span class="range-val" id="lv-c-out">1</span></div>
-          <input type="range" id="m-lv-c" min="1" max="90" value="1" step="1" oninput="recalcMats()">
+          <input type="range" id="m-lv-c" min="1" max="90" value="1" step="1" oninput="onTrackerLevelChange()">
           <div class="range-ticks"><span>1</span><span>20</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span></div>
         </div>
         <div class="range-arrow">→</div>
@@ -233,6 +248,9 @@
       <div class="checklist" id="dom-checklist"></div>
     </div>
 
-  </div></div><script src="js/CharacterIntroduction.js"></script>
+  </div></div>
+  <script src="js/NavBar.js"></script>
+  <script src="js/CharacterIntroduction.js"></script>
+  <script src="js/LogIn.js"></script>
 </body>
 </html>

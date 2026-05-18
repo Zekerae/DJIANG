@@ -1,6 +1,15 @@
-.body{
+/* ── UNIVERSAL CSS RESET ── */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
     overflow-x: hidden;
     overscroll-behavior-x: contain;
+    background-color: #06080d; /* Sets the deep background to dark instead of white */
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 .landing-page{
