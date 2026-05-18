@@ -339,3 +339,58 @@
         transform: none !important; z-index: 100 !important;
     }
 }
+
+/* ═══════════════════════════════════════════════
+   MOBILE OPTIMIZATION — CHARACTER CAROUSEL TEXT
+═══════════════════════════════════════════════ */
+@media screen and (max-width: 768px) {
+    
+    /* 1. Target the box holding the text and buttons, and turn it into a column */
+    #character-slide .content {
+        position: absolute !important;
+        bottom: 140px !important; /* Moves the entire text block safely above thumbnails */
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 85% !important;
+        display: flex !important;
+        flex-direction: column !important; /* Stacks name -> description -> buttons */
+        align-items: center !important;
+        text-align: center !important;
+    }
+
+    /* 2. Resize the massive title name and give it a clean separation margin */
+    #character-slide .name,
+    #character-slide .title {
+        font-size: clamp(36px, 9vw, 48px) !important; /* Scale fluidly on mobile */
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        margin: 0 0 12px 0 !important; /* The magic margin that pushes text down */
+        line-height: 1.1 !important;
+        letter-spacing: 2px !important;
+    }
+
+    /* 3. Style the description paragraph so it sits cleanly beneath the name */
+    #character-slide .des,
+    #character-slide .description,
+    #character-slide .content p {
+        font-size: 14px !important;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        margin: 0 0 20px 0 !important; /* Pushes the Profile/Track buttons down */
+        line-height: 1.5 !important;
+        max-width: 100% !important;
+        color: rgba(255, 255, 255, 0.85) !important;
+    }
+
+    /* 4. Ensure the action buttons stack neatly under the description */
+    #character-slide .buttons {
+        position: relative !important;
+        display: flex !important;
+        justify-content: center !important;
+        gap: 15px !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+}
