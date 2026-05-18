@@ -85,7 +85,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   transition:all .35s cubic-bezier(.4,0,.2,1);
 }
 
-/* spotlight hole — drawn via box-shadow trick */
+/* spotlight hole */
 .tour-spotlight{
   position:absolute;
   border-radius:8px;
@@ -378,18 +378,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .stat-block-val{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:1px;color:#fff;transition:.3s;}
 .stat-block-val.bump{color:var(--gold2);transform:scale(1.12);}
 
-.sub-stats{display:flex;gap:8px;flex-wrap:wrap;}
-.sub-stat{flex:1;min-width:100px;background:rgba(0,0,0,.2);border:1px solid var(--bord);border-radius:6px;padding:10px 12px;}
-.sub-stat-label{font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim2);margin-bottom:4px;}
-.sub-stat-val{font-family:'Rajdhani',sans-serif;font-size:.85rem;font-weight:700;color:var(--text);transition:.3s;}
-.sub-stat-val.bump{color:var(--gold2);}
+.stat-list { display: flex; flex-direction: column; gap: 8px; }
+.stat-item { background: rgba(0,0,0,.2); border: 1px solid var(--bord); border-radius: 8px; padding: 12px 14px; }
+.stat-item-label { font-family: 'Rajdhani', sans-serif; font-size: .65rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.stat-item-val { font-family: 'DM Sans', sans-serif; font-size: .78rem; font-weight: 400; color: var(--text); line-height: 1.6; transition: color .3s; }
+.stat-item-val.bump { color: var(--gold2); }
+.hl { color: #7ab8ff; font-weight: 600; }
 
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--bord2),transparent);}
 
-.passive-block{background:rgba(0,0,0,.2);border:1px solid var(--bord);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
-.passive-label{font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);}
-.passive-text{font-size:.75rem;color:var(--dim2);line-height:1.65;}
-.passive-text .scaled-val{color:var(--gold2);font-weight:700;transition:color .3s;}
 .flavor-text{font-size:.7rem;color:var(--dim);font-style:italic;line-height:1.65;border-left:2px solid rgba(212,148,58,.3);padding-left:10px;}
 
 .notes-block{background:rgba(0,0,0,.2);border:1px solid var(--bord);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
@@ -442,112 +439,45 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--dim2);}
 
-/* skills */
-.skill-item{display:flex;flex-direction:column;gap:6px;}
-.skill-header{display:flex;align-items:center;justify-content:space-between;}
-.skill-name-wrap{display:flex;align-items:center;gap:8px;}
-.skill-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
-.skill-name{font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);}
-.skill-desc{font-size:.72rem;color:var(--dim2);line-height:1.6;padding-left:14px;border-left:1px solid var(--bord);transition:transform .12s;}
-.hl{color:#7ab8ff;font-weight:600;}
-.hl-atk{color:var(--gold2);font-weight:600;}
-.skill-controls{display:flex;align-items:center;gap:8px;}
-.skill-btn{width:22px;height:22px;border-radius:4px;background:rgba(255,255,255,.07);border:1px solid var(--bord2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;font-weight:400;transition:.18s;line-height:1;}
-.skill-btn:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:#fff;}
-.skill-btn:disabled{opacity:.28;cursor:not-allowed;}
-.skill-lv{font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:1px;color:var(--gold2);min-width:32px;text-align:center;}
-
 .rec-row{display:flex;flex-wrap:wrap;gap:6px;}
 .rec-badge{font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:rgba(109,220,154,.1);border:1px solid rgba(109,220,154,.25);color:#6ddc9a;}
 
 /* ═══════════════════════════════════════════════════
-   RESPONSIVE — full coverage
-   Breakpoints:
-     xs  : ≤ 480px   (phones portrait)
-     sm  : 481–768px (phones landscape / small tablet)
-     md  : 769–960px (tablet portrait / small laptop)
-     lg  : 961–1200px (tablet landscape / laptop)
-     xl+ : > 1200px  (desktop — base styles)
+   RESPONSIVE
    ═══════════════════════════════════════════════════ */
-
-/* ── LARGE TABLET (≤ 1200px) ── */
-@media(max-width:1200px){
-  .right-panel{ width:360px; }
-}
-
-/* ── MEDIUM / TABLET PORTRAIT (≤ 960px) ── */
+@media(max-width:1200px){ .right-panel{ width:360px; } }
 @media(max-width:960px){
   .right-panel{ width:300px; }
   .panel-head{ padding:20px 20px 16px; }
   .panel-body{ padding:16px 20px; }
   .wpn-name{ font-size:1.9rem; }
 }
-
-/* ── SMALL TABLET / LARGE PHONE LANDSCAPE (≤ 768px) ── */
 @media(max-width:768px){
-  /* allow page to scroll vertically */
   html, body { height:auto; overflow-x:hidden; overflow-y:auto; }
   .shell{ height:auto; min-height:100svh; overflow:visible; }
-
-  /* stack layout vertically */
   .layout{ flex-direction:column; overflow:visible; }
-
-  /* topbar: compact */
   .topbar{ padding:0 12px; height:52px; }
   .breadcrumb{ font-size:.65rem; letter-spacing:1.5px; }
   .breadcrumb .cur{ max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .save-badge{ display:none; }
-
-  /* weapon selector: shrink trigger */
   .wpn-trigger{ min-width:0; max-width:180px; font-size:.72rem; padding:5px 8px 5px 10px; }
   .wpn-trigger-label{ max-width:100px; }
-  /* panel: full-width from top bar */
-  .wpn-panel{
-    width:calc(100vw - 16px);
-    right:auto; left:50%;
-    transform:translateX(-50%);
-    max-height:60vh;
-  }
+  .wpn-panel{ width:calc(100vw - 16px); right:auto; left:50%; transform:translateX(-50%); max-height:60vh; }
   .wpn-panel-filters .wpn-filter-row{ flex-wrap:wrap; gap:4px; }
-
-  /* sidebar: horizontal bottom-of-topbar row */
-  .sidebar{
-    flex-direction:row; width:100%; height:48px;
-    padding:0 16px; gap:8px;
-    border-right:none; border-bottom:1px solid var(--bord);
-    justify-content:flex-start;
-  }
+  .sidebar{ flex-direction:row; width:100%; height:48px; padding:0 16px; gap:8px; border-right:none; border-bottom:1px solid var(--bord); justify-content:flex-start; }
   .sb-btn{ width:38px; height:38px; }
   .sb-tip{ left:50%; top:calc(100% + 8px); transform:translateX(-50%); }
-
-  /* card stage: shrink, don't flex-grow to fill half the screen */
-  .card-stage{
-    flex:none; padding:24px 16px 20px;
-    min-height:280px; height:auto;
-  }
+  .card-stage{ flex:none; padding:24px 16px 20px; min-height:280px; height:auto; }
   .card-3d-wrap{ width:200px; height:300px; }
-
-  /* right panel: full width, scrolls naturally */
-  .right-panel{
-    width:100%; flex:none;
-    border-left:none; border-top:1px solid var(--bord);
-    overflow-y:visible; max-height:none;
-  }
+  .right-panel{ width:100%; flex:none; border-left:none; border-top:1px solid var(--bord); overflow-y:visible; max-height:none; }
   .panel-head{ padding:18px 16px 14px; position:relative; top:auto; }
   .panel-body{ padding:14px 16px; gap:16px; }
   .wpn-name{ font-size:1.7rem; }
-
-  /* modal: full width */
   .modal-box{ padding:20px 16px; }
   .mat-grid{ grid-template-columns:repeat(3,1fr); gap:8px; }
-
-  /* tour card: responsive width */
   .tour-card{ width:calc(100vw - 32px); max-width:320px; }
 }
-
-/* ── PHONE PORTRAIT (≤ 480px) ── */
 @media(max-width:480px){
-  /* topbar: tighten further */
   .topbar{ padding:0 10px; gap:8px; }
   .logo-mark{ width:28px; height:28px; font-size:12px; }
   .breadcrumb{ gap:5px; font-size:.6rem; }
@@ -556,14 +486,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .wpn-trigger-label{ max-width:80px; }
   .wpn-trigger-arrow{ font-size:.55rem; }
   .wpn-filter-badge{ font-size:.5rem; padding:1px 5px; }
-
-  /* weapon panel: full viewport minus small margins */
   .wpn-panel{ width:calc(100vw - 12px); max-height:70vh; }
   .wpn-search-input{ font-size:.75rem; }
   .fpill{ font-size:.58rem; padding:2px 7px; }
   .filter-clear-small{ font-size:.55rem; padding:2px 6px; }
-
-  /* card stage */
   .card-stage{ padding:16px 12px; min-height:240px; }
   .card-3d-wrap{ width:175px; height:262px; }
   .card-letter{ font-size:6rem; }
@@ -571,38 +497,26 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .card-star{ width:8px; height:8px; }
   .card-level-badge{ font-size:.75rem; padding:2px 6px; }
   .card-type-badge{ font-size:.52rem; padding:4px 8px; }
-
-  /* panel */
   .panel-head{ padding:14px 14px 12px; }
   .wpn-name{ font-size:1.5rem; letter-spacing:2px; }
   .wpn-type-label{ font-size:.6rem; }
   .wpn-star{ width:11px; height:11px; }
   .panel-body{ padding:12px 14px; gap:14px; }
-
-  /* stats */
   .stat-block{ padding:11px 13px; }
   .stat-block-val{ font-size:1.4rem; }
-  .sub-stat{ padding:8px 10px; }
-  .sub-stat-val{ font-size:.78rem; }
-
-  /* level slider — bigger thumb for touch */
+  .stat-item { padding:8px 10px; }
+  .stat-item-val { font-size:.78rem; }
   .slider-wrap{ height:8px; }
   .slider-thumb{ width:18px; height:18px; }
-
-  /* notes */
   .notes-block{ padding:12px 13px; }
   .tag-add-wrap{ flex-direction:column; }
   .tag-add-btn{ width:100%; text-align:center; padding:7px 12px; }
-
-  /* modal */
   .modal-box{ padding:16px 14px; border-radius:10px; }
   .modal-title{ font-size:1.1rem; }
   .track-row{ flex-wrap:wrap; gap:10px; justify-content:center; }
   .mat-grid{ grid-template-columns:repeat(2,1fr); gap:8px; }
   .mat-card{ padding:10px 8px; }
   .mat-icon{ width:32px; height:32px; }
-
-  /* tour card */
   .tour-card{ width:calc(100vw - 24px); max-width:none; left:12px !important; padding:14px 16px 12px; }
   .tour-title{ font-size:1rem; }
   .tour-desc{ font-size:.68rem; }
@@ -616,7 +530,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   <div class="loading-text">Loading Arsenal</div>
 </div>
 
-<!-- GUIDED TOUR OVERLAY -->
 <div class="tour-overlay" id="tourOverlay">
   <div class="tour-spotlight" id="tourSpotlight"></div>
   <div class="tour-card" id="tourCard">
@@ -638,7 +551,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 
 <div class="shell">
 
-  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-left">
       <div class="logo-mark">EF</div>
@@ -650,11 +562,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     </div>
     <div class="topbar-right">
       <div class="save-badge" id="saveBadge">● Saved</div>
-
-      <!-- HELP BUTTON -->
       <div class="help-btn" id="helpBtn" title="Page tour" onclick="startTour()">?</div>
-
-      <!-- FUSED WEAPON DROPDOWN -->
+      
       <div class="wpn-dropdown-wrap" id="wpnDropdownWrap">
         <div class="wpn-trigger" id="wpnTrigger">
           <span class="wpn-trigger-label" id="wpnTriggerLabel">Select Weapon…</span>
@@ -690,7 +599,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
 
   <div class="layout">
-    <!-- SIDEBAR -->
     <div class="sidebar">
       <button class="sb-btn active" id="sb-details" onclick="setSbActive('details')">
         <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="2.5" fill="currentColor"/></svg>
@@ -702,7 +610,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       </button>
     </div>
 
-    <!-- CARD STAGE -->
     <div class="card-stage" id="cardStage">
       <div class="stage-glow" id="stageGlow"></div>
       <div class="card-3d-wrap" id="card3d">
@@ -735,7 +642,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       </div>
     </div>
 
-    <!-- RIGHT PANEL -->
     <div class="right-panel" id="rightPanel">
       <div class="panel-head">
         <div class="wpn-type-label" id="panelTypeLabel">—</div>
@@ -770,15 +676,29 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
           <div class="stat-block-val" id="atkDisplay">—</div>
         </div>
 
-        <div class="sub-stats" id="subStats"></div>
-        <div id="skillsContainer"></div>
+        <div class="level-block" id="skillLevelBlock">
+          <div class="level-header">
+            <span class="level-label">Refinement Phase</span>
+            <span class="level-val" id="skillLvDisplay">1<span>/ 9</span></span>
+          </div>
+          <div class="slider-wrap" id="skillSliderWrap">
+            <div class="slider-bg"></div>
+            <div class="slider-fill" id="skillSliderFill"></div>
+            <div class="slider-thumb" id="skillSliderThumb"></div>
+          </div>
+          <div class="slider-labels">
+            <span>1</span><span>9</span>
+          </div>
+        </div>
 
-        <div id="recBlock" style="display:none">
-          <div class="passive-label" style="margin-bottom:8px">Recommended For</div>
+        <div class="stat-list" id="skillsContainer"></div>
+
+        <div id="recBlock" style="display:none; margin-top:10px;">
+          <div class="stat-item-label" style="margin-bottom:8px">Recommended For</div>
           <div class="rec-row" id="recRow"></div>
         </div>
 
-        <div class="flavor-text" id="flavorText" style="display:none"></div>
+        <div class="flavor-text" id="flavorText" style="display:none; margin-top: 10px;"></div>
 
         <div class="divider"></div>
 
@@ -801,7 +721,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 
 </div>
 
-<!-- TRACK MODAL -->
 <div class="modal-overlay" id="trackModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -831,83 +750,26 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
    GUIDED TOUR
    ========================================================= */
 const TOUR_STEPS = [
-  {
-    targetId: 'wpnTrigger',
-    title: 'Weapon Selector',
-    desc: 'Click here to open the full weapon browser. You can <b>search by name</b>, filter by <b>rarity (3–6 ★)</b>, and filter by <b>weapon type</b> — all at once.',
-    cardPos: 'below-left',
-    pad: 8,
-  },
-  {
-    targetId: 'wpnDropdownWrap',
-    title: 'Search & Filters',
-    desc: 'Inside the dropdown, use the <b>search bar</b> to find weapons instantly. Click the <b>rarity</b> or <b>type pills</b> to narrow your list. A badge on the selector button shows how many filters are active.',
-    cardPos: 'below-left',
-    pad: 8,
-  },
-  {
-    targetId: 'card3d',
-    title: '3D Weapon Card',
-    desc: 'This is the live weapon card. <b>Hover over it</b> to trigger a slow 360° spin, or <b>click and drag</b> to grab it. The card color, stripe, and glow all change to match the weapon\'s type.',
-    cardPos: 'right',
-    pad: 16,
-  },
-  {
-    targetId: 'levelBlock',
-    title: 'Level Slider',
-    desc: '<b>Drag the slider</b> to set the weapon\'s current level. The Base ATK and all substats scale in real-time. Small <b>milestone pips</b> below the bar light up as you pass ascension breakpoints.',
-    cardPos: 'left',
-    pad: 12,
-  },
-  {
-    targetId: 'atkBlock',
-    title: 'Base ATK',
-    desc: 'Shows the weapon\'s <b>Base ATK at your chosen level</b>. The value flashes gold whenever it updates. Substats below this also scale with level.',
-    cardPos: 'left',
-    pad: 12,
-  },
-  {
-    targetId: 'sb-track',
-    title: 'Material Tracker',
-    desc: 'Click this sidebar button to open the <b>Materials Needed</b> panel. Set a current and target level to see exactly which upgrade materials — and how many — you\'ll need.',
-    cardPos: 'right',
-    pad: 12,
-  },
-  {
-    targetId: 'notesBlock',
-    title: 'Notes & Tags',
-    desc: 'Type personal <b>build notes</b> here — comparisons, to-do reminders, anything. Add <b>custom tags</b> (e.g. "BiS", "farming") and click them to remove. Everything <b>auto-saves</b> per weapon.',
-    cardPos: 'left',
-    pad: 12,
-  },
+  { targetId: 'wpnTrigger', title: 'Weapon Selector', desc: 'Click here to open the full weapon browser. You can <b>search by name</b>, filter by <b>rarity</b>, and filter by <b>weapon type</b>.', cardPos: 'below-left', pad: 8 },
+  { targetId: 'wpnDropdownWrap', title: 'Search & Filters', desc: 'Inside the dropdown, use the <b>search bar</b> to find weapons instantly.', cardPos: 'below-left', pad: 8 },
+  { targetId: 'card3d', title: '3D Weapon Card', desc: 'This is the live weapon card. <b>Hover over it</b> to trigger a slow 360° spin, or <b>click and drag</b> to grab it.', cardPos: 'right', pad: 16 },
+  { targetId: 'levelBlock', title: 'Weapon Level', desc: '<b>Drag the slider</b> to set the weapon\'s 1-90 level. The Base ATK below scales in real-time.', cardPos: 'left', pad: 12 },
+  { targetId: 'skillLevelBlock', title: 'Refinement Phase', desc: '<b>Drag this slider</b> to change the Refinement level from 1-9. Watch the main stats, secondary stats, and passive effect values change.', cardPos: 'left', pad: 12 },
+  { targetId: 'sb-track', title: 'Material Tracker', desc: 'Click this sidebar button to open the <b>Materials Needed</b> panel.', cardPos: 'right', pad: 12 },
+  { targetId: 'notesBlock', title: 'Notes & Tags', desc: 'Type personal notes or add custom tags. Both sliders and this field will <b>auto-save</b> per weapon.', cardPos: 'left', pad: 12 }
 ];
 
 let tourStepIdx = 0;
 let tourActive  = false;
 
-function startTour() {
-  tourActive = true;
-  tourStepIdx = 0;
-  document.getElementById('tourOverlay').classList.add('active');
-  renderTourStep(tourStepIdx);
-}
-
-function endTour() {
-  tourActive = false;
-  document.getElementById('tourOverlay').classList.remove('active');
-}
-
-function tourStep(delta) {
-  tourStepIdx = Math.max(0, Math.min(TOUR_STEPS.length - 1, tourStepIdx + delta));
-  renderTourStep(tourStepIdx);
-}
-
+function startTour() { tourActive = true; tourStepIdx = 0; document.getElementById('tourOverlay').classList.add('active'); renderTourStep(tourStepIdx); }
+function endTour() { tourActive = false; document.getElementById('tourOverlay').classList.remove('active'); }
+function tourStep(delta) { tourStepIdx = Math.max(0, Math.min(TOUR_STEPS.length - 1, tourStepIdx + delta)); renderTourStep(tourStepIdx); }
 function renderTourStep(idx) {
   const step   = TOUR_STEPS[idx];
   const total  = TOUR_STEPS.length;
   const target = document.getElementById(step.targetId);
 
-  // dots
   let dots = '';
   for (let i = 0; i < total; i++) dots += `<div class="tour-dot${i===idx?' active':''}"></div>`;
   document.getElementById('tourDots').innerHTML = dots;
@@ -915,7 +777,6 @@ function renderTourStep(idx) {
   document.getElementById('tourTitle').textContent  = step.title;
   document.getElementById('tourDesc').innerHTML     = step.desc;
 
-  // prev/next buttons
   const prev = document.getElementById('tourPrev');
   const next = document.getElementById('tourNext');
   prev.style.display = idx === 0 ? 'none' : '';
@@ -924,7 +785,6 @@ function renderTourStep(idx) {
 
   if (!target) return;
 
-  // position spotlight
   const rect   = target.getBoundingClientRect();
   const pad    = step.pad || 8;
   const sp     = document.getElementById('tourSpotlight');
@@ -933,61 +793,25 @@ function renderTourStep(idx) {
   sp.style.width  = (rect.width  + pad*2) + 'px';
   sp.style.height = (rect.height + pad*2) + 'px';
 
-  // position card
   const card = document.getElementById('tourCard');
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const isMobile = vw <= 600;
-  const cardW = isMobile ? vw - 24 : 300;
-  const cardH = 200;
-
-  if (isMobile) {
-    // always pin to bottom on mobile
-    card.style.left   = '12px';
-    card.style.right  = '12px';
-    card.style.width  = '';
-    card.style.bottom = '16px';
-    card.style.top    = 'auto';
-    return;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  if (vw <= 600) {
+    card.style.left = '12px'; card.style.right = '12px'; card.style.width = ''; card.style.bottom = '16px'; card.style.top = 'auto'; return;
   }
-
-  card.style.bottom = '';
-  card.style.right  = '';
-  card.style.width  = '';
-
+  card.style.bottom = ''; card.style.right = ''; card.style.width = '';
+  
   let cx, cy;
-  const pos = step.cardPos || 'below-left';
-  if (pos === 'below-left') {
-    cx = Math.min(rect.right - cardW, vw - cardW - 16);
-    cy = rect.bottom + pad + 12;
-  } else if (pos === 'below-right') {
-    cx = rect.left;
-    cy = rect.bottom + pad + 12;
-  } else if (pos === 'right') {
-    cx = rect.right + pad + 16;
-    cy = rect.top + rect.height/2 - cardH/2;
-  } else if (pos === 'left') {
-    cx = rect.left - cardW - pad - 16;
-    cy = rect.top + rect.height/2 - cardH/2;
-  }
+  if (step.cardPos === 'below-left') { cx = Math.min(rect.right - 300, vw - 316); cy = rect.bottom + pad + 12; }
+  else if (step.cardPos === 'right') { cx = rect.right + pad + 16; cy = rect.top + rect.height/2 - 100; }
+  else if (step.cardPos === 'left') { cx = rect.left - 300 - pad - 16; cy = rect.top + rect.height/2 - 100; }
 
-  cx = Math.max(12, Math.min(vw - cardW - 12, cx));
-  cy = Math.max(12, Math.min(vh - cardH - 12, cy));
-
-  card.style.left = cx + 'px';
-  card.style.top  = cy + 'px';
+  cx = Math.max(12, Math.min(vw - 312, cx));
+  cy = Math.max(12, Math.min(vh - 212, cy));
+  card.style.left = cx + 'px'; card.style.top = cy + 'px';
 }
 
-// Esc key closes tour
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && tourActive) endTour();
-});
-
-// re-position on resize
-window.addEventListener('resize', () => {
-  if (tourActive) renderTourStep(tourStepIdx);
-});
-
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && tourActive) endTour(); });
+window.addEventListener('resize', () => { if (tourActive) renderTourStep(tourStepIdx); });
 
 /* =========================================================
    SUPABASE CONFIG
@@ -995,11 +819,7 @@ window.addEventListener('resize', () => {
 const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 
-const sbHeaders = {
-  'Content-Type':  'application/json',
-  'apikey':        SUPABASE_ANON_KEY,
-  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-};
+const sbHeaders = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` };
 
 async function sbGet(table, params = '') {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, { headers: sbHeaders });
@@ -1019,94 +839,61 @@ async function sbUpsert(table, body) {
    STATIC CONFIGS
    ========================================================= */
 const TYPE_CFG = {
-  'Sword':      { accent:'#e05a2b', dim:'rgba(224,90,43,.18)',  glow:'rgba(224,90,43,.22)',  card:'linear-gradient(155deg,#2a0e08,#170402)', stripeTop:'#ff8a65', stripeBot:'#8a2a10' },
-  'Greatsword': { accent:'#d4943a', dim:'rgba(212,148,58,.18)',  glow:'rgba(212,148,58,.22)',  card:'linear-gradient(155deg,#261a06,#120c01)', stripeTop:'#ffe06a', stripeBot:'#c9902a' },
-  'Polearm':    { accent:'#2a8c52', dim:'rgba(42,140,82,.15)',   glow:'rgba(42,140,82,.2)',   card:'linear-gradient(155deg,#091e0f,#030d06)', stripeTop:'#6ddc9a', stripeBot:'#1a6034' },
-  'Handcannon': { accent:'#3b82f6', dim:'rgba(59,130,246,.15)',  glow:'rgba(59,130,246,.2)',  card:'linear-gradient(155deg,#091428,#040b17)', stripeTop:'#7ab8ff', stripeBot:'#1a3870' },
-  'Arts Unit':  { accent:'#a855f7', dim:'rgba(168,85,247,.15)',  glow:'rgba(168,85,247,.2)',  card:'linear-gradient(155deg,#160820,#0b0312)', stripeTop:'#c89eff', stripeBot:'#5a189a' },
+  'Sword':      { accent:'#e05a2b', dim:'rgba(224,90,43,.18)',  glow:'rgba(224,90,43,.22)',  card:'linear-gradient(155deg,#2a0e08,#170402)' },
+  'Greatsword': { accent:'#d4943a', dim:'rgba(212,148,58,.18)',  glow:'rgba(212,148,58,.22)',  card:'linear-gradient(155deg,#261a06,#120c01)' },
+  'Polearm':    { accent:'#2a8c52', dim:'rgba(42,140,82,.15)',   glow:'rgba(42,140,82,.2)',   card:'linear-gradient(155deg,#091e0f,#030d06)' },
+  'Handcannon': { accent:'#3b82f6', dim:'rgba(59,130,246,.15)',  glow:'rgba(59,130,246,.2)',  card:'linear-gradient(155deg,#091428,#040b17)' },
+  'Arts Unit':  { accent:'#a855f7', dim:'rgba(168,85,247,.15)',  glow:'rgba(168,85,247,.2)',  card:'linear-gradient(155deg,#160820,#0b0312)' },
 };
 
 const RARITY_STRIPE = {
-  6: { top:'#ffe06a', bot:'#c9902a' },
-  5: { top:'#e89060', bot:'#9a4a1a' },
-  4: { top:'#b09aee', bot:'#584890' },
-  3: { top:'#90c890', bot:'#3a7a3a' },
+  6: { top:'#ffe06a', bot:'#c9902a' }, 5: { top:'#e89060', bot:'#9a4a1a' },
+  4: { top:'#b09aee', bot:'#584890' }, 3: { top:'#90c890', bot:'#3a7a3a' },
 };
 
 const MAX_LEVEL  = { 6:90, 5:80, 4:70, 3:60 };
 const MILESTONES = { 6:[20,40,60,80,90], 5:[20,40,60,80], 4:[20,40,60,70], 3:[20,40,60] };
 
-// Populated from weapon_atk_curve: { [weapon_id]: [ {lv, atk}, ... ] sorted by lv }
-let DB_ATK_CURVES = {};
+let WEAPONS          = [];
+let DB_WEAPON_SKILLS = {};
+let DB_ATK_CURVES    = {};
 
-const SUBSTAT_SCALE = {
-  atk_pct:   { min:0.60, label:(v)=>`Attack +${v.toFixed(2)}%` },
-  crit_rate: { min:0.60, label:(v)=>`Critical Rate +${v.toFixed(2)}%` },
-  phys_dmg:  { min:0.60, label:(v)=>`Physical DMG Bonus +${v.toFixed(2)}%` },
-  arts_dmg:  { min:0.60, label:(v)=>`Arts DMG Bonus +${v.toFixed(2)}%` },
-  heat_dmg:  { min:0.60, label:(v)=>`Heat DMG Bonus +${v.toFixed(2)}%` },
-  cryo_dmg:  { min:0.60, label:(v)=>`Cryo DMG Bonus +${v.toFixed(2)}%` },
-  elec_dmg:  { min:0.60, label:(v)=>`Electric DMG Bonus +${v.toFixed(2)}%` },
-  nat_dmg:   { min:0.60, label:(v)=>`Nature DMG Bonus +${v.toFixed(2)}%` },
-  treat_bon: { min:0.60, label:(v)=>`Treatment Bonus +${v.toFixed(2)}%` },
-  max_hp:    { min:0.60, label:(v)=>`Max HP +${v.toFixed(2)}%` },
-  ult_gain:  { min:0.60, label:(v)=>`Ultimate Gain Eff. +${v.toFixed(2)}%` },
-  arts_int:  { min:0.50, label:(v)=>`Arts Intensity +${Math.round(v)}` },
-  will:      { min:0.50, label:(v)=>`Will +${Math.round(v)}` },
-  intellect: { min:0.50, label:(v)=>`Intellect +${Math.round(v)}` },
-  agility:   { min:0.50, label:(v)=>`Agility +${Math.round(v)}` },
-  strength:  { min:0.50, label:(v)=>`Strength +${Math.round(v)}` },
-  main_attr: { min:0.50, label:(v)=>`Main Attribute +${Math.round(v)}` },
-};
+let curWeapon        = null;
+let curLevel         = 90;
+let curSkillLevel    = 1;
+let curTags          = [];
+let saveTimer        = null;
 
-function parseStatString(s) {
-  if (!s || s === '—') return null;
-  const patterns = [
-    { re:/^Attack \+([0-9.]+)%/,              key:'atk_pct',   pct:true  },
-    { re:/^Critical Rate \+([0-9.]+)%/,       key:'crit_rate', pct:true  },
-    { re:/^Physical DMG Bonus \+([0-9.]+)%/,  key:'phys_dmg',  pct:true  },
-    { re:/^Arts DMG Bonus \+([0-9.]+)%/,      key:'arts_dmg',  pct:true  },
-    { re:/^Heat DMG Bonus \+([0-9.]+)%/,      key:'heat_dmg',  pct:true  },
-    { re:/^Cryo DMG (?:Dealt|Bonus) \+([0-9.]+)%/, key:'cryo_dmg', pct:true },
-    { re:/^Electric DMG Bonus \+([0-9.]+)%/,  key:'elec_dmg',  pct:true  },
-    { re:/^Nature DMG Bonus \+([0-9.]+)%/,    key:'nat_dmg',   pct:true  },
-    { re:/^Treatment Bonus \+([0-9.]+)%/,     key:'treat_bon', pct:true  },
-    { re:/^Max HP \+([0-9.]+)%/,              key:'max_hp',    pct:true  },
-    { re:/^Ultimate Gain Eff\. \+([0-9.]+)%/, key:'ult_gain',  pct:true  },
-    { re:/^Ultimate Gain Efficiency \+([0-9.]+)%/, key:'ult_gain', pct:true },
-    { re:/^Arts Intensity \+([0-9]+)/,         key:'arts_int',  pct:false },
-    { re:/^Will(?:power)? \+([0-9]+)/,         key:'will',      pct:false },
-    { re:/^Intellect \+([0-9]+)/,              key:'intellect', pct:false },
-    { re:/^Agility \+([0-9]+)/,               key:'agility',   pct:false },
-    { re:/^Strength \+([0-9]+)/,              key:'strength',  pct:false },
-    { re:/^Main Attribute \+([0-9]+)/,         key:'main_attr', pct:false },
-  ];
-  for (const p of patterns) {
-    const m = s.match(p.re);
-    if (m) return { key: p.key, maxVal: parseFloat(m[1]), isPct: p.pct };
-  }
-  return { key: null, maxVal: null, raw: s };
-}
+const activeFilters  = { rarity: new Set(), type: new Set() };
+let searchQuery      = '';
 
-function scaledSubstat(parsed, level, maxLv) {
-  if (!parsed || !parsed.key) return parsed?.raw ?? '—';
-  const cfg = SUBSTAT_SCALE[parsed.key];
-  if (!cfg) return parsed.raw ?? '—';
-  const t   = (level - 1) / (maxLv - 1);
-  const val = parsed.maxVal * (cfg.min + (1 - cfg.min) * t);
-  return cfg.label(val);
-}
-
+/* =========================================================
+   SKILL RENDERING
+   ========================================================= */
 const SKILL_RENDERS = {
-  intellect:(v)=>`Intellect <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`,
-  agility:(v)=>`Agility <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`,
-  strength:(v)=>`Strength <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`,
-  will:(v)=>`Willpower <span class="hl">+${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : v}</span>`,
-  attack:(v)=>`Attack <span class="hl">+${typeof v === 'number' ? v.toFixed(1) : v}%</span>`,
+  intellect: (v) => `Intellect <span class="hl">+${typeof v==='number'&&!Number.isInteger(v)?v.toFixed(1):v}</span>`,
+  agility:   (v) => `Agility <span class="hl">+${typeof v==='number'&&!Number.isInteger(v)?v.toFixed(1):v}</span>`,
+  strength:  (v) => `Strength <span class="hl">+${typeof v==='number'&&!Number.isInteger(v)?v.toFixed(1):v}</span>`,
+  will:      (v) => `Willpower <span class="hl">+${typeof v==='number'&&!Number.isInteger(v)?v.toFixed(1):v}</span>`,
+  main_attr: (v) => `Main Attribute <span class="hl">+${typeof v==='number'&&!Number.isInteger(v)?v.toFixed(1):v}</span>`,
+  arts_intensity: (v) => `Arts Intensity <span class="hl">+${typeof v==='number'&&!Number.isInteger(v)?v.toFixed(1):v}</span>`,
+  attack_percent: (v) => `Attack <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  hp_percent:     (v) => `Max HP <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  crit_rate:      (v) => `Critical Rate <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  phys_dmg:       (v) => `Physical DMG Dealt <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  arts_dmg_bonus: (v) => `Arts DMG Dealt <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  heat_dmg:       (v) => `Heat DMG Dealt <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  cryo_dmg:       (v) => `Cryo DMG Dealt <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  elec_dmg:       (v) => `Electric DMG Dealt <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  nature_dmg:     (v) => `Nature DMG Dealt <span class="hl">+${typeof v==='number'?v.toFixed(1):v}%</span>`,
+  uge_percent:    (v) => `Ultimate Gain Efficiency <span class="hl">+${typeof v==='number'?v.toFixed(2):v}%</span>`,
+  te_bonus:       (v) => `Treatment Bonus <span class="hl">+${typeof v==='number'?v.toFixed(2):v}%</span>`,
+  te_percent:     (v) => `Treatment Efficiency <span class="hl">+${typeof v==='number'?v.toFixed(2):v}%</span>`
 };
 
 function resolveRenderFn(skillId, skillName, data) {
   if (SKILL_RENDERS[skillId]) return SKILL_RENDERS[skillId];
+  // Complex passives with interpolation
   const sample = Array.isArray(data) ? data[0] : null;
   if (sample !== null && typeof sample === 'object') {
     return (v) => Object.entries(v).map(([k,val])=>`${k.toUpperCase()}: <span class="hl">${typeof val==='number'?val.toFixed(1):val}</span>`).join(' · ');
@@ -1115,28 +902,12 @@ function resolveRenderFn(skillId, skillName, data) {
 }
 
 /* =========================================================
-   STATE
-   ========================================================= */
-let WEAPONS          = [];
-let DB_WEAPON_SKILLS = {};
-let curWeapon        = null;
-let curLevel         = 90;
-let curTags          = [];
-let skillLevels      = {};
-let dragging         = false;
-let saveTimer        = null;
-let parsedStats      = { stat1: null, stat2: null };
-
-const activeFilters  = { rarity: new Set(), type: new Set() };
-let searchQuery      = '';
-
-/* =========================================================
    FETCH
    ========================================================= */
 async function fetchWeapons() {
-  const data = await sbGet('weapons', 'select=*&order=rarity.desc,type.asc,name.asc');
-  WEAPONS = data;
+  WEAPONS = await sbGet('weapons', 'select=*&order=rarity.desc,type.asc,name.asc');
 }
+
 async function fetchAllWeaponSkills() {
   const rows = await sbGet('weapon_skills', 'select=*&order=id.asc,skill_index.asc');
   DB_WEAPON_SKILLS = {};
@@ -1147,51 +918,48 @@ async function fetchAllWeaponSkills() {
     DB_WEAPON_SKILLS[row.id].push({ id:row.skill_id, name:row.skill_name, maxLv:row.max_lv, defaultLv:row.default_lv, data, render:renderFn });
   }
 }
+
 async function fetchAllAtkCurves() {
   const rows = await sbGet('weapon_atk_curve', 'select=weapon_id,lv,atk&order=weapon_id.asc,lv.asc');
   DB_ATK_CURVES = {};
   for (const row of rows) {
     if (!DB_ATK_CURVES[row.weapon_id]) DB_ATK_CURVES[row.weapon_id] = [];
-    DB_ATK_CURVES[row.weapon_id].push({ lv: row.lv, atk: row.atk });
+    DB_ATK_CURVES[row.weapon_id].push({ lv: parseInt(row.lv, 10), atk: parseInt(row.atk, 10) });
   }
 }
 
-// Interpolate ATK at any level using the piecewise breakpoints from weapon_atk_curve.
-// Falls back to lerp against base_atk if curve data isn't available.
 function getAtkAtLevel(weapon, level) {
   const curve = DB_ATK_CURVES[weapon.id];
   if (curve && curve.length >= 2) {
-    // Find surrounding breakpoints
     for (let i = 0; i < curve.length - 1; i++) {
-      const lo = curve[i];
-      const hi = curve[i + 1];
+      const lo = curve[i], hi = curve[i + 1];
       if (level >= lo.lv && level <= hi.lv) {
+        if (hi.lv === lo.lv) return lo.atk;
         const t = (level - lo.lv) / (hi.lv - lo.lv);
-        return Math.round(lo.atk + (hi.atk - lo.atk) * t);
+        return Math.floor(lo.atk + (hi.atk - lo.atk) * t);
       }
     }
-    // Clamp to edges
-    if (level <= curve[0].lv) return curve[0].atk;
     return curve[curve.length - 1].atk;
   }
-  // Fallback: linear interpolation using rarity-based min values
   const atkMin = { 6:48, 5:38, 4:32, 3:27 }[weapon.rarity] || 48;
   const maxLv  = MAX_LEVEL[weapon.rarity] || 90;
   const t      = (level - 1) / (maxLv - 1);
-  return Math.round(atkMin + (weapon.base_atk - atkMin) * t);
+  return Math.floor(atkMin + (weapon.base_atk - atkMin) * t);
 }
 
 async function fetchProgress(weaponId) {
   try { const rows = await sbGet('weapon_progress',`select=*&weapon_id=eq.${weaponId}`); return rows[0]||null; }
   catch { return null; }
 }
-async function saveProgress(weaponId, level, notes, tags) {
+
+async function saveProgress(weaponId, level, skill_level, notes, tags) {
   setSaveBadge('saving');
   try {
-    await sbUpsert('weapon_progress', { weapon_id:weaponId, level, notes, tags, updated_at:new Date().toISOString() });
+    await sbUpsert('weapon_progress', { weapon_id:weaponId, level, skill_level, notes, tags, updated_at:new Date().toISOString() });
     setSaveBadge('saved');
   } catch(e) { console.error('Save failed:',e); setSaveBadge('error'); }
 }
+
 function setSaveBadge(state) {
   const el = document.getElementById('saveBadge');
   el.className = `save-badge show ${state}`;
@@ -1199,16 +967,17 @@ function setSaveBadge(state) {
   el.textContent = labels[state]||'';
   if (state==='saved'||state==='error') setTimeout(()=>{ el.className='save-badge'; },2200);
 }
+
 function scheduleSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
     if (!curWeapon) return;
-    saveProgress(curWeapon.id, curLevel, document.getElementById('notesArea').value, curTags);
+    saveProgress(curWeapon.id, curLevel, curSkillLevel, document.getElementById('notesArea').value, curTags);
   }, 900);
 }
 
 /* =========================================================
-   FILTER LOGIC
+   UI HELPERS & RENDER
    ========================================================= */
 function weaponMatchesFilters(w) {
   const q = searchQuery.toLowerCase();
@@ -1225,15 +994,11 @@ function updateFilterBadge() {
   else badge.classList.remove('visible');
 }
 
-/* =========================================================
-   CUSTOM DROPDOWN
-   ========================================================= */
 function renderWpnList() {
   const list = document.getElementById('wpnList');
   const groups = { 6:[], 5:[], 4:[], 3:[] };
   WEAPONS.filter(weaponMatchesFilters).forEach(w => groups[w.rarity]?.push(w));
-  let html = '';
-  let total = 0;
+  let html = '', total = 0;
   [6,5,4,3].forEach(r => {
     if (!groups[r].length) return;
     total += groups[r].length;
@@ -1252,26 +1017,11 @@ function renderWpnList() {
 }
 
 function selectWeapon(id) { closeDropdown(); navigateWeapon(id); }
-function openDropdown() {
-  document.getElementById('wpnPanel').classList.add('open');
-  document.getElementById('wpnTrigger').classList.add('open');
-  setTimeout(() => document.getElementById('wpnSearch').focus(), 50);
-  renderWpnList();
-}
-function closeDropdown() {
-  document.getElementById('wpnPanel').classList.remove('open');
-  document.getElementById('wpnTrigger').classList.remove('open');
-}
-function toggleDropdown() {
-  const panel = document.getElementById('wpnPanel');
-  if (panel.classList.contains('open')) closeDropdown(); else openDropdown();
-}
+function openDropdown() { document.getElementById('wpnPanel').classList.add('open'); document.getElementById('wpnTrigger').classList.add('open'); setTimeout(() => document.getElementById('wpnSearch').focus(), 50); renderWpnList(); }
+function closeDropdown() { document.getElementById('wpnPanel').classList.remove('open'); document.getElementById('wpnTrigger').classList.remove('open'); }
+function toggleDropdown() { const panel = document.getElementById('wpnPanel'); if (panel.classList.contains('open')) closeDropdown(); else openDropdown(); }
 
-document.addEventListener('mousedown', e => {
-  const wrap = document.getElementById('wpnDropdownWrap');
-  if (!wrap.contains(e.target)) closeDropdown();
-});
-
+document.addEventListener('mousedown', e => { const wrap = document.getElementById('wpnDropdownWrap'); if (!wrap.contains(e.target)) closeDropdown(); });
 document.getElementById('wpnTrigger').addEventListener('click', toggleDropdown);
 document.getElementById('wpnSearch').addEventListener('input', e => { searchQuery = e.target.value; renderWpnList(); });
 document.getElementById('wpnSearch').addEventListener('keydown', e => { if(e.key==='Escape') closeDropdown(); });
@@ -1279,49 +1029,47 @@ document.getElementById('wpnSearch').addEventListener('keydown', e => { if(e.key
 document.querySelectorAll('.fpill').forEach(pill => {
   pill.addEventListener('click', e => {
     e.stopPropagation();
-    const group = pill.dataset.group;
-    const val   = pill.dataset.val;
-    const set   = activeFilters[group];
+    const group = pill.dataset.group, val = pill.dataset.val, set = activeFilters[group];
     if (set.has(val)) { set.delete(val); pill.className = 'fpill'; }
     else { set.add(val); pill.classList.add(group==='rarity'?`active-r${val}`:`active-${val.replace(/\s+/g,'')}`); }
-    updateFilterBadge();
-    renderWpnList();
+    updateFilterBadge(); renderWpnList();
   });
 });
 
 document.getElementById('filterClear').addEventListener('click', e => {
-  e.stopPropagation();
-  activeFilters.rarity.clear(); activeFilters.type.clear();
+  e.stopPropagation(); activeFilters.rarity.clear(); activeFilters.type.clear();
   searchQuery = ''; document.getElementById('wpnSearch').value = '';
   document.querySelectorAll('.fpill').forEach(p => { p.className = 'fpill'; });
   updateFilterBadge(); renderWpnList();
 });
 
 /* =========================================================
-   LOAD WEAPON
+   CORE LOGIC & LOAD 
    ========================================================= */
 async function loadWeapon(id) {
   const w = WEAPONS.find(x => x.id === id);
   if (!w) return;
-  curWeapon = w; skillLevels = {};
+  curWeapon = w; 
+  
   const cfg   = TYPE_CFG[w.type] || TYPE_CFG['Sword'];
   const maxLv = MAX_LEVEL[w.rarity] || 90;
+  
+  // Appearance 
   document.documentElement.style.setProperty('--accent', cfg.accent);
   document.documentElement.style.setProperty('--accent-dim', cfg.dim);
   document.documentElement.style.setProperty('--accent-glow', cfg.glow);
-  document.getElementById('cardBg').style.background    = cfg.card;
-  document.getElementById('cardLetter').textContent     = w.name.charAt(0);
-  document.getElementById('cardLetter').style.color     = cfg.accent;
-  const imgEl = document.getElementById('cardImg');
-  if (w.img) { imgEl.src = w.img; imgEl.style.opacity = '1'; }
-  else        { imgEl.src = ''; imgEl.style.opacity = '0'; }
+  document.getElementById('cardBg').style.background = cfg.card;
+  document.getElementById('cardLetter').textContent = w.name.charAt(0);
+  document.getElementById('cardLetter').style.color = cfg.accent;
+  
   const rc = RARITY_STRIPE[w.rarity] || RARITY_STRIPE[6];
   document.getElementById('rarityStripe').style.background = `linear-gradient(180deg,${rc.top},${rc.bot})`;
-  document.getElementById('cardTypeBadge').textContent   = w.type;
+  document.getElementById('cardTypeBadge').textContent = w.type;
   document.getElementById('cardTypeBadge').style.background = cfg.accent;
-  document.getElementById('cardWpnName').textContent     = w.name;
+  document.getElementById('cardWpnName').textContent = w.name;
+  
   buildCardStars(w.rarity);
-  document.getElementById('glassEdge').style.boxShadow  =
+  document.getElementById('glassEdge').style.boxShadow =
     `inset 0 1.5px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(255,255,255,.08),` +
     `inset 1.5px 0 0 rgba(255,255,255,.22),inset -1px 0 0 rgba(255,255,255,.04),` +
     `0 0 60px ${cfg.glow},0 0 120px rgba(0,0,0,.3)`;
@@ -1329,155 +1077,157 @@ async function loadWeapon(id) {
     `repeating-linear-gradient(45deg,${cfg.accent} 0,${cfg.accent} 1px,transparent 0,transparent 50%)`;
   document.getElementById('bc-name').textContent = w.name;
   document.title = `${w.name} — Arknights: Endfield`;
+  
+  // Right Panel Titles
   document.getElementById('panelTypeLabel').textContent = w.type;
   document.getElementById('panelWpnName').textContent   = w.name;
   buildPanelStars(w.rarity);
   document.getElementById('wpnTriggerLabel').textContent = w.name;
+  
+  // Set Sliders
   document.getElementById('sliderMaxLabel').textContent = maxLv;
-  document.getElementById('trackEnd').max   = maxLv;
+  document.getElementById('trackEnd').max = maxLv;
   document.getElementById('trackEnd').value = maxLv;
-  parsedStats.stat1 = parseStatString(w.stat1);
-  parsedStats.stat2 = parseStatString(w.stat2);
   buildMilestonePips(w.rarity);
+  
+  // Text Fluff
   const flav = document.getElementById('flavorText');
-  flav.textContent   = w.flavor || '';
+  flav.textContent = w.flavor || '';
   flav.style.display = w.flavor ? '' : 'none';
   const recBlock = document.getElementById('recBlock');
   const recRow   = document.getElementById('recRow');
   const recs = Array.isArray(w.recommended_for) ? w.recommended_for.filter(Boolean) : [];
   if (recs.length) { recBlock.style.display = ''; recRow.innerHTML = recs.map(r=>`<span class="rec-badge">${r}</span>`).join(''); }
   else recBlock.style.display = 'none';
-  const skills = DB_WEAPON_SKILLS[id] || [];
-  skills.forEach((sk,i) => { skillLevels[i] = sk.defaultLv; });
-  const progress   = await fetchProgress(id);
+  
+  // Load Server Data
+  const progress = await fetchProgress(id);
   const savedLevel = progress?.level ?? maxLv;
+  
+  // Natively map from the altered DB column
+  curSkillLevel = progress?.skill_level ?? 1;
   curTags = progress?.tags ?? [];
+  
   document.getElementById('notesArea').value = progress?.notes ?? '';
   renderTags();
   document.getElementById('rightPanel').scrollTop = 0;
+  
+  // Finalize UI Render Passes
   updateLevel(savedLevel);
+  updateSkillLevel(curSkillLevel);
 }
 
-/* =========================================================
-   STARS / PIPS
-   ========================================================= */
-function buildCardStars(r) {
-  document.getElementById('cardStars').innerHTML = Array(r).fill('<div class="card-star"></div>').join('');
-}
-function buildPanelStars(r) {
-  document.getElementById('panelStars').innerHTML = Array(r).fill('<div class="wpn-star"></div>').join('');
-}
-function buildMilestonePips(rarity) {
-  const pips = MILESTONES[rarity] || [];
-  document.getElementById('milestonePips').innerHTML = pips.map(m=>`<div class="milestone-pip" data-lv="${m}" title="Lv.${m}"></div>`).join('');
-}
-function updateMilestonePips(level) {
-  document.querySelectorAll('.milestone-pip').forEach(p => {
-    p.classList.toggle('reached', level >= parseInt(p.dataset.lv));
-  });
-}
-function lerp(a,b,t){ return a+(b-a)*t; }
+function buildCardStars(r) { document.getElementById('cardStars').innerHTML = Array(r).fill('<div class="card-star"></div>').join(''); }
+function buildPanelStars(r) { document.getElementById('panelStars').innerHTML = Array(r).fill('<div class="wpn-star"></div>').join(''); }
+function buildMilestonePips(rarity) { document.getElementById('milestonePips').innerHTML = (MILESTONES[rarity] || []).map(m=>`<div class="milestone-pip" data-lv="${m}" title="Lv.${m}"></div>`).join(''); }
+function updateMilestonePips(level) { document.querySelectorAll('.milestone-pip').forEach(p => p.classList.toggle('reached', level >= parseInt(p.dataset.lv))); }
 
 function updateLevel(lv) {
   const w = curWeapon; if (!w) return;
   const maxLv = MAX_LEVEL[w.rarity]||90;
   lv = Math.max(1, Math.min(maxLv, lv));
   curLevel = lv;
-  const t   = (lv-1)/(maxLv-1);
+  
+  const t = (lv-1)/(maxLv-1);
   const pct = t*100;
-  document.getElementById('sliderFill').style.width  = pct+'%';
-  document.getElementById('sliderThumb').style.left  = pct+'%';
-  document.getElementById('lvDisplay').innerHTML     = `${lv}<span>/ ${maxLv}</span>`;
+  document.getElementById('sliderFill').style.width = pct+'%';
+  document.getElementById('sliderThumb').style.left = pct+'%';
+  document.getElementById('lvDisplay').innerHTML = `${lv}<span>/ ${maxLv}</span>`;
   document.getElementById('cardLevelBadge').textContent = `LV ${lv}`;
+  
   updateMilestonePips(lv);
-  const atk    = getAtkAtLevel(w, lv);
-  const atkEl  = document.getElementById('atkDisplay');
+  const atk = getAtkAtLevel(w, lv);
+  const atkEl = document.getElementById('atkDisplay');
   atkEl.textContent = atk;
+  
   atkEl.classList.remove('bump'); void atkEl.offsetWidth; atkEl.classList.add('bump');
   setTimeout(()=>atkEl.classList.remove('bump'),320);
-  buildSubStats(w, lv, maxLv);
-  buildSkills(w, lv, maxLv);
+  
   scheduleSave();
 }
 
-function buildSubStats(w, level, maxLv) {
-  const el    = document.getElementById('subStats');
-  const stats = [
-    { parsed:parsedStats.stat1, raw:w.stat1 },
-    { parsed:parsedStats.stat2, raw:w.stat2 },
-  ].filter(s => s.raw && s.raw!=='—' && s.raw!==null);
-  el.innerHTML = stats.map(({parsed,raw})=>{
-    const val = parsed?.key ? scaledSubstat(parsed,level,maxLv) : (raw||'—');
-    return `<div class="sub-stat"><div class="sub-stat-label">Substat</div><div class="sub-stat-val">${val}</div></div>`;
+function updateSkillLevel(lv) {
+  const w = curWeapon; if (!w) return;
+  lv = Math.max(1, Math.min(9, lv));
+  curSkillLevel = lv;
+  
+  const t = (lv-1)/8;
+  const pct = t*100;
+  document.getElementById('skillSliderFill').style.width = pct+'%';
+  document.getElementById('skillSliderThumb').style.left = pct+'%';
+  document.getElementById('skillLvDisplay').innerHTML = `${lv}<span>/ 9</span>`;
+  
+  renderSkills();
+  scheduleSave();
+}
+
+function renderSkills() {
+  const w = curWeapon; if (!w) return;
+  const skills = DB_WEAPON_SKILLS[w.id] || [];
+  const container = document.getElementById('skillsContainer');
+
+  if (!skills.length) {
+     container.innerHTML = `<div class="stat-item"><div class="stat-item-label">Effect</div><div class="stat-item-val">${w.passive_lv9||'—'}</div></div>`;
+     return;
+  }
+
+  // Iterate over DB rows and grab the correct dynamic stats array 
+  container.innerHTML = skills.map(sk => {
+    // Determine dynamic stat at current user's requested level phase
+    const effectiveLv = Math.min(sk.maxLv, curSkillLevel);
+    const val = sk.data[effectiveLv - 1];
+    const desc = sk.render ? sk.render(val) : String(val);
+
+    return `
+      <div class="stat-item">
+        <div class="stat-item-label">${sk.name}</div>
+        <div class="stat-item-val bump-target">${desc}</div>
+      </div>
+    `;
   }).join('');
-  el.querySelectorAll('.sub-stat-val').forEach(v=>{
-    v.classList.remove('bump'); void v.offsetWidth; v.classList.add('bump');
-    setTimeout(()=>v.classList.remove('bump'),320);
+
+  // Re-trigger visual flash
+  container.querySelectorAll('.bump-target').forEach(el => {
+    el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+    setTimeout(() => el.classList.remove('bump'), 320);
   });
 }
 
-function buildSkills(w) {
-  const container = document.getElementById('skillsContainer');
-  const skills    = DB_WEAPON_SKILLS[w.id]||[];
-  if (!skills.length) {
-    container.innerHTML = `<div class="passive-block"><div class="passive-label">Passive</div><div class="passive-text">${w.passive_name?`<strong>${w.passive_name}</strong><br>`:''}${w.passive_lv9||'—'}</div></div>`;
-    return;
-  }
-  container.innerHTML = skills.map((sk,idx)=>{
-    const lv  = skillLevels[idx]??sk.defaultLv;
-    const val = sk.data[lv-1];
-    const desc= sk.render ? sk.render(val) : String(val);
-    return `<div class="skill-item" id="skill-item-${idx}">
-      <div class="skill-header">
-        <div class="skill-name-wrap"><div class="skill-dot"></div><div class="skill-name">${sk.name}</div></div>
-        ${sk.maxLv>1?`<div class="skill-controls">
-          <button class="skill-btn" onclick="changeSkillLv(${idx},-1)" id="skill-dn-${idx}">−</button>
-          <span class="skill-lv" id="skill-lv-${idx}">Lv.${lv}/${sk.maxLv}</span>
-          <button class="skill-btn" onclick="changeSkillLv(${idx},1)" id="skill-up-${idx}">+</button>
-        </div>`:''}
-      </div>
-      <div class="skill-desc" id="skill-desc-${idx}">${desc}</div>
-    </div>`;
-  }).join('<div style="height:4px"></div>');
-  skills.forEach((sk,idx)=>updateSkillBtns(idx,sk));
-}
-
-function changeSkillLv(idx, delta) {
-  const w = curWeapon; if (!w) return;
-  const skills = DB_WEAPON_SKILLS[w.id]||[];
-  const sk = skills[idx]; if (!sk) return;
-  const lv = Math.max(1, Math.min(sk.maxLv, (skillLevels[idx]??sk.defaultLv)+delta));
-  skillLevels[idx] = lv;
-  const val  = sk.data[lv-1];
-  const desc = sk.render ? sk.render(val) : String(val);
-  document.getElementById(`skill-desc-${idx}`).innerHTML = desc;
-  document.getElementById(`skill-lv-${idx}`).textContent = `Lv.${lv}/${sk.maxLv}`;
-  updateSkillBtns(idx, sk);
-}
-function updateSkillBtns(idx, sk) {
-  const lv = skillLevels[idx]??sk.defaultLv;
-  const dn = document.getElementById(`skill-dn-${idx}`);
-  const up = document.getElementById(`skill-up-${idx}`);
-  if (dn) dn.disabled = lv<=1;
-  if (up) up.disabled = lv>=sk.maxLv;
-}
-
 /* =========================================================
-   SLIDER DRAG
+   SLIDER DRAG EVENTS
    ========================================================= */
-(function initSlider(){
-  const wrap = document.getElementById('sliderWrap');
-  function posPct(e){
-    const r = wrap.getBoundingClientRect();
+(function initSliders(){
+  const wWrap = document.getElementById('sliderWrap');
+  const sWrap = document.getElementById('skillSliderWrap');
+  
+  function posPct(e, el){
+    const r = el.getBoundingClientRect();
     const x = (e.touches?e.touches[0].clientX:e.clientX)-r.left;
     return Math.max(0,Math.min(1,x/r.width));
   }
-  wrap.addEventListener('mousedown', e=>{ dragging=true; const maxLv=curWeapon?MAX_LEVEL[curWeapon.rarity]||90:90; updateLevel(Math.round(posPct(e)*(maxLv-1))+1); });
-  wrap.addEventListener('touchstart', e=>{ dragging=true; const maxLv=curWeapon?MAX_LEVEL[curWeapon.rarity]||90:90; updateLevel(Math.round(posPct(e)*(maxLv-1))+1); },{passive:true});
-  document.addEventListener('mousemove', e=>{ if(!dragging||!curWeapon) return; const maxLv=MAX_LEVEL[curWeapon.rarity]||90; updateLevel(Math.round(posPct(e)*(maxLv-1))+1); });
-  document.addEventListener('touchmove', e=>{ if(!dragging||!curWeapon) return; const maxLv=MAX_LEVEL[curWeapon.rarity]||90; updateLevel(Math.round(posPct(e)*(maxLv-1))+1); },{passive:true});
-  document.addEventListener('mouseup', ()=>{ dragging=false; });
-  document.addEventListener('touchend', ()=>{ dragging=false; });
+  
+  let draggingLv = false, draggingSk = false;
+
+  // Level Bound
+  wWrap.addEventListener('mousedown', e=>{ draggingLv=true; const mx=curWeapon?MAX_LEVEL[curWeapon.rarity]||90:90; updateLevel(Math.round(posPct(e,wWrap)*(mx-1))+1); });
+  wWrap.addEventListener('touchstart', e=>{ draggingLv=true; const mx=curWeapon?MAX_LEVEL[curWeapon.rarity]||90:90; updateLevel(Math.round(posPct(e,wWrap)*(mx-1))+1); },{passive:true});
+  
+  // Phase Bound
+  sWrap.addEventListener('mousedown', e=>{ draggingSk=true; updateSkillLevel(Math.round(posPct(e,sWrap)*8)+1); });
+  sWrap.addEventListener('touchstart', e=>{ draggingSk=true; updateSkillLevel(Math.round(posPct(e,sWrap)*8)+1); },{passive:true});
+
+  // Global Mover
+  document.addEventListener('mousemove', e=>{
+     if(draggingLv && curWeapon) { const mx=MAX_LEVEL[curWeapon.rarity]||90; updateLevel(Math.round(posPct(e,wWrap)*(mx-1))+1); }
+     if(draggingSk && curWeapon) { updateSkillLevel(Math.round(posPct(e,sWrap)*8)+1); }
+  });
+  document.addEventListener('touchmove', e=>{
+     if(draggingLv && curWeapon) { const mx=MAX_LEVEL[curWeapon.rarity]||90; updateLevel(Math.round(posPct(e,wWrap)*(mx-1))+1); }
+     if(draggingSk && curWeapon) { updateSkillLevel(Math.round(posPct(e,sWrap)*8)+1); }
+  },{passive:true});
+
+  document.addEventListener('mouseup', ()=>{ draggingLv=false; draggingSk=false; });
+  document.addEventListener('touchend', ()=>{ draggingLv=false; draggingSk=false; });
 })();
 
 /* =========================================================
@@ -1489,8 +1239,7 @@ function renderTags() {
   row.innerHTML = curTags.map((t,i)=>`<div class="tag-chip" onclick="removeTag(${i})">${t}<span class="tag-x">✕</span></div>`).join('');
 }
 function addTag() {
-  const inp = document.getElementById('tagInput');
-  const val = inp.value.trim();
+  const inp = document.getElementById('tagInput'), val = inp.value.trim();
   if (!val||curTags.includes(val)||curTags.length>=8){inp.value='';return;}
   curTags.push(val); inp.value=''; renderTags(); scheduleSave();
 }
@@ -1499,37 +1248,27 @@ document.getElementById('tagInput').addEventListener('keydown', e=>{ if(e.key===
 document.getElementById('notesArea').addEventListener('input', scheduleSave);
 
 /* =========================================================
-   SIDEBAR
+   SIDEBAR & MAT TRACKER
    ========================================================= */
 function setSbActive(id) {
   document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('sb-'+id).classList.add('active');
 }
-function openTrack() {
-  setSbActive('track');
-  document.getElementById('trackModal').classList.add('show');
-  updateTrackMats();
-}
-document.getElementById('modalClose').addEventListener('click',()=>{
-  document.getElementById('trackModal').classList.remove('show'); setSbActive('details');
-});
-document.getElementById('trackModal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('trackModal')){ document.getElementById('trackModal').classList.remove('show'); setSbActive('details'); }
-});
+function openTrack() { setSbActive('track'); document.getElementById('trackModal').classList.add('show'); updateTrackMats(); }
+document.getElementById('modalClose').addEventListener('click',()=>{ document.getElementById('trackModal').classList.remove('show'); setSbActive('details'); });
+document.getElementById('trackModal').addEventListener('click',e=>{ if(e.target===document.getElementById('trackModal')){ document.getElementById('trackModal').classList.remove('show'); setSbActive('details'); } });
 
-/* =========================================================
-   TRACK MATS
-   ========================================================= */
 const MAT_DB = {
-  tcreds:    {name:'T-Creds',        css:'r-gray',   icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8M8 14h8"/>'},
-  cast_die:  {name:'Cast Die',       css:'r-blue',   icon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'},
-  kalkonyx:  {name:'Kalkonyx',       css:'r-blue',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-  auronyx:   {name:'Auronyx',        css:'r-purple', icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-  heavy_cast:{name:'Heavy Cast Die', css:'r-purple', icon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'},
-  d96_steel: {name:'D96 Steel',      css:'r-purple', icon:'<rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 8v8M18 8v8"/>'},
-  umbronyx:  {name:'Umbronyx',       css:'r-gold',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
+  tcreds:     {name:'T-Creds',        css:'r-gray',   icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8M8 14h8"/>'},
+  cast_die:   {name:'Cast Die',       css:'r-blue',   icon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'},
+  kalkonyx:   {name:'Kalkonyx',       css:'r-blue',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
+  auronyx:    {name:'Auronyx',        css:'r-purple', icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
+  heavy_cast: {name:'Heavy Cast Die', css:'r-purple', icon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'},
+  d96_steel:  {name:'D96 Steel',      css:'r-purple', icon:'<rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 8v8M18 8v8"/>'},
+  umbronyx:   {name:'Umbronyx',       css:'r-gold',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
   wulingstone:{name:'Wulingstone',   css:'r-gold',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
 };
+
 function updateTrackMats() {
   const w = curWeapon; if (!w) return;
   const maxLv = MAX_LEVEL[w.rarity]||90;
@@ -1548,11 +1287,9 @@ function updateTrackMats() {
     if(i>40&&i<=60&&i%2===0) t.heavy_cast+=2;
     if(i>60&&i<=80&&i%2===0) t.heavy_cast+=2;
   }
-  const grid = document.getElementById('matGrid');
-  grid.innerHTML='';
+  const grid = document.getElementById('matGrid'); grid.innerHTML='';
   for (const [k,v] of Object.entries(t)){
-    if(v<=0) continue;
-    const m=MAT_DB[k];
+    if(v<=0) continue; const m=MAT_DB[k];
     grid.innerHTML+=`<div class="mat-card ${m.css}"><div class="mat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${m.icon}</svg></div><div class="mat-name">${m.name}</div><div class="mat-qty">${v.toLocaleString()}</div></div>`;
   }
 }
@@ -1573,6 +1310,7 @@ async function init() {
     await loadWeapon(defaultId);
   }
 }
+
 function navigateWeapon(id) {
   const url = new URL(window.location);
   url.searchParams.set('weapon', id);
@@ -1580,6 +1318,7 @@ function navigateWeapon(id) {
   loadWeapon(id);
   renderWpnList();
 }
+
 init();
 </script>
 <script src="js/LogIn.js"></script>
