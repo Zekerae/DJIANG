@@ -26,6 +26,8 @@ let mouseDown = true;
 setupCanvas();
 animate();
 
+let isCanvasVisible = true;
+
 function setupCanvas() {
   let canvasElement = document.getElementById('res-canvas');
   let canvasCtx = canvasElement.getContext('2d');
@@ -46,7 +48,17 @@ function setupCanvas() {
   canvas.addEventListener('mousemove', (e) => {
     mousePos = { x: e.offsetX, y: e.offsetY };
   });
+
+  // --- NEW: THE INTERSECTION OBSERVER ---
+  // This watches the canvas and tells us if it is actually on the screen
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      isCanvasVisible = entry.isIntersecting;
+    });
+  });
+  observer.observe(canvasElement);
 }
+
 
 function canvasSize() {
   // Uses the browser window size so it doesn't render at 0x0 when hidden
