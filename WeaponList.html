@@ -6,35 +6,20 @@
   <title>DJIANG — Weapon Database</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/WeaponList.css">
   <link rel="stylesheet" href="css/NavBar.css">
   <link rel="stylesheet" href="css/WipeHover.css">
   <link rel="stylesheet" href="css/MainStyle.css">
   <link rel="stylesheet" href="css/LogIn.css">
-  <style>
-    .drawer-level-val {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: .85rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--gold2, #f0b866);
-    }
-    .drawer-field {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-  </style>
+  <link rel="stylesheet" href="css/WeaponList.css">
 </head>
 <body>
 
-<div class="container">
+<div class="page-wrap">
+
   <div class="page-hero">
-    <div class="hero-flex">
-      <div class="hero-left">
-        <h1>Weapon Database</h1>
-        <div class="sub">Arknights: Endfield · Weapon Overview</div>
-      </div>
+    <div class="hero-left">
+      <h1>Weapon Database</h1>
+      <div class="sub">Arknights: Endfield · Weapon Overview</div>
     </div>
   </div>
 
@@ -49,7 +34,6 @@
 
     <div class="filter-row" id="filterRow">
 
-      <!-- Rarity -->
       <div class="fgroup">
         <div class="flabel">Rarity</div>
         <div class="fpills" data-group="rarity">
@@ -60,7 +44,6 @@
         </div>
       </div>
 
-      <!-- Type -->
       <div class="fgroup">
         <div class="flabel">Type</div>
         <div class="fpills" data-group="type">
@@ -72,7 +55,6 @@
         </div>
       </div>
 
-      <!-- Stat Tags (from Prydwen) -->
       <div class="fgroup full-width">
         <div class="flabel">Filter by Stat</div>
         <div class="fpills" data-group="stat">
@@ -96,13 +78,11 @@
         </div>
       </div>
 
-      <!-- Roster -->
       <div class="fgroup">
         <div class="flabel">Roster</div>
         <div class="fpills">
           <button class="pill" id="pill-owned" data-val="owned">✓ Owned Only</button>
         </div>
-      </div>
       </div>
 
       <button class="fclear" id="clearBtn">✕ Reset Filters</button>
@@ -110,9 +90,9 @@
   </div>
 
   <div class="results-row">
-    <div class="results-text">Showing <span id="visNum">68</span> weapons</div>
+    <div class="results-text">Showing <span id="visNum">0</span> weapons</div>
     <div class="sort-group">
-      <span class="flabel" style="margin-right: 8px;">Sort By:</span>
+      <span class="flabel">Sort By:</span>
       <button class="pill sort-btn active" data-sort="rarity">Rarity</button>
       <button class="pill sort-btn" data-sort="name">Name</button>
       <button class="pill sort-btn" data-sort="atk">Base ATK</button>
@@ -121,6 +101,7 @@
   </div>
 
   <div class="card-grid" id="cardGrid"></div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -1,344 +1,617 @@
-:root {
-  --bg: #07080b; --bg2: #0c0d12; --bg3: #10121a;
-  --bord: rgba(255,255,255,.055); --bord2: rgba(255,255,255,.10);
-  --text: #e4e0d8; --dim: #5a5868; --dim2: #8a8694;
-  --gold: #d4943a; --gold2: #f0b866;
+/* ==========================================================
+   WeaponList.css
+   All class names match WeaponList.js output exactly.
+   WeaponList.css loads LAST so it wins over NavBar.css etc.
+   ========================================================== */
+
+/* ── LOCAL TOKENS (don't clash with NavBar :root) ── */
+.page-wrap {
+  --bg:    #07080b;
+  --bg2:   #0c0d12;
+  --bord:  rgba(255,255,255,.055);
+  --bord2: rgba(255,255,255,.10);
+  --text:  #e4e0d8;
+  --dim:   #5a5868;
+  --dim2:  #8a8694;
+  --gold:  #d4943a;
+  --gold2: #f0b866;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: clip; }
-
-body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: -1;
-  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.025) 3px, rgba(0,0,0,.025) 4px);
+/* ── PAGE WRAPPER ── */
+.page-wrap {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: calc(var(--navbar-height, 56px) + 40px) 30px 80px;
+  background: #07080b;
+  min-height: 100vh;
+  color: #e4e0d8;
+  font-family: 'DM Sans', sans-serif;
 }
 
-.container { max-width: 1400px; margin: 0 auto; padding: 0 30px; }
+/* Scanlines */
+.page-wrap::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 3px,
+    rgba(0,0,0,.018) 3px, rgba(0,0,0,.018) 4px
+  );
+}
 
-/* --- HEADER --- */
-.page-hero { padding: 60px 0 40px; position: relative; border-bottom: 1px solid var(--bord); margin-bottom: 20px; }
-.hero-flex { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
-.hero-left h1 { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; letter-spacing: 7px; color: #fff; line-height: 1; }
-.hero-left .sub { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--dim2); margin-top: 10px; display: flex; align-items: center; gap: 10px; }
-.hero-left .sub::before { content: ''; width: 30px; height: 1px; background: var(--gold); opacity: 0.6; }
+/* ── HERO ── */
+.page-hero {
+  padding: 20px 0 40px;
+  border-bottom: 1px solid var(--bord);
+  margin-bottom: 28px;
+}
+.page-hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem;
+  letter-spacing: 7px;
+  color: #fff;
+  line-height: 1;
+}
+.page-hero .sub {
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim2);
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page-hero .sub::before {
+  content: '';
+  width: 30px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.6;
+}
 
-/* --- STICKY FILTER ZONE --- */
+/* ── FILTER ZONE ── */
 .filter-zone {
-  background: rgba(19, 21, 28, 0.95); border: 1px solid var(--bord); border-radius: 12px;
-  padding: 24px 30px; margin-bottom: 30px; position: sticky; top: 40px; z-index: 999;
-  backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: padding 0.3s ease;
+  background: rgba(19,21,28,0.95);
+  border: 1px solid var(--bord);
+  border-radius: 12px;
+  padding: 20px 26px;
+  margin-bottom: 28px;
+  position: sticky;
+  top: calc(var(--navbar-height, 56px) + 8px);
+  z-index: 500;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   overflow: visible;
+  transition: padding 0.3s ease;
+}
+.filter-zone.scrolled { padding: 14px 26px; }
+.filter-zone.scrolled .search-header { margin-bottom: 0; }
+
+.search-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 0;
 }
 
-.search-header { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; }
 .search-input {
-  width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--bord2); border-radius: 6px;
-  padding: 14px 20px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 1rem; margin-bottom: 0;
-  flex: 1; transition: 0.3s;
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--bord2);
+  border-radius: 6px;
+  padding: 13px 18px;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  transition: 0.3s;
 }
-.search-input:focus { outline: none; border-color: rgba(212,148,58,0.5); background: rgba(0,0,0,0.5); }
+.search-input:focus {
+  outline: none;
+  border-color: rgba(212,148,58,0.5);
+  background: rgba(0,0,0,0.5);
+}
 
 .filter-toggle-btn {
-  display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05);
-  border: 1px solid var(--bord2); border-radius: 6px; padding: 0 20px; height: 100%; min-height: 48px;
-  color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 0.9rem; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--bord2);
+  border-radius: 6px;
+  padding: 0 18px;
+  height: 48px;
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
 }
 .filter-toggle-btn img { width: 18px; height: 18px; }
-.filter-toggle-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(212,148,58,0.5); color: var(--gold2); }
+.filter-toggle-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(212,148,58,0.5);
+  color: var(--gold2);
+}
 
-.filter-zone.scrolled { padding: 15px 30px; }
-.filter-zone.scrolled .search-header { margin-bottom: 0; height: 48px; }
-
+/* ── FILTER DROPDOWN ── */
 .filter-row {
-  display: none; flex-wrap: wrap; gap: 25px;
-  position: absolute; top: 100%; left: -1px; right: -1px; z-index: 1000;
-  background: rgba(19, 21, 28, 0.98); padding: 25px 30px;
-  border: 1px solid var(--bord); border-top: 1px solid rgba(255,255,255,0.05);
-  border-radius: 0 0 12px 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); backdrop-filter: blur(20px);
+  display: none;
+  flex-wrap: wrap;
+  gap: 22px;
+  position: absolute;
+  top: 100%;
+  left: -1px;
+  right: -1px;
+  z-index: 600;
+  background: rgba(16,18,24,0.99);
+  padding: 22px 26px;
+  border: 1px solid var(--bord);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.85);
+  backdrop-filter: blur(20px);
 }
 .filter-zone.dropdown-open .filter-row { display: flex; }
 
-/* Stat tag filter group — full width row */
-.fgroup { display: flex; flex-direction: column; gap: 8px; }
+.fgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 .fgroup.full-width { width: 100%; }
-.flabel { font-family: 'Rajdhani', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); }
-.fpills { display: flex; gap: 6px; flex-wrap: wrap; max-width: 480px; }
 .fgroup.full-width .fpills { max-width: 100%; }
 
-/* Pills */
-.pill {
-  display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 4px;
-  border: 1px solid var(--bord2); font-family: 'Rajdhani', sans-serif; font-size: 0.75rem;
-  font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--dim2);
-  background: transparent; cursor: pointer; transition: all 0.2s;
+.flabel {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
 }
-.pill:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
-.pill-icon { width: 14px; height: 14px; object-fit: contain; opacity: 0.8; }
-.pill:hover .pill-icon, .pill.active .pill-icon { opacity: 1; filter: brightness(1.2); }
 
-/* Stat tag pills — tighter */
-.pill.stat-tag { padding: 4px 10px; font-size: 0.68rem; }
+.fpills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: 340px;
+}
 
-/* Rarity active states */
+/* ── PILLS ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: 4px;
+  border: 1px solid var(--bord2);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--dim2);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.pill:hover { color: var(--text); border-color: rgba(255,255,255,0.28); }
+.pill.active { background: rgba(255,255,255,0.09); color: #fff; border-color: rgba(255,255,255,0.35); }
+
 .pill[data-val="6"].active { background: rgba(212,148,58,.18); color: var(--gold2); border-color: rgba(212,148,58,.5); }
-.pill[data-val="5"].active { background: rgba(195,106,42,.18); color: #e8956a; border-color: rgba(195,106,42,.5); }
-.pill[data-val="4"].active { background: rgba(124,111,232,.18); color: #b0a0ff; border-color: rgba(124,111,232,.5); }
-.pill[data-val="3"].active { background: rgba(100,160,100,.15); color: #90c890; border-color: rgba(100,160,100,.4); }
+.pill[data-val="5"].active { background: rgba(195,106,42,.18); color: #e8956a;      border-color: rgba(195,106,42,.5); }
+.pill[data-val="4"].active { background: rgba(124,111,232,.18); color: #b0a0ff;     border-color: rgba(124,111,232,.5); }
 
-/* Type active states */
-.pill[data-val="Sword"].active      { background: rgba(224,90,43,.15); color: #ff8a65; border-color: rgba(224,90,43,.4); }
-.pill[data-val="Greatsword"].active { background: rgba(212,148,58,.15); color: var(--gold2); border-color: rgba(212,148,58,.4); }
-.pill[data-val="Polearm"].active    { background: rgba(42,140,82,.15); color: #6ddc9a; border-color: rgba(42,140,82,.4); }
-.pill[data-val="Handcannon"].active { background: rgba(59,130,246,.15); color: #7ab8ff; border-color: rgba(59,130,246,.4); }
-.pill[data-val="Arts Unit"].active  { background: rgba(168,85,247,.15); color: #c89eff; border-color: rgba(168,85,247,.4); }
+.pill-icon { width: 13px; height: 13px; object-fit: contain; opacity: 0.8; }
+.pill.active .pill-icon, .pill:hover .pill-icon { opacity: 1; }
 
-/* Stat tag active — gold accent */
-.pill.stat-tag.active { background: rgba(212,148,58,.15); color: var(--gold2); border-color: rgba(212,148,58,.5); }
+#pill-owned.active { background: rgba(60,200,90,.18); color: #6ddc9a; border-color: rgba(60,200,90,.5); }
 
-/* Generic fallback active */
-.pill.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.4); }
+.fclear {
+  margin-left: auto;
+  align-self: flex-end;
+  padding: 7px 14px;
+  border: 1px solid var(--bord);
+  border-radius: 4px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--dim);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fclear:hover { color: #e05a5a; border-color: rgba(224,90,90,.4); background: rgba(224,90,90,0.08); }
 
-.fclear { margin-left: auto; align-self: flex-end; padding: 8px 16px; border: 1px solid var(--bord); border-radius: 4px; font-family: 'Rajdhani', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); background: transparent; cursor: pointer; transition: all 0.2s; }
-.fclear:hover { color: #e05a5a; border-color: rgba(224,90,90,.4); background: rgba(224,90,90,0.1); }
+/* ── RESULTS ROW ── */
+.results-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.results-text {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.results-text span { color: var(--gold2); font-weight: 700; font-size: 1.05rem; }
 
-/* --- RESULTS ROW --- */
-.results-row { display: flex; align-items: center; justify-content: space-between; padding: 0 10px 20px; flex-wrap: wrap; gap: 15px; }
-.results-text { font-family: 'Rajdhani', sans-serif; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); }
-.results-text span { color: var(--gold2); font-weight: 700; font-size: 1.1rem; }
 .sort-group { display: flex; align-items: center; gap: 6px; }
 .sort-btn.active { background: rgba(212,148,58,0.15); color: var(--gold2); border-color: rgba(212,148,58,0.5); }
+.sort-arrow { font-size: 0.8em; }
 
-/* --- CARD GRID --- */
+/* ── CARD GRID ── */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 20px;
-  padding-bottom: 80px;
   align-content: start;
-  min-height: 80vh;
+  min-height: 60vh;
 }
 
-/* --- WEAPON CARD (portrait style like operator cards) --- */
+/* ── CARD WRAP — wpn-card-wrap ── */
+.wpn-card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+}
+.wpn-card-wrap.hidden { display: none !important; }
+
+/* ── WEAPON CARD — wpn-card ── */
 .wpn-card {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
   aspect-ratio: 0.72;
+  width: 100%;
+  flex-shrink: 0;
   border: 1px solid var(--bord2);
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s, border-color 0.3s;
 }
-.wpn-card:hover { transform: translateY(-8px); }
-.wpn-card.hidden { display: none !important; }
+.wpn-card:hover { transform: translateY(-6px); }
 
-/* Type background gradients */
-.bg-Sword      { background: linear-gradient(155deg, #2a0e08 0%, #170402 100%); }
-.bg-Greatsword { background: linear-gradient(155deg, #261a06 0%, #120c01 100%); }
-.bg-Polearm    { background: linear-gradient(155deg, #091e0f 0%, #030d06 100%); }
-.bg-Handcannon { background: linear-gradient(155deg, #091428 0%, #040b17 100%); }
-.bg-Arts-Unit  { background: linear-gradient(155deg, #160820 0%, #0b0312 100%); }
-
-/* Rarity stripe */
+/* Rarity left stripe */
 .wpn-card::after {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; z-index: 5;
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  z-index: 5;
 }
 .rarity-6::after { background: linear-gradient(180deg, #ffe06a, #c9902a); }
 .rarity-5::after { background: linear-gradient(180deg, #e89060, #9a4a1a); }
 .rarity-4::after { background: linear-gradient(180deg, #b09aee, #584890); }
-.rarity-3::after { background: linear-gradient(180deg, #90c890, #3a7a3a); }
+.rarity-3::after { background: linear-gradient(180deg, #88c0a0, #3a7050); }
 
-/* Weapon art — portrait fill */
-.card-art {
-  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
-  object-fit: cover; object-position: 50% 20%;
-  transition: transform .5s cubic-bezier(.22,1,.36,1);
-  clip-path: polygon(10% 0,100% 0,100% 88%,90% 100%,0 100%,0 9%);
+/* Type backgrounds — typeKey = w.type.replace(/\s+/g, '-') */
+.bg-Sword      { background: linear-gradient(155deg, #1e1608 0%, #0e0b03 100%); }
+.bg-Greatsword { background: linear-gradient(155deg, #1e1210 0%, #0e0807 100%); }
+.bg-Polearm    { background: linear-gradient(155deg, #0e1e14 0%, #060e08 100%); }
+.bg-Handcannon { background: linear-gradient(155deg, #0c1422 0%, #060810 100%); }
+.bg-Arts-Unit  { background: linear-gradient(155deg, #1a0e24 0%, #0c0614 100%); }
+
+/* Hover glow per type */
+.wpn-card:hover.bg-Sword      { border-color: rgba(200,170,60,.5); box-shadow: 0 12px 30px rgba(200,170,60,.15); }
+.wpn-card:hover.bg-Greatsword { border-color: rgba(200,90,50,.5);  box-shadow: 0 12px 30px rgba(200,90,50,.15); }
+.wpn-card:hover.bg-Polearm    { border-color: rgba(42,160,90,.5);  box-shadow: 0 12px 30px rgba(42,160,90,.15); }
+.wpn-card:hover.bg-Handcannon { border-color: rgba(50,110,230,.5); box-shadow: 0 12px 30px rgba(50,110,230,.15); }
+.wpn-card:hover.bg-Arts-Unit  { border-color: rgba(150,70,240,.5); box-shadow: 0 12px 30px rgba(150,70,240,.15); }
+
+/* Owned highlight */
+.wpn-card.card-owned { border-color: rgba(60,200,90,0.3) !important; }
+.wpn-card.card-owned .card-vignette {
+  background: linear-gradient(180deg, transparent 30%, rgba(0,10,3,0.96) 100%);
 }
-.wpn-card:hover .card-art { transform: scale(1.08); }
+
+/* Card art image */
+.card-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 20%;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+  clip-path: polygon(10% 0, 100% 0, 100% 88%, 90% 100%, 0 100%, 0 9%);
+}
+.wpn-card:hover .card-art { transform: scale(1.07); }
 
 /* Placeholder letter */
 .card-placeholder {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-family: 'Bebas Neue', sans-serif; font-size: 5rem; z-index: 0; opacity: 0.35;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 5rem;
+  color: rgba(255,255,255,0.06);
+  z-index: 0;
 }
-.bg-Sword .card-placeholder      { color: rgba(224,90,43,.4); }
-.bg-Greatsword .card-placeholder  { color: rgba(212,148,58,.4); }
-.bg-Polearm .card-placeholder     { color: rgba(42,140,82,.4); }
-.bg-Handcannon .card-placeholder  { color: rgba(59,130,246,.4); }
-.bg-Arts-Unit .card-placeholder   { color: rgba(168,85,247,.4); }
 
-/* Bottom vignette */
+/* Vignette gradient */
 .card-vignette {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.97) 100%);
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 28%, rgba(0,0,0,0.97) 100%);
 }
 
-/* Type badge — top right */
+/* ── TYPE BADGE (top-right) ── */
 .card-type-badge {
-  position: absolute; top: 0; right: 0; z-index: 6;
-  font-family: 'Rajdhani', sans-serif; font-size: 0.65rem; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase; padding: 6px 10px;
-  border-radius: 0 0 0 8px; display: flex; align-items: center; gap: 5px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 6;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 0 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #fff;
 }
 .badge-icon { width: 14px; height: 14px; object-fit: contain; }
-.badge-Sword      { background: rgba(224,90,43,.9); color: #fff; }
-.badge-Greatsword { background: rgba(212,148,58,.9); color: #111; }
-.badge-Polearm    { background: rgba(42,140,82,.9);  color: #fff; }
-.badge-Handcannon { background: rgba(59,130,246,.9); color: #fff; }
-.badge-Arts-Unit  { background: rgba(168,85,247,.9); color: #fff; }
 
-/* Card info at bottom */
+.badge-Sword      { background: rgba(180,155,55,.92); }
+.badge-Greatsword { background: rgba(185,75,45,.92); }
+.badge-Polearm    { background: rgba(38,148,78,.92); }
+.badge-Handcannon { background: rgba(38,100,210,.92); }
+.badge-Arts-Unit  { background: rgba(130,55,215,.92); }
+
+/* ── CARD INFO (bottom overlay) ── */
 .card-info {
-  position: absolute; bottom: 0; left: 0; right: 0; z-index: 6;
-  padding: 14px 14px 12px; pointer-events: none;
-}
-.card-name {
-  font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 1.5px;
-  color: #fff; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,1); margin-bottom: 7px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  padding: 12px 13px;
+  pointer-events: none;
 }
 
-/* Stats row */
-.card-stats { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
-.stat-row {
-  display: flex; align-items: center; gap: 6px;
-  font-family: 'Rajdhani', sans-serif; font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.5px; text-transform: uppercase;
+.card-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.35rem;
+  letter-spacing: 1.5px;
+  color: #fff;
+  line-height: 1.1;
+  text-shadow: 0 2px 12px rgba(0,0,0,1);
+  margin-bottom: 5px;
 }
-.stat-label { color: var(--dim2); min-width: 28px; }
-.stat-val { color: #fff; }
-.stat-row.atk-row .stat-val { color: var(--gold2); }
+
+/* Stats */
+.card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 5px;
+}
+.stat-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.stat-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--dim2);
+  flex-shrink: 0;
+}
+.stat-val {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.atk-row .stat-val {
+  color: var(--gold2);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
 
 /* Stars */
-.card-stars { display: flex; gap: 3px; margin-top: 6px; }
-.star-icon { width: 12px; height: 12px; object-fit: contain; }
+.card-stars { display: flex; gap: 3px; margin-top: 4px; }
+.star-icon  { width: 11px; height: 11px; object-fit: contain; }
 
-/* Hover glow per type */
-.wpn-card:hover.bg-Sword      { border-color: rgba(224,90,43,.5); box-shadow: 0 10px 30px rgba(224,90,43,.2); }
-.wpn-card:hover.bg-Greatsword { border-color: rgba(212,148,58,.5); box-shadow: 0 10px 30px rgba(212,148,58,.2); }
-.wpn-card:hover.bg-Polearm    { border-color: rgba(42,140,82,.5);  box-shadow: 0 10px 30px rgba(42,140,82,.2); }
-.wpn-card:hover.bg-Handcannon { border-color: rgba(59,130,246,.5); box-shadow: 0 10px 30px rgba(59,130,246,.2); }
-.wpn-card:hover.bg-Arts-Unit  { border-color: rgba(168,85,247,.5); box-shadow: 0 10px 30px rgba(168,85,247,.2); }
-
-/* --- PASSIVE DROPDOWN --- */
-.passive-dropdown {
-  position: absolute; bottom: 0; left: 0; right: 0; z-index: 20;
-  background: rgba(8, 10, 16, 0.97); border-top: 1px solid var(--bord2);
-  border-radius: 0 0 8px 8px; padding: 14px 14px 14px 18px;
-  transform: translateY(100%); opacity: 0;
-  transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), opacity 0.22s ease;
-  pointer-events: none;
-  max-height: 60%;
-  overflow-y: auto;
-}
-.passive-dropdown::-webkit-scrollbar { width: 3px; }
-.passive-dropdown::-webkit-scrollbar-thumb { background: var(--bord2); border-radius: 3px; }
-
-.wpn-card.passive-open .passive-dropdown {
-  transform: translateY(0); opacity: 1; pointer-events: auto;
-}
-.passive-label {
-  font-family: 'Rajdhani', sans-serif; font-size: 0.6rem; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px;
-}
-.passive-text {
-  font-size: 0.72rem; color: var(--dim2); line-height: 1.55;
-}
-
-/* Passive toggle button */
-.passive-btn {
-  position: absolute; bottom: 10px; right: 10px; z-index: 15;
-  background: rgba(0,0,0,0.7); border: 1px solid var(--bord2); border-radius: 4px;
-  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.2s; color: var(--dim2); font-size: 0.7rem;
-  pointer-events: auto; overflow: visible;
-}
-.passive-btn:hover { border-color: var(--gold); color: var(--gold2); background: rgba(212,148,58,0.15); }
-.wpn-card.passive-open .passive-btn { background: rgba(212,148,58,0.2); border-color: var(--gold); color: var(--gold2); }
-
-/* Empty state */
-.empty {
-  grid-column: 1/-1; padding: 60px 20px; text-align: center;
-  font-family: 'Rajdhani', sans-serif; letter-spacing: 2px; text-transform: uppercase; color: var(--dim);
-}
-
-/* ── CARD WRAP (outer shell that includes card + drawer) ── */
-.wpn-card-wrap {
-  display: flex; flex-direction: column; align-self: start;
-}
-.wpn-card-wrap.hidden { display: none !important; }
-
-/* Owned glow on the card */
-.wpn-card.card-owned {
-  box-shadow: 0 0 0 1px rgba(212,148,58,0.4), 0 0 14px rgba(212,148,58,0.12);
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-/* ── OWNED BADGE ── */
+/* ── OWNED BADGE (top-left circle) ── */
 .owned-badge {
-  position: absolute; top: 8px; left: 8px; z-index: 10;
-  width: 26px; height: 26px; border-radius: 50%;
-  background: rgba(0,0,0,0.55); border: 1px solid var(--bord2);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.2s;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 8;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.owned-badge:hover { border-color: var(--gold); background: rgba(212,148,58,0.15); }
-.owned-check { font-size: 13px; color: var(--dim); line-height: 1; transition: color 0.2s; }
-.owned-badge.owned { background: rgba(212,148,58,0.22); border-color: var(--gold); }
-.owned-badge.owned .owned-check { color: var(--gold2); }
+.owned-badge .owned-check { font-size: 12px; color: rgba(255,255,255,0.18); line-height: 1; transition: all 0.2s; }
+.owned-badge:hover { border-color: rgba(255,255,255,0.35); background: rgba(0,0,0,0.72); }
+.owned-badge.owned { background: rgba(60,200,90,0.88); border-color: rgba(80,220,110,1); box-shadow: 0 0 8px rgba(60,200,90,0.4); }
+.owned-badge.owned .owned-check { color: #fff; }
 
-/* ── WEAPON DRAWER ── */
-.wpn-drawer {
-  max-height: 0; overflow: hidden;
-  transition: max-height 0.28s cubic-bezier(0.22,1,0.36,1);
-  background: rgba(8,10,16,0.97); border: 1px solid var(--bord2); border-top: none;
+/* ── PASSIVE DROPDOWN ── */
+.passive-dropdown {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: rgba(8,9,14,0.97);
+  border-top: 1px solid var(--bord2);
+  padding: 10px 13px 13px;
   border-radius: 0 0 8px 8px;
 }
-.wpn-drawer.open { max-height: 80px; }
-.drawer-inner { padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
-.drawer-field { display: flex; align-items: center; gap: 8px; }
+.wpn-card.passive-open .passive-dropdown { display: block; }
+
+.passive-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+.passive-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  color: var(--dim2);
+  line-height: 1.5;
+  max-height: 90px;
+  overflow-y: auto;
+}
+
+/* ── PASSIVE TOGGLE BUTTON ── */
+.passive-btn {
+  position: absolute;
+  bottom: 7px;
+  right: 9px;
+  z-index: 11;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--bord2);
+  border-radius: 4px;
+  color: var(--dim2);
+  font-size: 0.78rem;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: 0.18s;
+  pointer-events: all;
+}
+.passive-btn:hover { color: var(--gold2); border-color: rgba(212,148,58,0.4); }
+.wpn-card.passive-open .passive-btn { color: var(--gold2); transform: rotate(180deg); }
+
+/* ── WEAPON DRAWER (level display below card) ── */
+.wpn-drawer {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  width: 100%;
+  transition: max-height 0.32s cubic-bezier(0.4,0,0.2,1), opacity 0.22s ease;
+}
+.wpn-drawer.open {
+  max-height: 70px;
+  opacity: 1;
+  pointer-events: all;
+}
+
+.drawer-inner {
+  padding: 8px 10px;
+  background: rgba(11,12,17,0.98);
+  border: 1px solid var(--bord2);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.drawer-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--bord);
+  border-radius: 4px;
+  padding: 5px 8px;
+  min-width: 0;
+}
+
 .drawer-lbl {
-  font-family: 'Rajdhani', sans-serif; font-size: 0.68rem; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase; color: var(--dim2); white-space: nowrap;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--dim2);
+  white-space: nowrap;
 }
-.drawer-input {
-  width: 70px; background: rgba(0,0,0,0.35); border: 1px solid var(--bord2); border-radius: 4px;
-  padding: 5px 10px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
-  text-align: center; transition: border-color 0.2s;
-}
-.drawer-input:focus { outline: none; border-color: rgba(212,148,58,0.5); background: rgba(0,0,0,0.55); }
 
-/* ── LEVEL FILTER GROUP ── */
-.fgroup-level { min-width: 200px; }
-.level-range-wrap { display: flex; flex-direction: column; gap: 6px; }
-.level-range-labels {
-  display: flex; align-items: center; gap: 6px;
-  font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--text);
+.drawer-level-val {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--gold2);
 }
-.level-range-sep { color: var(--dim); }
-.level-sliders { display: flex; flex-direction: column; gap: 4px; }
-.lv-slider {
-  width: 100%; accent-color: var(--gold); height: 3px; cursor: pointer;
-  -webkit-appearance: none; background: var(--bord2); border-radius: 2px;
-}
-.lv-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); cursor: pointer; }
-.level-range-hint { font-size: 0.62rem; color: var(--dim); font-style: italic; }
 
-/* --- RESPONSIVE --- */
+/* ── MISC ── */
+.empty {
+  grid-column: 1 / -1;
+  padding: 60px 20px;
+  text-align: center;
+  font-family: 'Rajdhani', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.roster-notice {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--dim2);
+  border: 1px solid var(--bord);
+  border-radius: 4px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.02);
+  width: 100%;
+}
+.roster-notice a { color: var(--gold2); text-decoration: none; }
+.roster-notice a:hover { text-decoration: underline; }
+
+/* ── RESPONSIVE ── */
 @media (max-width: 860px) {
-  .hero-left h1 { font-size: 3rem; }
-  .filter-zone, .filter-zone.scrolled { padding: 20px; }
-  .filter-row { gap: 15px; }
+  .page-wrap { padding-left: 20px; padding-right: 20px; }
+  .page-hero h1 { font-size: 3rem; }
   .fpills { max-width: 100%; }
-  .fclear { width: 100%; text-align: center; margin-top: 10px; }
+  .fclear { width: 100%; text-align: center; margin-top: 8px; }
   .card-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 14px; }
 }
 @media (max-width: 540px) {
-  .container { padding: 0 15px; }
-  .page-hero { padding: 40px 0 20px; }
-  .hero-left h1 { font-size: 2.5rem; }
-  .card-name { font-size: 1.1rem; }
+  .page-wrap { padding-left: 14px; padding-right: 14px; }
+  .page-hero h1 { font-size: 2.4rem; }
   .card-grid { grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 10px; }
+  .card-name { font-size: 1.1rem; }
 }
