@@ -215,16 +215,32 @@ body::after {
   max-height: 250px; 
 }
 .sidebar-sub-item { 
+  position: relative; /* FIX: Anchors the active indicator to the text box instead of the screen edge! */
   padding: 10px 20px 10px 46px; 
   color: var(--dim2); 
   font-family: var(--font-body); 
   font-size: 12px; 
   cursor: pointer; 
   transition: all 0.15s; 
-  border-left: 2px solid transparent; 
 }
 .sidebar-sub-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-.sidebar-sub-item.active { color: var(--teal); border-left-color: var(--teal); background: rgba(0,229,192,0.04); }
+
+.sidebar-sub-item.active { 
+  color: var(--teal); 
+  background: rgba(0,229,192,0.04); 
+}
+
+/* Create the vertical indicator line safely INSIDE the sidebar bounding box */
+.sidebar-sub-item.active::before {
+  content: '';
+  position: absolute;
+  left: 24px; /* Perfectly places the line next to the sub-menu text */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--teal);
+  box-shadow: 0 0 8px rgba(0,229,192,0.5);
+}
 
 /* ── MAIN ── */
 .main { flex: 1; padding: 28px 32px; overflow-x: hidden; }
