@@ -24,17 +24,22 @@
 
 <div class="topbar">
   <div class="nav-left">
-    <div class="logo-mark">EF</div>
+    <a href="index.html" class="logo-mark" style="text-decoration: none; cursor: pointer;" title="Return to Homepage">DJIANG</a>
+    
     <div class="nav-breadcrumbs">
+      <a href="javascript:history.back()" style="color: #00e5c0; font-weight: 700; margin-right: 12px; display: inline-flex; align-items: center; gap: 4px;">
+        <span>&larr;</span> BACK
+      </a>
+      <span style="opacity: 0.3;">|</span>
+      <a href="index.html" style="margin-left: 12px;">Home</a>
+      <span>/</span>
       <a href="#">Characters</a>
       <span>/</span>
       <span class="current" id="nav-name">Loading…</span>
     </div>
   </div>
-  <select class="character-select" id="char-selector" onchange="navigateToCharacter(this.value)">
-    <option value="" disabled selected>Select Operator...</option>
-  </select>
-</div>
+  
+  </div>
 
 <div class="hero">
   <div class="hero-bg-glow"></div>
