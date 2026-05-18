@@ -21,7 +21,7 @@
 .page-wrap {
   max-width: 1400px;
   margin: 0 auto;
-  padding: calc(var(--navbar-height, 56px) + 40px) 30px 80px;
+  padding: calc(var(--navbar-height, 56px) + 16px) 30px 80px;
   background: #07080b;
   min-height: 100vh;
   color: #e4e0d8;
@@ -44,7 +44,7 @@
 
 /* ── HERO ── */
 .page-hero {
-  padding: 20px 0 40px;
+  padding: 0 0 24px;
   border-bottom: 1px solid var(--bord);
   margin-bottom: 28px;
 }

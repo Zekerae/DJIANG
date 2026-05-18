@@ -307,6 +307,8 @@ async function init() {
 
   grid.innerHTML = WEAPONS.map(createCard).join('');
   applySort();
+  updateFilters();
+
 
   // Inject icons into type / rarity filter pills
   document.querySelectorAll('.filter-row .pill').forEach(pill => {
