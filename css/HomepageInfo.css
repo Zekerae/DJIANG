@@ -339,7 +339,7 @@
 
 .ei-class-name {
     font-family: var(--ei-font-display);
-    font-size: 30px;
+    font-size: clamp(22px, 2.5vw, 30px);
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -453,7 +453,7 @@
 
 .ei-element-name {
     font-family: var(--ei-font-display);
-    font-size: 32px;
+    font-size: clamp(24px, 3vw, 32px);
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -550,7 +550,7 @@
 
 .ei-reaction-name {
     font-family: var(--ei-font-display);
-    font-size: 28px;
+    font-size: clamp(20px, 2.5vw, 28px);
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -618,7 +618,7 @@
 
 .ei-concept-title {
     font-family: var(--ei-font-display);
-    font-size: 24px;
+    font-size: clamp(18px, 2vw, 24px);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -692,7 +692,7 @@
 
 .ei-archetype-label-name {
     font-family: var(--ei-font-display);
-    font-size: 26px;
+    font-size: clamp(20px, 2.5vw, 26px);
     font-weight: 700;
     text-transform: uppercase;
     color: #fff;
@@ -860,4 +860,11 @@
     .ei-elements-grid { grid-template-columns: 1fr; }
     .ei-reaction-concepts { grid-template-columns: 1fr; }
     .ei-glossary-grid { grid-template-columns: 1fr; }
+}
+
+.ei-elements-wrapper,
+.ei-reactions-wrapper,
+.ei-teams-wrapper,
+.ei-glossary-wrapper { 
+    padding: clamp(30px, 5vh, 56px) 6%;
 }

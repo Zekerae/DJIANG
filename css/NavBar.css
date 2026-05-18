@@ -1,12 +1,28 @@
+/*
+  NavBar.css — FLUID SCOPED VERSION
+  ══════════════════════════════════════════════════════════════════
+  Rigid pixel math has been replaced with CSS Variables and clamp().
+  The sidebar mathematically calculates its own width and hidden state,
+  eliminating the need for multiple stacked media queries!
+  ══════════════════════════════════════════════════════════════════
+*/
+
 :root {
     --navbar-color: rgb(135, 135, 135);
-    --navbar-height: 48px;
-    --sidebar-width: 520px;
+    
+    /* FLUID: Navbar height grows slightly on tall monitors */
+    --navbar-height: clamp(48px, 6vh, 64px);
+    
+    /* FLUID: Sidebar scales with screen width, capped gracefully */
+    --sidebar-width: clamp(260px, 30vw, 450px);
+    
     --border: 0.5px solid rgba(135, 135, 135, 0.4);
 
     --sidebar-active-bg: #fff;
     --sidebar-active-text: #000;
-    --sidebar-notch: 16px;
+    
+    /* FLUID: The angled notch dynamically scales */
+    --sidebar-notch: clamp(12px, 1.5vw, 20px);
     --sidebar-item-indent: 5%;
     --sidebar-font: 'Arial Black', Arial, sans-serif;
     --sidebar-page-count-offset: 0px;
@@ -21,34 +37,21 @@
 }
 
 /* 2. Apply it to the Navbar */
-/* Target the navbar container and its links (adjust the class names if NavBar.js uses different ones like .nav-item or .nav-menu) */
 #navbar, 
 .navbar, 
-/* Fix for clipped Navbar font */
 .nav-links a, 
 .navbar a {
-    /* Increases the invisible box around the text so the bottom doesn't cut off */
     line-height: 1.5 !important; 
-    
-    /* Ensures the links behave like blocks so vertical spacing applies correctly */
     display: center !important;
     align-items: center !important;
-    
-    /* Optional: Add a tiny bit of bottom padding if it's still clipping the bottom pixel */
     padding-bottom: 2px !important; 
 }
 .navbar button {
     font-family: 'HarmonyOS Sans Regular', sans-serif !important;
 }
-/* ─────────────────────────────────────────────────────────────────────────────
-   STACKING CONTEXT FIX
-   Any element with transform/filter/will-change/opacity creates its own
-   stacking context, which traps children — even z-index:9999 ones.
-   Giving <body> an explicit stacking context at z=0 means the navbar's
-   z-index is always measured against the root, not a trapped ancestor.
-───────────────────────────────────────────────────────────────────────────── */
+
 body {
-    isolation: isolate;   /* creates root stacking context without side-effects */
+    isolation: isolate; 
 }
 
 /* ─── NAVBAR ─── */
@@ -59,8 +62,6 @@ body {
     width: 100%;
     height: var(--navbar-height);
     background: #0a0a0a;
-    /* Use the highest possible z-index so nothing — transforms, filters, etc. — 
-       can push content over the bar.                                          */
     z-index: 2147483647;
     display: grid;
     grid-template-columns: var(--navbar-height) 1fr var(--navbar-height);
@@ -68,7 +69,6 @@ body {
     border-bottom: var(--border);
 }
 
-/* ─── PROGRESS BAR ─── */
 .progress-bar {
     position: absolute;
     bottom: -1px;
@@ -91,9 +91,10 @@ body {
 
 .nav-btn {
     height: 100%;
-    padding: 0 20px;
+    /* FLUID PADDING & FONT: Breathes with the screen size */
+    padding: 0 clamp(12px, 1.5vw, 24px);
+    font-size: clamp(10px, 1vw, 13px);
     color: rgba(135, 135, 135, 0.6);
-    font-size: 11px;
     letter-spacing: 0.12em;
     cursor: pointer;
     display: flex;
@@ -147,20 +148,20 @@ body {
 .sidebar {
     position: fixed;
     top: 0;
-    left: -30vw;
-    width: 30vw;
-    min-width: 260px;
+    
+    /* FLUID MAGIC: Uses the CSS variable to perfectly hide itself off-screen! */
+    width: var(--sidebar-width);
+    left: calc(var(--sidebar-width) * -1); 
+    
     height: 100%;
     background: #0a0a0a;
     border-right: var(--border);
-    /* One below navbar so the bar always renders on top */
     z-index: 2147483646;
     display: flex;
     flex-direction: column;
     padding-top: var(--navbar-height);
     transition: left 0.4s cubic-bezier(0.77, 0, 0.18, 1);
     overflow: hidden;
-
     padding-bottom: env(safe-area-inset-bottom, 0px); 
 }
 
@@ -168,14 +169,19 @@ body {
 
 /* ─── SIDEBAR LABEL ─── */
 .sidebar-label {
-    padding: 18px 28px 12px;
-    font-size: 9px;
+    /* FLUID FIX: Reduced right padding so it doesn't push against the wall */
+    padding: clamp(12px, 2vh, 18px) 16px clamp(8px, 1vh, 12px) clamp(16px, 2vw, 28px);
+    font-size: clamp(8px, 0.8vw, 10px);
     letter-spacing: 0.2em;
     color: rgb(255, 255, 255);
     border-bottom: var(--border);
     display: flex;
     align-items: center;
     gap: 8px;
+    
+    /* FLUID FIX: Allow wrapping */
+    white-space: normal !important;
+    word-wrap: break-word !important;
 }
 
 .sidebar-label::before {
@@ -195,10 +201,14 @@ body {
     min-height: 0; 
 }
 
+/* 1. Scale down the massive font size and enforce word-breaking */
 .sidebar-item {
     padding: 2px 0;                         
     color: rgba(135, 135, 135, 0.5);
-    font-size: clamp(18px, 2.6vw, 30px);
+    
+    /* FLUID FIX: Reduced from 30px max to 22px max so long words actually fit */
+    font-size: clamp(14px, 1.8vw, 22px) !important; 
+    
     font-family: var(--sidebar-font);
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -212,19 +222,28 @@ body {
     user-select: none;
     line-height: 1.15;
     position: relative;
+    
+    /* FLUID FIX: Force text to wrap to a new line if it hits the edge */
+    white-space: normal !important; 
+    word-wrap: break-word !important;
 }
 
 .sidebar-item:hover { color: #fff; }
 .sidebar-item.active { color: var(--sidebar-active-text); }
 .sidebar-item.active:hover { color: var(--sidebar-active-text); }
 
+/* 2. Remove the massive right-padding that is suffocating the text */
 .sidebar-item-inner {
-    padding: 6px 40px 6px 26px;
+    /* FLUID FIX: Reduced the right padding from 40px to 16px */
+    padding: 8px 16px 8px 24px !important; 
     margin-left: var(--sidebar-item-indent);
     position: relative;
-    width: 90% !important; /* Prevents it from overflowing the sidebar */
+    
+    /* FLUID FIX: Give it a bit more width to breathe inside the sidebar */
+    width: 95% !important; 
+    
     box-sizing: border-box !important;
-    gap: 16px !important;  /* Creates a permanent physical space between text and page numbers */
+    gap: 12px !important;  
     z-index: 1;
     display: inline-flex;
     align-items: center;
@@ -246,8 +265,8 @@ body {
 .sidebar-text {
     display: inline-block;
     color: inherit;
-    flex: 1 !important; /* Pushes the page number to the far right */
-    white-space: normal !important; /* Allows long words to drop to a second line */
+    flex: 1 !important; 
+    white-space: normal !important; 
     word-wrap: break-word !important;
     line-height: 1.1 !important;
 }
@@ -255,7 +274,7 @@ body {
 .sidebar-page-num {
     position: relative;
     z-index: 1;
-    font-size: 9px;
+    font-size: clamp(8px, 0.8vw, 10px);
     font-weight: 400;
     letter-spacing: 0.15em;
     color: rgba(135, 135, 135, 0.5);
@@ -279,30 +298,35 @@ body {
 
 /* ─── SIDEBAR FOOTER ─── */
 .sidebar-footer {
-    padding: 18px 28px 24px;
+    /* FLUID FIX: Reduced right padding from 28px down to 12px so text fits! */
+    padding: clamp(14px, 2vh, 18px) 12px clamp(18px, 3vh, 24px) clamp(16px, 2vw, 28px);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .sidebar-footer-item {
-    font-size: 9px;
+    font-size: clamp(9px, 1vw, 11px); /* Bumped slightly for readability */
     letter-spacing: 0.16em;
     color: rgb(255, 255, 255);
     cursor: pointer;
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Better alignment if text wraps */
     gap: 8px;
     transition: color 0.2s;
     user-select: none;
+    
+    /* FLUID FIX: Force long links like "INSTAGRAM" to drop to a new line if squished */
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    line-height: 1.4 !important;
 }
 
 .sidebar-footer-item:hover { color: rgba(255, 255, 255, 0.7); }
-
 /* ─── PAGE COUNTER ─── */
 .sidebar-page-count {
-    padding: 12px 28px;
-    font-size: 9px;
+    padding: clamp(8px, 1.5vh, 12px) clamp(16px, 2vw, 28px);
+    font-size: clamp(8px, 0.8vw, 10px);
     letter-spacing: 0.15em;
     color: rgb(255, 255, 255);
     border-top: var(--border);
@@ -330,63 +354,35 @@ body {
 }
 
 /* ═══════════════════════════════════════════════
-   RESPONSIVE — Mid tablets / small laptops  1025px → 768px
+   MOBILE OPTIMIZATION — THE SINGLE BREAKPOINT
 ═══════════════════════════════════════════════ */
-@media (max-width: 1024px) {
-    .sidebar { width: 38vw; left: -38vw; }
-    .nav-btn { padding: 0 14px; font-size: 10px; }
-    .sidebar-item { font-size: clamp(20px, 3vw, 32px); }
-}
+/* Because of our fluid clamp() variables, we can delete the 1024px, 600px, 
+   and 480px media queries. We ONLY need this one breakpoint for mobile! */
 
-/* ═══════════════════════════════════════════════
-   RESPONSIVE — Tablets (portrait)  769px → 480px
-═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
-    :root { --navbar-height: 52px; }
-    .nav-links { display: none; }
+    :root { 
+        /* Override our variables for mobile views */
+        --navbar-height: 52px; 
+        --sidebar-width: 85vw; /* Takes up most of the screen on phones */
+        --sidebar-notch: 12px;
+    }
+    
+    .nav-links { display: none; } /* Hide the top links, force hamburger usage */
+    .sidebar-page-num { display: none; } /* Hide page numbers to save screen space */
+    
     .navbar { grid-template-columns: var(--navbar-height) 1fr var(--navbar-height); }
-    .sidebar { width: 60vw; left: -60vw; }
-    .sidebar-item { font-size: clamp(16px, 4vw, 26px); white-space: normal; word-break: break-word; }
-    .sidebar-page-num { display: none; }
-    .sidebar-item-inner { padding: 8px 16px 8px 20px; width: 100%; box-sizing: border-box; }
-    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
     .hamburger span { width: 20px; }
+    
+    /* Allow the massive sidebar text to wrap neatly */
+    .sidebar-item { 
+        font-size: clamp(18px, 6vw, 26px); 
+        white-space: normal; 
+        word-break: break-word; 
+    }
+    
+    .sidebar-item-inner { 
+        padding: 8px 16px 8px 20px; 
+        width: 100%; 
+        box-sizing: border-box; 
+    }
 }
-
-/* ═══════════════════════════════════════════════
-   RESPONSIVE — Mobile landscape  601px → 480px
-═══════════════════════════════════════════════ */
-@media (max-width: 600px) and (orientation: landscape) {
-    :root { --navbar-height: 44px; }
-    .sidebar { width: 70vw; left: -70vw; padding-top: var(--navbar-height); }
-    .sidebar-item { font-size: clamp(13px, 3.2vw, 18px); padding: 2px 0; white-space: normal; word-break: break-word; }
-    .sidebar-page-num { display: none; }
-    .sidebar-item-inner { padding: 4px 14px 4px 14px; width: 100%; box-sizing: border-box; }
-    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
-    .sidebar-label { padding: 10px 20px 8px; }
-    .sidebar-footer { padding: 10px 20px 14px; gap: 6px; }
-    .sidebar-page-count { padding: 8px 20px; }
-}
-
-/* ═══════════════════════════════════════════════
-   RESPONSIVE — Mobile portrait  ≤ 480px
-═══════════════════════════════════════════════ */
-@media (max-width: 480px) {
-    :root { --navbar-height: 52px; --sidebar-notch: 12px; }
-    .nav-links { display: none; }
-    .sidebar { width: 88vw; left: -88vw; min-width: unset; }
-    .hamburger { width: var(--navbar-height); height: var(--navbar-height); gap: 6px; }
-    .hamburger span { width: 22px; height: 2px; }
-    .hamburger.open span:nth-child(1) { transform: translateY(8px)  rotate(45deg); }
-    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-    .sidebar-label { padding: 14px 20px 10px; font-size: 8px; }
-    .sidebar-item { font-size: clamp(16px, 6vw, 28px); padding: 3px 0; white-space: normal; word-break: break-word; }
-    .sidebar-item-inner { padding: 6px 14px 6px 16px; margin-left: 0; width: 100%; box-sizing: border-box; }
-    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
-    .sidebar-page-num { display: none; }
-    .sidebar-footer { padding: 14px 20px 18px; gap: 12px; }
-    .sidebar-footer-item { font-size: 9px; letter-spacing: 0.14em; min-height: 36px; }
-    .sidebar-page-count { padding: 10px 20px; font-size: 8px; }
-    .progress-bar { height: 2px; }
-}
-

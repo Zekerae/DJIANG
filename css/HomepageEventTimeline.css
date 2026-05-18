@@ -1,16 +1,16 @@
 /* ══════════════════════════════════════════════════════════════════
    HomepageEventTimeline.css
    Live event tracker — Current, Ongoing & Upcoming events
-   Drop this in your /css/ folder and add:
-     <link rel="stylesheet" href="css/HomepageEventTimeline.css">
-   ══════════════════════════════════════════════════════════════════ */
+   Fluid Architecture Applied: Scales natively on 4K down to Mobile.
+══════════════════════════════════════════════════════════════════ */
 
 /* ── SECTION ── */
 #event-timeline {
   position: relative;
   background: var(--bg, #0a0a0a);
   color: var(--text, #e0e0e0);
-  padding: 80px 0 40px;
+  /* FLUID: Padding grows on tall monitors, shrinks on laptops/phones */
+  padding: clamp(40px, 8vh, 100px) 0 clamp(20px, 4vh, 60px);
   overflow: hidden;
   font-family: inherit;
 }
@@ -19,20 +19,23 @@
   content: '';
   display: block;
   position: absolute;
-  top: 0; left: 5%; right: 5%;
+  top: 0; 
+  left: 5%; 
+  right: 5%;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(180,140,80,0.4), transparent);
 }
 
 /* ── HEADER ── */
 .et-header {
-  max-width: 1200px;
-  margin: 0 auto 48px;
-  padding: 0 40px;
+  /* FLUID: Container scales with screen width up to 1400px */
+  max-width: clamp(800px, 90vw, 1400px);
+  margin: 0 auto clamp(24px, 5vh, 64px);
+  padding: 0 clamp(20px, 4vw, 60px);
 }
 
 .et-header-label {
-  font-size: 0.68rem;
+  font-size: clamp(0.6rem, 1vw, 0.75rem);
   letter-spacing: 0.22em;
   color: rgba(180,140,80,0.8);
   text-transform: uppercase;
@@ -50,21 +53,22 @@
 }
 
 .et-header-sub {
-  font-size: 0.82rem;
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
   color: rgba(200,200,200,0.45);
   letter-spacing: 0.05em;
   max-width: 500px;
   line-height: 1.6;
 }
 
-/* ── TWO-COLUMN GRID ── */
+/* ── DYNAMIC TWO-COLUMN GRID ── */
 .et-grid {
-  max-width: 1200px;
+  max-width: clamp(800px, 90vw, 1400px);
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 clamp(20px, 4vw, 60px);
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  /* FLUID MAGIC: Auto-collapses to 1 column on phones without media queries! */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: clamp(16px, 3vw, 40px);
 }
 
 /* ── COLUMN HEADER ── */
@@ -72,13 +76,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 12px;
+  padding-bottom: clamp(8px, 1.5vh, 16px);
   border-bottom: 1px solid rgba(180,140,80,0.25);
-  margin-bottom: 10px;
+  margin-bottom: clamp(8px, 1.5vh, 16px);
 }
 
 .et-col-title {
-  font-size: 0.78rem;
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -95,7 +99,7 @@
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
   color: rgba(200,200,200,0.45);
-  font-size: 0.6rem;
+  font-size: clamp(0.55rem, 1vw, 0.65rem);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -135,8 +139,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 14px;
-  height: 52px;
-  position: relative;
+  /* FLUID: Bar gets slightly taller on bigger screens */
+  height: clamp(48px, 6vh, 64px); 
+  background-size: cover; 
+  background-position: center; 
+  position: relative; 
   overflow: hidden;
 }
 
@@ -148,36 +155,14 @@
   z-index: 1;
 }
 
-/* Letter-icon fallback */
-.et-event-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.75);
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.et-event-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .et-event-name {
-  font-size: 0.82rem;
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: #fff;
   text-shadow: 0 1px 4px rgba(0,0,0,0.8);
   text-transform: uppercase;
+  padding-left: 10px;
 }
 
 .et-event-bar-right {
@@ -190,7 +175,7 @@
 
 /* ── COUNTDOWN BADGE ── */
 .et-event-timer {
-  font-size: 0.7rem;
+  font-size: clamp(0.6rem, 1vw, 0.75rem);
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 3px 10px;
@@ -233,6 +218,7 @@
   overflow: hidden;
   transition: max-height 0.3s ease;
   background: rgba(12,14,18,0.95);
+  border-top: none;
 }
 
 .et-event-card.open .et-event-details {
@@ -241,7 +227,7 @@
 }
 
 .et-event-details-inner {
-  padding: 14px 16px;
+  padding: clamp(12px, 2vw, 20px);
 }
 
 .et-event-duration {
@@ -253,7 +239,7 @@
 }
 
 .et-event-desc {
-  font-size: 0.76rem;
+  font-size: clamp(0.7rem, 1.1vw, 0.85rem);
   color: rgba(180,180,180,0.65);
   line-height: 1.65;
   max-width: 520px;
@@ -281,9 +267,9 @@
 
 /* ── BOTTOM BAR ── */
 .et-bottom-bar {
-  max-width: 1200px;
-  margin: 32px auto 0;
-  padding: 16px 40px;
+  max-width: clamp(800px, 90vw, 1400px);
+  margin: clamp(24px, 4vh, 48px) auto 0;
+  padding: clamp(12px, 2vh, 24px) clamp(20px, 4vw, 60px);
   border-top: 1px solid rgba(255,255,255,0.05);
   display: flex;
   justify-content: space-between;
@@ -292,75 +278,6 @@
   letter-spacing: 0.12em;
   color: rgba(150,150,150,0.3);
   text-transform: uppercase;
+  flex-wrap: wrap; /* Allows text to wrap neatly on very tiny phones */
+  gap: 12px;
 }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 860px) {
-  .et-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .et-header,
-  .et-grid,
-  .et-bottom-bar {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .et-bottom-bar {
-    flex-direction: column;
-    gap: 6px;
-    text-align: center;
-  }
-}
-
-/* ══════════════════════════════════════════════════
-   EVENT TIMELINE — SECTION STYLES (CLEANED)
-   ══════════════════════════════════════════════════ */
-   #event-timeline { position: relative; background: var(--bg, #0a0a0a); color: var(--text, #e0e0e0); padding: 80px 0 40px; overflow: hidden; font-family: inherit; }
-   #event-timeline::before { content: ''; display: block; position: absolute; top: 0; left: 5%; right: 5%; height: 1px; background: linear-gradient(90deg, transparent, rgba(180,140,80,0.4), transparent); }
-   
-   .et-header { max-width: 1200px; margin: 0 auto 48px; padding: 0 40px; }
-   .et-header-label { font-size: 0.68rem; letter-spacing: 0.22em; color: rgba(180,140,80,0.8); text-transform: uppercase; margin-bottom: 12px; }
-   .et-header-title { font-size: clamp(2.6rem, 6vw, 5rem); font-weight: 800; letter-spacing: -0.02em; line-height: 0.92; text-transform: uppercase; color: var(--text, #e0e0e0); margin-bottom: 20px; }
-   .et-header-sub { font-size: 0.82rem; color: rgba(200,200,200,0.45); letter-spacing: 0.05em; max-width: 500px; line-height: 1.6; }
-   
-   .et-grid { max-width: 1200px; margin: 0 auto; padding: 0 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-   .et-col-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid rgba(180,140,80,0.25); margin-bottom: 10px; }
-   .et-col-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(220,200,160,0.9); }
-   
-   .et-region-tabs { display: flex; gap: 2px; }
-   .et-region-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: rgba(200,200,200,0.45); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; cursor: pointer; transition: all 0.15s; }
-   .et-region-btn:hover { color: rgba(200,200,200,0.75); border-color: rgba(255,255,255,0.15); }
-   .et-region-btn.active { background: rgba(30,120,200,0.25); border-color: rgba(60,150,230,0.5); color: rgba(120,185,255,1); }
-   
-   /* EVENT CARD (PRYDWEN STYLE) */
-   .et-event-card { border: 1px solid rgba(255,255,255,0.06); margin-bottom: 5px; overflow: hidden; transition: border-color 0.15s; cursor: pointer; user-select: none; }
-   .et-event-card:hover { border-color: rgba(255,255,255,0.12); }
-   
-   .et-event-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 14px; height: 52px; background-size: cover; background-position: center; position: relative; overflow: hidden; }
-   /* Notice: Removed the dark tint ::before element here so banners are fully visible! */
-   
-   .et-event-bar-left { display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
-   .et-event-name { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); text-transform: uppercase; padding-left: 10px; }
-   
-   .et-event-bar-right { display: flex; align-items: center; gap: 8px; position: relative; z-index: 1; }
-   .et-event-timer { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 3px; white-space: nowrap; background: rgba(0,0,0,0.55); color: rgba(230,230,230,0.9); border: 1px solid rgba(255,255,255,0.12); }
-   .et-event-timer.ending-soon { background: rgba(200,60,40,0.3); color: rgba(255,150,130,0.95); border-color: rgba(200,60,40,0.5); }
-   .et-event-timer.upcoming-soon { background: rgba(50,150,230,0.2); color: rgba(120,185,255,0.95); border-color: rgba(50,150,230,0.4); }
-   
-   .et-chevron { font-size: 0.65rem; color: rgba(200,200,200,0.5); transition: transform 0.2s; }
-   .et-event-card.open .et-chevron { transform: rotate(180deg); }
-   
-   .et-event-details { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: rgba(12,14,18,0.95); border-top: none; }
-   .et-event-card.open .et-event-details { max-height: 300px; border-top: 1px solid rgba(255,255,255,0.06); }
-   .et-event-details-inner { padding: 14px 16px; }
-   .et-event-duration { font-size: 0.65rem; letter-spacing: 0.1em; color: rgba(180,140,80,0.75); text-transform: uppercase; margin-bottom: 8px; }
-   .et-event-desc { font-size: 0.76rem; color: rgba(180,180,180,0.65); line-height: 1.65; max-width: 520px; }
-   .et-event-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-   .et-event-tag { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; background: rgba(255,255,255,0.05); color: rgba(200,200,200,0.55); border: 1px solid rgba(255,255,255,0.08); }
-   
-   .et-bottom-bar { max-width: 1200px; margin: 32px auto 0; padding: 16px 40px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; font-size: 0.62rem; letter-spacing: 0.12em; color: rgba(150,150,150,0.3); text-transform: uppercase; }
-   
-   @media (max-width: 860px) { .et-grid { grid-template-columns: 1fr; } .et-header, .et-grid, .et-bottom-bar { padding-left: 20px; padding-right: 20px; } .et-bottom-bar { flex-direction: column; gap: 6px; text-align: center; } }
-   
