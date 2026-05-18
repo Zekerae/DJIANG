@@ -705,12 +705,14 @@
   text-shadow: 0 0 20px rgba(212,148,58,.4);
 }
 .tour-desc {
+  font-family: 'DM Sans', sans-serif;
   font-size: .78rem;
+  font-weight: 400;
   color: #d4cfdf !important;
   line-height: 1.7;
   margin-bottom: 14px;
 }
-.tour-desc b { color: #f0b866 !important; font-weight: 600; }
+.tour-desc b { font-family: 'DM Sans', sans-serif; color: #f0b866 !important; font-weight: 600; }
 .tour-actions { display: flex; align-items: center; justify-content: space-between; }
 .tour-skip {
   font-family: 'Rajdhani', sans-serif;
