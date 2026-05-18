@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="css/LogIn.css">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg:   #07080b;
@@ -1105,29 +1106,52 @@ window.addEventListener('resize', () => {
 
 
 /* =========================================================
-   SUPABASE CONFIG
+   SUPABASE — SDK (matches auth.html)
    ========================================================= */
 const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const sbHeaders = {
-  'Content-Type':  'application/json',
-  'apikey':        SUPABASE_ANON_KEY,
-  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-};
+let currentUser = null;
 
-async function sbGet(table, params = '') {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, { headers: sbHeaders });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function sbUpsert(table, body) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-    method: 'POST',
-    headers: { ...sbHeaders, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-    body: JSON.stringify(body),
+// Auth gate — redirect to auth.html if not signed in
+async function initAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) { window.location.href = 'auth.html'; return false; }
+  currentUser = session.user;
+  // Keep session fresh on tab focus
+  db.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT' || !session) window.location.href = 'auth.html';
+    else currentUser = session.user;
   });
-  if (!r.ok) throw new Error(await r.text());
+  return true;
+}
+
+// Thin SDK wrappers that mirror the old sbGet/sbUpsert signatures
+async function sbGet(table, params = '') {
+  const url = new URL('http://x?' + params);
+  const select = url.searchParams.get('select') || '*';
+  let q = db.from(table).select(select);
+  url.searchParams.forEach((val, key) => {
+    if (key === 'select' || key === 'order') return;
+    const m = key.match(/^(.+)\.(eq|neq|gt|lt|gte|lte|in)$/);
+    if (m) q = q[m[2]](m[1], val);
+  });
+  const orderParam = url.searchParams.get('order');
+  if (orderParam) {
+    orderParam.split(',').forEach(o => {
+      const [col, dir] = o.split('.');
+      q = q.order(col, { ascending: dir !== 'desc' });
+    });
+  }
+  const { data, error } = await q;
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+async function sbUpsert(table, body) {
+  const { error } = await db.from(table).upsert(body, { onConflict: 'user_id,weapon_id' });
+  if (error) throw new Error(error.message);
 }
 
 /* =========================================================
@@ -1471,15 +1495,19 @@ function lsSave(weaponId, data) {
 async function fetchProgress(weaponId) {
   // 1. Always read from localStorage first (instant, no auth needed)
   const local = lsGetAll()[weaponId] || null;
-  // 2. Optionally try Supabase in background (silently ignore 401/RLS errors)
+  if (!currentUser) return local;
+  // 2. Try Supabase — filter by the logged-in user
   try {
-    const rows = await sbGet('weapon_progress', `select=*&weapon_id=eq.${weaponId}`);
-    const remote = rows[0] || null;
-    if (remote) {
-      // If remote is newer, use it and update local cache
-      if (!local || (remote.updated_at && new Date(remote.updated_at) > new Date(local.updated || 0))) {
-        lsSave(weaponId, { level: remote.level, notes: remote.notes, tags: remote.tags, skill_level: remote.skill_level });
-        return remote;
+    const { data, error } = await db.from('weapon_progress')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .eq('weapon_id', weaponId)
+      .single();
+    if (data && !error) {
+      // If remote is newer, use it and refresh local cache
+      if (!local || new Date(data.updated_at) > new Date(local.updated || 0)) {
+        lsSave(weaponId, { level: data.level, notes: data.notes, tags: data.tags, skill_level: data.skill_level });
+        return data;
       }
     }
   } catch { /* RLS / network error — silently use local */ }
@@ -1487,13 +1515,30 @@ async function fetchProgress(weaponId) {
 }
 
 async function saveProgress(weaponId, level, notes, tags, skillLevel) {
-  // 1. Always save to localStorage immediately (no badge flicker)
+  // 1. Always save to localStorage immediately
   lsSave(weaponId, { level, notes, tags, skill_level: skillLevel });
-  setSaveBadge('saved');
-  // 2. Try Supabase in background — silently swallow RLS / auth errors
+  setSaveBadge('saving');
+  if (!currentUser) { setSaveBadge('saved'); return; }
+  // 2. Upsert to Supabase with user_id — table PK is (user_id, weapon_id)
   try {
-    await sbUpsert('weapon_progress', { weapon_id: weaponId, level, notes, tags, skill_level: skillLevel, updated_at: new Date().toISOString() });
-  } catch { /* Supabase unavailable or RLS blocked — localStorage already saved */ }
+    const { error } = await db.from('weapon_progress').upsert(
+      {
+        user_id:     currentUser.id,
+        weapon_id:   weaponId,
+        level,
+        notes,
+        tags,
+        skill_level: skillLevel,
+        updated_at:  new Date().toISOString(),
+      },
+      { onConflict: 'user_id,weapon_id' }
+    );
+    if (error) throw new Error(error.message);
+    setSaveBadge('saved');
+  } catch(e) {
+    console.error('[Supabase save error]', e.message);
+    setSaveBadge('error');
+  }
 }
 
 function setSaveBadge(state) {
@@ -2091,6 +2136,8 @@ document.getElementById('trackEnd').addEventListener('input', updateTrackMats);
    INIT
    ========================================================= */
 async function init() {
+  const authed = await initAuth();
+  if (!authed) return; // redirected to auth.html
   await Promise.all([fetchWeapons(), fetchAllWeaponSkills(), fetchAllAtkCurves()]);
   document.getElementById('loadingOverlay').classList.add('hide');
   if (WEAPONS.length > 0) {
