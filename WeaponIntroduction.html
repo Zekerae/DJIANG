@@ -378,57 +378,121 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .stat-block-val{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:1px;color:#fff;transition:.3s;}
 .stat-block-val.bump{color:var(--gold2);transform:scale(1.12);}
 
-/* ── SKILL ITEMS (new list style matching screenshot) ── */
-.main-stats{display:flex;flex-direction:column;gap:0;}
-.skill-list-item{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:10px 0;
-  border-bottom:1px solid var(--bord);
-  position:relative;
-}
-.skill-list-item:last-child{border-bottom:none;}
-.skill-list-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:rgba(255,255,255,.25);
-  border:1px solid rgba(255,255,255,.18);
-  margin-top:4px;flex-shrink:0;
-}
-.skill-list-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
-.skill-list-name{
-  font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;
-  letter-spacing:.5px;color:var(--text);line-height:1.2;
-}
-.skill-list-sub{
-  font-size:.72rem;color:var(--dim2);line-height:1.55;
-}
-.skill-list-sub .hl-atk{color:var(--gold2);font-weight:600;}
-.skill-list-sub .hl{color:#7ab8ff;font-weight:600;}
-.skill-list-ctrl{
-  display:flex;align-items:center;gap:0;
-  flex-shrink:0;margin-top:1px;
-}
-.ms-btn{
-  width:22px;height:22px;
-  background:rgba(255,255,255,.07);border:1px solid var(--bord2);
-  color:var(--text);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:.95rem;transition:.18s;line-height:1;padding:0;
-  border-radius:4px;
-}
-.ms-btn:first-child{border-radius:4px 0 0 4px;}
-.ms-btn:last-child{border-radius:0 4px 4px 0;}
-.ms-btn:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:#fff;}
-.ms-btn:disabled{opacity:.25;cursor:not-allowed;}
-.ms-lv{
-  font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:700;
-  letter-spacing:.5px;color:var(--text);
-  min-width:38px;text-align:center;
-  padding:0 2px;
-  border-top:1px solid var(--bord2);border-bottom:1px solid var(--bord2);
-  height:22px;display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.25);
-}
+/* ── STAT CARDS ── */
+.main-stats{display:flex;flex-direction:column;gap:8px;}
 
-/* legacy skill-level slider (hidden now, kept for compat) */
+.stat-card{
+  position:relative;overflow:hidden;
+  background:rgba(0,0,0,.28);
+  border:1px solid var(--bord2);
+  border-radius:10px;
+  padding:12px 14px 10px;
+  display:flex;flex-direction:column;gap:8px;
+  transition:border-color .25s,box-shadow .25s;
+}
+.stat-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 60%);
+  pointer-events:none;
+}
+.stat-card:hover{
+  border-color:var(--accent);
+  box-shadow:0 0 18px var(--accent-glow),inset 0 0 12px rgba(0,0,0,.15);
+}
+.stat-card-top{display:flex;align-items:center;gap:9px;}
+.stat-card-icon{
+  width:26px;height:26px;border-radius:6px;
+  background:var(--accent-dim);
+  border:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--accent);flex-shrink:0;
+}
+.stat-card-icon svg{width:13px;height:13px;}
+.stat-card-label{
+  font-family:'Rajdhani',sans-serif;font-size:.68rem;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--dim2);
+  flex:1;
+}
+.stat-card-stepper{display:flex;align-items:center;gap:0;flex-shrink:0;}
+.ms-btn{
+  width:20px;height:20px;
+  background:rgba(255,255,255,.06);border:1px solid var(--bord2);
+  color:var(--dim2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:.9rem;transition:.18s;line-height:1;padding:0;
+  border-radius:3px;
+}
+.ms-btn:first-child{border-radius:3px 0 0 3px;}
+.ms-btn:last-child{border-radius:0 3px 3px 0;}
+.ms-btn:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:#fff;}
+.ms-btn:disabled{opacity:.2;cursor:not-allowed;}
+.ms-lv{
+  font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;
+  letter-spacing:.5px;color:var(--dim2);
+  min-width:34px;text-align:center;
+  border-top:1px solid var(--bord2);border-bottom:1px solid var(--bord2);
+  height:20px;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.3);
+}
+.stat-card-val-row{display:flex;align-items:flex-end;gap:8px;}
+.stat-card-val{
+  font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:1.5px;
+  color:#fff;line-height:1;
+  transition:color .25s,transform .2s;
+}
+.stat-card-val.bump{color:var(--gold2);transform:scale(1.1);}
+.stat-card-bar-wrap{height:3px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden;}
+.stat-card-bar-fill{
+  height:100%;border-radius:2px;
+  background:linear-gradient(90deg,var(--accent),var(--gold2));
+  transition:width .35s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 6px var(--accent-glow);
+}
+.stat-card-pips{display:flex;justify-content:space-between;padding:0 1px;margin-top:3px;}
+.stat-pip{
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(255,255,255,.12);
+  transition:background .25s,box-shadow .25s;
+}
+.stat-pip.lit{background:var(--accent);box-shadow:0 0 4px var(--accent);}
+
+/* ── EFFECT PANEL ── */
+#skillsContainer{margin-top:2px;}
+.effect-panel{
+  position:relative;overflow:hidden;
+  background:rgba(0,0,0,.22);
+  border:1px solid var(--bord2);
+  border-radius:10px;
+  padding:12px 14px;
+  display:flex;flex-direction:column;gap:0;
+}
+.effect-panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:.55;pointer-events:none;
+}
+.effect-panel-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.effect-panel-icon{
+  width:22px;height:22px;border-radius:5px;
+  background:var(--accent-dim);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--accent);flex-shrink:0;
+}
+.effect-panel-icon svg{width:11px;height:11px;}
+.effect-panel-label{
+  font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--accent);flex:1;
+}
+.effect-panel-stepper{display:flex;align-items:center;gap:0;flex-shrink:0;}
+.effect-panel-name{
+  font-family:'Rajdhani',sans-serif;font-size:.82rem;font-weight:700;
+  letter-spacing:.5px;color:var(--text);margin-bottom:5px;
+}
+.effect-panel-desc{font-size:.72rem;color:var(--dim2);line-height:1.65;}
+.effect-panel-desc .hl-atk{color:var(--gold2);font-weight:600;}
+.effect-panel-desc .hl{color:#7ab8ff;font-weight:600;}
+
+/* legacy hidden */
+.skill-list-item{display:none;}
 .sk-slider-wrap{display:none;}
 .sk-slider{display:none;}
 .sk-lv-badge{display:none;}
@@ -1082,8 +1146,8 @@ const RARITY_STRIPE = {
   3: { top:'#90c890', bot:'#3a7a3a' },
 };
 
-const MAX_LEVEL  = { 6:90, 5:80, 4:70, 3:60 };
-const MILESTONES = { 6:[20,40,60,80,90], 5:[20,40,60,80], 4:[20,40,60,70], 3:[20,40,60] };
+const MAX_LEVEL  = { 6:90, 5:90, 4:90, 3:90 };
+const MILESTONES = { 6:[20,40,60,80,90], 5:[20,40,60,80,90], 4:[20,40,60,80,90], 3:[20,40,60,80,90] };
 
 // Populated from weapon_atk_curve: { [weapon_id]: [ {lv, atk}, ... ] sorted by lv }
 let DB_ATK_CURVES = {};
@@ -1151,49 +1215,55 @@ function fmtNum(v) { return typeof v === 'number' ? (Number.isInteger(v) ? v : v
 function fmtPct(v) { return typeof v === 'number' ? v.toFixed(1) : v; }
 function hi(v) { return '<span class="hl-atk">+' + v + '</span>'; }
 
+// Map every skill_id used in the DB to a render function
+// skill_id values come directly from weapon_skills.skill_id column
 const SKILL_RENDERS = {
-  intellect:  (v) => 'Intellect '    + hi(fmtNum(v)),
-  agility:    (v) => 'Agility '      + hi(fmtNum(v)),
-  strength:   (v) => 'Strength '     + hi(fmtNum(v)),
-  will:       (v) => 'Willpower '    + hi(fmtNum(v)),
-  attack:     (v) => 'Attack '       + hi(fmtPct(v) + '%'),
-  crit_rate:  (v) => 'Critical Rate '+ hi(fmtPct(v) + '%'),
-  phys_dmg:   (v) => 'Physical DMG ' + hi(fmtPct(v) + '%'),
-  arts_dmg:   (v) => 'Arts DMG '     + hi(fmtPct(v) + '%'),
-  heat_dmg:   (v) => 'Heat DMG '     + hi(fmtPct(v) + '%'),
-  cryo_dmg:   (v) => 'Cryo DMG '     + hi(fmtPct(v) + '%'),
-  elec_dmg:   (v) => 'Electric DMG ' + hi(fmtPct(v) + '%'),
-  nat_dmg:    (v) => 'Nature DMG '   + hi(fmtPct(v) + '%'),
-  treat_bon:  (v) => 'Treatment Bonus ' + hi(fmtPct(v) + '%'),
-  max_hp:     (v) => 'Max HP '       + hi(fmtPct(v) + '%'),
-  ult_gain:   (v) => 'Ult. Gain Eff.' + hi(fmtPct(v) + '%'),
-  arts_int:   (v) => 'Arts Intensity '+ hi(fmtNum(v)),
-  main_attr:  (v) => 'Main Attribute '+ hi(fmtNum(v)),
+  intellect:      (v) => 'Intellect '           + hi(fmtNum(v)),
+  agility:        (v) => 'Agility '             + hi(fmtNum(v)),
+  strength:       (v) => 'Strength '            + hi(fmtNum(v)),
+  will:           (v) => 'Willpower '           + hi(fmtNum(v)),
+  main_attr:      (v) => 'Main Attribute '      + hi(fmtNum(v)),
+  attack_percent: (v) => 'Attack '              + hi(fmtPct(v) + '%'),
+  crit_rate:      (v) => 'Critical Rate '       + hi(fmtPct(v) + '%'),
+  phys_dmg:       (v) => 'Physical DMG '        + hi(fmtPct(v) + '%'),
+  arts_dmg:       (v) => 'Arts DMG '            + hi(fmtPct(v) + '%'),
+  arts_dmg_bonus: (v) => 'Arts DMG '            + hi(fmtPct(v) + '%'),
+  heat_dmg:       (v) => 'Heat DMG '            + hi(fmtPct(v) + '%'),
+  cryo_dmg:       (v) => 'Cryo DMG '            + hi(fmtPct(v) + '%'),
+  elec_dmg:       (v) => 'Electric DMG '        + hi(fmtPct(v) + '%'),
+  nat_dmg:        (v) => 'Nature DMG '          + hi(fmtPct(v) + '%'),
+  te_bonus:       (v) => 'Treatment Bonus '     + hi(fmtPct(v) + '%'),
+  te_percent:     (v) => 'Treatment Bonus '     + hi(fmtPct(v) + '%'),
+  hp_percent:     (v) => 'Max HP '              + hi(fmtPct(v) + '%'),
+  uge_percent:    (v) => 'Ult. Gain Eff. '      + hi(fmtPct(v) + '%'),
+  arts_intensity: (v) => 'Arts Intensity '      + hi(fmtNum(v)),
 };
 
 function resolveRenderFn(skillId, skillName, data) {
   if (SKILL_RENDERS[skillId]) return SKILL_RENDERS[skillId];
-  // Try to infer from skill_name for any unmapped IDs
-  const nameLow = (skillName || '').toLowerCase();
-  if (nameLow.includes('attack') || nameLow.includes('atk'))
-    return (v) => 'Attack ' + hi(fmtPct(v) + '%');
-  if (nameLow.includes('intellect') || nameLow.includes('int'))
-    return (v) => 'Intellect ' + hi(fmtNum(v));
-  if (nameLow.includes('agility') || nameLow.includes('agi'))
-    return (v) => 'Agility ' + hi(fmtNum(v));
-  if (nameLow.includes('strength') || nameLow.includes('str'))
-    return (v) => 'Strength ' + hi(fmtNum(v));
-  if (nameLow.includes('will'))
-    return (v) => 'Willpower ' + hi(fmtNum(v));
-  // Object-valued data (effect)
-  const sample = Array.isArray(data) ? data[0] : null;
-  if (sample !== null && typeof sample === 'object') {
-    return (v) => Object.entries(v).map(([k,val]) =>
-      k + ': ' + hi(typeof val === 'number' ? val.toFixed(1) : val)
-    ).join(' · ');
-  }
-  return (v) => hi(typeof v === 'number' ? v.toFixed(1) : v);
+  // Fallback by name keywords for any unmapped ids
+  const n = (skillName || '').toLowerCase();
+  if (n.includes('attack') || n.includes('atk'))    return (v) => 'Attack '         + hi(fmtPct(v) + '%');
+  if (n.includes('intellect'))                       return (v) => 'Intellect '      + hi(fmtNum(v));
+  if (n.includes('agility'))                         return (v) => 'Agility '        + hi(fmtNum(v));
+  if (n.includes('strength'))                        return (v) => 'Strength '       + hi(fmtNum(v));
+  if (n.includes('willpower') || n.includes('will')) return (v) => 'Willpower '      + hi(fmtNum(v));
+  if (n.includes('arts intensity'))                  return (v) => 'Arts Intensity ' + hi(fmtNum(v));
+  if (n.includes('arts dmg'))                        return (v) => 'Arts DMG '       + hi(fmtPct(v) + '%');
+  if (n.includes('phys') || n.includes('physical'))  return (v) => 'Physical DMG '   + hi(fmtPct(v) + '%');
+  if (n.includes('heat'))                            return (v) => 'Heat DMG '       + hi(fmtPct(v) + '%');
+  if (n.includes('cryo'))                            return (v) => 'Cryo DMG '       + hi(fmtPct(v) + '%');
+  if (n.includes('elec'))                            return (v) => 'Electric DMG '   + hi(fmtPct(v) + '%');
+  if (n.includes('nature'))                          return (v) => 'Nature DMG '     + hi(fmtPct(v) + '%');
+  if (n.includes('treatment') || n.includes('te'))   return (v) => 'Treatment Bonus '+ hi(fmtPct(v) + '%');
+  if (n.includes('hp') || n.includes('max hp'))      return (v) => 'Max HP '         + hi(fmtPct(v) + '%');
+  if (n.includes('ult') || n.includes('uge'))        return (v) => 'Ult. Gain Eff. ' + hi(fmtPct(v) + '%');
+  if (n.includes('crit'))                            return (v) => 'Critical Rate '  + hi(fmtPct(v) + '%');
+  if (n.includes('main attr'))                       return (v) => 'Main Attribute ' + hi(fmtNum(v));
+  // Effect skills (skill_index 2) — object values, not rendered via this path
+  return (v) => typeof v === 'number' ? hi(fmtNum(v)) : hi(v);
 }
+
 
 /* =========================================================
    STATE
@@ -1202,7 +1272,8 @@ let WEAPONS          = [];
 let DB_WEAPON_SKILLS = {};
 let curWeapon        = null;
 let curLevel         = 90;
-let curSkillLevel    = 4;   // 1–9, shared across all skill slots for this weapon
+let curSkillLevel    = 4;   // legacy save compat (mirrors slot 0)
+let curSkLv          = [4, 4, 4]; // independent skill level per slot: [stat0, stat1, effect]
 let curTags          = [];
 let skillLevels      = {};
 let dragging         = false;
@@ -1259,12 +1330,100 @@ async function fetchAllWeaponSkills() {
     );
   }
 }
+// Static ATK curves embedded from weapon_atk_curve_rows.csv
+// Each weapon has breakpoints at lv 1, 20, 40, 60, 80, 90.
+// getAtkAtLevel() linearly interpolates between these.
+const STATIC_ATK_CURVES = {
+  "aggeloslayer": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "ancient-canal": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "artzy-tyrannical": [{lv:1,atk:51}, {lv:20,atk:148}, {lv:40,atk:250}, {lv:60,atk:352}, {lv:80,atk:454}, {lv:90,atk:505}],
+  "aspirant": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "brigands-calling": [{lv:1,atk:51}, {lv:20,atk:148}, {lv:40,atk:250}, {lv:60,atk:352}, {lv:80,atk:454}, {lv:90,atk:505}],
+  "chimeric-justice": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "chivalric-virtues": [{lv:1,atk:49}, {lv:20,atk:142}, {lv:40,atk:240}, {lv:60,atk:338}, {lv:80,atk:436}, {lv:90,atk:485}],
+  "clannibal": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "cohesive-traction": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "darhoff-7": [{lv:1,atk:29}, {lv:20,atk:83}, {lv:40,atk:140}, {lv:60,atk:197}, {lv:80,atk:254}, {lv:90,atk:283}],
+  "delivery-guaranteed": [{lv:1,atk:51}, {lv:20,atk:146}, {lv:40,atk:247}, {lv:60,atk:348}, {lv:80,atk:449}, {lv:90,atk:500}],
+  "detonation-unit": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "dreams-of-the-starry-beach": [{lv:1,atk:50}, {lv:20,atk:145}, {lv:40,atk:245}, {lv:60,atk:345}, {lv:80,atk:445}, {lv:90,atk:495}],
+  "eminent-repute": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "exemplar": [{lv:1,atk:51}, {lv:20,atk:146}, {lv:40,atk:247}, {lv:60,atk:348}, {lv:80,atk:449}, {lv:90,atk:500}],
+  "finchaser-3-0": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "finishing-call": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "flickers-in-the-mist": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "fluorescent-roc": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "forgeborn-scathe": [{lv:1,atk:52}, {lv:20,atk:149}, {lv:40,atk:252}, {lv:60,atk:355}, {lv:80,atk:458}, {lv:90,atk:510}],
+  "former-finery": [{lv:1,atk:50}, {lv:20,atk:145}, {lv:40,atk:245}, {lv:60,atk:345}, {lv:80,atk:445}, {lv:90,atk:495}],
+  "fortmaker": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "freedom-to-proselytize": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "glorious-memory": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "grand-vision": [{lv:1,atk:51}, {lv:20,atk:146}, {lv:40,atk:247}, {lv:60,atk:348}, {lv:80,atk:449}, {lv:90,atk:500}],
+  "home-longing": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "howling-guard": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "hypernova-auto": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "industry-0-1": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "jet": [{lv:1,atk:51}, {lv:20,atk:146}, {lv:40,atk:247}, {lv:60,atk:348}, {lv:80,atk:449}, {lv:90,atk:500}],
+  "jiminy-12": [{lv:1,atk:29}, {lv:20,atk:83}, {lv:40,atk:140}, {lv:60,atk:197}, {lv:80,atk:254}, {lv:90,atk:283}],
+  "khravengger": [{lv:1,atk:51}, {lv:20,atk:148}, {lv:40,atk:250}, {lv:60,atk:352}, {lv:80,atk:454}, {lv:90,atk:505}],
+  "lone-barge": [{lv:1,atk:52}, {lv:20,atk:149}, {lv:40,atk:252}, {lv:60,atk:355}, {lv:80,atk:458}, {lv:90,atk:510}],
+  "long-road": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "lupine-scarlet": [{lv:1,atk:51}, {lv:20,atk:148}, {lv:40,atk:250}, {lv:60,atk:352}, {lv:80,atk:454}, {lv:90,atk:505}],
+  "monaihe": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "mountain-bearer": [{lv:1,atk:51}, {lv:20,atk:146}, {lv:40,atk:247}, {lv:60,atk:348}, {lv:80,atk:449}, {lv:90,atk:500}],
+  "navigator": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "never-rest": [{lv:1,atk:51}, {lv:20,atk:146}, {lv:40,atk:247}, {lv:60,atk:348}, {lv:80,atk:449}, {lv:90,atk:500}],
+  "obj-arts-identifier": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "obj-edge-of-lightness": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "obj-heavy-burden": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "obj-razorhorn": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "obj-velocitous": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "oblivion": [{lv:1,atk:50}, {lv:20,atk:145}, {lv:40,atk:245}, {lv:60,atk:345}, {lv:80,atk:445}, {lv:90,atk:495}],
+  "opero-77": [{lv:1,atk:29}, {lv:20,atk:83}, {lv:40,atk:140}, {lv:60,atk:197}, {lv:80,atk:254}, {lv:90,atk:283}],
+  "opus-etch-figure": [{lv:1,atk:49}, {lv:20,atk:142}, {lv:40,atk:240}, {lv:60,atk:338}, {lv:80,atk:436}, {lv:90,atk:485}],
+  "opus-the-living": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "pathfinders-beacon": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "peco-5": [{lv:1,atk:29}, {lv:20,atk:83}, {lv:40,atk:140}, {lv:60,atk:197}, {lv:80,atk:254}, {lv:90,atk:283}],
+  "prominent-edge": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "quencher": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "rapid-ascent": [{lv:1,atk:50}, {lv:20,atk:145}, {lv:40,atk:245}, {lv:60,atk:345}, {lv:80,atk:445}, {lv:90,atk:495}],
+  "rational-farewell": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "seeker-of-dark-lung": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "stanza-of-memorials": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "sundered-prince": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "sundering-steel": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "tarr-11": [{lv:1,atk:29}, {lv:20,atk:83}, {lv:40,atk:140}, {lv:60,atk:197}, {lv:80,atk:254}, {lv:90,atk:283}],
+  "thermite-cutter": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "thunderberge": [{lv:1,atk:50}, {lv:20,atk:145}, {lv:40,atk:245}, {lv:60,atk:345}, {lv:80,atk:445}, {lv:90,atk:495}],
+  "twelve-questions": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+  "umbral-torch": [{lv:1,atk:50}, {lv:20,atk:144}, {lv:40,atk:243}, {lv:60,atk:342}, {lv:80,atk:441}, {lv:90,atk:490}],
+  "valiant": [{lv:1,atk:50}, {lv:20,atk:145}, {lv:40,atk:245}, {lv:60,atk:345}, {lv:80,atk:445}, {lv:90,atk:495}],
+  "wave-tide": [{lv:1,atk:34}, {lv:20,atk:100}, {lv:40,atk:169}, {lv:60,atk:238}, {lv:80,atk:307}, {lv:90,atk:341}],
+  "wedge": [{lv:1,atk:51}, {lv:20,atk:146}, {lv:40,atk:247}, {lv:60,atk:348}, {lv:80,atk:449}, {lv:90,atk:500}],
+  "white-night-nova": [{lv:1,atk:51}, {lv:20,atk:148}, {lv:40,atk:250}, {lv:60,atk:352}, {lv:80,atk:454}, {lv:90,atk:505}],
+  "wild-wanderer": [{lv:1,atk:42}, {lv:20,atk:120}, {lv:40,atk:203}, {lv:60,atk:286}, {lv:80,atk:369}, {lv:90,atk:411}],
+};
+
 async function fetchAllAtkCurves() {
-  const rows = await sbGet('weapon_atk_curve', 'select=weapon_id,lv,atk&order=weapon_id.asc,lv.asc');
+  // Seed from embedded static data first so ATK is always correct
   DB_ATK_CURVES = {};
-  for (const row of rows) {
-    if (!DB_ATK_CURVES[row.weapon_id]) DB_ATK_CURVES[row.weapon_id] = [];
-    DB_ATK_CURVES[row.weapon_id].push({ lv: row.lv, atk: row.atk });
+  for (const [wid, pts] of Object.entries(STATIC_ATK_CURVES)) {
+    DB_ATK_CURVES[wid] = pts.slice(); // copy
+  }
+  // Merge any additional rows from Supabase (new weapons, corrections)
+  try {
+    const rows = await sbGet('weapon_atk_curve', 'select=weapon_id,lv,atk&order=weapon_id.asc,lv.asc');
+    for (const row of rows) {
+      if (!DB_ATK_CURVES[row.weapon_id]) DB_ATK_CURVES[row.weapon_id] = [];
+      // Only add if this breakpoint isn't already covered by the static data
+      const existing = DB_ATK_CURVES[row.weapon_id];
+      if (!existing.find(p => p.lv === row.lv)) {
+        existing.push({ lv: row.lv, atk: row.atk });
+        existing.sort((a, b) => a.lv - b.lv);
+      }
+    }
+  } catch(e) {
+    console.warn('[AtkCurves] Supabase fetch skipped, using static data:', e.message);
   }
 }
 
@@ -1463,7 +1622,9 @@ async function loadWeapon(id) {
   skills.forEach((sk,i) => { skillLevels[i] = sk.defaultLv; });
   const progress   = await fetchProgress(id);
   const savedLevel = progress?.level ?? maxLv;
-  curSkillLevel    = progress?.skill_level ?? (skills[0]?.defaultLv ?? 4);
+  const defLv = progress?.skill_level ?? (skills[0]?.defaultLv ?? 4);
+  curSkillLevel = defLv;
+  curSkLv = [defLv, defLv, defLv];
   curTags = progress?.tags ?? [];
   document.getElementById('notesArea').value = progress?.notes ?? '';
   renderTags();
@@ -1539,80 +1700,72 @@ function renderStatValue(sk, lv) {
   return '<span class="hl">' + (typeof val === 'number' ? (Number.isInteger(val) ? val : val.toFixed(1)) : val) + '</span>';
 }
 
-// Render effect description by substituting {value_N} placeholders
+// Render effect description for skill_index 2
+// data[lv-1] is an object like {value_1: 25.6, value_2: 120}
+// passive_lv9 is the lv9 description text with the lv9 numbers embedded
+// Strategy: replace lv9 numeric values in the text with current-level values
 function renderEffectDesc(sk, lv, weapon) {
-  if (!sk) return '—';
-  const entry = Array.isArray(sk.data) ? sk.data[lv - 1] : null;
-  if (!entry) return weapon?.passive_lv9 || '—';
-
-  // Get template: stored in weapon.effect_description_template or reconstruct from passive_lv9 at lv9
-  // We use the passive_lv9 (lv9 description) as a reference pattern, then substitute values
-  // Since the DB doesn't store the template, we reconstruct from the lv9 text by back-substituting
-  // the lv9 values and then re-substituting the current lv values.
-  if (!entry || typeof entry !== 'object') {
-    // scalar effect — just return the value
-    return `<span class="hl-atk">${typeof entry === 'number' && !Number.isInteger(entry) ? entry.toFixed(1) : entry}</span>`;
-  }
-
-  // Get the lv9 entry to find lv9 values for building a reverse template
+  if (!sk) return weapon?.passive_lv9 || '—';
+  const entry   = Array.isArray(sk.data) ? sk.data[lv - 1] : null;
   const lv9entry = Array.isArray(sk.data) ? sk.data[8] : null;
-  const lv9text  = weapon?.passive_lv9 || '';
+  const template = weapon?.passive_lv9 || '';
 
-  // Build a regex-based template from lv9 text by replacing lv9 numeric values
-  // ordered by value magnitude (largest first to avoid partial replacement)
-  let template = lv9text;
-  const keys = Object.keys(lv9entry || {});
-
-  if (lv9entry && lv9text) {
-    // Sort keys so we replace longest/most-specific values first
-    const sorted = [...keys].sort((a,b) => {
-      const va = lv9entry[a], vb = lv9entry[b];
-      return String(vb).length - String(va).length;
-    });
-    for (const k of sorted) {
-      const v = lv9entry[k];
-      const displayV = typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : String(v);
-      // Replace the first occurrence of this number in the template
-      template = template.replace(displayV, `__${k}__`);
+  if (!entry || !lv9entry || !template) {
+    // No template — just list current values
+    if (entry && typeof entry === 'object') {
+      return Object.values(entry).map(v =>
+        '<span class="hl-atk">+' + (typeof v === 'number' ? (Number.isInteger(v) ? v : v.toFixed(1)) : v) + '</span>'
+      ).join(' / ');
     }
-    // Now substitute current level values
-    for (const k of keys) {
-      const v = entry[k];
-      const displayV = typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : String(v);
-      template = template.replace(`__${k}__`, `<span class="hl-atk">${displayV}</span>`);
-    }
-    // Clean up any unreplaced placeholders
-    template = template.replace(/__\w+__/g, '?');
-    return template;
+    return template || '—';
   }
 
-  // Fallback: just list the values
-  return keys.map(k => {
+  // Build a sorted list of [key, lv9displayValue] pairs, longest values first
+  // to avoid partial replacement (e.g. "210" before "21")
+  const keys = Object.keys(lv9entry);
+  const pairs = keys.map(k => {
+    const v = lv9entry[k];
+    const display = typeof v === 'number'
+      ? (Number.isInteger(v) ? String(v) : v.toFixed(1))
+      : String(v);
+    return { k, display };
+  }).sort((a, b) => b.display.length - a.display.length || b.display.localeCompare(a.display));
+
+  // Replace each lv9 value with a placeholder, then substitute current value
+  let result = template;
+  for (const { k, display } of pairs) {
+    // Use word-boundary aware replacement to avoid replacing "4" inside "44.8"
+    result = result.replace(display, ' ' + k + ' ');
+  }
+  for (const { k } of pairs) {
     const v = entry[k];
-    const displayV = typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(1) : String(v);
-    return `<span class="hl-atk">${displayV}</span>`;
-  }).join(' / ');
+    const display = typeof v === 'number'
+      ? (Number.isInteger(v) ? String(v) : v.toFixed(1))
+      : String(v);
+    result = result.replace(' ' + k + ' ', '<span class="hl-atk">' + display + '</span>');
+  }
+  // Clean any unreplaced placeholders
+  result = result.replace(/ \w+ /g, '?');
+  return result;
 }
 
-function buildMainStats(weapon, lv) {
-  const container = document.getElementById('mainStats');
+
+// A "stat skill" has a scalar data array (numbers, not objects).
+// 3-star weapons use skill_index 1 for their effect (object array), not a second flat stat.
+function isStatSkill(sk) {
+  if (!sk || !Array.isArray(sk.data) || sk.data.length === 0) return false;
+  return typeof sk.data[0] === 'number';
+}
+
+function resolveSkills(weapon) {
   const skills = DB_WEAPON_SKILLS[weapon.id] || [];
-  console.log('[buildMainStats] weapon:', weapon.id, 'skills from DB:', skills.length);
-
-  // Try skill_index 0 & 1 from weapon_skills table first
-  let sk0 = skills.find(s => s.skill_index === 0) || skills[0] || null;
-  let sk1 = skills.find(s => s.skill_index === 1) || skills[1] || null;
-
-  // FALLBACK: build synthetic skill objects from weapons.stat1 / stat2 columns
-  // if weapon_skills data is missing (e.g. RLS not set up yet)
+  let sk0 = skills.find(s => s.skill_index === 0 && isStatSkill(s)) || null;
+  const sk1Candidate = skills.find(s => s.skill_index === 1) || null;
+  let sk1 = isStatSkill(sk1Candidate) ? sk1Candidate : null;
   if (!sk0 && (weapon.stat1 || weapon.stat2)) {
-    console.log('[buildMainStats] No DB skills found, using stat1/stat2 fallback:', weapon.stat1, weapon.stat2);
     const makeStaticSk = (statStr) => {
       if (!statStr || statStr === '—') return null;
       const parsed = parseStatString(statStr);
-      // Scale across 9 levels using approximate game curve coefficients
-      // Derived from observed values: lv1≈28%, lv4≈44%, lv9=100%
-      // Fitted as a gentle power curve: v = maxVal * (0.28 + 0.72 * (i/8)^0.65)
       const maxVal = parsed?.maxVal ?? 0;
       const isPct  = parsed?.isPct ?? false;
       const data   = Array.from({length:9}, (_,i) => {
@@ -1620,130 +1773,171 @@ function buildMainStats(weapon, lv) {
         const v = maxVal * (0.28 + 0.72 * Math.pow(t, 0.65));
         return isPct ? parseFloat(v.toFixed(1)) : Math.round(v);
       });
-      // Force lv9 to exact max
       if (isPct) data[8] = parseFloat(maxVal.toFixed(1));
       else data[8] = maxVal;
-      const key  = parsed?.key || 'main_attr';
-      const renderFn = resolveRenderFn(key, statStr, data);
-      return { skill_index:0, id:key, name:statStr, skill_name:statStr, maxLv:9, defaultLv:4, data, render:renderFn };
+      const key = parsed?.key || 'main_attr';
+      return { skill_index:0, id:key, name:statStr, skill_name:statStr, maxLv:9, defaultLv:4, data, render:resolveRenderFn(key, statStr, data) };
     };
     sk0 = makeStaticSk(weapon.stat1);
     sk1 = makeStaticSk(weapon.stat2);
-    // Cache on weapon object so updateMainStatValues can reuse them
     weapon._fallbackSk0 = sk0;
     weapon._fallbackSk1 = sk1;
   }
+  return { sk0: sk0 || weapon._fallbackSk0 || null, sk1: sk1 || weapon._fallbackSk1 || null };
+}
 
-  const maxLv = sk0?.maxLv || 9;
+function statIcon(name) {
+  const n = (name||'').toLowerCase();
+  if (n.includes('attack') || n.includes('atk'))
+    return '<path d="M2 12L12 2M9 2h3v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>';
+  if (n.includes('crit'))
+    return '<circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M10 4l2 2-6 6-2-2z" stroke="currentColor" stroke-width="1.2"/>';
+  if (n.includes('hp') || n.includes('health'))
+    return '<path d="M7 2v5H2v4h5v5h4v-5h5V7h-5V2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>';
+  if (n.includes('treatment') || n.includes('heal'))
+    return '<path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>';
+  if (n.includes('dmg') || n.includes('damage') || n.includes('bonus'))
+    return '<polygon points="7,1 13,12 1,12" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/>';
+  if (n.includes('intellect') || n.includes('arts'))
+    return '<circle cx="7" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M3 13c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>';
+  if (n.includes('will') || n.includes('agility') || n.includes('strength') || n.includes('main attr'))
+    return '<path d="M4 10 L7 4 L10 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 8h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>';
+  if (n.includes('ult'))
+    return '<path d="M7 1l1.8 3.8L13 5.6l-3 3 .7 4.4L7 10.8 2.3 13l.7-4.4-3-3 4.2-.8z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/>';
+  return '<rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/>';
+}
 
-  function statRow(sk, idx) {
-    if (!sk) return '';
-    const name = sk.skill_name || sk.name || 'Attribute';
-    const val  = renderStatValue(sk, lv);
-    return '<div class="skill-list-item" id="mainStat'+idx+'Row">' +
-      '<div class="skill-list-dot"></div>' +
-      '<div class="skill-list-body">' +
-        '<div class="skill-list-name">'+name+'</div>' +
-        '<div class="skill-list-sub" id="mainStatVal'+idx+'">'+val+'</div>' +
-      '</div>' +
-      '<div class="skill-list-ctrl">' +
-        '<button class="ms-btn" id="skLvDn'+idx+'" onclick="changeSkLv(-1)">−</button>' +
-        '<div class="ms-lv" id="skLvBadge'+idx+'">'+lv+'/'+maxLv+'</div>' +
-        '<button class="ms-btn" id="skLvUp'+idx+'" onclick="changeSkLv(1)">+</button>' +
-      '</div>' +
-    '</div>';
+function buildStatCard(sk, slotIdx, lv) {
+  if (!sk) return '';
+  const name  = sk.skill_name || sk.name || 'Attribute';
+  const maxLv = sk.maxLv || 9;
+  const pct   = ((lv - 1) / (maxLv - 1)) * 100;
+  const val   = renderStatValue(sk, lv);
+  const pips  = Array.from({length: maxLv}, (_, i) =>
+    `<div class="stat-pip${i < lv ? ' lit' : ''}"></div>`
+  ).join('');
+  return `<div class="stat-card" id="statCard${slotIdx}">
+    <div class="stat-card-top">
+      <div class="stat-card-icon"><svg viewBox="0 0 14 14" fill="none">${statIcon(name)}</svg></div>
+      <div class="stat-card-label">${name}</div>
+      <div class="stat-card-stepper">
+        <button class="ms-btn" id="skLvDn${slotIdx}" onclick="changeSkLvSlot(${slotIdx},-1)">−</button>
+        <div class="ms-lv" id="skLvBadge${slotIdx}">${lv}/${maxLv}</div>
+        <button class="ms-btn" id="skLvUp${slotIdx}" onclick="changeSkLvSlot(${slotIdx},1)">+</button>
+      </div>
+    </div>
+    <div class="stat-card-val-row">
+      <div class="stat-card-val" id="mainStatVal${slotIdx}">${val}</div>
+    </div>
+    <div class="stat-card-bar-wrap">
+      <div class="stat-card-bar-fill" id="statBar${slotIdx}" style="width:${pct}%"></div>
+    </div>
+    <div class="stat-card-pips" id="statPips${slotIdx}">${pips}</div>
+  </div>`;
+}
+
+function buildMainStats(weapon, lv) {
+  const container = document.getElementById('mainStats');
+  const { sk0, sk1 } = resolveSkills(weapon);
+  container.innerHTML = buildStatCard(sk0, 0, curSkLv[0]) + buildStatCard(sk1, 1, curSkLv[1]);
+}
+function updateStatCard(sk, slotIdx, lv) {
+  if (!sk) return;
+  const maxLv = sk.maxLv || 9;
+  const pct   = ((lv - 1) / (maxLv - 1)) * 100;
+  const valEl = document.getElementById('mainStatVal' + slotIdx);
+  const barEl = document.getElementById('statBar' + slotIdx);
+  const badgeEl = document.getElementById('skLvBadge' + slotIdx);
+  const pipsEl  = document.getElementById('statPips' + slotIdx);
+  const dnEl  = document.getElementById('skLvDn' + slotIdx);
+  const upEl  = document.getElementById('skLvUp' + slotIdx);
+  if (valEl) {
+    valEl.innerHTML = renderStatValue(sk, lv);
+    valEl.classList.remove('bump'); void valEl.offsetWidth; valEl.classList.add('bump');
+    setTimeout(() => valEl.classList.remove('bump'), 280);
   }
-
-  container.innerHTML = statRow(sk0, 0) + (sk1 ? statRow(sk1, 1) : '');
-  updateSkLvBtns(lv, maxLv);
+  if (barEl) barEl.style.width = pct + '%';
+  if (badgeEl) badgeEl.textContent = lv + '/' + maxLv;
+  if (pipsEl) pipsEl.innerHTML = Array.from({length: maxLv}, (_, i) =>
+    `<div class="stat-pip${i < lv ? ' lit' : ''}"></div>`).join('');
+  if (dnEl) dnEl.disabled = lv <= 1;
+  if (upEl) upEl.disabled = lv >= maxLv;
 }
 
 function updateMainStatValues(lv) {
-  const weapon = curWeapon; if (!weapon) return;
-  // Use cached resolved skills (set by buildMainStats) so fallback stat objects are reused
-  const skills = DB_WEAPON_SKILLS[weapon.id] || [];
-  const sk0 = skills.find(s => s.skill_index === 0) || skills[0] || weapon._fallbackSk0 || null;
-  const sk1 = skills.find(s => s.skill_index === 1) || skills[1] || weapon._fallbackSk1 || null;
-  const maxLv = sk0?.maxLv || 9;
-
-  const v0 = document.getElementById('mainStatVal0');
-  const v1 = document.getElementById('mainStatVal1');
-  if (v0 && sk0) { v0.innerHTML = renderStatValue(sk0, lv); v0.classList.remove('bump'); void v0.offsetWidth; v0.classList.add('bump'); setTimeout(()=>v0.classList.remove('bump'),280); }
-  if (v1 && sk1) { v1.innerHTML = renderStatValue(sk1, lv); v1.classList.remove('bump'); void v1.offsetWidth; v1.classList.add('bump'); setTimeout(()=>v1.classList.remove('bump'),280); }
-
-  ['skLvBadge0','skLvBadge1','skLvBadgeEff'].forEach(id => {
-    const b = document.getElementById(id); if (b) b.textContent = lv+'/'+maxLv;
-  });
-  updateSkLvBtns(lv, maxLv);
-
-  // Also update effect
-  buildEffectBlock(weapon, lv);
+  // legacy: update slot 0 when called from old paths
+  if (!curWeapon) return;
+  const { sk0, sk1 } = resolveSkills(curWeapon);
+  updateStatCard(sk0, 0, curSkLv[0]);
+  updateStatCard(sk1, 1, curSkLv[1]);
+  buildEffectBlock(curWeapon, curSkLv[2]);
 }
+
 
 function updateSkLvBtns(lv, maxLv) {
-  ['skLvDn0','skLvDn1','skLvDnEff'].forEach(id => { const b=document.getElementById(id); if(b) b.disabled = lv<=1; });
-  ['skLvUp0','skLvUp1','skLvUpEff'].forEach(id => { const b=document.getElementById(id); if(b) b.disabled = lv>=maxLv; });
-  // legacy compat
-  const dn = document.getElementById('skLvDn');
-  const up = document.getElementById('skLvUp');
-  if (dn) dn.disabled = lv <= 1;
-  if (up) up.disabled = lv >= maxLv;
+  // legacy compat — not used by new card system
 }
 
-function changeSkLv(delta) {
-  const skills = curWeapon ? DB_WEAPON_SKILLS[curWeapon.id] || [] : [];
-  const maxLv  = skills[0]?.maxLv || 9;
-  curSkillLevel = Math.max(1, Math.min(maxLv, curSkillLevel + delta));
-  updateMainStatValues(curSkillLevel);
+function changeSkLvSlot(slotIdx, delta) {
+  if (!curWeapon) return;
+  const { sk0, sk1 } = resolveSkills(curWeapon);
+  const skills = DB_WEAPON_SKILLS[curWeapon.id] || [];
+  const skEff  = skills.find(s => s.skill_index === 2) ||
+                 skills.find(s => s.skill_index === 1 && !isStatSkill(s)) || null;
+  const maxLvs = [sk0?.maxLv || 9, sk1?.maxLv || 9, skEff?.maxLv || sk0?.maxLv || 9];
+  curSkLv[slotIdx] = Math.max(1, Math.min(maxLvs[slotIdx], curSkLv[slotIdx] + delta));
+  // keep legacy curSkillLevel in sync with slot 0 for saves
+  if (slotIdx === 0) curSkillLevel = curSkLv[0];
+  if (slotIdx === 0) updateStatCard(sk0, 0, curSkLv[0]);
+  if (slotIdx === 1) updateStatCard(sk1, 1, curSkLv[1]);
+  if (slotIdx === 2) buildEffectBlock(curWeapon, curSkLv[2]);
   scheduleSave();
 }
-function onSkSlider(val) {
-  curSkillLevel = parseInt(val);
-  updateMainStatValues(curSkillLevel);
-  scheduleSave();
-}
+
+// legacy
+function changeSkLv(delta) { changeSkLvSlot(0, delta); }
+function onSkSlider(val) { curSkLv[0] = parseInt(val); curSkillLevel = curSkLv[0]; updateMainStatValues(); scheduleSave(); }
+
 
 function buildEffectBlock(weapon, lv) {
   const container = document.getElementById('skillsContainer');
   const skills = DB_WEAPON_SKILLS[weapon.id] || [];
-  const skEff = skills.find(s => s.skill_index === 2);
+  const skEff = skills.find(s => s.skill_index === 2) ||
+                skills.find(s => s.skill_index === 1 && !isStatSkill(s)) || null;
 
-  // Determine maxLv: from the effect skill, or from stat skills, or default 9
   const anySkill = skEff || skills[0];
   const maxLv = anySkill?.maxLv || 9;
-
   const effectName = skEff?.skill_name || weapon.passive_name || 'Passive';
 
-  // If we have structured skEff data, render it with template substitution
-  // Otherwise fall back to static passive_lv9 text (no scaling)
   let effectDesc;
   if (skEff && Array.isArray(skEff.data) && skEff.data.length > 0) {
     effectDesc = renderEffectDesc(skEff, lv, weapon);
   } else if (weapon.passive_lv9) {
-    // Static fallback — just show the lv9 text, no scaling possible without data
     effectDesc = weapon.passive_lv9;
   } else {
     effectDesc = '—';
   }
 
-  // Hide the effect block entirely if there is no passive at all
   if (!effectName && !weapon.passive_lv9 && !skEff) {
     container.innerHTML = '';
     return;
   }
 
+  const pct = ((lv - 1) / (maxLv - 1)) * 100;
+
   container.innerHTML =
-    '<div class="skill-list-item">' +
-      '<div class="skill-list-dot"></div>' +
-      '<div class="skill-list-body">' +
-        '<div class="skill-list-name">'+effectName+'</div>' +
-        '<div class="skill-list-sub" id="effectDescEl">'+effectDesc+'</div>' +
+    '<div class="effect-panel">' +
+      '<div class="effect-panel-head">' +
+        '<div class="effect-panel-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 3.2L12 4.8l-2.5 2.4.6 3.8L7 9.2l-3.1 1.8.6-3.8L2 4.8l3.5-.6z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg></div>' +
+        '<div class="effect-panel-label">Passive Effect</div>' +
+        '<div class="effect-panel-stepper">' +
+          '<button class="ms-btn" id="skLvDnEff" onclick="changeSkLvSlot(2,-1)">−</button>' +
+          '<div class="ms-lv" id="skLvBadgeEff">'+lv+'/'+maxLv+'</div>' +
+          '<button class="ms-btn" id="skLvUpEff" onclick="changeSkLvSlot(2,1)">+</button>' +
+        '</div>' +
       '</div>' +
-      '<div class="skill-list-ctrl">' +
-        '<button class="ms-btn" id="skLvDnEff" onclick="changeSkLv(-1)">−</button>' +
-        '<div class="ms-lv" id="skLvBadgeEff">'+lv+'/'+maxLv+'</div>' +
-        '<button class="ms-btn" id="skLvUpEff" onclick="changeSkLv(1)">+</button>' +
-      '</div>' +
+      '<div class="effect-panel-name">'+effectName+'</div>' +
+      '<div class="effect-panel-desc" id="effectDescEl">'+effectDesc+'</div>' +
     '</div>';
 
   const dn = document.getElementById('skLvDnEff');
@@ -1752,10 +1946,11 @@ function buildEffectBlock(weapon, lv) {
   if (up) up.disabled = lv >= maxLv;
 }
 
+
 // Called by updateLevel — rebuilds both main stats and effect
 function buildSkills(weapon) {
-  buildMainStats(weapon, curSkillLevel);
-  buildEffectBlock(weapon, curSkillLevel);
+  buildMainStats(weapon, curSkLv[0]);
+  buildEffectBlock(weapon, curSkLv[2]);
 }
 
 // Legacy stub — no longer used for substats, kept for compatibility
