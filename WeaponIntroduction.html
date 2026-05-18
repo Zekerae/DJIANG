@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title">Weapon — Arknights: Endfield</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="css/LogIn.css">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/LogIn.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -142,6 +142,24 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .tour-btn.primary{background:var(--accent-dim);border-color:var(--gold);color:var(--gold2);}
 .tour-btn.primary:hover{background:rgba(212,148,58,.3);}
 
+/* ── SIDEBAR DROPDOWN ── */
+.sb-dropdown{position:relative;}
+.wpn-trigger.sb-trigger{
+  width:44px;height:44px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;border:1px solid transparent;
+  color:var(--dim);cursor:pointer;transition:.2s;
+  padding:0;min-width:unset;max-width:unset;
+  user-select:none;
+}
+.wpn-trigger.sb-trigger:hover{color:var(--text);background:rgba(255,255,255,.05);border-color:var(--bord2);}
+.wpn-trigger.sb-trigger.open{color:var(--accent);background:var(--accent-dim);border-color:var(--accent);}
+.wpn-panel.sb-panel{
+  position:absolute;top:0;left:calc(100% + 10px);right:auto;
+  width:420px;
+  transform:none;
+}
+
 /* ── CUSTOM WEAPON DROPDOWN ── */
 .wpn-dropdown-wrap{position:relative;}
 
@@ -168,7 +186,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .wpn-filter-badge.visible{display:block;}
 
 .wpn-panel{
-  position:absolute;top:calc(100% + 6px);right:0;
+  position:absolute;top:calc(100% + 6px);left:0;
   width:420px;
   background:rgba(10,11,18,.98);border:1px solid var(--bord2);border-radius:8px;
   box-shadow:0 20px 50px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);
@@ -248,6 +266,21 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .wpn-option-type{font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim2);flex-shrink:0;}
 .wpn-no-results{padding:20px;text-align:center;font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
 
+/* weapon option tooltip */
+.wpn-option{position:relative;}
+.wpn-option-tooltip{
+  position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);
+  background:var(--bg3);border:1px solid var(--bord2);border-radius:6px;
+  padding:6px 10px;white-space:nowrap;pointer-events:none;
+  font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:1px;
+  color:var(--text);z-index:10;
+  opacity:0;transition:opacity .15s;
+  box-shadow:0 8px 20px rgba(0,0,0,.5);
+}
+.wpn-option-tooltip .tt-stars{color:var(--gold2);margin-bottom:2px;font-size:.7rem;}
+.wpn-option-tooltip .tt-type{color:var(--dim2);font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;}
+.wpn-option:hover .wpn-option-tooltip{opacity:1;}
+
 /* ── OUTER SHELL ── */
 .shell{
   display:flex;
@@ -272,8 +305,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .sb-btn:hover{color:var(--text);background:rgba(255,255,255,.05);border-color:var(--bord2);}
 .sb-btn.active{color:var(--accent);background:var(--accent-dim);border-color:var(--accent);}
 .sb-btn svg{width:18px;height:18px;}
+.sb-help{font-family:'Rajdhani',sans-serif;font-size:.9rem;font-weight:700;}
 .sb-tip{position:absolute;left:calc(100% + 10px);background:var(--bg3);border:1px solid var(--bord2);border-radius:4px;padding:5px 10px;font-family:'Rajdhani',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);white-space:nowrap;opacity:0;pointer-events:none;transition:.15s;z-index:99;}
 .sb-btn:hover .sb-tip{opacity:1;}
+.wpn-trigger.sb-trigger:hover .sb-tip{opacity:1;}
 
 /* ── CARD STAGE ── */
 .card-stage{
@@ -612,15 +647,17 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .breadcrumb .cur{ max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .save-badge{ display:none; }
 
-  /* weapon selector: shrink trigger */
-  .wpn-trigger{ min-width:0; max-width:180px; font-size:.72rem; padding:5px 8px 5px 10px; }
-  .wpn-trigger-label{ max-width:100px; }
-  /* panel: full-width from top bar */
-  .wpn-panel{
-    width:calc(100vw - 16px);
-    right:auto; left:50%;
-    transform:translateX(-50%);
+  /* weapon selector: sidebar icon button — constrain panel on mobile */
+  .wpn-trigger.sb-trigger{ min-width:0; max-width:none; width:38px; height:38px; padding:0; font-size:inherit; }
+  .wpn-panel.sb-panel{
+    position:fixed;
+    top:100px; /* below topbar + sidebar row */
+    left:8px;
+    right:8px;
+    width:auto;
     max-height:60vh;
+    transform:none;
+    z-index:9999;
   }
   .wpn-panel-filters .wpn-filter-row{ flex-wrap:wrap; gap:4px; }
 
@@ -666,13 +703,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .logo-mark{ width:28px; height:28px; font-size:12px; }
   .breadcrumb{ gap:5px; font-size:.6rem; }
   .help-btn{ width:28px; height:28px; font-size:.75rem; }
-  .wpn-trigger{ max-width:140px; font-size:.68rem; padding:5px 8px; gap:5px; }
-  .wpn-trigger-label{ max-width:80px; }
-  .wpn-trigger-arrow{ font-size:.55rem; }
-  .wpn-filter-badge{ font-size:.5rem; padding:1px 5px; }
-
-  /* weapon panel: full viewport minus small margins */
-  .wpn-panel{ width:calc(100vw - 12px); max-height:70vh; }
+  .wpn-trigger.sb-trigger{ width:34px; height:34px; }
+  .wpn-panel.sb-panel{ top:96px; left:4px; right:4px; max-height:70vh; }
   .wpn-search-input{ font-size:.75rem; }
   .fpill{ font-size:.58rem; padding:2px 7px; }
   .filter-clear-small{ font-size:.55rem; padding:2px 6px; }
@@ -755,7 +787,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-left">
-      <div class="logo-mark">DJIANG</div>
       <div class="breadcrumb">
         <a href="index.html">Home</a>
         <span class="sep">/</span>
@@ -766,18 +797,25 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     </div>
     <div class="topbar-right">
       <div class="save-badge" id="saveBadge">● Saved</div>
+    </div>
+  </div>
 
-      <!-- HELP BUTTON -->
-      <div class="help-btn" id="helpBtn" title="Page tour" onclick="startTour()">?</div>
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <button class="sb-btn active" id="sb-details" onclick="setSbActive('details')">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="2.5" fill="currentColor"/></svg>
+        <span class="sb-tip">Details</span>
+      </button>
 
-      <!-- FUSED WEAPON DROPDOWN -->
-      <div class="wpn-dropdown-wrap" id="wpnDropdownWrap">
-        <div class="wpn-trigger" id="wpnTrigger">
-          <span class="wpn-trigger-label" id="wpnTriggerLabel">Select Weapon…</span>
+      <!-- WEAPON DROPDOWN in sidebar, next to Details -->
+      <div class="wpn-dropdown-wrap sb-dropdown" id="wpnDropdownWrap">
+        <div class="wpn-trigger sb-trigger" id="wpnTrigger" title="Select Weapon">
+          <svg viewBox="0 0 20 20" fill="none" width="18" height="18"><path d="M4 6h12M4 10h8M4 14h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
           <span class="wpn-filter-badge" id="wpnFilterBadge">0</span>
-          <span class="wpn-trigger-arrow">▾</span>
+          <span class="sb-tip">Select Weapon</span>
         </div>
-        <div class="wpn-panel" id="wpnPanel">
+        <div class="wpn-panel sb-panel" id="wpnPanel">
           <div class="wpn-panel-search">
             <input class="wpn-search-input" id="wpnSearch" type="text" placeholder="Search weapons…" autocomplete="off">
           </div>
@@ -802,19 +840,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
           <div class="wpn-list" id="wpnList"></div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="layout">
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <button class="sb-btn active" id="sb-details" onclick="setSbActive('details')">
-        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="2.5" fill="currentColor"/></svg>
-        <span class="sb-tip">Details</span>
-      </button>
-      <button class="sb-btn" id="sb-track" onclick="openTrack()">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M5 15L10 5l5 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 11h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        <span class="sb-tip">Track Mats</span>
+      <!-- HELP BUTTON next to dropdown -->
+      <button class="sb-btn sb-help" id="helpBtn" onclick="startTour()">
+        ?
+        <span class="sb-tip">Page Tour</span>
       </button>
     </div>
 
@@ -917,31 +947,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 
 </div>
 
-<!-- TRACK MODAL -->
-<div class="modal-overlay" id="trackModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div class="modal-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15L10 5l5 10"/><path d="M7 11h6"/></svg>
-        Required Materials
-      </div>
-      <div class="modal-close" id="modalClose">✕</div>
-    </div>
-    <div class="track-row">
-      <div class="track-group">
-        <label>Current Lv.</label>
-        <input class="track-input" type="number" id="trackStart" value="20" min="1" max="89">
-      </div>
-      <div class="track-arrow">→</div>
-      <div class="track-group">
-        <label>Target Lv.</label>
-        <input class="track-input" type="number" id="trackEnd" value="90" min="2" max="90">
-      </div>
-    </div>
-    <div class="mat-grid" id="matGrid"></div>
-  </div>
-</div>
-
 <script>
 /* =========================================================
    GUIDED TOUR
@@ -980,13 +985,6 @@ const TOUR_STEPS = [
     title: 'Base ATK',
     desc: 'Shows the weapon\'s <b>Base ATK at your chosen level</b>, interpolated from the curve. Below it, the two <b>main stats</b> (e.g. Intellect, Attack%) scale with the <b>Skill Level</b> slider (1–9). The passive <b>effect</b> also updates its values at each skill level.',
     cardPos: 'left',
-    pad: 12,
-  },
-  {
-    targetId: 'sb-track',
-    title: 'Material Tracker',
-    desc: 'Click this sidebar button to open the <b>Materials Needed</b> panel. Set a current and target level to see exactly which upgrade materials — and how many — you\'ll need.',
-    cardPos: 'right',
     pad: 12,
   },
   {
@@ -1590,10 +1588,11 @@ function renderWpnList() {
     html += `<div class="wpn-optgroup-label">${'★'.repeat(r)} · ${r}-Star (${groups[r].length})</div>`;
     groups[r].forEach(w => {
       const sel = curWeapon && curWeapon.id === w.id ? ' selected' : '';
-      html += `<div class="wpn-option${sel}" data-id="${w.id}" onclick="selectWeapon('${w.id}')">
+      html += `<div class="wpn-option${sel}" data-id="${w.id}" onclick="selectWeapon('${w.id}')" title="${w.name} · ${w.type} · ${'★'.repeat(r)}">
         <div class="wpn-option-stars">${Array(r).fill('<div class="wpn-option-star"></div>').join('')}</div>
         <div class="wpn-option-name">${w.name}</div>
         <div class="wpn-option-type">${w.type}</div>
+        <div class="wpn-option-tooltip"><div class="tt-stars">${'★'.repeat(r)}</div>${w.name}<div class="tt-type">${w.type}</div></div>
       </div>`;
     });
   });
@@ -1682,7 +1681,7 @@ async function loadWeapon(id) {
   document.getElementById('panelTypeLabel').textContent = w.type;
   document.getElementById('panelWpnName').textContent   = w.name;
   buildPanelStars(w.rarity);
-  document.getElementById('wpnTriggerLabel').textContent = w.name;
+  const lbl = document.getElementById('wpnTriggerLabel'); if (lbl) lbl.textContent = w.name;
   document.getElementById('sliderMaxLabel').textContent = maxLv;
   document.getElementById('trackEnd').max   = maxLv;
   document.getElementById('trackEnd').value = maxLv;
@@ -1824,7 +1823,7 @@ function renderEffectDesc(sk, lv, weapon) {
     result = result.replace(' ' + k + ' ', '<span class="hl-atk">' + display + '</span>');
   }
   // Clean any unreplaced placeholders
-  result = result.replace(/ \w+ /g, '?');
+  result = result.replace(/ \w+ /g, ' ');
   return result;
 }
 
@@ -2078,59 +2077,7 @@ function setSbActive(id) {
   document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('sb-'+id).classList.add('active');
 }
-function openTrack() {
-  setSbActive('track');
-  document.getElementById('trackModal').classList.add('show');
-  updateTrackMats();
-}
-document.getElementById('modalClose').addEventListener('click',()=>{
-  document.getElementById('trackModal').classList.remove('show'); setSbActive('details');
-});
-document.getElementById('trackModal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('trackModal')){ document.getElementById('trackModal').classList.remove('show'); setSbActive('details'); }
-});
 
-/* =========================================================
-   TRACK MATS
-   ========================================================= */
-const MAT_DB = {
-  tcreds:    {name:'T-Creds',        css:'r-gray',   icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8M8 14h8"/>'},
-  cast_die:  {name:'Cast Die',       css:'r-blue',   icon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'},
-  kalkonyx:  {name:'Kalkonyx',       css:'r-blue',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-  auronyx:   {name:'Auronyx',        css:'r-purple', icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-  heavy_cast:{name:'Heavy Cast Die', css:'r-purple', icon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'},
-  d96_steel: {name:'D96 Steel',      css:'r-purple', icon:'<rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 8v8M18 8v8"/>'},
-  umbronyx:  {name:'Umbronyx',       css:'r-gold',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-  wulingstone:{name:'Wulingstone',   css:'r-gold',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-};
-function updateTrackMats() {
-  const w = curWeapon; if (!w) return;
-  const maxLv = MAX_LEVEL[w.rarity]||90;
-  let start = parseInt(document.getElementById('trackStart').value)||1;
-  let end   = parseInt(document.getElementById('trackEnd').value)||maxLv;
-  if (start<1) start=1; if (end>maxLv) end=maxLv; if (start>=end) end=start+1;
-  const t = {tcreds:0,cast_die:0,kalkonyx:0,auronyx:0,heavy_cast:0,d96_steel:0,umbronyx:0,wulingstone:0};
-  for (let i=start+1;i<=end;i++){
-    t.tcreds+=i*30;
-    if(i===20){t.kalkonyx+=3;t.cast_die+=5;t.tcreds+=5000;}
-    if(i===40){t.auronyx+=5;t.heavy_cast+=15;t.tcreds+=10000;}
-    if(i===60){t.umbronyx+=5;t.d96_steel+=16;t.tcreds+=15000;}
-    if(i===80){t.wulingstone+=8;t.d96_steel+=20;t.tcreds+=20000;}
-    if(i>1&&i<=20&&i%2===0) t.cast_die+=1;
-    if(i>20&&i<=40&&i%2===0) t.cast_die+=1;
-    if(i>40&&i<=60&&i%2===0) t.heavy_cast+=2;
-    if(i>60&&i<=80&&i%2===0) t.heavy_cast+=2;
-  }
-  const grid = document.getElementById('matGrid');
-  grid.innerHTML='';
-  for (const [k,v] of Object.entries(t)){
-    if(v<=0) continue;
-    const m=MAT_DB[k];
-    grid.innerHTML+=`<div class="mat-card ${m.css}"><div class="mat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${m.icon}</svg></div><div class="mat-name">${m.name}</div><div class="mat-qty">${v.toLocaleString()}</div></div>`;
-  }
-}
-document.getElementById('trackStart').addEventListener('input', updateTrackMats);
-document.getElementById('trackEnd').addEventListener('input', updateTrackMats);
 
 /* =========================================================
    INIT

@@ -6,30 +6,60 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let CURRENT_USER  = null;
-// Cache: { [weapon_id]: { owned, level } }
+// Cache: { [weapon_id]: { owned } }
 let WEAPON_ROSTER = {};
+// Cache: { [weapon_id]: { level } } — sourced from weapon_progress (set in WeaponIntroduction)
+let WEAPON_PROGRESS = {};
 
 async function loadWeaponRoster() {
   if (!CURRENT_USER) return;
   const { data, error } = await db
     .from('user_weapon_roster')
-    .select('weapon_id, owned, level')
+    .select('weapon_id, owned')
     .eq('user_id', CURRENT_USER.id);
   if (error) { console.warn('Weapon roster load error:', error); return; }
   WEAPON_ROSTER = {};
   (data || []).forEach(row => { WEAPON_ROSTER[row.weapon_id] = row; });
 }
 
+// Load levels saved in WeaponIntroduction (weapon_progress table)
+async function loadWeaponProgress() {
+  if (!CURRENT_USER) {
+    // Fall back to localStorage written by WeaponIntroduction
+    try {
+      const all = JSON.parse(localStorage.getItem('wpn_progress_v1') || '{}');
+      WEAPON_PROGRESS = {};
+      Object.entries(all).forEach(([id, val]) => {
+        if (val && val.level != null) WEAPON_PROGRESS[id] = { level: val.level };
+      });
+    } catch { WEAPON_PROGRESS = {}; }
+    return;
+  }
+  try {
+    const { data, error } = await db
+      .from('weapon_progress')
+      .select('weapon_id, level')
+      .eq('user_id', CURRENT_USER.id);
+    if (error) { console.warn('Weapon progress load error:', error); return; }
+    WEAPON_PROGRESS = {};
+    (data || []).forEach(row => { if (row.level != null) WEAPON_PROGRESS[row.weapon_id] = { level: row.level }; });
+  } catch(e) { console.warn('Weapon progress fetch failed:', e); }
+}
+
+function getProgressLevel(id) {
+  return WEAPON_PROGRESS[id]?.level ?? null;
+}
+
 async function upsertWeaponEntry(weaponId, patch) {
   if (!CURRENT_USER) return;
-  const existing = WEAPON_ROSTER[weaponId] || { owned: false, level: null };
+  const existing = WEAPON_ROSTER[weaponId] || { owned: false };
   const updated  = { ...existing, ...patch };
   WEAPON_ROSTER[weaponId] = updated;
   const { error } = await db.from('user_weapon_roster').upsert({
     user_id:    CURRENT_USER.id,
     weapon_id:  weaponId,
     owned:      updated.owned,
-    level:      updated.level !== null ? parseInt(updated.level) : null,
+    level:      null,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id,weapon_id' });
   if (error) console.warn('Weapon roster save error:', error);
@@ -141,6 +171,7 @@ function createCard(w) {
   const entry   = getWeaponEntry(w.id);
   const isOwned = !!entry.owned;
   const drawerVisible = isOwned ? ' open' : '';
+  const progressLevel = getProgressLevel(w.id);
 
   return `
     <div class="wpn-card-wrap${isOwned ? ' wpn-wrap-owned' : ''}"
@@ -151,7 +182,7 @@ function createCard(w) {
          data-atk="${w.base_atk || 0}"
          data-tags="${w._tags.join('|')}"
          data-owned="${isOwned}"
-         data-level="${entry.level || ''}">
+         data-level="${progressLevel !== null ? progressLevel : ''}">
 
       <div class="wpn-card rarity-${w.rarity} bg-${typeKey}${isOwned ? ' card-owned' : ''}"
            onclick="cardNavigate(event, '${w.id}')">
@@ -194,12 +225,10 @@ function createCard(w) {
 
       <div class="wpn-drawer${drawerVisible}">
         <div class="drawer-inner">
-          <label class="drawer-field">
+          <div class="drawer-field">
             <span class="drawer-lbl">Level</span>
-            <input class="drawer-input" type="number" min="1" max="90" placeholder="—"
-              value="${entry.level || ''}"
-              oninput="saveWeaponLevel(event, '${w.id}')">
-          </label>
+            <span class="drawer-level-val">${progressLevel !== null ? progressLevel + ' / ' + (w.rarity >= 5 ? 90 : 80) : '—'}</span>
+          </div>
         </div>
       </div>
 
@@ -274,6 +303,7 @@ async function init() {
 
   await loadWeaponsFromDB();
   if (CURRENT_USER) await loadWeaponRoster();
+  try { await loadWeaponProgress(); } catch(e) { console.warn("loadWeaponProgress error:", e); }
 
   grid.innerHTML = WEAPONS.map(createCard).join('');
   applySort();
@@ -327,25 +357,6 @@ async function toggleOwned(event, id) {
 
   if (filterOwned || filterLevelActive) updateFilters();
   if (currentSort === 'level') applySort();
-}
-
-// ==========================================
-// LEVEL SAVE
-// ==========================================
-function saveWeaponLevel(event, id) {
-  if (!CURRENT_USER) return;
-  const input = event.target;
-  let val = parseInt(input.value);
-  if (isNaN(val) || input.value === '') { val = null; }
-  else { val = Math.min(90, Math.max(1, val)); input.value = val; }
-
-  const wrap = document.querySelector(`.wpn-card-wrap[data-id="${id}"]`);
-  if (wrap) wrap.dataset.level = val !== null ? String(val) : '';
-
-  if (currentSort === 'level') applySort();
-  if (filterLevelActive) updateFilters();
-
-  wpnDebounce('level-' + id, () => upsertWeaponEntry(id, { level: val }));
 }
 
 // ==========================================
