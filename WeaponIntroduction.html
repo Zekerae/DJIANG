@@ -154,8 +154,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .wpn-trigger.sb-trigger:hover{color:var(--text);background:rgba(255,255,255,.05);border-color:var(--bord2);}
 .wpn-trigger.sb-trigger.open{color:var(--accent);background:var(--accent-dim);border-color:var(--accent);}
 .wpn-panel.sb-panel{
-  position:absolute;top:0;left:calc(100% + 10px);
+  position:absolute;top:0;left:calc(100% + 10px);right:auto;
   width:420px;
+  transform:none;
 }
 
 /* ── CUSTOM WEAPON DROPDOWN ── */
@@ -263,6 +264,21 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .wpn-option-name{font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.5px;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .wpn-option-type{font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim2);flex-shrink:0;}
 .wpn-no-results{padding:20px;text-align:center;font-family:'Rajdhani',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
+
+/* weapon option tooltip */
+.wpn-option{position:relative;}
+.wpn-option-tooltip{
+  position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);
+  background:var(--bg3);border:1px solid var(--bord2);border-radius:6px;
+  padding:6px 10px;white-space:nowrap;pointer-events:none;
+  font-family:'Rajdhani',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:1px;
+  color:var(--text);z-index:10;
+  opacity:0;transition:opacity .15s;
+  box-shadow:0 8px 20px rgba(0,0,0,.5);
+}
+.wpn-option-tooltip .tt-stars{color:var(--gold2);margin-bottom:2px;font-size:.7rem;}
+.wpn-option-tooltip .tt-type{color:var(--dim2);font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;}
+.wpn-option:hover .wpn-option-tooltip{opacity:1;}
 
 /* ── OUTER SHELL ── */
 .shell{
@@ -628,15 +644,17 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .breadcrumb .cur{ max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .save-badge{ display:none; }
 
-  /* weapon selector: shrink trigger */
-  .wpn-trigger{ min-width:0; max-width:180px; font-size:.72rem; padding:5px 8px 5px 10px; }
-  .wpn-trigger-label{ max-width:100px; }
-  /* panel: full-width from top bar */
-  .wpn-panel{
-    width:calc(100vw - 16px);
-    right:auto; left:50%;
-    transform:translateX(-50%);
+  /* weapon selector: sidebar icon button — constrain panel on mobile */
+  .wpn-trigger.sb-trigger{ min-width:0; max-width:none; width:38px; height:38px; padding:0; font-size:inherit; }
+  .wpn-panel.sb-panel{
+    position:fixed;
+    top:100px; /* below topbar + sidebar row */
+    left:8px;
+    right:8px;
+    width:auto;
     max-height:60vh;
+    transform:none;
+    z-index:9999;
   }
   .wpn-panel-filters .wpn-filter-row{ flex-wrap:wrap; gap:4px; }
 
@@ -682,13 +700,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   .logo-mark{ width:28px; height:28px; font-size:12px; }
   .breadcrumb{ gap:5px; font-size:.6rem; }
   .help-btn{ width:28px; height:28px; font-size:.75rem; }
-  .wpn-trigger{ max-width:140px; font-size:.68rem; padding:5px 8px; gap:5px; }
-  .wpn-trigger-label{ max-width:80px; }
-  .wpn-trigger-arrow{ font-size:.55rem; }
-  .wpn-filter-badge{ font-size:.5rem; padding:1px 5px; }
-
-  /* weapon panel: full viewport minus small margins */
-  .wpn-panel{ width:calc(100vw - 12px); max-height:70vh; }
+  .wpn-trigger.sb-trigger{ width:34px; height:34px; }
+  .wpn-panel.sb-panel{ top:96px; left:4px; right:4px; max-height:70vh; }
   .wpn-search-input{ font-size:.75rem; }
   .fpill{ font-size:.58rem; padding:2px 7px; }
   .filter-clear-small{ font-size:.55rem; padding:2px 6px; }
@@ -782,9 +795,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     </div>
     <div class="topbar-right">
       <div class="save-badge" id="saveBadge">● Saved</div>
-
-      <!-- HELP BUTTON -->
-      <div class="help-btn" id="helpBtn" title="Page tour" onclick="startTour()">?</div>
     </div>
   </div>
 
@@ -828,6 +838,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
           <div class="wpn-list" id="wpnList"></div>
         </div>
       </div>
+
+      <!-- HELP BUTTON next to dropdown -->
+      <button class="sb-btn" id="helpBtn" onclick="startTour()">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><text x="10" y="14.5" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="9" font-weight="700" fill="currentColor">?</text></svg>
+        <span class="sb-tip">Page Tour</span>
+      </button>
     </div>
 
     <!-- CARD STAGE -->
@@ -1570,10 +1586,11 @@ function renderWpnList() {
     html += `<div class="wpn-optgroup-label">${'★'.repeat(r)} · ${r}-Star (${groups[r].length})</div>`;
     groups[r].forEach(w => {
       const sel = curWeapon && curWeapon.id === w.id ? ' selected' : '';
-      html += `<div class="wpn-option${sel}" data-id="${w.id}" onclick="selectWeapon('${w.id}')">
+      html += `<div class="wpn-option${sel}" data-id="${w.id}" onclick="selectWeapon('${w.id}')" title="${w.name} · ${w.type} · ${'★'.repeat(r)}">
         <div class="wpn-option-stars">${Array(r).fill('<div class="wpn-option-star"></div>').join('')}</div>
         <div class="wpn-option-name">${w.name}</div>
         <div class="wpn-option-type">${w.type}</div>
+        <div class="wpn-option-tooltip"><div class="tt-stars">${'★'.repeat(r)}</div>${w.name}<div class="tt-type">${w.type}</div></div>
       </div>`;
     });
   });
