@@ -6,6 +6,13 @@
 <title id="page-title">Weapon — Arknights: Endfield</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'diamante-serial-bold';
+  src: url('https://static.wfonts.com/data/2016/01/11/diamante-serial/diamante-serial-bold.ttf') format('truetype');
+  font-display: swap;
+}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -30,7 +37,7 @@ body {
   min-height: 100%;
   overflow-x: hidden;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);}
+body{font-family:'diamante-serial-bold','DM Sans',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.022) 3px,rgba(0,0,0,.022) 4px);}
 
 /* ── TOP BAR ── */
@@ -167,7 +174,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .wpn-filter-badge.visible{display:block;}
 
 .wpn-panel{
-  position:absolute;top:calc(100% + 6px);right:0;
+  position:absolute;top:calc(100% + 6px);left:0;
   width:420px;
   background:rgba(10,11,18,.98);border:1px solid var(--bord2);border-radius:8px;
   box-shadow:0 20px 50px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);
@@ -762,12 +769,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         <span class="sep">/</span>
         <span class="cur" id="bc-name">—</span>
       </div>
-    </div>
-    <div class="topbar-right">
-      <div class="save-badge" id="saveBadge">● Saved</div>
-
-      <!-- HELP BUTTON -->
-      <div class="help-btn" id="helpBtn" title="Page tour" onclick="startTour()">?</div>
 
       <!-- FUSED WEAPON DROPDOWN -->
       <div class="wpn-dropdown-wrap" id="wpnDropdownWrap">
@@ -802,6 +803,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
         </div>
       </div>
     </div>
+    <div class="topbar-right">
+      <div class="save-badge" id="saveBadge">● Saved</div>
+
+      <!-- HELP BUTTON -->
+      <div class="help-btn" id="helpBtn" title="Page tour" onclick="startTour()">?</div>
+    </div>
   </div>
 
   <div class="layout">
@@ -810,10 +817,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
       <button class="sb-btn active" id="sb-details" onclick="setSbActive('details')">
         <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="2.5" fill="currentColor"/></svg>
         <span class="sb-tip">Details</span>
-      </button>
-      <button class="sb-btn" id="sb-track" onclick="openTrack()">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M5 15L10 5l5 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 11h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        <span class="sb-tip">Track Mats</span>
       </button>
     </div>
 
@@ -916,31 +919,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 
 </div>
 
-<!-- TRACK MODAL -->
-<div class="modal-overlay" id="trackModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div class="modal-title">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15L10 5l5 10"/><path d="M7 11h6"/></svg>
-        Required Materials
-      </div>
-      <div class="modal-close" id="modalClose">✕</div>
-    </div>
-    <div class="track-row">
-      <div class="track-group">
-        <label>Current Lv.</label>
-        <input class="track-input" type="number" id="trackStart" value="20" min="1" max="89">
-      </div>
-      <div class="track-arrow">→</div>
-      <div class="track-group">
-        <label>Target Lv.</label>
-        <input class="track-input" type="number" id="trackEnd" value="90" min="2" max="90">
-      </div>
-    </div>
-    <div class="mat-grid" id="matGrid"></div>
-  </div>
-</div>
-
 <script>
 /* =========================================================
    GUIDED TOUR
@@ -979,13 +957,6 @@ const TOUR_STEPS = [
     title: 'Base ATK',
     desc: 'Shows the weapon\'s <b>Base ATK at your chosen level</b>, interpolated from the curve. Below it, the two <b>main stats</b> (e.g. Intellect, Attack%) scale with the <b>Skill Level</b> slider (1–9). The passive <b>effect</b> also updates its values at each skill level.',
     cardPos: 'left',
-    pad: 12,
-  },
-  {
-    targetId: 'sb-track',
-    title: 'Material Tracker',
-    desc: 'Click this sidebar button to open the <b>Materials Needed</b> panel. Set a current and target level to see exactly which upgrade materials — and how many — you\'ll need.',
-    cardPos: 'right',
     pad: 12,
   },
   {
@@ -2077,59 +2048,7 @@ function setSbActive(id) {
   document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('sb-'+id).classList.add('active');
 }
-function openTrack() {
-  setSbActive('track');
-  document.getElementById('trackModal').classList.add('show');
-  updateTrackMats();
-}
-document.getElementById('modalClose').addEventListener('click',()=>{
-  document.getElementById('trackModal').classList.remove('show'); setSbActive('details');
-});
-document.getElementById('trackModal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('trackModal')){ document.getElementById('trackModal').classList.remove('show'); setSbActive('details'); }
-});
 
-/* =========================================================
-   TRACK MATS
-   ========================================================= */
-const MAT_DB = {
-  tcreds:    {name:'T-Creds',        css:'r-gray',   icon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8M8 14h8"/>'},
-  cast_die:  {name:'Cast Die',       css:'r-blue',   icon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'},
-  kalkonyx:  {name:'Kalkonyx',       css:'r-blue',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-  auronyx:   {name:'Auronyx',        css:'r-purple', icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-  heavy_cast:{name:'Heavy Cast Die', css:'r-purple', icon:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>'},
-  d96_steel: {name:'D96 Steel',      css:'r-purple', icon:'<rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 8v8M18 8v8"/>'},
-  umbronyx:  {name:'Umbronyx',       css:'r-gold',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-  wulingstone:{name:'Wulingstone',   css:'r-gold',   icon:'<polygon points="12 2 2 7 12 22 22 7 12 2"/>'},
-};
-function updateTrackMats() {
-  const w = curWeapon; if (!w) return;
-  const maxLv = MAX_LEVEL[w.rarity]||90;
-  let start = parseInt(document.getElementById('trackStart').value)||1;
-  let end   = parseInt(document.getElementById('trackEnd').value)||maxLv;
-  if (start<1) start=1; if (end>maxLv) end=maxLv; if (start>=end) end=start+1;
-  const t = {tcreds:0,cast_die:0,kalkonyx:0,auronyx:0,heavy_cast:0,d96_steel:0,umbronyx:0,wulingstone:0};
-  for (let i=start+1;i<=end;i++){
-    t.tcreds+=i*30;
-    if(i===20){t.kalkonyx+=3;t.cast_die+=5;t.tcreds+=5000;}
-    if(i===40){t.auronyx+=5;t.heavy_cast+=15;t.tcreds+=10000;}
-    if(i===60){t.umbronyx+=5;t.d96_steel+=16;t.tcreds+=15000;}
-    if(i===80){t.wulingstone+=8;t.d96_steel+=20;t.tcreds+=20000;}
-    if(i>1&&i<=20&&i%2===0) t.cast_die+=1;
-    if(i>20&&i<=40&&i%2===0) t.cast_die+=1;
-    if(i>40&&i<=60&&i%2===0) t.heavy_cast+=2;
-    if(i>60&&i<=80&&i%2===0) t.heavy_cast+=2;
-  }
-  const grid = document.getElementById('matGrid');
-  grid.innerHTML='';
-  for (const [k,v] of Object.entries(t)){
-    if(v<=0) continue;
-    const m=MAT_DB[k];
-    grid.innerHTML+=`<div class="mat-card ${m.css}"><div class="mat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${m.icon}</svg></div><div class="mat-name">${m.name}</div><div class="mat-qty">${v.toLocaleString()}</div></div>`;
-  }
-}
-document.getElementById('trackStart').addEventListener('input', updateTrackMats);
-document.getElementById('trackEnd').addEventListener('input', updateTrackMats);
 
 /* =========================================================
    INIT
