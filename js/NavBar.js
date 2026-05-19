@@ -278,3 +278,42 @@ const NavBar = (() => {
 
   return { init, toggleSidebar };
 })();
+
+/* ═══════════════════════════════════════════════
+   SMART SCROLL-SPY (Prevents Blank Navbar Bug)
+═══════════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", () => {
+  const sections = document.querySelectorAll("section, [id]");
+  const navLinks = document.querySelectorAll(".nav-links a, .nav-links .nav-btn");
+
+  // SAFETY NET: If no link is active on page load, force the first one (HOME) to be active
+  if (!document.querySelector(".nav-links .active") && navLinks.length > 0) {
+      navLinks[0].classList.add("active");
+  }
+
+  window.addEventListener("scroll", () => {
+      let currentSectionId = "";
+
+      // 1. Find which section is currently in the viewport
+      sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          if (window.scrollY >= sectionTop - 160) {
+              currentSectionId = section.getAttribute("id");
+          }
+      });
+
+      if (currentSectionId) {
+          // 2. THE FIX: Search the navbar for a button that matches this section's ID
+          // Using .includes() is much safer in case your href looks like "index.html#events"
+          const targetLink = Array.from(navLinks).find(
+              link => link.href.includes(`#${currentSectionId}`) || link.dataset.target === currentSectionId
+          );
+
+          // 3. ONLY wipe the menu and switch IF a matching button actually exists!
+          if (targetLink) {
+              navLinks.forEach(l => l.classList.remove("active"));
+              targetLink.classList.add("active");
+          }
+      }
+  });
+});

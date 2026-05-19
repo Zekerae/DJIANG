@@ -36,30 +36,27 @@
     src: local('HarmonyOS Sans Regular'), url('../assets/fonts/HarmonyOS/HarmonyOS_Sans_Regular.woff') format('woff');
 }
 
-/* 2. Apply it to the Navbar */
+/* 2. Apply Typography Cleanly (Decoupled from layout containers) */
 #navbar,
 .navbar,
 .nav-links a,
-.navbar a {
-    /* FIX 1: Apply the font directly to the links and the container */
-    font-family: 'HarmonyOS Sans Regular', sans-serif !important;
-    font-weight: bolder; 
-    line-height: 1.5 !important;
-    
-    /* FIX 2: Changed 'center' to 'flex' so 'align-items: center' actually works */
-    display: center !important; 
-    align-items: center !important;
-    padding-bottom: 2px !important;
-}
+.navbar a,
 .navbar button {
     font-family: 'HarmonyOS Sans Regular', sans-serif !important;
+    font-weight: bolder; 
+}
+
+.nav-links a,
+.navbar a {
+    line-height: 1.5 !important;
+    padding-bottom: 2px !important;
 }
 
 body {
     isolation: isolate; 
 }
 
-/* ─── NAVBAR ─── */
+/* ─── NAVBAR STRUCTURE ─── */
 .navbar {
     position: fixed;
     top: 0;
@@ -68,7 +65,7 @@ body {
     height: var(--navbar-height);
     background: #0a0a0a;
     z-index: 2147483647;
-    display: grid;
+    display: grid !important; /* Force Grid context to remain untouched */
     grid-template-columns: var(--navbar-height) 1fr var(--navbar-height);
     align-items: center;
     border-bottom: var(--border);
@@ -153,11 +150,8 @@ body {
 .sidebar {
     position: fixed;
     top: 0;
-    
-    /* FLUID MAGIC: Uses the CSS variable to perfectly hide itself off-screen! */
     width: var(--sidebar-width);
     left: calc(var(--sidebar-width) * -1); 
-    
     height: 100%;
     background: #0a0a0a;
     border-right: var(--border);
@@ -174,7 +168,6 @@ body {
 
 /* ─── SIDEBAR LABEL ─── */
 .sidebar-label {
-    /* FLUID FIX: Reduced right padding so it doesn't push against the wall */
     padding: clamp(12px, 2vh, 18px) 16px clamp(8px, 1vh, 12px) clamp(16px, 2vw, 28px);
     font-size: clamp(8px, 0.8vw, 10px);
     letter-spacing: 0.2em;
@@ -183,8 +176,6 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    
-    /* FLUID FIX: Allow wrapping */
     white-space: normal !important;
     word-wrap: break-word !important;
 }
@@ -206,14 +197,10 @@ body {
     min-height: 0; 
 }
 
-/* 1. Scale down the massive font size and enforce word-breaking */
 .sidebar-item {
     padding: 2px 0;                         
     color: rgba(135, 135, 135, 0.5);
-    
-    /* FLUID FIX: Reduced from 30px max to 22px max so long words actually fit */
     font-size: clamp(14px, 1.8vw, 22px) !important; 
-    
     font-family: var(--sidebar-font);
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -227,8 +214,6 @@ body {
     user-select: none;
     line-height: 1.15;
     position: relative;
-    
-    /* FLUID FIX: Force text to wrap to a new line if it hits the edge */
     white-space: normal !important; 
     word-wrap: break-word !important;
 }
@@ -237,16 +222,11 @@ body {
 .sidebar-item.active { color: var(--sidebar-active-text); }
 .sidebar-item.active:hover { color: var(--sidebar-active-text); }
 
-/* 2. Remove the massive right-padding that is suffocating the text */
 .sidebar-item-inner {
-    /* FLUID FIX: Reduced the right padding from 40px to 16px */
     padding: 8px 16px 8px 24px !important; 
     margin-left: var(--sidebar-item-indent);
     position: relative;
-    
-    /* FLUID FIX: Give it a bit more width to breathe inside the sidebar */
     width: 95% !important; 
-    
     box-sizing: border-box !important;
     gap: 12px !important;  
     z-index: 1;
@@ -287,7 +267,6 @@ body {
     white-space: nowrap;
     flex-shrink: 0 !important;
     align-self: center !important;
-    padding-top: 0 !important;
     opacity: 0;
     transform: translateX(6px);
     transition: opacity 0.2s ease, transform 0.2s ease;
@@ -303,7 +282,6 @@ body {
 
 /* ─── SIDEBAR FOOTER ─── */
 .sidebar-footer {
-    /* FLUID FIX: Reduced right padding from 28px down to 12px so text fits! */
     padding: clamp(14px, 2vh, 18px) 12px clamp(18px, 3vh, 24px) clamp(16px, 2vw, 28px);
     display: flex;
     flex-direction: column;
@@ -311,23 +289,22 @@ body {
 }
 
 .sidebar-footer-item {
-    font-size: clamp(9px, 1vw, 11px); /* Bumped slightly for readability */
+    font-size: clamp(9px, 1vw, 11px); 
     letter-spacing: 0.16em;
     color: rgb(255, 255, 255);
     cursor: pointer;
     display: flex;
-    align-items: flex-start; /* Better alignment if text wraps */
+    align-items: flex-start; 
     gap: 8px;
     transition: color 0.2s;
     user-select: none;
-    
-    /* FLUID FIX: Force long links like "INSTAGRAM" to drop to a new line if squished */
     white-space: normal !important;
     word-wrap: break-word !important;
     line-height: 1.4 !important;
 }
 
 .sidebar-footer-item:hover { color: rgba(255, 255, 255, 0.7); }
+
 /* ─── PAGE COUNTER ─── */
 .sidebar-page-count {
     padding: clamp(8px, 1.5vh, 12px) clamp(16px, 2vw, 28px);
@@ -359,54 +336,59 @@ body {
 }
 
 /* ═══════════════════════════════════════════════
-   MOBILE OPTIMIZATION — THE SINGLE BREAKPOINT
+   MOBILE OPTIMIZATION — THE CONTEXTUAL TRACKER
 ═══════════════════════════════════════════════ */
-/* Because of our fluid clamp() variables, we can delete the 1024px, 600px, 
-   and 480px media queries. We ONLY need this one breakpoint for mobile! */
-
 @media (max-width: 768px) {
     :root { 
-        /* Override our variables for mobile views */
         --navbar-height: 52px; 
-        --sidebar-width: 85vw; /* Takes up most of the screen on phones */
+        --sidebar-width: 85vw; 
         --sidebar-notch: 12px;
     }
     
-    /* 1. Unhide the links container so it fits in the center 1fr grid space */
+    /* 1. Force container to sit centered in the middle navbar grid slot */
     .nav-links { 
         display: flex !important; 
         justify-content: center !important;
         align-items: center !important;
         height: 100% !important;
         width: 100% !important;
-    }
+    } 
 
-    /* 2. Hide all the navigation text menu items by default on mobile */
-    nav-links .nav-btn {
+    /* 2. Hide ALL link tags and classes on mobile by default */
+    .nav-links a,
+    .nav-links .nav-btn {
         display: none !important;
     }
 
-    /* 3. ONLY display the button that your scroll JS flags as active! */
+    /* 3. Display the single link that is currently flagged active */
+    .nav-links a.active,
     .nav-links .nav-btn.active {
-        display: flex !important; /* Re-appears like magic in the center */
-        color: #fff !important;
+        display: flex !important; 
+        align-items: center !important;
+        justify-content: center !important;
+        color: #ffffff !important;         /* Force pure white text */
         font-size: 11px !important;
         font-weight: 800 !important;
         letter-spacing: 0.15em !important;
         padding: 0 !important;
-        pointer-events: none !important; /* Disables clicking so it behaves like a clear title header */
+        opacity: 1 !important;             /* Guarantee visibility */
+        visibility: visible !important;
+        pointer-events: none !important; 
     }
 
-    /* 4. Remove the desktop top-line decoration so it functions as a clean readout */
-    .nav-btn.active::after {
+    /* 4. Completely destroy the desktop underline on mobile */
+    .nav-links a.active::after,
+    .nav-links .nav-btn.active::after {
+        content: none !important;          /* This kills the ghost line! */
         display: none !important;
     }
-    .sidebar-page-num { display: none; } /* Hide page numbers to save screen space */
+    .sidebar-page-num { display: none; } 
     
-    .navbar { grid-template-columns: var(--navbar-height) 1fr var(--navbar-height); }
+    .navbar { 
+        grid-template-columns: var(--navbar-height) 1fr var(--navbar-height) !important; 
+    }
     .hamburger span { width: 20px; }
     
-    /* Allow the massive sidebar text to wrap neatly */
     .sidebar-item { 
         font-size: clamp(18px, 6vw, 26px); 
         white-space: normal; 
