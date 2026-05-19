@@ -559,14 +559,14 @@ function renderCharacter(char) {
   const _clsIcon = resolveClassIcon(char.class);
 
   document.getElementById('dom-tags').innerHTML = `
-    <span class="tag tag-stars">${iconImg('../assets/RarityAssets/StarIcon.png', 12, 'tag-el-icon').repeat(char.rarity || 6)} ${char.rarity || 6}-Star</span>
+    <span class="tag tag-stars">${iconImg('assets/RarityAssets/StarIcon.png', 12, 'tag-el-icon').repeat(char.rarity || 6)} ${char.rarity || 6}-Star</span>
     <span class="tag tag-primary">${iconImg(_elIcon, 12, 'tag-el-icon')} ${char.element || ''}</span>
     <span class="tag tag-class">${_clsIcon ? iconImg(_clsIcon, 12, 'tag-el-icon') + ' ' : ''}${char.class || ''}</span>
     <span class="tag tag-class">${iconImg(_wpnIcon, 12, 'tag-el-icon')} ${char.weapon || ''}</span>
   `;
 
   document.getElementById('dom-pills').innerHTML = `
-    <div class="hero-pill">${iconImg('../assets/RarityAssets/StarIcon.png', 14, 'has-char-img')}<strong>${char.rarity || 6}-Star</strong></div>
+    <div class="hero-pill">${iconImg('assets/RarityAssets/StarIcon.png', 14, 'has-char-img')}<strong>${char.rarity || 6}-Star</strong></div>
     <div class="hero-pill">${iconImg(_wpnIcon, 14, 'has-char-img')}<strong>${char.weapon || ''}</strong></div>
     <div class="hero-pill">${_clsIcon ? iconImg(_clsIcon, 14, 'has-char-img') : ''}${iconImg(char.icon_role || '🎯', 14, 'has-char-img')}<strong>${char.role || ''}</strong></div>
     <div class="hero-pill owned-pill" id="dom-owned-pill" onclick="toggleCharOwned()" style="cursor:pointer;user-select:none">
@@ -653,10 +653,10 @@ function renderCharacter(char) {
 /* ─── ATTRIBUTES ─── */
 function renderAttributes(char) {
   const attrMap = [
-    { key:'str', label:'Strength',  icon: char.icon_str || '../assets/AttributesAssets/STR.png',  id:'attr-str' },
-    { key:'agi', label:'Agility',   icon: char.icon_agi || '../assets/AttributeAssets/AGI.png',   id:'attr-agi' },
-    { key:'int', label:'Intellect', icon: char.icon_int || '../assets/AttributesAssets/INT.png',  id:'attr-int' },
-    { key:'wil', label:'Will',      icon: char.icon_wil || '../assets/AttributesAssets/WILL.png', id:'attr-wil' }
+    { key:'str', label:'Strength',  icon: char.icon_str || 'assets/AttributesAssets/STR.png',  id:'attr-str' },
+    { key:'agi', label:'Agility',   icon: char.icon_agi || 'assets/AttributeAssets/AGI.png',   id:'attr-agi' },
+    { key:'int', label:'Intellect', icon: char.icon_int || 'assets/AttributesAssets/INT.png',  id:'attr-int' },
+    { key:'wil', label:'Will',      icon: char.icon_wil || 'assets/AttributesAssets/WILL.png', id:'attr-wil' }
   ];
   const primary = char.primary_attr || 'int';
   document.getElementById('dom-attr-grid').innerHTML = attrMap.map(a => {
