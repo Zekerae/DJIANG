@@ -1074,32 +1074,37 @@ function setExpHave(groupKey, itemKey, val) {
  * plus coveredExp, pct, remaining.
  */
 function computeExpBreakdown(rawExp, groupDef, groupKey) {
-  // Greedy coverage: largest items first
+  // Step 1: greedily consume inventory largest-first to find remaining EXP
   let remaining = rawExp;
-  let coveredExp = 0;
+  const used = {};
   for (const key of groupDef.keys) {
-    const val = MATS[key]?.expValue || 1;
+    const val  = MATS[key]?.expValue || 1;
     const have = getExpHave(groupKey, key);
-    const used = Math.min(have, Math.ceil(remaining / val));
-    coveredExp += used * val;
-    remaining = Math.max(0, remaining - used * val);
+    const use  = Math.min(have, Math.floor(remaining / val));
+    used[key]  = use;
+    remaining  = Math.max(0, remaining - use * val);
   }
 
+  const coveredExp = rawExp - remaining;
   const pct = rawExp > 0 ? Math.min(100, Math.round((coveredExp / rawExp) * 100)) : 0;
 
-  // Per-tier standalone count (how many if you only used THIS tier)
+  // Step 2: per tier — how many items of THIS tier cover the remaining EXP
+  // (independent counts so the user can mix and match)
   const perTier = {};
   for (const key of groupDef.keys) {
-    const val = MATS[key]?.expValue || 1;
+    const val  = MATS[key]?.expValue || 1;
     const have = getExpHave(groupKey, key);
-    const standaloneTotal = Math.ceil(rawExp / val);
-    const need = Math.max(0, standaloneTotal - have);
-    perTier[key] = { standaloneTotal, need, have, expVal: val };
+    const need = remaining > 0 ? Math.ceil(remaining / val) : 0;
+    perTier[key] = {
+      standaloneTotal: Math.ceil(rawExp / val),
+      need,
+      have,
+      expVal: val,
+    };
   }
 
-  return { perTier, coveredExp, remaining: Math.max(0, rawExp - coveredExp), totalExp: rawExp, pct };
+  return { perTier, coveredExp, remaining, totalExp: rawExp, pct };
 }
-
 // ── SKILL DEFINITIONS ──
 const SKILL_NAMES = ['Basic Attack','Battle Skill','Combo Skill','Ultimate'];
 function defaultSkills() {
@@ -1120,6 +1125,7 @@ async function loadDbData() {
         if (MATS[m.id]) MATS[m.id].name = m.name;
       }
     }
+    
     const { data: maps, error: mapErr } = await db.from('material_list_maps').select('*').order('sort_order');
     if (mapErr) throw mapErr;
     const { data: pins, error: pinErr } = await db.from('material_list_map_pins').select('*').order('sort_order');
