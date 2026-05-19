@@ -37,14 +37,18 @@
 }
 
 /* 2. Apply it to the Navbar */
-#navbar, 
-.navbar, 
-.nav-links a, 
+#navbar,
+.navbar,
+.nav-links a,
 .navbar a {
-    line-height: 1.5 !important; 
-    display: center !important;
+    /* FIX 1: Apply the font directly to the links and the container */
+    font-family: 'HarmonyOS Sans Regular', sans-serif !important; 
+    line-height: 1.5 !important;
+    
+    /* FIX 2: Changed 'center' to 'flex' so 'align-items: center' actually works */
+    display: center !important; 
     align-items: center !important;
-    padding-bottom: 2px !important; 
+    padding-bottom: 2px !important;
 }
 .navbar button {
     font-family: 'HarmonyOS Sans Regular', sans-serif !important;
