@@ -808,6 +808,7 @@ async function initAuth() {
 async function loadUserData() {
   if (!CURRENT_USER) return;
   try {
+    // 1. Load plans
     const { data: planRows, error: planErr } = await db
       .from('material_list_plans')
       .select('id, plan_type, from_level, to_level, plan_json, plan_label, character_id, weapon_id')
@@ -817,12 +818,49 @@ async function loadUserData() {
 
     if (planRows && planRows.length) {
       plans = planRows.map(row => {
-        const base = row.plan_json || {};
-        return { ...base, _dbId: row.id };
-      }).filter(p => p.id && p.item);
+        // plan_json may be a parsed object (jsonb) or a JSON string
+        let base = row.plan_json;
+        if (typeof base === 'string') {
+          try { base = JSON.parse(base); } catch { base = {}; }
+        }
+        base = base || {};
+
+        // If plan_json has everything, use it directly
+        if (base.id && base.item) {
+          return { ...base, _dbId: row.id };
+        }
+
+        // Fallback: reconstruct from relational columns
+        const type = row.plan_type;
+        let item = null;
+        if (type === 'operator') {
+          item = OPERATORS.find(o => o.id === row.character_id);
+        } else if (type === 'weapon') {
+          item = WEAPONS.find(w => w.id === row.weapon_id);
+        }
+        if (!item) return null; // unknown entity, skip
+
+        return {
+          id: row.id,
+          type,
+          item,
+          fromLv:     row.from_level  ?? 1,
+          toLv:       row.to_level    ?? 40,
+          promoFrom:  base.promoFrom  ?? 0,
+          promoTo:    base.promoTo    ?? 0,
+          talentFrom: base.talentFrom ?? 0,
+          talentTo:   base.talentTo   ?? 0,
+          tuneFrom:   base.tuneFrom   ?? 0,
+          tuneTo:     base.tuneTo     ?? 0,
+          skills:     base.skills     ?? (type === 'operator' ? defaultSkills() : []),
+          _dbId: row.id,
+        };
+      }).filter(Boolean); // drop nulls
+
       plans.forEach(p => focusedPlanIds.add(p.id));
     }
 
+    // 2. Load inventory
     const { data: matRows, error: matErr } = await db
       .from('material_list_user_mats')
       .select('material_id, have_qty, exp_have')
@@ -832,8 +870,11 @@ async function loadUserData() {
     if (matRows && matRows.length) {
       haveQty = {}; expHave = {};
       for (const row of matRows) {
-        haveQty[row.material_id] = row.have_qty || 0;
-        if (row.material_id === '__exp_have__' && row.exp_have) expHave = row.exp_have;
+        if (row.material_id === '__exp_have__') {
+          expHave = row.exp_have || {};
+        } else {
+          haveQty[row.material_id] = row.have_qty || 0;
+        }
       }
     }
   } catch (e) {
@@ -846,6 +887,11 @@ async function loadUserData() {
 
 async function savePlanToDB(plan) {
   if (!CURRENT_USER) return;
+
+  // Store plan_json as a plain object (Supabase jsonb handles it)
+  const planSnapshot = { ...plan };
+  delete planSnapshot._dbId; // don't nest _dbId inside the JSON
+
   const payload = {
     user_id:      CURRENT_USER.id,
     plan_type:    plan.type,
@@ -853,14 +899,23 @@ async function savePlanToDB(plan) {
     to_level:     plan.toLv,
     character_id: plan.type === 'operator' ? plan.item.id : null,
     weapon_id:    plan.type === 'weapon'   ? plan.item.id : null,
-    plan_json:    JSON.stringify(plan),
+    plan_json:    planSnapshot, // plain object, NOT JSON.stringify()
     plan_label:   plan.item.name,
   };
+
   if (plan._dbId) {
-    const { error } = await db.from('material_list_plans').update(payload).eq('id', plan._dbId).eq('user_id', CURRENT_USER.id);
+    const { error } = await db
+      .from('material_list_plans')
+      .update(payload)
+      .eq('id', plan._dbId)
+      .eq('user_id', CURRENT_USER.id);
     if (error) throw error;
   } else {
-    const { data, error } = await db.from('material_list_plans').insert(payload).select('id').single();
+    const { data, error } = await db
+      .from('material_list_plans')
+      .insert(payload)
+      .select('id')
+      .single();
     if (error) throw error;
     plan._dbId = data.id;
   }
@@ -1182,7 +1237,6 @@ async function loadDbData() {
 const charImgCache={};
 const weaponImgCache={};
 
-// ── FIX 3a: re-render plans after char images load ──
 async function loadCharImages() {
   try{
     const{data}=await db.from('v_characters_tiered').select('name,slug,img_path');
@@ -1191,10 +1245,9 @@ async function loadCharImages() {
       if(row.slug)charImgCache[row.slug]=row.img_path??null;
     }
   }catch(e){console.warn('Could not load char images:',e.message);}
-  renderPlans(); // re-render now that cache is warm
+  renderPlans();
 }
 
-// ── FIX 3b: re-render plans after weapon images load ──
 async function loadWeaponImages() {
   try{
     const{data}=await db.from('weapons').select('id,img');
@@ -1202,7 +1255,7 @@ async function loadWeaponImages() {
       if(row.id)weaponImgCache[row.id]=row.img??null;
     }
   }catch(e){console.warn('Could not load weapon images:',e.message);}
-  renderPlans(); // re-render now that cache is warm
+  renderPlans();
 }
 
 function getCharImg(name){const key=name.toLowerCase();if(!(key in charImgCache))return undefined;return charImgCache[key]||null;}
@@ -1270,7 +1323,6 @@ function removePlan(id) {
   renderAll();
 }
 
-// ── FIX 2: reset plan to defaults instead of deleting ──
 function resetPlan(id) {
   const plan=plans.find(p=>p.id===id);
   if(!plan) return;
@@ -1352,7 +1404,6 @@ function buildPlanCard(plan){
   }
   const card=document.createElement('div');
   card.className='plan-card';card.dataset.id=plan.id;
-  // ── FIX 2: trash button now calls resetPlan instead of removePlan ──
   card.innerHTML=`<div class="plan-head">${buildAvatarHTML(plan)}<div class="plan-meta"><div class="plan-name">${plan.item.name}</div><div class="plan-tags">${isOp?`<span class="tag tag-${elLower}">${el}</span><span class="tag tag-neutral">${plan.item.cls}</span>`:`<span class="tag tag-neutral">${plan.item.type}</span>`}<span class="tag tag-rarity">${'★'.repeat(plan.item.rarity)}</span></div></div><button class="btn btn-ghost btn-sm btn-danger" onclick="resetPlan(${plan.id})" title="Reset to defaults"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button></div><div class="plan-body"><div class="level-row"><div class="level-col"><label>From</label><div class="level-slider-wrap"><input type="range" class="from-slider" min="1" max="89" value="${plan.fromLv}" oninput="updateFrom(${plan.id},this.value)"><input type="number" class="level-num-input from-num" min="1" max="89" value="${plan.fromLv}" onchange="updateFrom(${plan.id},this.value)" onkeydown="if(event.key==='Enter'){updateFrom(${plan.id},this.value);this.blur()}"></div></div><div class="level-arrow">→</div><div class="level-col"><label>To</label><div class="level-slider-wrap"><input type="range" class="to-slider" min="2" max="90" value="${plan.toLv}" oninput="updateTo(${plan.id},this.value)"><input type="number" class="level-num-input to-num" min="2" max="90" value="${plan.toLv}" onchange="updateTo(${plan.id},this.value)" onkeydown="if(event.key==='Enter'){updateTo(${plan.id},this.value);this.blur()}"></div></div></div><div class="quick-btns">${qBtns}</div>${promoRow}${tuneRow}${skillsSection}</div>`;
   return card;
 }
