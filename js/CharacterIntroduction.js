@@ -101,6 +101,49 @@ const ELEMENT_PALETTES = {
   electric: { primary:'#b88a10', text:'#ffd257', bg:'rgba(184,138,16,0.13)', bg2:'rgba(184,138,16,0.06)', border:'rgba(184,138,16,0.34)', glow:'rgba(184,138,16,0.22)' },
   physical: { primary:'#6272a0', text:'#b0bedd', bg:'rgba(98,114,160,0.13)', bg2:'rgba(98,114,160,0.06)', border:'rgba(98,114,160,0.34)', glow:'rgba(98,114,160,0.20)' },
 };
+/* ── STATIC ICON RESOLVERS ── */
+const ELEMENT_ICONS = {
+  cryo:     '../assets/ElementAssets/Cryoicon.png',
+  ice:      '../assets/ElementAssets/Cryoicon.png',
+  heat:     '../assets/ElementAssets/Heaticon.png',
+  fire:     '../assets/ElementAssets/Heaticon.png',
+  electric: '../assets/ElementAssets/Electricicon.png',
+  shock:    '../assets/ElementAssets/Electricicon.png',
+  nature:   '../assets/ElementAssets/Natureicon.png',
+  grass:    '../assets/ElementAssets/Natureicon.png',
+  physical: '../assets/ElementAssets/Physicalicon.png',
+  steel:    '../assets/ElementAssets/Physicalicon.png',
+};
+function resolveElementIcon(element) {
+  const key = (element || '').toLowerCase().trim();
+  return ELEMENT_ICONS[key] || null;
+}
+
+const WEAPON_ICONS = {
+  'arts unit':  '../assets/WeaponCharAssets/36px-Arts_Unit.png',
+  'great sword':'../assets/WeaponCharAssets/36px-Great_Sword.webp',
+  'greatsword': '../assets/WeaponCharAssets/36px-Great_Sword.webp',
+  'handcannon': '../assets/WeaponCharAssets/36px-Handcannon.webp',
+  'polearm':    '../assets/WeaponCharAssets/36px-Polearm.webp',
+  'sword':'../assets/WeaponCharAssets/Short-Weapon.webp',
+};
+function resolveWeaponIcon(weapon) {
+  const key = (weapon || '').toLowerCase().trim();
+  return WEAPON_ICONS[key] || null;
+}
+
+const CLASS_ICONS = {
+  caster:   '../assets/ClassAssets/CasterIcon.png',
+  defender: '../assets/ClassAssets/DefenderIcon.png',
+  guard:    '../assets/ClassAssets/GuardIcon.png',
+  striker:  '../assets/ClassAssets/StrikerIcon.png',
+  vanguard: '../assets/ClassAssets/VanguardIcon.png',
+};
+function resolveClassIcon(cls) {
+  const key = (cls || '').toLowerCase().trim();
+  return CLASS_ICONS[key] || null;
+}
+
 function applyTheme(elementOrHex) {
   const r = document.documentElement;
   const e = (elementOrHex||'').toLowerCase().trim();
@@ -116,50 +159,144 @@ function applyTheme(elementOrHex) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   DROPDOWN
+   DROPDOWN — weapon-style (grouped, filterable, searchable)
    ════════════════════════════════════════════════════════════════ */
+const charActiveFilters = { rarity: new Set(), element: new Set(), role: new Set(), weapon: new Set() };
+let charSearchQuery = '';
 let _dropdownOpen = false;
+
 function toggleCharDropdown() { _dropdownOpen ? closeCharDropdown() : openCharDropdown(); }
+
 function openCharDropdown() {
   _dropdownOpen = true;
   document.getElementById('charTrigger').classList.add('open');
-  document.getElementById('charPanel').style.display = 'block';
-  document.getElementById('charSearch').focus();
+  document.getElementById('charPanel').classList.add('open');
+  setTimeout(() => document.getElementById('charSearch').focus(), 50);
+  renderCharList();
   document.addEventListener('mousedown', onOutsideClick, true);
 }
+
 function closeCharDropdown() {
   _dropdownOpen = false;
   document.getElementById('charTrigger').classList.remove('open');
-  document.getElementById('charPanel').style.display = 'none';
-  document.getElementById('charSearch').value = '';
-  filterCharList('');
+  document.getElementById('charPanel').classList.remove('open');
   document.removeEventListener('mousedown', onOutsideClick, true);
 }
+
 function onOutsideClick(e) {
   const wrap = document.getElementById('charDropdownWrap');
   if (wrap && !wrap.contains(e.target)) closeCharDropdown();
 }
 
+function charMatchesFilters(c) {
+  const q = charSearchQuery.toLowerCase();
+  if (q && !(c.name || '').toLowerCase().includes(q)) return false;
+  if (charActiveFilters.rarity.size && !charActiveFilters.rarity.has(String(c.rarity || 6))) return false;
+  if (charActiveFilters.element.size) {
+    const el = (c.element || '').toLowerCase();
+    if (![...charActiveFilters.element].some(f => el.includes(f.toLowerCase()))) return false;
+  }
+  if (charActiveFilters.role.size) {
+    const ro = (c.role || '').toLowerCase();
+    if (![...charActiveFilters.role].some(f => ro.includes(f.toLowerCase()))) return false;
+  }
+  if (charActiveFilters.weapon.size) {
+    const wp = (c.weapon || '').toLowerCase();
+    if (![...charActiveFilters.weapon].some(f => wp.includes(f.toLowerCase()))) return false;
+  }
+  return true;
+}
+
+function updateCharFilterBadge() {
+  const count = charActiveFilters.rarity.size + charActiveFilters.element.size;
+  const badge = document.getElementById('charFilterBadge');
+  if (count > 0) { badge.textContent = count; badge.classList.add('visible'); }
+  else badge.classList.remove('visible');
+}
+
 function buildCharList(chars) {
   ALL_CHARS = chars;
+  renderCharList();
+}
+
+function renderCharList() {
   const list = document.getElementById('charList');
   if (!list) return;
-  list.innerHTML = chars.map(c => `
-    <div class="char-item" data-id="${c.id}" data-name="${(c.name||'').toLowerCase()}" onclick="selectChar('${c.id}')">
-      <div class="char-item-av" style="background:${c.avatar_bg || 'var(--surface3)'}">${c.avatar_img ? `<img src="${c.avatar_img}">` : (c.name||'?').charAt(0)}</div>
-      <div style="flex:1;min-width:0"><div class="char-item-name">${c.name}</div><div class="char-item-sub">${[c.element, c.class].filter(Boolean).join(' · ') || ''}</div></div>
-      <span class="char-item-check">✓</span>
-    </div>`).join('');
-}
-function filterCharList(q) {
-  const term = q.toLowerCase();
-  document.querySelectorAll('.char-item').forEach(item => {
-    item.style.display = (!term || (item.dataset.name||'').includes(term)) ? '' : 'none';
+  const groups = { 6: [], 5: [], 4: [], 3: [] };
+  ALL_CHARS.filter(charMatchesFilters).forEach(c => {
+    const r = c.rarity || 6;
+    if (groups[r]) groups[r].push(c);
+    else groups[6].push(c);
   });
+  let html = '';
+  let total = 0;
+  [6, 5, 4, 3].forEach(r => {
+    if (!groups[r].length) return;
+    total += groups[r].length;
+    html += `<div class="char-optgroup-label">${'★'.repeat(r)} · ${r}-Star (${groups[r].length})</div>`;
+    groups[r].forEach(c => {
+      const isCur = CHAR && CHAR.id === c.id;
+      const stars = Array(r).fill('<div class="char-item-star"></div>').join('');
+      const avatar = c.avatar_img
+        ? `<img src="${c.avatar_img}">`
+        : (c.name || '?').charAt(0);
+      html += `
+        <div class="char-item${isCur ? ' active' : ''}" data-id="${c.id}" onclick="selectChar('${c.id}')">
+          <div class="char-item-av" style="background:${c.avatar_bg || 'var(--surface3)'}">${avatar}</div>
+          <div style="flex:1;min-width:0">
+            <div class="char-item-name">${c.name}</div>
+            <div class="char-item-sub">${[c.element, c.class].filter(Boolean).join(' · ') || ''}</div>
+          </div>
+          <div class="char-item-stars">${stars}</div>
+        </div>`;
+    });
+  });
+  if (total === 0) html = '<div class="char-no-results">No operators match</div>';
+  list.innerHTML = html;
 }
+
+function filterCharList(q) {
+  charSearchQuery = q;
+  renderCharList();
+}
+
 function setActiveCharItem(id) {
-  document.querySelectorAll('.char-item').forEach(item => item.classList.toggle('active', item.dataset.id === id));
+  document.querySelectorAll('.char-item').forEach(item =>
+    item.classList.toggle('active', item.dataset.id === id)
+  );
 }
+
+// Wire up filter pills and reset after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('charSearch').addEventListener('input', e => {
+    charSearchQuery = e.target.value;
+    renderCharList();
+  });
+  document.getElementById('charSearch').addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeCharDropdown();
+  });
+  document.querySelectorAll('.char-fpill').forEach(pill => {
+    pill.addEventListener('click', e => {
+      e.stopPropagation();
+      const group = pill.dataset.group;
+      const val   = pill.dataset.val;
+      const set   = charActiveFilters[group];
+      if (set.has(val)) { set.delete(val); pill.className = 'char-fpill'; }
+      else { set.add(val); pill.classList.add(`active-${val.replace(/\s+/g, '')}`); }
+      updateCharFilterBadge();
+      renderCharList();
+    });
+  });
+  document.getElementById('charFilterClear').addEventListener('click', e => {
+    e.stopPropagation();
+    charActiveFilters.rarity.clear(); charActiveFilters.element.clear();
+    charActiveFilters.role.clear();   charActiveFilters.weapon.clear();
+    charSearchQuery = '';
+    document.getElementById('charSearch').value = '';
+    document.querySelectorAll('.char-fpill').forEach(p => { p.className = 'char-fpill'; });
+    updateCharFilterBadge(); renderCharList();
+  });
+});
 function selectChar(id) {
   closeCharDropdown();
   const url = new URL(window.location.href);
@@ -364,7 +501,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const charSlug = new URLSearchParams(window.location.search).get('char') || null;
   try {
-    const { data: chars } = await db.from('characters').select('id, name, element, class, avatar_img, avatar_bg').order('name');
+    const { data: chars } = await db.from('characters').select('id, name, element, class, role, weapon, rarity, avatar_img, avatar_bg').order('name');
     if (chars && chars.length > 0) buildCharList(chars);
     const targetId = charSlug || (chars && chars.length > 0 ? chars[0].id : null);
     if (targetId) {
@@ -416,17 +553,21 @@ function renderCharacter(char) {
   document.getElementById('dom-eyebrow').textContent = [char.element, char.class, char.faction].filter(Boolean).join(' · ').toUpperCase();
   document.getElementById('dom-quote').textContent   = char.quote || '';
 
+  const _elIcon  = char.icon_element   || resolveElementIcon(char.element) || '◈';
+  const _wpnIcon = char.icon_weapon_type|| resolveWeaponIcon(char.weapon)  || '⚔️';
+  const _clsIcon = resolveClassIcon(char.class);
+
   document.getElementById('dom-tags').innerHTML = `
-    <span class="tag tag-stars">${iconImg('assets/RarityAssets/StarIcon.png', 12, 'tag-el-icon').repeat(char.rarity || 6)} ${char.rarity || 6}-Star</span>
-    <span class="tag tag-primary">${iconImg(char.icon_element || '◈', 12, 'tag-el-icon')} ${char.element || ''}</span>
-    <span class="tag tag-class">${char.class || ''}</span>
-    <span class="tag tag-class">${char.weapon || ''}</span>
+    <span class="tag tag-stars">${iconImg('../assets/RarityAssets/StarIcon.png', 12, 'tag-el-icon').repeat(char.rarity || 6)} ${char.rarity || 6}-Star</span>
+    <span class="tag tag-primary">${iconImg(_elIcon, 12, 'tag-el-icon')} ${char.element || ''}</span>
+    <span class="tag tag-class">${_clsIcon ? iconImg(_clsIcon, 12, 'tag-el-icon') + ' ' : ''}${char.class || ''}</span>
+    <span class="tag tag-class">${iconImg(_wpnIcon, 12, 'tag-el-icon')} ${char.weapon || ''}</span>
   `;
 
   document.getElementById('dom-pills').innerHTML = `
-    <div class="hero-pill">${iconImg(char.icon_star || '⭐', 14, 'has-char-img')}<strong>${char.rarity || 6}-Star</strong></div>
-    <div class="hero-pill">${iconImg(char.icon_weapon_type || '⚔️', 14, 'has-char-img')}<strong>${char.weapon || ''}</strong></div>
-    <div class="hero-pill">${iconImg(char.icon_role || '🎯', 14, 'has-char-img')}<strong>${char.role || ''}</strong></div>
+    <div class="hero-pill">${iconImg('../assets/RarityAssets/StarIcon.png', 14, 'has-char-img')}<strong>${char.rarity || 6}-Star</strong></div>
+    <div class="hero-pill">${iconImg(_wpnIcon, 14, 'has-char-img')}<strong>${char.weapon || ''}</strong></div>
+    <div class="hero-pill">${_clsIcon ? iconImg(_clsIcon, 14, 'has-char-img') : ''}${iconImg(char.icon_role || '🎯', 14, 'has-char-img')}<strong>${char.role || ''}</strong></div>
     <div class="hero-pill owned-pill" id="dom-owned-pill" onclick="toggleCharOwned()" style="cursor:pointer;user-select:none">
       <span id="dom-owned-check" style="font-size:12px">○</span><strong id="dom-owned-label">Not Owned</strong>
     </div>`;
@@ -511,10 +652,10 @@ function renderCharacter(char) {
 /* ─── ATTRIBUTES ─── */
 function renderAttributes(char) {
   const attrMap = [
-    { key:'str', label:'Strength',  icon: char.icon_str || '💪', id:'attr-str' },
-    { key:'agi', label:'Agility',   icon: char.icon_agi || '🏃', id:'attr-agi' },
-    { key:'int', label:'Intellect', icon: char.icon_int || '🧠', id:'attr-int' },
-    { key:'wil', label:'Will',      icon: char.icon_wil || '🛡️', id:'attr-wil' }
+    { key:'str', label:'Strength',  icon: char.icon_str || '../assets/AttributesAssets/STR.png',  id:'attr-str' },
+    { key:'agi', label:'Agility',   icon: char.icon_agi || '../assets/AttributeAssets/AGI.png',   id:'attr-agi' },
+    { key:'int', label:'Intellect', icon: char.icon_int || '../assets/AttributesAssets/INT.png',  id:'attr-int' },
+    { key:'wil', label:'Will',      icon: char.icon_wil || '../assets/AttributesAssets/WILL.png', id:'attr-wil' }
   ];
   const primary = char.primary_attr || 'int';
   document.getElementById('dom-attr-grid').innerHTML = attrMap.map(a => {

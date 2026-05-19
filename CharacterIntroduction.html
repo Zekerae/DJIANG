@@ -79,11 +79,44 @@
       <div id="charDropdownWrap" class="char-dropdown-wrap">
         <div id="charTrigger" class="char-trigger" onclick="toggleCharDropdown()">
           <span id="charTriggerLabel">Select Operator...</span>
+          <span class="char-filter-badge" id="charFilterBadge">0</span>
           <span class="char-trigger-arrow">▼</span>
         </div>
-        <div id="charPanel" class="char-panel" style="display: none;">
+        <div id="charPanel" class="char-panel">
           <div class="char-panel-search">
-            <input type="text" id="charSearch" placeholder="Search operator..." oninput="filterCharList(this.value)" autocomplete="off">
+            <input type="text" class="char-search-input" id="charSearch" placeholder="Search operator..." autocomplete="off">
+          </div>
+          <div class="char-panel-filters">
+            <div class="char-filter-row">
+              <span class="char-filter-group-label">Rarity</span>
+              <button class="char-fpill" data-group="rarity" data-val="6">6 ★</button>
+              <button class="char-fpill" data-group="rarity" data-val="5">5 ★</button>
+              <button class="char-fpill" data-group="rarity" data-val="4">4 ★</button>
+              <button class="char-filter-clear" id="charFilterClear">✕ Reset</button>
+            </div>
+            <div class="char-filter-row">
+              <span class="char-filter-group-label">Element</span>
+              <button class="char-fpill" data-group="element" data-val="Heat">Heat</button>
+              <button class="char-fpill" data-group="element" data-val="Cryo">Cryo</button>
+              <button class="char-fpill" data-group="element" data-val="Electric">Electric</button>
+              <button class="char-fpill" data-group="element" data-val="Nature">Nature</button>
+              <button class="char-fpill" data-group="element" data-val="Physical">Physical</button>
+            </div>
+            <div class="char-filter-row">
+              <span class="char-filter-group-label">Role</span>
+              <button class="char-fpill" data-group="role" data-val="DPS">DPS</button>
+              <button class="char-fpill" data-group="role" data-val="Support">Support</button>
+              <button class="char-fpill" data-group="role" data-val="Tank">Tank</button>
+              <button class="char-fpill" data-group="role" data-val="Healer">Healer</button>
+            </div>
+            <div class="char-filter-row">
+              <span class="char-filter-group-label">Weapon</span>
+              <button class="char-fpill" data-group="weapon" data-val="Great Sword">Greatsword</button>
+              <button class="char-fpill" data-group="weapon" data-val="Polearm">Polearm</button>
+              <button class="char-fpill" data-group="weapon" data-val="Handcannon">Handcannon</button>
+              <button class="char-fpill" data-group="weapon" data-val="Arts Unit">Arts Unit</button>
+              <button class="char-fpill" data-group="weapon" data-val="Sword">Sword</button>
+            </div>
           </div>
           <div id="charList" class="char-list"></div>
         </div>
