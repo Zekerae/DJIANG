@@ -16,7 +16,6 @@
             --text:#e8e8ee;--text2:#b0b0c0;--text3:#707080;--text4:#44444e;
             --t0:#e8c85a;--t05:#a06fe8;--t1:#5ba0e8;--t15:#4ec69a;--t2:#8b8fa8;
             --radius:8px;--radius-sm:5px;--nav-h:48px;--sidebar-w:220px;
-            --log-bg:#0a0f0a;--log-border:#1a2a1a;
         }
         html{scroll-behavior:smooth}
         body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
@@ -67,8 +66,6 @@
         .btn.danger{border-color:rgba(239,80,80,.3);color:var(--red);background:rgba(239,80,80,.06)}
         .btn.danger:hover{background:rgba(239,80,80,.14)}
         .btn:disabled{opacity:.4;cursor:not-allowed}
-        .btn.green{border-color:rgba(78,202,139,.3);color:var(--green);background:rgba(78,202,139,.06)}
-        .btn.green:hover{background:rgba(78,202,139,.14)}
 
         /* SCHEMA NOTE */
         .schema-note{background:rgba(240,160,64,.05);border:1px solid rgba(240,160,64,.2);border-left:2px solid var(--gold);border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:18px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#c8a060;letter-spacing:.06em;line-height:1.7}
@@ -243,47 +240,6 @@
         .modal-body{font-size:14px;color:var(--text2);margin-bottom:18px;line-height:1.6}
         .modal-actions{display:flex;gap:8px;justify-content:flex-end}
 
-        /* ══ DIAGNOSTIC LOG ══ */
-        #diag-panel{
-            background:var(--log-bg);
-            border:1px solid var(--log-border);
-            border-left:2px solid var(--green);
-            border-radius:var(--radius);
-            margin-bottom:20px;
-            overflow:hidden;
-        }
-        #diag-header{
-            display:flex;align-items:center;gap:10px;padding:9px 14px;
-            background:rgba(78,202,139,.04);border-bottom:1px solid var(--log-border);
-            cursor:pointer;user-select:none;
-        }
-        #diag-header-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);flex:1}
-        #diag-count{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:1px 7px}
-        #diag-toggle-btn{font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;border:1px solid var(--log-border);border-radius:var(--radius-sm);background:transparent;color:var(--text3);cursor:pointer;transition:color .1s}
-        #diag-toggle-btn:hover{color:var(--text)}
-        #diag-clear-btn{font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;border:1px solid rgba(239,80,80,.2);border-radius:var(--radius-sm);background:transparent;color:var(--text3);cursor:pointer;transition:color .1s}
-        #diag-clear-btn:hover{color:var(--red)}
-        #diag-rerun-btn{font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 9px;border:1px solid rgba(78,202,139,.3);border-radius:var(--radius-sm);background:rgba(78,202,139,.05);color:var(--green);cursor:pointer;transition:all .1s}
-        #diag-rerun-btn:hover{background:rgba(78,202,139,.12)}
-        #diag-body{display:block;max-height:420px;overflow-y:auto;padding:10px 0}
-        #diag-body.collapsed{display:none}
-        .log-entry{display:flex;align-items:flex-start;gap:10px;padding:4px 14px;font-family:'Share Tech Mono',monospace;font-size:10px;line-height:1.5;border-bottom:1px solid rgba(255,255,255,.02)}
-        .log-entry:last-child{border-bottom:none}
-        .log-ts{color:var(--text4);flex-shrink:0;min-width:56px}
-        .log-tag{flex-shrink:0;min-width:70px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:1px 5px;border-radius:2px;text-align:center}
-        .log-tag.info{color:#6aadfa;border:1px solid rgba(106,173,250,.2);background:rgba(106,173,250,.04)}
-        .log-tag.ok{color:var(--green);border:1px solid rgba(78,202,139,.2);background:rgba(78,202,139,.04)}
-        .log-tag.warn{color:var(--warn);border:1px solid rgba(240,160,64,.2);background:rgba(240,160,64,.04)}
-        .log-tag.err{color:var(--red);border:1px solid rgba(239,80,80,.2);background:rgba(239,80,80,.06)}
-        .log-tag.data{color:var(--purple);border:1px solid rgba(176,126,248,.2);background:rgba(176,126,248,.04)}
-        .log-msg{color:var(--text2);flex:1;word-break:break-all}
-        .log-msg pre{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:3px;padding:6px 8px;margin-top:4px;overflow-x:auto;max-height:200px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;font-size:9px;color:var(--text3);line-height:1.5}
-        .log-msg .hi-key{color:#6aadfa}
-        .log-msg .hi-val{color:#4eca8b}
-        .log-msg .hi-err{color:var(--red)}
-        .log-msg .hi-warn{color:var(--warn)}
-        .log-msg .hi-null{color:var(--text4)}
-
         @media(max-width:860px){.sidebar{display:none}.main{padding:18px 14px 48px}}
     </style>
 </head>
@@ -331,18 +287,6 @@
                 <div class="panel-actions">
                     <button class="btn primary" id="btn-add-char">+ Add Character</button>
                 </div>
-            </div>
-
-            <!-- ══ DIAGNOSTIC LOG PANEL ══ -->
-            <div id="diag-panel">
-                <div id="diag-header">
-                    <span id="diag-header-label">◈ Diagnostic Log</span>
-                    <span id="diag-count">0 entries</span>
-                    <button id="diag-rerun-btn" onclick="event.stopPropagation();runDiagnostics()">↻ Re-run</button>
-                    <button id="diag-clear-btn" onclick="event.stopPropagation();clearLog()">✕ Clear</button>
-                    <button id="diag-toggle-btn">▲ Collapse</button>
-                </div>
-                <div id="diag-body"></div>
             </div>
 
             <div class="schema-note">
@@ -463,6 +407,8 @@
                     <div class="panel-title">Endmin Log</div>
                 </div>
             </div>
+
+            <!-- Date -->
             <div class="meta-section">
                 <div class="meta-section-title">Last Updated Date</div>
                 <div class="meta-field">
@@ -471,6 +417,8 @@
                 </div>
                 <button class="btn primary" id="save-last-updated">Save Date</button>
             </div>
+
+            <!-- General accordion -->
             <div class="meta-section" style="max-width:720px">
                 <div class="meta-section-title">General Tier List — Introduction</div>
                 <div class="acc-section-header">
@@ -479,6 +427,8 @@
                 </div>
                 <div class="accordion-editor-section" id="acc-editor-general"></div>
             </div>
+
+            <!-- Team accordion -->
             <div class="meta-section" style="max-width:720px">
                 <div class="meta-section-title">Team Tier List — Introduction</div>
                 <div class="acc-section-header">
@@ -505,16 +455,16 @@
 
 <div id="toast-wrap"></div>
 
-
 <script>
 const SUPABASE_URL       = 'https://vjcucliqjjljhgbqshmi.supabase.co';
-const SUPABASE_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODQ5NTcxMiwiZXhwIjoyMDk0MDcxNzEyfQ.W0j6nc4221j6Pm-qKerKgMUCkG4kSLLt9MCaeRM-VrM';
+const SUPABASE_ADMIN_KEY = '';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY);
 
 const TIERS    = ['T0','T0.5','T1','T1.5','T2'];
 const ROLES    = ['damage','enabler','buffer'];
 const TIER_CSS = {'T0':'tier-T0','T0.5':'tier-T05','T1':'tier-T1','T1.5':'tier-T15','T2':'tier-T2'};
 
+/* Default accordion structures */
 const FALLBACK_ACCORDION = {
     general:[
         {key:'about',icon:'01',title:'About the Tier List',html:'<p>About content here.</p>'},
@@ -532,246 +482,6 @@ const FALLBACK_ACCORDION = {
 let charData=[], teamsData=[], charNames={}, charImgs={}, charRarities={}, allSlugs=[], allCharsRaw=[];
 let pickerSelectedSlug=null, tierFilter='all', roleFilter='all', searchQ='';
 let accState={general:[],team:[]};
-
-/* ══════════════════════════════════════════════
-   DIAGNOSTIC LOGGER
-══════════════════════════════════════════════ */
-const Diag = (() => {
-    let entries = [];
-    let collapsed = false;
-
-    function ts() {
-        const d = new Date();
-        return `${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}.${String(d.getMilliseconds()).padStart(3,'0')}`;
-    }
-
-    function updateCount() {
-        document.getElementById('diag-count').textContent = `${entries.length} entr${entries.length===1?'y':'ies'}`;
-    }
-
-    function renderEntry(e) {
-        const div = document.createElement('div');
-        div.className = 'log-entry';
-        let msgHTML = '';
-        if (e.detail !== undefined && e.detail !== null) {
-            let detailStr;
-            try { detailStr = typeof e.detail === 'string' ? e.detail : JSON.stringify(e.detail, null, 2); }
-            catch { detailStr = String(e.detail); }
-            detailStr = detailStr
-                .replace(/("[\w_]+"):/g, '<span class="hi-key">$1</span>:')
-                .replace(/: (true|false)/g, ': <span class="hi-val">$1</span>')
-                .replace(/: null/g, ': <span class="hi-null">null</span>')
-                .replace(/: (\d+)/g, ': <span class="hi-val">$1</span>');
-            msgHTML = `<pre>${detailStr}</pre>`;
-        }
-        div.innerHTML = `
-            <span class="log-ts">${e.ts}</span>
-            <span class="log-tag ${e.type}">${e.type.toUpperCase()}</span>
-            <span class="log-msg">${e.msg}${msgHTML}</span>`;
-        return div;
-    }
-
-    function push(type, msg, detail) {
-        const entry = { ts: ts(), type, msg, detail };
-        entries.push(entry);
-        const body = document.getElementById('diag-body');
-        body.appendChild(renderEntry(entry));
-        body.scrollTop = body.scrollHeight;
-        updateCount();
-        const consoleFn = type === 'err' ? console.error : type === 'warn' ? console.warn : console.log;
-        consoleFn(`[DIAG ${entry.ts}] [${type.toUpperCase()}] ${msg}`, detail ?? '');
-    }
-
-    document.getElementById('diag-header').addEventListener('click', () => {
-        collapsed = !collapsed;
-        document.getElementById('diag-body').classList.toggle('collapsed', collapsed);
-        document.getElementById('diag-toggle-btn').textContent = collapsed ? '▼ Expand' : '▲ Collapse';
-    });
-
-    return {
-        info: (msg, detail) => push('info', msg, detail),
-        ok:   (msg, detail) => push('ok',   msg, detail),
-        warn: (msg, detail) => push('warn',  msg, detail),
-        err:  (msg, detail) => push('err',   msg, detail),
-        data: (msg, detail) => push('data',  msg, detail),
-        clear() {
-            entries = [];
-            document.getElementById('diag-body').innerHTML = '';
-            updateCount();
-        }
-    };
-})();
-
-function clearLog() { Diag.clear(); }
-
-/* ══════════════════════════════════════════════
-   FULL DIAGNOSTIC PROBE of character_tier_info
-══════════════════════════════════════════════ */
-async function runDiagnostics() {
-    Diag.clear();
-    Diag.info('=== Starting character tier diagnostics ===');
-
-    /* 1 ── Probe: what columns does character_tier_info actually have? */
-    Diag.info('[STEP 1] Fetching one raw row from character_tier_info (no joins)…');
-    const { data: rawRow, error: rawErr } = await db
-        .from('character_tier_info')
-        .select('*')
-        .limit(1);
-
-    if (rawErr) {
-        Diag.err('[STEP 1] Query failed — table may not exist or RLS blocking', { code: rawErr.code, message: rawErr.message, hint: rawErr.hint, details: rawErr.details });
-    } else if (!rawRow || rawRow.length === 0) {
-        Diag.warn('[STEP 1] Query succeeded but table is EMPTY — 0 rows returned');
-    } else {
-        const cols = Object.keys(rawRow[0]);
-        Diag.ok(`[STEP 1] Got 1 row. Columns present (${cols.length}):`, cols);
-        Diag.data('[STEP 1] Raw row sample:', rawRow[0]);
-
-        const expected = ['id','character_slug','tier','role','is_new','is_expert','watchlist'];
-        const missing = expected.filter(c => !cols.includes(c));
-        const extra   = cols.filter(c => !expected.includes(c));
-        if (missing.length) Diag.warn('[STEP 1] MISSING expected columns:', missing);
-        else Diag.ok('[STEP 1] All expected columns present ✓');
-        if (extra.length)   Diag.info('[STEP 1] Extra / new columns found:', extra);
-
-        const idVal = rawRow[0].id;
-        Diag.info(`[STEP 1] id column value: ${idVal} (type: ${typeof idVal})`);
-        if (idVal === undefined || idVal === null) {
-            Diag.err('[STEP 1] id is null/undefined — PRIMARY KEY may still be character_slug. Schema migration needed.');
-        }
-    }
-
-    /* 2 ── Probe: join with characters table using explicit FK hint */
-    Diag.info('[STEP 2] Testing join: character_tier_info → characters (using !fk_character_slug hint)…');
-    const { data: joinRow, error: joinErr } = await db
-        .from('character_tier_info')
-        .select('id, character_slug, tier, role, characters!fk_character_slug(name, img_path, rarity)')
-        .limit(1);
-
-    if (joinErr) {
-        Diag.err('[STEP 2] JOIN failed', { code: joinErr.code, message: joinErr.message, hint: joinErr.hint });
-    } else if (!joinRow || joinRow.length === 0) {
-        Diag.warn('[STEP 2] JOIN returned 0 rows');
-    } else {
-        Diag.ok('[STEP 2] JOIN succeeded ✓');
-        Diag.data('[STEP 2] Join sample row:', joinRow[0]);
-        if (!joinRow[0].characters) {
-            Diag.warn('[STEP 2] characters relation is null — character_slug may not match any row in characters table');
-        } else {
-            const charCols = Object.keys(joinRow[0].characters);
-            Diag.info('[STEP 2] characters sub-columns:', charCols);
-            const missingCharCols = ['name','img_path','rarity'].filter(c => !charCols.includes(c));
-            if (missingCharCols.length) Diag.warn('[STEP 2] Missing expected characters columns:', missingCharCols);
-            else Diag.ok('[STEP 2] characters columns look correct ✓');
-        }
-    }
-
-    /* 3 ── Probe: characters table itself */
-    Diag.info('[STEP 3] Probing characters table directly…');
-    const { data: charRow, error: charErr } = await db
-        .from('characters')
-        .select('*')
-        .limit(1);
-
-    if (charErr) {
-        Diag.err('[STEP 3] characters table query failed', { code: charErr.code, message: charErr.message });
-    } else if (!charRow || charRow.length === 0) {
-        Diag.warn('[STEP 3] characters table is EMPTY');
-    } else {
-        const charCols = Object.keys(charRow[0]);
-        Diag.ok(`[STEP 3] characters table accessible. Columns (${charCols.length}):`, charCols);
-        Diag.data('[STEP 3] Sample character row:', charRow[0]);
-
-        if ('id' in charRow[0]) {
-            Diag.info(`[STEP 3] characters PK: id=${charRow[0].id} (type: ${typeof charRow[0].id})`);
-        }
-        if ('slug' in charRow[0]) {
-            Diag.info(`[STEP 3] characters has 'slug' column: ${charRow[0].slug}`);
-        }
-
-        const missingImg = ['name','img_path','rarity'].filter(c => !charCols.includes(c));
-        if (missingImg.length) Diag.warn('[STEP 3] Missing expected characters columns:', missingImg);
-        else Diag.ok('[STEP 3] characters has name, img_path, rarity ✓');
-    }
-
-    /* 4 ── Probe: full loadChars query with FK hint */
-    Diag.info('[STEP 4] Running full loadChars query (all rows, with !fk_character_slug join)…');
-    const { data: fullData, error: fullErr } = await db
-        .from('character_tier_info')
-        .select('id,character_slug,tier,role,is_new,is_expert,watchlist,characters!fk_character_slug(name,img_path,rarity)')
-        .order('character_slug');
-
-    if (fullErr) {
-        Diag.err('[STEP 4] Full query FAILED', { code: fullErr.code, message: fullErr.message, hint: fullErr.hint, details: fullErr.details });
-    } else {
-        Diag.ok(`[STEP 4] Full query returned ${(fullData||[]).length} rows`);
-        if (fullData && fullData.length > 0) {
-            const nullJoins = fullData.filter(r => !r.characters).length;
-            const nullIds   = fullData.filter(r => r.id === null || r.id === undefined).length;
-            const nullSlugs = fullData.filter(r => !r.character_slug).length;
-            if (nullJoins)  Diag.warn(`[STEP 4] ${nullJoins}/${fullData.length} rows have NULL characters join (unmatched slugs)`);
-            if (nullIds)    Diag.err(`[STEP 4] ${nullIds} rows have NULL id — PK migration not applied`);
-            if (nullSlugs)  Diag.warn(`[STEP 4] ${nullSlugs} rows have NULL character_slug`);
-            if (!nullJoins && !nullIds && !nullSlugs) Diag.ok('[STEP 4] All rows look healthy ✓');
-
-            const sample = fullData.slice(0,3).map(r => ({
-                id: r.id,
-                slug: r.character_slug,
-                name: r.characters?.name || '(null — slug mismatch?)',
-                rarity: r.characters?.rarity,
-                img_path: r.characters?.img_path,
-                tier: r.tier,
-                role: r.role,
-                is_new: r.is_new,
-                is_expert: r.is_expert,
-                watchlist: r.watchlist,
-            }));
-            Diag.data('[STEP 4] First 3 processed rows:', sample);
-        }
-    }
-
-    /* 5 ── Probe: RLS / count check */
-    Diag.info('[STEP 5] Checking row count via count query…');
-    const { count, error: countErr } = await db
-        .from('character_tier_info')
-        .select('*', { count: 'exact', head: true });
-
-    if (countErr) {
-        Diag.err('[STEP 5] Count query failed', countErr);
-    } else {
-        Diag.ok(`[STEP 5] character_tier_info total row count: ${count}`);
-        if (count === 0) Diag.warn('[STEP 5] Table has 0 rows — nothing to display');
-    }
-
-    /* 6 ── Probe: column name alias check */
-    Diag.info('[STEP 6] Checking for alternate column names…');
-    const knownAliases = {
-        character_slug: ['char_slug','slug','character_id','char_id','operator_slug'],
-        tier:           ['rank','tier_rank','tier_level'],
-        role:           ['class','type','operator_class'],
-        is_new:         ['new','is_newly_added','newly_added'],
-        is_expert:      ['expert','expert_only','requires_expert'],
-        watchlist:      ['watch','trending','trend_direction'],
-    };
-    if (rawRow && rawRow.length > 0) {
-        const actualCols = Object.keys(rawRow[0]);
-        for (const [expected, aliases] of Object.entries(knownAliases)) {
-            if (!actualCols.includes(expected)) {
-                const found = aliases.find(a => actualCols.includes(a));
-                if (found) {
-                    Diag.warn(`[STEP 6] Column '${expected}' missing but found alias '${found}' — UPDATE your query!`);
-                } else {
-                    Diag.err(`[STEP 6] Column '${expected}' not found and no known alias present`);
-                }
-            }
-        }
-        Diag.ok('[STEP 6] Column alias check complete');
-    } else {
-        Diag.warn('[STEP 6] Skipped — no raw row available from Step 1');
-    }
-
-    Diag.info('=== Diagnostics complete ===');
-}
 
 /* ── UTILS ── */
 function setStatus(state,msg){
@@ -808,27 +518,16 @@ document.querySelectorAll('.sidebar-btn[data-panel]').forEach(btn=>{
 
 /* ── CHARS ── */
 async function loadChars(){
-    Diag.info('loadChars() called — starting character load');
     const{data:cti,error:ctiErr}=await db.from('character_tier_info')
-        .select('id,character_slug,tier,role,is_new,is_expert,watchlist,characters!fk_character_slug(name,img_path,rarity)')
+        .select('id,character_slug,tier,role,is_new,is_expert,watchlist,characters(name,img_path,rarity)')
         .order('character_slug');
-    if(ctiErr){
-        Diag.err('loadChars() query FAILED',{code:ctiErr.code,message:ctiErr.message,hint:ctiErr.hint,details:ctiErr.details});
-        toast('Failed to load characters: '+ctiErr.message,'err');
-        return;
-    }
-    Diag.ok(`loadChars() raw result: ${(cti||[]).length} rows`);
+    if(ctiErr){toast('Failed to load characters: '+ctiErr.message,'err');return;}
     charData=(cti||[]).map(r=>({
         id:r.id,slug:r.character_slug,name:r.characters?.name||r.character_slug,
         rarity:r.characters?.rarity||5,img_path:r.characters?.img_path||null,
         tier:r.tier,role:r.role,is_new:r.is_new||false,is_expert:r.is_expert||false,watchlist:r.watchlist||null,
     }));
-    const noName = charData.filter(c=>!c.name||c.name===c.slug);
-    if(noName.length) Diag.warn(`loadChars() ${noName.length} chars resolved to slug as name (join may be broken for these)`,noName.map(c=>c.slug));
-    const noId = charData.filter(c=>c.id===null||c.id===undefined);
-    if(noId.length) Diag.err(`loadChars() ${noId.length} chars have null id — PK migration needed`,noId.map(c=>c.slug));
     document.getElementById('count-chars').textContent=charData.length;
-    Diag.ok(`loadChars() processed ${charData.length} characters into charData`);
     renderCharsTable();
 }
 
@@ -893,14 +592,9 @@ async function saveCharRow(btn){
     const is_expert=row.querySelector('[data-field="is_expert"]').checked;
     const watchlist=row.querySelector('[data-field="watchlist"]').value||null;
     btn.textContent='…';btn.classList.add('saving');btn.disabled=true;
-    Diag.info(`saveCharRow() id=${id}`,{tier,role,is_new,is_expert,watchlist});
     const{error}=await db.from('character_tier_info').update({tier,role,is_new,is_expert,watchlist}).eq('id',id);
     btn.classList.remove('saving');btn.disabled=false;
-    if(error){
-        Diag.err(`saveCharRow() FAILED id=${id}`,{code:error.code,message:error.message,hint:error.hint});
-        toast('Save failed: '+error.message,'err');btn.textContent='Save';return;
-    }
-    Diag.ok(`saveCharRow() success id=${id}`);
+    if(error){toast('Save failed: '+error.message,'err');btn.textContent='Save';return;}
     const idx=charData.findIndex(c=>String(c.id)===String(id));
     if(idx!==-1)Object.assign(charData[idx],{tier,role,is_new,is_expert,watchlist});
     btn.textContent='Saved ✓';btn.classList.add('saved');row.classList.remove('dirty');
@@ -966,13 +660,8 @@ document.getElementById('confirm-add-char').addEventListener('click',async()=>{
     const is_new=document.getElementById('new-is-new').checked,is_expert=document.getElementById('new-is-expert').checked;
     const watchlist=document.getElementById('new-watchlist').value||null;
     if(!slug){toast('Select a character first','warn');document.getElementById('picker-search').focus();return;}
-    Diag.info(`insert character_tier_info slug=${slug}`,{tier,role,is_new,is_expert,watchlist});
     const{data:inserted,error}=await db.from('character_tier_info').insert({character_slug:slug,tier,role,is_new,is_expert,watchlist}).select().single();
-    if(error){
-        Diag.err('Insert failed',{code:error.code,message:error.message,hint:error.hint});
-        toast('Insert failed: '+error.message,'err');return;
-    }
-    Diag.ok('Insert succeeded',inserted);
+    if(error){toast('Insert failed: '+error.message,'err');return;}
     toast(`Added ${charNames[slug]||slug} → ${tier} / ${role}`,'ok');
     document.getElementById('add-char-form').classList.remove('visible');
     if(window._resetCharPicker)window._resetCharPicker();
@@ -1140,10 +829,14 @@ function buildAccordionEditor(sectionKey,items){
         container.appendChild(div);
     });
 }
+
 async function saveAccordionSection(sectionKey){
     const btn=document.getElementById(`save-${sectionKey}-acc`);
     btn.textContent='Saving…';btn.disabled=true;
-    const items=accState[sectionKey].map((item,idx)=>({key:item.key,html:document.getElementById(`acc-ta-${sectionKey}-${idx}`).value}));
+    const items=accState[sectionKey].map((item,idx)=>({
+        key:item.key,
+        html:document.getElementById(`acc-ta-${sectionKey}-${idx}`).value,
+    }));
     const{error}=await db.from('tier_meta').upsert({key:`accordion_${sectionKey}`,value:JSON.stringify(items)},{onConflict:'key'});
     btn.disabled=false;
     if(error){toast('Save failed: '+error.message,'err');btn.textContent=`Save ${sectionKey==='general'?'General':'Team'}`;return;}
@@ -1151,14 +844,19 @@ async function saveAccordionSection(sectionKey){
     btn.textContent='Saved ✓';toast(`${sectionKey==='general'?'General':'Team'} intro saved`,'ok');
     setTimeout(()=>{btn.textContent=`Save ${sectionKey==='general'?'General':'Team'}`;},2000);
 }
+
 document.getElementById('save-general-acc').addEventListener('click',()=>saveAccordionSection('general'));
 document.getElementById('save-team-acc').addEventListener('click',()=>saveAccordionSection('team'));
+
 async function loadAccordionContent(sectionKey){
     try{
         const{data,error}=await db.from('tier_meta').select('value').eq('key',`accordion_${sectionKey}`).single();
         if(error||!data?.value)throw new Error('not found');
         const items=JSON.parse(data.value);
-        const merged=FALLBACK_ACCORDION[sectionKey].map(fb=>{const live=items.find(i=>i.key===fb.key);return live?{...fb,html:live.html}:fb;});
+        const merged=FALLBACK_ACCORDION[sectionKey].map(fb=>{
+            const live=items.find(i=>i.key===fb.key);
+            return live?{...fb,html:live.html}:fb;
+        });
         buildAccordionEditor(sectionKey,merged);
     }catch{buildAccordionEditor(sectionKey,FALLBACK_ACCORDION[sectionKey]);}
 }
@@ -1166,37 +864,18 @@ async function loadAccordionContent(sectionKey){
 /* ── INIT ── */
 async function init(){
     setStatus('busy','Connecting…');
-    Diag.info('init() started');
-
-    Diag.info('[INIT] Fetching all characters from characters table…');
     const{data:allChars,error:charsErr}=await db.from('characters').select('id,name,img_path,rarity').order('name');
-    if(charsErr){
-        Diag.err('[INIT] characters table fetch failed',{code:charsErr.code,message:charsErr.message,hint:charsErr.hint});
-        toast('No characters found in characters table','warn');
-    } else if(allChars&&allChars.length){
-        Diag.ok(`[INIT] Loaded ${allChars.length} characters from characters table`);
-        Diag.data('[INIT] Sample character row:', allChars[0]);
+    if(allChars&&allChars.length){
         allCharsRaw=allChars.map(c=>({...c,slug:c.id}));
         allCharsRaw.forEach(c=>{charNames[c.id]=c.name;charImgs[c.id]=c.img_path||null;charRarities[c.id]=c.rarity||5;});
         allSlugs=allCharsRaw.map(c=>c.id);
-        Diag.info(`[INIT] charNames populated for ${Object.keys(charNames).length} slugs`);
-        const sampleId = allChars[0]?.id;
-        if(typeof sampleId === 'string') Diag.warn(`[INIT] characters.id is a STRING ("${sampleId}") — used as slug key`);
-        else Diag.info(`[INIT] characters.id type: ${typeof sampleId} (value: ${sampleId})`);
-    } else {
-        Diag.warn('[INIT] characters table returned 0 rows');
-        toast('No characters found in characters table','warn');
-    }
-
-    // Load all data first, THEN run diagnostics so Step 1 hits a warm connection
+    }else{toast('No characters found in characters table','warn');}
     await Promise.all([loadChars(),loadTeams(),loadMeta(),loadAccordionContent('general'),loadAccordionContent('team')]);
     initCharPicker();
     setStatus('ok','Connected');
-    Diag.ok('init() complete — running diagnostics…');
-    await runDiagnostics();
 }
 
-init().catch(err=>{setStatus('err','Connection error');toast('Init error: '+err.message,'err');Diag.err('init() threw uncaught error',{message:err.message,stack:err.stack});});
+init().catch(err=>{setStatus('err','Connection error');toast('Init error: '+err.message,'err');});
 </script>
 </body>
 </html>

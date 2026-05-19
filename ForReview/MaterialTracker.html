@@ -27,11 +27,10 @@ body {
   font-family: var(--font-body);
   height: 100vh; overflow: hidden;
   display: flex; flex-direction: column;
-  /* Push app down to make room for the fixed navbar */
   padding-top: clamp(48px, 6vh, 64px);
 }
 
-/* ── SUB-NAVBAR (from v2.2) ── */
+/* ── SUB-NAVBAR ── */
 .sub-navbar {
   position: fixed; top: 0; left: 0; width: 100%; height: 48px;
   background: #0a0a0a; border-bottom: 1px solid var(--border);
@@ -276,14 +275,33 @@ input[type=range]::-moz-range-thumb {
 .plans-empty-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); opacity: 0.5; }
 
 /* ── MID PANEL ── */
-.mid-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
-.mid-head::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 50px; height: 1px; background: var(--accent2); }
+.mid-head { padding: 14px 16px 0; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.mid-head-row { display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 10px; position: relative; }
+.mid-head-row::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 50px; height: 1px; background: var(--accent2); }
 .mid-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 3px; }
 .mid-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1; }
 .mid-badge { font-family: var(--font-mono); font-size: 9px; background: rgba(255,140,66,0.12); color: var(--accent2); padding: 2px 8px; border: 1px solid rgba(255,140,66,0.25); white-space: nowrap; }
+
+/* ── MID MODE TABS ── */
+.mid-mode-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.mid-mode-tab {
+  flex: 1; padding: 8px 12px; font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+  background: transparent; border: none; color: var(--muted);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.mid-mode-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+.mid-mode-tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.02); }
+.mid-mode-tab svg { width: 11px; height: 11px; flex-shrink: 0; }
+
 .mid-body { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 12px; min-width: 0; }
 .mid-body::-webkit-scrollbar { width: 3px; }
 .mid-body::-webkit-scrollbar-thumb { background: var(--surface3); }
+
+/* collective panel wrapper */
+.mid-collective { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+.mid-individual { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
 
 .mid-focus-bar { border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg); display: none; }
 .mid-focus-toggle { display: flex; align-items: center; gap: 7px; padding: 7px 14px; cursor: pointer; user-select: none; }
@@ -312,7 +330,7 @@ input[type=range]::-moz-range-thumb {
 .mid-focus-indicator { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.06em; padding: 1px 6px; border: 1px solid rgba(255,140,66,0.25); background: rgba(255,140,66,0.08); display: none; }
 .mid-focus-indicator.visible { display: inline-block; }
 
-/* ── NEED LIST ── */
+/* ── NEED LIST (collective - read only) ── */
 .need-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .need-section-label:first-child { padding-top: 2px; }
 .need-row {
@@ -320,23 +338,12 @@ input[type=range]::-moz-range-thumb {
   padding: 7px 8px; background: var(--surface2); border: 1px solid var(--border);
   margin-bottom: 4px; position: relative; min-width: 0; overflow: hidden;
 }
-.need-row.checked { opacity: 0.42; }
-.need-row.checked .need-row-name { text-decoration: line-through; color: var(--muted); }
-.need-check { width: 15px; height: 15px; flex-shrink: 0; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.need-row.checked .need-check { background: var(--accent); border-color: var(--accent); }
-.need-check-inner { width: 8px; height: 5px; border-left: 2px solid #0d1a18; border-bottom: 2px solid #0d1a18; transform: rotate(-45deg) translateY(-1px); opacity: 0; }
-.need-row.checked .need-check-inner { opacity: 1; }
+.need-row.highlighted { border-color: var(--accent) !important; background: rgba(0,196,163,0.06); }
+.need-row.highlighted .need-row-name { color: var(--accent); }
 .need-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .need-row-name { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .need-row-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .need-row-qty { font-family: var(--font-display); font-size: 14px; font-weight: 700; line-height: 1; }
-.need-have-wrap { display: flex; align-items: center; gap: 2px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
-.need-have-label { display: inline; }
-.need-row-input { width: 38px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 10px; padding: 2px 3px; outline: none; text-align: right; transition: border-color 0.15s; }
-.need-row-input:focus { border-color: var(--accent); }
-.need-row.highlighted { border-color: var(--accent) !important; background: rgba(0,196,163,0.06); }
-.need-row.highlighted .need-row-name { color: var(--accent); }
-.need-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); transition: width 0.25s; opacity: 0.6; }
 
 /* ── FIND BUTTON ── */
 .need-find-btn {
@@ -364,7 +371,7 @@ input[type=range]::-moz-range-thumb {
 .find-dropdown-map { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; flex: 1; }
 .find-dropdown-count { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
 
-/* ── EXP BREAKDOWN (v2.3 improved version) ── */
+/* ── EXP BREAKDOWN (collective - read only) ── */
 .exp-breakdown {
   margin-bottom: 8px; padding: 10px 10px 8px;
   background: var(--surface2); border: 1px solid var(--border);
@@ -373,53 +380,137 @@ input[type=range]::-moz-range-thumb {
 .exp-breakdown-header {
   font-family: var(--font-mono); font-size: 9px; color: var(--muted);
   letter-spacing: 0.14em; text-transform: uppercase;
-  margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;
 }
 .exp-breakdown-total { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--accent); }
-.exp-progress { height: 2px; background: var(--surface3); margin-bottom: 4px; }
-.exp-progress-fill { height: 100%; background: var(--accent); transition: width 0.25s; }
-.exp-coverage-text { font-family: var(--font-mono); font-size: 8px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
-.exp-divider { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin: 6px 0 4px; opacity: 0.6; border-bottom: 1px solid var(--border); padding-bottom: 3px; }
-
-.exp-item-row {
+.exp-item-row-simple {
   display: grid;
-  grid-template-columns: 7px 1fr auto auto auto;
+  grid-template-columns: 7px 1fr auto;
   gap: 5px; align-items: center;
   padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
   margin-bottom: 3px; min-width: 0;
 }
 .exp-item-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .exp-item-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.exp-item-need {
-  font-family: var(--font-display); font-size: 15px; font-weight: 700;
-  min-width: 28px; text-align: right; line-height: 1; flex-shrink: 0;
-}
-.exp-item-need.done { color: var(--accent); font-size: 13px; }
-.exp-item-have-wrap {
-  display: flex; align-items: center; gap: 3px;
-  font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0;
-}
-.exp-item-input {
-  width: 42px; background: var(--surface2); border: 1px solid var(--border2);
-  color: var(--text); font-family: var(--font-mono); font-size: 10px;
-  padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s;
-}
-.exp-item-input:focus { border-color: var(--accent); }
-.exp-item-find-btn {
-  width: 18px; height: 18px; flex-shrink: 0;
-  border: 1px solid var(--border2); background: transparent;
-  color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.12s;
-}
-.exp-item-find-btn:hover { border-color: var(--accent2); color: var(--accent2); }
-.exp-item-find-btn svg { width: 9px; height: 9px; }
-.exp-item-row.satisfied { opacity: 0.5; }
-.exp-item-row.satisfied .exp-item-name { text-decoration: line-through; }
+.exp-item-qty { font-family: var(--font-display); font-size: 14px; font-weight: 700; line-height: 1; flex-shrink: 0; }
 
 .mid-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; }
 .mid-empty svg { opacity: 0.12; margin-bottom: 12px; }
 .mid-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .mid-empty-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); opacity: 0.5; }
+
+/* ── INDIVIDUAL TRACKER ── */
+.indiv-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; padding:30px; }
+.indiv-empty svg { opacity:0.12; margin-bottom:12px; }
+.indiv-empty-title { font-family:var(--font-display); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+.indiv-empty-sub { font-family:var(--font-mono); font-size:10px; color:var(--muted); opacity:0.5; }
+
+.indiv-list { flex:1; overflow-y:auto; padding:8px 12px; }
+.indiv-list::-webkit-scrollbar { width:3px; }
+.indiv-list::-webkit-scrollbar-thumb { background:var(--surface3); }
+
+.indiv-card {
+  background: var(--surface2); border: 1px solid var(--border);
+  margin-bottom: 6px; position: relative; animation: slideIn 0.18s ease;
+  overflow: hidden;
+}
+.indiv-card-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; cursor: pointer; user-select: none;
+  transition: background 0.12s;
+}
+.indiv-card-head:hover { background: rgba(255,255,255,0.02); }
+.indiv-card-avatar {
+  width: 36px; height: 40px; flex-shrink: 0;
+  border: 1px solid var(--border2); border-radius: 2px;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  background: var(--surface);
+}
+.indiv-card-avatar img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
+.indiv-card-avatar svg { width:14px; height:14px; }
+.indiv-card-meta { flex:1; min-width:0; }
+.indiv-card-name { font-family:var(--font-display); font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1; margin-bottom:3px; }
+.indiv-card-sub { font-family:var(--font-mono); font-size:8px; color:var(--muted); display:flex; align-items:center; gap:5px; }
+.indiv-card-progress-bar { height:2px; background:var(--surface3); margin:0 10px; }
+.indiv-card-progress-fill { height:100%; background:var(--accent); transition:width 0.3s; }
+.indiv-card-caret { color:var(--muted); font-size:10px; transition:transform 0.2s; flex-shrink:0; }
+.indiv-card.open .indiv-card-caret { transform:rotate(180deg); }
+.indiv-card-status { font-family:var(--font-mono); font-size:8px; padding:1px 5px; border:1px solid; flex-shrink:0; }
+.indiv-card-status.done { color:var(--accent); border-color:rgba(0,196,163,0.3); background:rgba(0,196,163,0.07); }
+.indiv-card-status.inprog { color:var(--accent2); border-color:rgba(255,140,66,0.3); background:rgba(255,140,66,0.07); }
+.indiv-card-status.pending { color:var(--muted); border-color:var(--border); background:transparent; }
+
+.indiv-card-body { overflow:hidden; max-height:0; transition:max-height 0.25s ease; }
+.indiv-card.open .indiv-card-body { max-height:2000px; }
+
+.indiv-section { padding:0 10px 10px; }
+.indiv-section-head {
+  font-family:var(--font-mono); font-size:8px; color:var(--muted);
+  letter-spacing:0.14em; text-transform:uppercase;
+  padding:6px 0 4px; border-bottom:1px solid var(--border);
+  margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;
+}
+
+/* Individual material rows with have input */
+.indiv-mat-row {
+  display: grid;
+  grid-template-columns: 8px 1fr auto auto;
+  gap: 5px; align-items: center;
+  padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 3px;
+}
+.indiv-mat-dot { width: 8px; height: 8px; border-radius: 50%; }
+.indiv-mat-name { font-family:var(--font-display); font-size:10px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.indiv-mat-need { font-family:var(--font-display); font-size:13px; font-weight:700; line-height:1; flex-shrink:0; text-align:right; }
+.indiv-mat-need.satisfied { color: var(--accent); font-size:11px; }
+
+/* have input in individual */
+.indiv-have-wrap {
+  display: flex; align-items: center; gap: 3px;
+  font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0;
+}
+.indiv-have-input {
+  width: 42px; background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text); font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s;
+}
+.indiv-have-input:focus { border-color: var(--accent); }
+.indiv-mat-row.zero { opacity:0.35; }
+.indiv-mat-row.satisfied-row { opacity: 0.55; }
+.indiv-mat-row.satisfied-row .indiv-mat-name { text-decoration: line-through; color: var(--muted); }
+
+/* indiv progress bar beneath need qty */
+.indiv-mat-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); opacity: 0.5; }
+
+/* EXP rows in individual */
+.indiv-exp-row {
+  display: grid;
+  grid-template-columns: 8px 1fr auto auto;
+  gap: 5px; align-items: center;
+  padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 3px;
+}
+.indiv-exp-row.satisfied-row { opacity: 0.55; }
+.indiv-exp-row.satisfied-row .indiv-mat-name { text-decoration: line-through; color: var(--muted); }
+
+/* save button area */
+.indiv-save-bar { padding:8px 10px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+.indiv-save-btn {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:5px 12px; border:1px solid var(--accent2);
+  background:rgba(255,140,66,0.06); color:var(--accent2);
+  font-family:var(--font-display); font-size:11px; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; cursor:pointer;
+  clip-path:polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+  transition:all 0.15s;
+}
+.indiv-save-btn:hover { background:rgba(255,140,66,0.15); }
+.indiv-save-btn svg { width:11px; height:11px; }
+.indiv-save-btn.saving { opacity:0.6; pointer-events:none; }
+.indiv-save-btn.saved { border-color:var(--accent); color:var(--accent); background:rgba(0,196,163,0.08); }
+.indiv-save-status { font-family:var(--font-mono); font-size:9px; color:var(--muted); letter-spacing:0.06em; flex:1; }
+.indiv-save-status.ok { color:var(--accent); }
+.indiv-save-status.err { color:var(--danger); }
 
 /* ── MAP PANEL ── */
 .map-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); min-width: 200px; }
@@ -439,7 +530,6 @@ input[type=range]::-moz-range-thumb {
 
 .map-area { flex: 1; position: relative; overflow: hidden; }
 
-/* Deselect hint (v2.3) */
 .map-deselect-hint {
   position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%);
   font-family: var(--font-mono); font-size: 9px; color: var(--muted);
@@ -455,7 +545,6 @@ input[type=range]::-moz-range-thumb {
 .map-canvas-wrap { position: absolute; inset: 0; display: none; }
 .map-canvas-wrap.active { display: block; }
 
-/* Pins — no clip-path to avoid clipping child elements */
 .user-pin {
   position: absolute; transform: translate(-50%,-50%);
   display: flex; align-items: center; gap: 5px;
@@ -493,7 +582,6 @@ input[type=range]::-moz-range-thumb {
   box-shadow: 0 1px 4px rgba(0,0,0,0.6); z-index: 20;
 }
 
-/* Pin group portal */
 .pin-group-portal {
   position: fixed; z-index: 5000;
   background: rgba(13,15,18,0.98); border: 1px solid var(--border2);
@@ -538,7 +626,6 @@ input[type=range]::-moz-range-thumb {
 .map-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .map-legend-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); }
 .map-legend-item.dimmed .map-legend-name { color: var(--muted); }
-/* Clear button in legend (v2.3) */
 .map-legend-clear { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 3px 0 0; border-top: 1px solid var(--border); margin-top: 4px; display: none; }
 .map-legend-clear.visible { display: block; }
 .map-legend-clear:hover { color: var(--accent2); }
@@ -596,7 +683,7 @@ input[type=range]::-moz-range-thumb {
 </head>
 <body>
 
-<!-- SUB-NAVBAR (from v2.2) -->
+<!-- SUB-NAVBAR -->
 <nav class="sub-navbar" id="navbar">
   <div class="sub-nav-left">
     <div class="hamburger">
@@ -616,19 +703,15 @@ input[type=range]::-moz-range-thumb {
   </div>
 </nav>
 
-<!-- SIDEBAR (from v2.2) -->
+<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-label">NAVIGATION</div>
   <div class="sidebar-nav">
     <a href="index.html" class="sidebar-item" style="text-decoration:none;">
-      <div class="sidebar-item-inner">
-        <span class="sidebar-text">HOME</span>
-      </div>
+      <div class="sidebar-item-inner"><span class="sidebar-text">HOME</span></div>
     </a>
     <a href="#" class="sidebar-item active" style="text-decoration:none;">
-      <div class="sidebar-item-inner">
-        <span class="sidebar-text">TRACKER</span>
-      </div>
+      <div class="sidebar-item-inner"><span class="sidebar-text">TRACKER</span></div>
     </a>
   </div>
 </div>
@@ -703,39 +786,67 @@ input[type=range]::-moz-range-thumb {
 
   <!-- MID: Materials -->
   <div class="mid-panel" id="mid-panel">
+    <!-- Header -->
     <div class="mid-head">
-      <div>
-        <div class="mid-eyebrow">Materials Required</div>
-        <div class="mid-title">Need</div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        <div id="mid-badge-wrap" style="display:none"><div class="mid-badge" id="mid-badge">0/0</div></div>
-        <div class="mid-focus-indicator" id="mid-focus-indicator">Focused</div>
-      </div>
-    </div>
-    <div class="mid-focus-bar" id="mid-focus-bar">
-      <div class="mid-focus-toggle" onclick="toggleFocusPanel()">
-        <svg class="mid-focus-caret" id="mid-focus-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-        <span class="mid-focus-toggle-label">Focus Plans</span>
-        <span class="mid-focus-count" id="mid-focus-count"></span>
-      </div>
-      <div class="mid-focus-pills-wrap" id="mid-focus-pills-wrap">
-        <div class="mid-focus-actions">
-          <button class="mid-focus-act" onclick="focusAll()">All</button>
-          <button class="mid-focus-act" onclick="focusNone()">None</button>
-          <button class="mid-focus-act" onclick="focusOnly('operator')">Operators</button>
-          <button class="mid-focus-act" onclick="focusOnly('weapon')">Weapons</button>
+      <div class="mid-head-row">
+        <div>
+          <div class="mid-eyebrow">Materials Required</div>
+          <div class="mid-title">Need</div>
         </div>
-        <div class="mid-focus-pills" id="mid-focus-pills"></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <div id="mid-badge-wrap" style="display:none"><div class="mid-badge" id="mid-badge">0 items</div></div>
+          <div class="mid-focus-indicator" id="mid-focus-indicator">Focused</div>
+        </div>
+      </div>
+      <!-- Mode toggle tabs -->
+      <div class="mid-mode-tabs">
+        <button class="mid-mode-tab active" id="mtab-collective" onclick="switchMidMode('collective')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Collective
+        </button>
+        <button class="mid-mode-tab" id="mtab-individual" onclick="switchMidMode('individual')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Individual
+        </button>
       </div>
     </div>
-    <div class="mid-body" id="mid-body">
-      <div class="mid-empty" id="mid-empty">
-        <svg width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="10" width="32" height="32" rx="2"/><path d="M16 20l4 4 8-8"/><path d="M16 30h16"/></svg>
-        <div class="mid-empty-title">Nothing Needed</div>
-        <div class="mid-empty-sub">Add plans to see your<br>material checklist</div>
+
+    <!-- COLLECTIVE VIEW — read-only totals -->
+    <div class="mid-collective" id="mid-collective-view">
+      <div class="mid-focus-bar" id="mid-focus-bar">
+        <div class="mid-focus-toggle" onclick="toggleFocusPanel()">
+          <svg class="mid-focus-caret" id="mid-focus-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          <span class="mid-focus-toggle-label">Focus Plans</span>
+          <span class="mid-focus-count" id="mid-focus-count"></span>
+        </div>
+        <div class="mid-focus-pills-wrap" id="mid-focus-pills-wrap">
+          <div class="mid-focus-actions">
+            <button class="mid-focus-act" onclick="focusAll()">All</button>
+            <button class="mid-focus-act" onclick="focusNone()">None</button>
+            <button class="mid-focus-act" onclick="focusOnly('operator')">Operators</button>
+            <button class="mid-focus-act" onclick="focusOnly('weapon')">Weapons</button>
+          </div>
+          <div class="mid-focus-pills" id="mid-focus-pills"></div>
+        </div>
       </div>
-      <div id="need-list"></div>
+      <div class="mid-body" id="mid-body">
+        <div class="mid-empty" id="mid-empty">
+          <svg width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="10" width="32" height="32" rx="2"/><path d="M16 20l4 4 8-8"/><path d="M16 30h16"/></svg>
+          <div class="mid-empty-title">Nothing Needed</div>
+          <div class="mid-empty-sub">Add plans to see your<br>material totals</div>
+        </div>
+        <div id="need-list"></div>
+      </div>
+    </div>
+
+    <!-- INDIVIDUAL VIEW — per-plan have inputs -->
+    <div class="mid-individual" id="mid-individual-view" style="display:none">
+      <div class="indiv-empty" id="indiv-empty" style="display:flex">
+        <svg width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="24" cy="16" r="8"/><path d="M8 42c0-8 7.2-14 16-14s16 6 16 14"/></svg>
+        <div class="indiv-empty-title">No Plans Yet</div>
+        <div class="indiv-empty-sub">Add operators or weapons<br>to track them individually</div>
+      </div>
+      <div class="indiv-list" id="indiv-list" style="display:none"></div>
     </div>
   </div>
 
@@ -865,10 +976,6 @@ const WEAPONS = [
 ];
 
 // ── MATERIAL DEFINITIONS ──
-// EXP values from Endfield Talos Wiki (verified 2025):
-// Elementary Combat Record = 200, Intermediate = 1000, Advanced = 10000
-// Elementary Cognitive Carrier = 1000, Advanced Cognitive Carrier = 10000
-// Arms Inspector = 200, Arms INSP Kit = 1000, Arms INSP Set = 10000
 const MATS = {
   t_creds:              {name:"T-Creds",              color:"#f0c040", category:"Currency"},
   elementary_combat_record:     {name:"Elem. Combat Record",  color:"#5ba85b", category:"Operator EXP", expValue:200,   isExpItem:true, expType:'operator'},
@@ -906,7 +1013,7 @@ const MATS = {
   triphasic:            {name:"Triphasic Nanoflake",    color:"#705000", category:"Operator Rare Mat"},
 };
 
-// ── EXP GROUPS — highest value item listed first ──
+// ── EXP GROUPS ──
 const EXP_GROUPS = {
   operator: {
     label: 'Operator EXP',
@@ -1059,45 +1166,16 @@ function totalMats() {
   return acc;
 }
 
-// ── EXP HAVE storage ──
-let expHave = {};
-function getExpHave(groupKey, itemKey) { return (expHave[groupKey] && expHave[groupKey][itemKey]) || 0; }
-function setExpHave(groupKey, itemKey, val) {
-  if (!expHave[groupKey]) expHave[groupKey] = {};
-  expHave[groupKey][itemKey] = Math.max(0, parseInt(val)||0);
-  renderNeed();
-}
+// ── INDIVIDUAL HAVE QTY — keyed by planId:matKey ──
+let indivHaveQty = {};   // { "planId:matKey": number }
+let indivExpHave = {};   // { "planId:groupKey:itemKey": number }
 
-/**
- * Compute per-tier needs for the EXP breakdown (v2.3 greedy approach).
- * Returns perTier[key] = { standaloneTotal, need, have, expVal }
- * plus coveredExp, pct, remaining.
- */
-function computeExpBreakdown(rawExp, groupDef, groupKey) {
-  // Greedy coverage: largest items first
-  let remaining = rawExp;
-  let coveredExp = 0;
-  for (const key of groupDef.keys) {
-    const val = MATS[key]?.expValue || 1;
-    const have = getExpHave(groupKey, key);
-    const used = Math.min(have, Math.ceil(remaining / val));
-    coveredExp += used * val;
-    remaining = Math.max(0, remaining - used * val);
-  }
-
-  const pct = rawExp > 0 ? Math.min(100, Math.round((coveredExp / rawExp) * 100)) : 0;
-
-  // Per-tier standalone count (how many if you only used THIS tier)
-  const perTier = {};
-  for (const key of groupDef.keys) {
-    const val = MATS[key]?.expValue || 1;
-    const have = getExpHave(groupKey, key);
-    const standaloneTotal = Math.ceil(rawExp / val);
-    const need = Math.max(0, standaloneTotal - have);
-    perTier[key] = { standaloneTotal, need, have, expVal: val };
-  }
-
-  return { perTier, coveredExp, remaining: Math.max(0, rawExp - coveredExp), totalExp: rawExp, pct };
+function getIndivHave(planId, matKey)            { return indivHaveQty[planId + ':' + matKey] || 0; }
+function setIndivHaveQty(planId, matKey, val)    { indivHaveQty[planId + ':' + matKey] = Math.max(0, parseInt(val)||0); renderIndividual(); }
+function getIndivExpHave(planId, gKey, itemKey)  { return indivExpHave[planId + ':' + gKey + ':' + itemKey] || 0; }
+function setIndivExpHave(planId, gKey, itemKey, val) {
+  indivExpHave[planId + ':' + gKey + ':' + itemKey] = Math.max(0, parseInt(val)||0);
+  renderIndividual();
 }
 
 // ── SKILL DEFINITIONS ──
@@ -1135,8 +1213,9 @@ async function loadDbData() {
   }
 }
 
-// ── PORTRAIT CACHE ──
 const charImgCache = {};
+const weaponImgCache = {};
+
 async function loadCharImages() {
   try {
     const { data } = await db.from('v_characters_tiered').select('name,slug,img_path');
@@ -1146,10 +1225,25 @@ async function loadCharImages() {
     }
   } catch (e) { console.warn('Could not load char images:', e.message); }
 }
+
+async function loadWeaponImages() {
+  try {
+    const { data } = await db.from('weapons').select('id,img');
+    for (const row of (data || [])) {
+      if (row.id) weaponImgCache[row.id] = row.img ?? null;
+    }
+  } catch (e) { console.warn('Could not load weapon images:', e.message); }
+}
+
 function getCharImg(name) {
   const key = name.toLowerCase();
   if (!(key in charImgCache)) return undefined;
   return charImgCache[key] || null;
+}
+
+function getWeaponImg(id) {
+  if (!(id in weaponImgCache)) return undefined;
+  return weaponImgCache[id] || null;
 }
 
 // ── STATE ──
@@ -1158,13 +1252,25 @@ let planFilter = 'all';
 let activeFilter = 'all';
 let modalType = null;
 let highlightedMat = null;
-let checkedMats = {};
-let haveQty = {};
 let focusedPlanIds = new Set();
 let focusPanelOpen = false;
 let activeMapId = null;
 let mapView = { tx: 0, ty: 0, scale: 1 };
 let openPinGroupData = null;
+let midMode = 'collective';
+
+let indivSaveStatus = {};
+let indivOpenCards = new Set();
+
+// ── MID MODE SWITCH ──
+function switchMidMode(mode) {
+  midMode = mode;
+  document.getElementById('mtab-collective').classList.toggle('active', mode === 'collective');
+  document.getElementById('mtab-individual').classList.toggle('active', mode === 'individual');
+  document.getElementById('mid-collective-view').style.display = mode === 'collective' ? 'flex' : 'none';
+  document.getElementById('mid-individual-view').style.display = mode === 'individual' ? 'flex' : 'none';
+  if (mode === 'individual') renderIndividual();
+}
 
 // ── HELPERS ──
 function getElColor(el) {
@@ -1197,10 +1303,14 @@ function addPlan(type, item) {
   renderAll();
   closeModal();
 }
-function removePlan(id) { plans = plans.filter(p => p.id !== id); focusedPlanIds.delete(id); renderAll(); }
+function removePlan(id) {
+  plans = plans.filter(p => p.id !== id);
+  focusedPlanIds.delete(id);
+  indivOpenCards.delete(id);
+  delete indivSaveStatus[id];
+  renderAll();
+}
 
-// Sliders call updateFrom/updateTo which only re-renders need+map, NOT plans list
-// (prevents slider from being destroyed mid-drag)
 function updateFrom(id, val, fromSlider) {
   const p = plans.find(x => x.id === id); if (!p) return;
   let v = parseInt(val); if (isNaN(v)) return;
@@ -1209,6 +1319,7 @@ function updateFrom(id, val, fromSlider) {
   if (p.fromLv >= p.toLv) p.toLv = Math.min(p.fromLv + 1, 90);
   syncLevelUI(id);
   renderNeed(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
+  if (midMode === 'individual') renderIndividual();
 }
 function updateTo(id, val, fromSlider) {
   const p = plans.find(x => x.id === id); if (!p) return;
@@ -1218,9 +1329,9 @@ function updateTo(id, val, fromSlider) {
   if (p.toLv <= p.fromLv) p.fromLv = Math.max(p.toLv - 1, 1);
   syncLevelUI(id);
   renderNeed(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
+  if (midMode === 'individual') renderIndividual();
 }
 
-// Sync slider + number input without rebuilding the card
 function syncLevelUI(id) {
   const p = plans.find(x => x.id === id); if (!p) return;
   const card = document.querySelector(`.plan-card[data-id="${id}"]`); if (!card) return;
@@ -1243,6 +1354,7 @@ function setRange(id, f, t) {
   p.fromLv = f; p.toLv = t;
   syncLevelUI(id);
   renderNeed(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
+  if (midMode === 'individual') renderIndividual();
 }
 
 function setPromoRange(id, field, val)  { const p = plans.find(x => x.id === id); if (!p) return; p[field] = parseInt(val); renderAll(); }
@@ -1253,7 +1365,11 @@ function setSkillFrom(id, skillIdx, val) { const p = plans.find(x => x.id === id
 function setSkillTo(id, skillIdx, val)   { const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return; p.skills[skillIdx].toLv = val; renderAll(); }
 function toggleAllSkills(id) { const p = plans.find(x => x.id === id); if (!p) return; const allOn = p.skills.every(s => s.enabled); p.skills.forEach(s => s.enabled = !allOn); renderAll(); }
 
-function renderAll() { renderPlans(); renderFocusBar(); renderNeed(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId); }
+function renderAll() {
+  renderPlans(); renderFocusBar(); renderNeed(); renderMapFilters();
+  if (activeMapId) renderMapCanvas(activeMapId);
+  if (midMode === 'individual') renderIndividual();
+}
 
 function switchPlanTab(tab) {
   planFilter = tab;
@@ -1279,6 +1395,7 @@ function buildAvatarHTML(plan) {
   const el = plan.item.element || null;
   const elColor = getElColor(el);
   const rarityColor = getRarityColor(plan.item.rarity);
+
   if (isOp) {
     const imgPath = getCharImg(plan.item.name);
     if (imgPath) {
@@ -1289,6 +1406,14 @@ function buildAvatarHTML(plan) {
     }
     const icon = EL_ICON[el] || OP_ICON;
     return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">${icon}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
+  }
+
+  const wpnImg = getWeaponImg(plan.item.id);
+  if (wpnImg) {
+    return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">
+      <img src="${wpnImg}" alt="${plan.item.name}" loading="lazy">
+      <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+    </div>`;
   }
   return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">${WPN_ICON}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
 }
@@ -1433,6 +1558,333 @@ function renderFocusBar() {
   }).join('');
 }
 
+// ── INDIVIDUAL TRACKER ──
+function toggleIndivCard(id) {
+  if (indivOpenCards.has(id)) indivOpenCards.delete(id);
+  else indivOpenCards.add(id);
+  renderIndividual();
+}
+
+function renderIndividual() {
+  const emptyEl = document.getElementById('indiv-empty');
+  const listEl  = document.getElementById('indiv-list');
+
+  if (!plans.length) {
+    emptyEl.style.display = 'flex';
+    listEl.style.display  = 'none';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  listEl.style.display  = 'block';
+  listEl.innerHTML = plans.map(plan => buildIndivCard(plan)).join('');
+}
+
+function buildIndivCard(plan) {
+  const isOp    = plan.type === 'operator';
+  const el      = plan.item.element || null;
+  const elColor = getElColor(el);
+  const rarityColor = getRarityColor(plan.item.rarity);
+  const isOpen  = indivOpenCards.has(plan.id);
+  const mats    = calcMats(plan);
+
+  const internalKeys = new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
+
+  // Regular (non-EXP) mat entries
+  const matEntries = Object.entries(mats).filter(([k]) => !internalKeys.has(k) && MATS[k] && !MATS[k].isExpItem);
+
+  // Compute overall progress: materials where have >= need
+  const totalItems   = matEntries.length;
+  const doneCount    = matEntries.filter(([k, qty]) => getIndivHave(plan.id, k) >= qty).length;
+  const progressPct  = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
+
+  let statusClass = 'pending', statusLabel = 'Pending';
+  if (totalItems > 0 && doneCount === totalItems) { statusClass = 'done'; statusLabel = 'Done'; }
+  else if (doneCount > 0) { statusClass = 'inprog'; statusLabel = `${doneCount}/${totalItems}`; }
+
+  // Avatar
+  let avatarContent;
+  if (isOp) {
+    const imgPath = getCharImg(plan.item.name);
+    avatarContent = imgPath ? `<img src="${imgPath}" alt="${plan.item.name}" loading="lazy">` : (EL_ICON[el] || OP_ICON);
+  } else {
+    const wpnImg = getWeaponImg(plan.item.id);
+    avatarContent = wpnImg ? `<img src="${wpnImg}" alt="${plan.item.name}" loading="lazy">` : WPN_ICON;
+  }
+
+  // Group non-EXP mats by category
+  const byCategory = {};
+  for (const [k, qty] of matEntries) {
+    const mat = MATS[k];
+    const cat = mat.category;
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push({ k, qty, mat });
+  }
+
+  let matSectionsHtml = '';
+
+  // EXP sections with have inputs
+  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
+    const rawKey = gDef.rawKey;
+    if (!mats[rawKey]) continue;
+    const rawExp = mats[rawKey];
+    const fmtTotal = fmtExp(rawExp);
+
+    matSectionsHtml += `<div class="indiv-section-head">${gDef.label} — ${fmtTotal} total</div>`;
+
+    for (const itemKey of gDef.keys) {
+      const mat = MATS[itemKey]; if (!mat) continue;
+      const expVal   = mat.expValue;
+      const expLabel = expVal >= 1000 ? (expVal/1000).toFixed(0)+'k' : expVal;
+      const standTot = Math.ceil(rawExp / expVal);
+      const have     = getIndivExpHave(plan.id, gKey, itemKey);
+
+      // How many of this tier needed if only using this tier
+      const usedFromHave = Math.min(have, Math.floor(rawExp / expVal));
+      const remaining    = Math.max(0, rawExp - usedFromHave * expVal);
+      const stillNeed    = remaining > 0 ? Math.ceil(remaining / expVal) : 0;
+      const isSat        = stillNeed === 0;
+
+      matSectionsHtml += `<div class="indiv-exp-row${isSat?' satisfied-row':''}">
+        <div class="indiv-mat-dot" style="background:${mat.color}"></div>
+        <div class="indiv-mat-name" title="${mat.name} — ${expLabel} EXP each">${mat.name}</div>
+        <div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}" title="Need ~${standTot} if only using this tier">
+          ${isSat ? '✓' : standTot}
+        </div>
+        <div class="indiv-have-wrap">
+          <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
+          <input class="indiv-have-input" type="number" min="0" value="${have}"
+            onclick="event.stopPropagation()"
+            onchange="setIndivExpHave(${plan.id},'${gKey}','${itemKey}',this.value)"
+            oninput="setIndivExpHave(${plan.id},'${gKey}','${itemKey}',this.value)">
+        </div>
+      </div>`;
+    }
+  }
+
+  // Regular mat sections with have inputs
+  for (const [cat, items] of Object.entries(byCategory)) {
+    matSectionsHtml += `<div class="indiv-section-head">${cat}</div>`;
+    for (const { k, qty, mat } of items) {
+      const have    = getIndivHave(plan.id, k);
+      const isSat   = have >= qty;
+      const fmtQty  = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
+      const pct     = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
+
+      matSectionsHtml += `<div class="indiv-mat-row${qty===0?' zero':''}${isSat?' satisfied-row':''}">
+        <div class="indiv-mat-dot" style="background:${mat.color}"></div>
+        <div class="indiv-mat-name">${mat.name}</div>
+        <div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}">
+          ${isSat ? '✓' : fmtQty}
+        </div>
+        <div class="indiv-have-wrap">
+          <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
+          <input class="indiv-have-input" type="number" min="0" value="${have}"
+            onclick="event.stopPropagation()"
+            onchange="setIndivHaveQty(${plan.id},'${k}',this.value)"
+            oninput="setIndivHaveQty(${plan.id},'${k}',this.value)">
+        </div>
+        ${pct > 0 && !isSat ? `<div style="position:absolute;bottom:0;left:0;height:2px;width:${pct}%;background:var(--accent);opacity:0.5;pointer-events:none"></div>` : ''}
+      </div>`;
+    }
+  }
+
+  if (!matSectionsHtml) {
+    matSectionsHtml = `<div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);padding:8px 0">No materials required for this range.</div>`;
+  }
+
+  // save button
+  const saveStatus = indivSaveStatus[plan.id] || 'idle';
+  const isSaving   = saveStatus === 'saving';
+  const isSaved    = saveStatus === 'saved';
+  const isError    = saveStatus === 'error';
+  const saveBtnClass = `indiv-save-btn${isSaving?' saving':''}${isSaved?' saved':''}`;
+  const saveBtnLabel = isSaving ? 'Saving…' : isSaved ? '✓ Saved' : 'Save to DB';
+  const saveStatusMsg = isSaving ? 'Writing to database…' : isSaved ? 'Saved successfully' : isError ? 'Save failed' : 'Not yet saved';
+  const saveStatusClass = `indiv-save-status${isSaved?' ok':''}${isError?' err':''}`;
+
+  return `<div class="indiv-card${isOpen?' open':''}" data-id="${plan.id}">
+    <div class="indiv-card-head" onclick="toggleIndivCard(${plan.id})">
+      <div class="indiv-card-avatar" style="border-color:${isOp?elColor+'55':'var(--border2)'}">
+        ${avatarContent}
+      </div>
+      <div class="indiv-card-meta">
+        <div class="indiv-card-name" style="color:${isOp?elColor:'var(--text)'}">${plan.item.name}</div>
+        <div class="indiv-card-sub">
+          <span style="color:${rarityColor}">${'★'.repeat(plan.item.rarity)}</span>
+          <span>Lv ${plan.fromLv} → ${plan.toLv}</span>
+          ${isOp && (plan.promoFrom !== plan.promoTo) ? `<span>P${plan.promoFrom}→P${plan.promoTo}</span>` : ''}
+          ${!isOp && (plan.tuneFrom !== plan.tuneTo) ? `<span>T${plan.tuneFrom}→T${plan.tuneTo}</span>` : ''}
+        </div>
+      </div>
+      <div class="indiv-card-status ${statusClass}">${statusLabel}</div>
+      <div class="indiv-card-caret">▾</div>
+    </div>
+    ${totalItems > 0 ? `<div class="indiv-card-progress-bar"><div class="indiv-card-progress-fill" style="width:${progressPct}%"></div></div>` : ''}
+    <div class="indiv-card-body">
+      <div class="indiv-section">
+        ${matSectionsHtml}
+      </div>
+      <div class="indiv-save-bar">
+        <button class="${saveBtnClass}" onclick="saveIndivPlan(${plan.id})" ${isSaving?'disabled':''}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          ${saveBtnLabel}
+        </button>
+        <span class="${saveStatusClass}">${saveStatusMsg}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function saveIndivPlan(id) {
+  const plan = plans.find(p => p.id === id);
+  if (!plan) return;
+
+  indivSaveStatus[id] = 'saving';
+  renderIndividual();
+
+  const payload = {
+    plan_id:    String(plan.id),
+    item_id:    plan.item.id,
+    item_name:  plan.item.name,
+    type:       plan.type,
+    from_lv:    plan.fromLv,
+    to_lv:      plan.toLv,
+    promo_from: plan.promoFrom || 0,
+    promo_to:   plan.promoTo   || 0,
+    talent_from:plan.talentFrom|| 0,
+    talent_to:  plan.talentTo  || 0,
+    tune_from:  plan.tuneFrom  || 0,
+    tune_to:    plan.tuneTo    || 0,
+    skills:     plan.skills    || [],
+    mats:       calcMats(plan),
+    saved_at:   new Date().toISOString(),
+  };
+
+  console.log('[Ascension Planner] Save payload:', payload);
+  await new Promise(r => setTimeout(r, 600));
+
+  indivSaveStatus[id] = 'saved';
+  renderIndividual();
+
+  setTimeout(() => {
+    if (indivSaveStatus[id] === 'saved') {
+      delete indivSaveStatus[id];
+      renderIndividual();
+    }
+  }, 3000);
+}
+
+// ── COLLECTIVE NEED LIST (read-only totals) ──
+function renderNeed() {
+  const empty  = document.getElementById('mid-empty');
+  const list   = document.getElementById('need-list');
+  const badge  = document.getElementById('mid-badge-wrap');
+  const badgeLabel = document.getElementById('mid-badge');
+
+  if (!plans.length) { empty.style.display = 'flex'; list.innerHTML = ''; badge.style.display = 'none'; return; }
+  empty.style.display = 'none';
+
+  if (focusedPlanIds.size === 0) {
+    list.innerHTML = `<div style="padding:20px 8px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">No plans focused</div></div>`;
+    badge.style.display = 'none'; return;
+  }
+
+  const mats = totalMats();
+  const internalKeys = new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
+  const matsWithPinsSet = new Set();
+  for (const map of dbMaps) for (const pin of map.pins) matsWithPinsSet.add(pin.material_id);
+
+  const entries = Object.entries(mats).filter(([k]) => !internalKeys.has(k));
+  const hasExpData = mats['_op_exp_raw'] || mats['_op_exp_hi_raw'] || mats['_wpn_exp_raw'] || mats['_wpn_exp_hi_raw'];
+
+  if (!entries.length && !hasExpData) { list.innerHTML = ''; badge.style.display = 'none'; return; }
+
+  // Group by category
+  const byCategory = {};
+
+  // EXP groups — read-only totals only
+  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
+    const rawKey = gDef.rawKey;
+    if (!mats[rawKey]) continue;
+    byCategory[gDef.label] = { type: 'exp', gKey, gDef, rawExp: mats[rawKey] };
+  }
+
+  // Regular mats
+  for (const [k, qty] of entries) {
+    const mat = MATS[k]; if (!mat) continue;
+    if (mat.isExpItem) continue;
+    const cat = mat.category;
+    if (!byCategory[cat]) byCategory[cat] = { type: 'items', items: [] };
+    if (byCategory[cat].type === 'items') byCategory[cat].items.push({k, qty, mat});
+  }
+
+  // Badge = count of distinct material types
+  const totalDistinct = entries.filter(([k]) => { const m = MATS[k]; return m && !m.isExpItem; }).length;
+  badge.style.display = 'block';
+  badgeLabel.textContent = `${totalDistinct} items`;
+
+  let html = '';
+  for (const [cat, data] of Object.entries(byCategory)) {
+    html += `<div class="need-section-label">${cat}</div>`;
+
+    if (data.type === 'exp') {
+      // Compact EXP block — just totals, no inputs
+      const { gDef, rawExp } = data;
+      html += `<div class="exp-breakdown">
+        <div class="exp-breakdown-header">
+          <span>${cat}</span>
+          <span class="exp-breakdown-total">${fmtExp(rawExp)}</span>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);margin-bottom:6px;opacity:0.6">
+          Track inventory per-character in the Individual tab →
+        </div>`;
+
+      for (const itemKey of gDef.keys) {
+        const mat = MATS[itemKey]; if (!mat) continue;
+        const expVal   = mat.expValue;
+        const standTot = Math.ceil(rawExp / expVal);
+        html += `<div class="exp-item-row-simple">
+          <div class="exp-item-dot" style="background:${mat.color}"></div>
+          <div class="exp-item-name" style="color:var(--text)">${mat.name}</div>
+          <div class="exp-item-qty" style="color:${mat.color}">${standTot}</div>
+        </div>`;
+      }
+      html += `</div>`;
+
+    } else {
+      for (const {k, qty, mat} of (data.items||[])) {
+        const highlighted = highlightedMat === k ? 'highlighted' : '';
+        const fmtQty   = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
+        const hasFind  = matsWithPinsSet.has(k);
+        const findBtn  = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${k}',this,event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+        </button>` : '';
+
+        html += `<div class="need-row ${highlighted}">
+          <div class="need-dot" style="background:${mat.color}"></div>
+          <div class="need-row-name">${mat.name}</div>
+          <div class="need-row-right">
+            ${findBtn}
+            <div class="need-row-qty" style="color:${mat.color}">${fmtQty}</div>
+          </div>
+        </div>`;
+      }
+    }
+  }
+  list.innerHTML = html;
+}
+
+function fmtExp(v) {
+  if (v >= 1000000) return (v/1000000).toFixed(2)+'M EXP';
+  if (v >= 1000)    return (v/1000).toFixed(1)+'k EXP';
+  return v.toLocaleString()+' EXP';
+}
+
 // ── FIND BUTTON LOGIC ──
 function mapsWithMat(matKey) {
   return dbMaps.map(map => {
@@ -1508,164 +1960,6 @@ document.addEventListener('click', (e) => {
   if (activeFindDropdownEl && !activeFindDropdownEl.contains(e.target)) closeAllFindDropdowns();
 });
 
-// ── NEED LIST ──
-function toggleCheck(matKey) { checkedMats[matKey] = !checkedMats[matKey]; renderNeed(); }
-function updateHave(matKey, val) { haveQty[matKey] = Math.max(0, parseInt(val)||0); renderNeed(); }
-
-function renderNeed() {
-  const empty  = document.getElementById('mid-empty');
-  const list   = document.getElementById('need-list');
-  const badge  = document.getElementById('mid-badge-wrap');
-  const badgeLabel = document.getElementById('mid-badge');
-
-  if (!plans.length) { empty.style.display = 'flex'; list.innerHTML = ''; badge.style.display = 'none'; return; }
-  empty.style.display = 'none';
-
-  if (focusedPlanIds.size === 0) {
-    list.innerHTML = `<div style="padding:20px 8px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">No plans focused</div></div>`;
-    badge.style.display = 'none'; return;
-  }
-
-  const mats = totalMats();
-  const internalKeys = new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
-
-  const matsWithPinsSet = new Set();
-  for (const map of dbMaps) for (const pin of map.pins) matsWithPinsSet.add(pin.material_id);
-
-  const entries = Object.entries(mats).filter(([k]) => !internalKeys.has(k));
-  const hasExpData = mats['_op_exp_raw'] || mats['_op_exp_hi_raw'] || mats['_wpn_exp_raw'] || mats['_wpn_exp_hi_raw'];
-
-  if (!entries.length && !hasExpData) { list.innerHTML = ''; badge.style.display = 'none'; return; }
-
-  const byCategory = {};
-
-  // Inject EXP breakdown groups
-  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
-    const rawKey = gDef.rawKey;
-    if (!mats[rawKey]) continue;
-    const rawExp = mats[rawKey];
-    const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
-    byCategory[gDef.label] = { type: 'exp', gKey, gDef, rawExp, ...breakdown };
-  }
-
-  // Regular items
-  for (const [k, qty] of entries) {
-    const mat = MATS[k]; if (!mat) continue;
-    if (mat.isExpItem) continue;
-    if (!byCategory[mat.category]) byCategory[mat.category] = { type: 'items', items: [] };
-    if (byCategory[mat.category].type === 'items') byCategory[mat.category].items.push({k, qty, mat});
-  }
-
-  const checkableItems = entries.filter(([k]) => { const m = MATS[k]; return m && !m.isExpItem; });
-  const checkedCount = checkableItems.filter(([k]) => checkedMats[k]).length;
-  badge.style.display = 'block';
-  badgeLabel.textContent = `${checkedCount}/${checkableItems.length}`;
-
-  let html = '';
-  for (const [cat, data] of Object.entries(byCategory)) {
-    html += `<div class="need-section-label">${cat}</div>`;
-
-    if (data.type === 'exp') {
-      const { gKey, gDef, rawExp, perTier, coveredExp, remaining, pct } = data;
-      const fmtTotal   = fmtExp(rawExp);
-      const fmtCovered = fmtExp(coveredExp);
-      const allDone    = remaining === 0;
-
-      html += `<div class="exp-breakdown">
-        <div class="exp-breakdown-header">
-          <span>Total EXP needed</span>
-          <span class="exp-breakdown-total" style="${allDone?'color:var(--accent)':''}">${fmtTotal}</span>
-        </div>
-        <div class="exp-progress"><div class="exp-progress-fill" style="width:${pct}%"></div></div>
-        <div class="exp-coverage-text">${allDone
-          ? '✓ Fully covered by owned items'
-          : `${pct}% covered · ${fmtCovered} in inventory`
-        }</div>`;
-
-      for (const itemKey of gDef.keys) {
-        const mat = MATS[itemKey]; if (!mat) continue;
-        const tier   = perTier[itemKey];
-        const expVal = mat.expValue;
-        const expLabel = expVal >= 1000 ? (expVal/1000).toFixed(0)+'k' : expVal;
-        const isDone = tier.need === 0;
-        const hasFind = matsWithPinsSet.has(itemKey);
-
-        const findBtn = hasFind ? `<button class="exp-item-find-btn" title="Find on map"
-          onclick="onFindBtn('${itemKey}',this,event)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-        </button>` : '';
-
-        const needDisplay = isDone
-          ? `<div class="exp-item-need done" title="Covered by inventory">✓</div>`
-          : `<div class="exp-item-need" style="color:${mat.color}" title="Need ${tier.need} more (${fmtExp(tier.need * expVal)} EXP)">${tier.need}</div>`;
-
-        html += `<div class="exp-item-row${isDone?' satisfied':''}">
-          <div class="exp-item-dot" style="background:${mat.color}"></div>
-          <div class="exp-item-name" style="${isDone?'':'color:var(--text)'}" title="${mat.name} — ${expLabel} EXP each">${mat.name}</div>
-          ${findBtn}
-          ${needDisplay}
-          <div class="exp-item-have-wrap">
-            <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
-            <input class="exp-item-input" type="number" min="0" value="${tier.have}"
-              title="How many you own"
-              onclick="event.stopPropagation()"
-              onchange="setExpHave('${gKey}','${itemKey}',this.value)"
-              oninput="setExpHave('${gKey}','${itemKey}',this.value)">
-          </div>
-        </div>`;
-      }
-
-      if (!allDone) {
-        html += `<div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);padding:4px 2px 0;opacity:0.55">
-          ↑ counts shown if you only use that tier — mix tiers as desired
-        </div>`;
-      }
-
-      html += `</div>`;
-
-    } else {
-      for (const {k, qty, mat} of (data.items||[])) {
-        const checked = checkedMats[k] ? 'checked' : '';
-        const highlighted = highlightedMat === k ? 'highlighted' : '';
-        const have = haveQty[k] || 0;
-        const pct  = Math.min(100, Math.round((have / qty) * 100));
-        const remaining = Math.max(0, qty - have);
-        const fmtQty   = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
-        const fmtTotal = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
-        const hasFind  = matsWithPinsSet.has(k);
-        const findBtn  = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${k}',this,event)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-        </button>` : '';
-
-        html += `<div class="need-row ${checked} ${highlighted}">
-          <div class="need-check" onclick="toggleCheck('${k}')"><div class="need-check-inner"></div></div>
-          <div class="need-dot" style="background:${mat.color}"></div>
-          <div class="need-row-name">${mat.name}</div>
-          <div class="need-row-right" onclick="event.stopPropagation()">
-            ${findBtn}
-            <div class="need-row-qty" style="color:${mat.color}">${fmtQty}</div>
-            <div class="need-have-wrap">
-              <span class="need-have-label" style="color:var(--muted);font-size:8px">have:</span>
-              <input class="need-row-input" type="number" min="0" value="${have}"
-                onclick="event.stopPropagation()"
-                onchange="updateHave('${k}',this.value)"
-                oninput="updateHave('${k}',this.value)">/<span style="color:var(--muted)">${fmtTotal}</span>
-            </div>
-          </div>
-          ${pct > 0 && !checked ? `<div class="need-progress" style="width:${pct}%"></div>` : ''}
-        </div>`;
-      }
-    }
-  }
-  list.innerHTML = html;
-}
-
-function fmtExp(v) {
-  if (v >= 1000000) return (v/1000000).toFixed(2)+'M EXP';
-  if (v >= 1000)    return (v/1000).toFixed(1)+'k EXP';
-  return v.toLocaleString()+' EXP';
-}
-
 // ── MAP ──
 function initMaps() {
   const topBar = document.getElementById('map-top-bar');
@@ -1718,7 +2012,6 @@ function switchMap(mapId) {
 function getMatColor(matId) { return MATS[matId]?.color || '#6b7280'; }
 function getMatName(matId)  { return MATS[matId]?.name || dbMatsById[matId]?.name || matId; }
 
-// ── CLEAR HIGHLIGHT (v2.3) ──
 function clearHighlight() {
   highlightedMat = null;
   closePinGroupPortal();
@@ -1988,7 +2281,6 @@ function onGroupedPinClick(event, groupId, pinEl) {
   if (activeMapId) renderMapCanvas(activeMapId);
 }
 
-// Close portal on outside click
 document.addEventListener('click', e => {
   if (!openPinGroupData) return;
   const portal = document.querySelector('.pin-group-portal');
@@ -2112,7 +2404,6 @@ function setupMapInteraction() {
     if (a) a.style.cursor = '';
   });
 
-  // Click on viewport background (not on a pin) clears highlight
   area.addEventListener('click', e => {
     if (e.target.closest('.user-pin')) return;
     if (e.target.closest('.map-legend')) return;
@@ -2149,7 +2440,6 @@ function mapZoom(factor) {
 }
 function mapReset() { mapView = { tx:0, ty:0, scale:1 }; updateMapTransform(); }
 
-// ── HIGHLIGHT (legend click) ──
 function highlightMat(matId) {
   if (highlightedMat === matId) { clearHighlight(); return; }
   highlightedMat = matId;
@@ -2163,7 +2453,6 @@ function highlightMat(matId) {
   showDeselect();
 }
 
-// ── MAP FILTER BAR ──
 function renderMapFilters() {
   const bar = document.getElementById('map-filter-bar');
   const chipsEl = document.getElementById('mat-chips');
@@ -2277,7 +2566,12 @@ function renderModalList(items) {
       iconContent = imgPath
         ? `<img src="${imgPath}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`
         : (EL_ICON[el] || OP_ICON);
-    } else { iconContent = WPN_ICON; }
+    } else {
+      const wpnImg = getWeaponImg(item.id);
+      iconContent = wpnImg
+        ? `<img src="${wpnImg}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;">`
+        : WPN_ICON;
+    }
     return `<button class="modal-item" onclick='selectItem(${JSON.stringify(item).replace(/'/g,"&#39;")})' style="${inPlan?'border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)':''}">
       <div class="modal-item-icon" style="${el?`border-color:${elColor}40;`:''}">${iconContent}</div>
       <div>
@@ -2297,7 +2591,7 @@ document.addEventListener('keydown', e => {
 window.addEventListener('load', async () => {
   setupResize();
   renderAll();
-  await Promise.all([loadDbData(), loadCharImages()]);
+  await Promise.all([loadDbData(), loadCharImages(), loadWeaponImages()]);
   initMaps();
   renderAll();
 });
