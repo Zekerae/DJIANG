@@ -317,3 +317,61 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   });
 });
+
+/* ═══════════════════════════════════════════════
+   SMART VIDEO FEED (Observer + Manual Override)
+═══════════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", () => {
+  const videoFrame = document.getElementById("ei-youtube-video");
+  const toggleBtn = document.getElementById("video-toggle-btn");
+  const infoSection = document.getElementById("endfield-info");
+
+  if (!videoFrame || !infoSection) return;
+
+  let feedActive = true;        // Tracks if the video is currently playing
+  let isManuallyPaused = false; // Tracks if the user intentionally locked it
+
+  // 1. MANUAL OVERRIDE (The Button)
+  if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+          if (feedActive) {
+              // Pause it securely
+              videoFrame.contentWindow.postMessage(JSON.stringify({"event": "command", "func": "pauseVideo", "args": ""}), "*");
+              toggleBtn.classList.add("paused");
+              toggleBtn.querySelector(".btn-text").textContent = "RESUME FEED";
+              
+              feedActive = false;
+              isManuallyPaused = true; // LOCK the state!
+          } else {
+              // Resume it securely
+              videoFrame.contentWindow.postMessage(JSON.stringify({"event": "command", "func": "playVideo", "args": ""}), "*");
+              toggleBtn.classList.remove("paused");
+              toggleBtn.querySelector(".btn-text").textContent = "PAUSE FEED";
+              
+              feedActive = true;
+              isManuallyPaused = false; // UNLOCK the state!
+          }
+      });
+  }
+
+  // 2. AUTOMATIC OBSERVER (The Scroll Spy)
+  const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+          // A. If it leaves the screen, and it's currently playing, pause it to save bandwidth!
+          if (!entry.isIntersecting && feedActive) {
+              videoFrame.contentWindow.postMessage(JSON.stringify({"event": "command", "func": "pauseVideo", "args": ""}), "*");
+              feedActive = false; 
+              // Notice we do NOT change the UI button or the manual lock here. 
+              // It pauses silently in the background.
+          } 
+          // B. If it comes back on screen, ONLY play it if the user hasn't manually locked it!
+          else if (entry.isIntersecting && !feedActive && !isManuallyPaused) {
+              videoFrame.contentWindow.postMessage(JSON.stringify({"event": "command", "func": "playVideo", "args": ""}), "*");
+              feedActive = true;
+          }
+      });
+  }, { threshold: 0.1 }); // Triggers when 10% of the section is visible
+
+  // Start watching the section
+  videoObserver.observe(infoSection);
+});
