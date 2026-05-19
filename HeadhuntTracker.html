@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Endfield — Headhunt Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/NavBar.css">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -51,42 +52,8 @@ body {
 @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 @keyframes spin   { to { transform: rotate(360deg); } }
 
-.navbar {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(13,13,15,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-.navbar-inner {
-  max-width: 1200px; margin: 0 auto;
-  padding: 0 16px;
-  display: flex; align-items: center; gap: 10px; height: 48px;
-  min-width: 0;
-}
-.navbar-brand {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800; font-size: 15px;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: var(--accent); white-space: nowrap;
-  flex-shrink: 0;
-}
-.navbar-sep { width: 1px; height: 20px; background: var(--border2); flex-shrink: 0; }
-.navbar-links {
-  display: flex; gap: 2px;
-  overflow-x: auto; scrollbar-width: none;
-  flex: 1; min-width: 0;
-}
-.navbar-links::-webkit-scrollbar { display: none; }
-.nav-link {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
-  color: var(--text3); padding: 6px 9px;
-  border-radius: var(--rs); white-space: nowrap;
-  cursor: pointer; border: none; background: none;
-  transition: color 0.15s, background 0.15s;
-  flex-shrink: 0;
-}
-.nav-link:hover { color: var(--text2); background: var(--surface2); }
+/* 50px spacer replacing the navbar */
+.navbar-spacer { height: 50px; }
 
 .char-banner {
   background: var(--surface);
@@ -208,8 +175,8 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
 .step-t code {
   font-family: 'Share Tech Mono', monospace; font-size: 10px;
   color: var(--accent); background: var(--accent-soft);
-  padding: 1px 5px; border: 1px solid rgba(232,97,58,0.2);
-  border-radius: 3px; word-break: break-all;
+  padding: 1px 5px; border-radius: 3px;
+  word-break: break-all;
 }
 
 .info-box {
@@ -623,7 +590,6 @@ select.field { cursor: pointer; }
 .shop-input { background:var(--bg); border:1px solid var(--border2); color:var(--text); font-family:'Share Tech Mono',monospace; font-size:12px; padding:8px 12px; border-radius:var(--rs); outline:none; transition:border-color 0.15s; width:130px; }
 .shop-input:focus { border-color:var(--accent); }
 
-/* currency selector */
 .currency-selector-wrap {
   display:flex; flex-direction:column; gap:5px;
 }
@@ -695,25 +661,13 @@ footer {
   .est-chips   { grid-template-columns: 1fr 1fr 1fr; }
 }
 @media(max-width:380px) {
-  .navbar-brand { font-size: 12px; letter-spacing: 1px; }
   .est-chips   { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="navbar-inner">
-    <div class="navbar-brand">Endfield ◈</div>
-    <div class="navbar-sep"></div>
-    <div class="navbar-links">
-      <button class="nav-link" onclick="document.getElementById('sec-data').scrollIntoView({behavior:'smooth'})">Data Link</button>
-      <button class="nav-link" onclick="document.getElementById('sec-log').scrollIntoView({behavior:'smooth'})">Pull Log</button>
-      <button class="nav-link" onclick="document.getElementById('sec-stats').scrollIntoView({behavior:'smooth'})">Statistics</button>
-      <button class="nav-link" onclick="switchPageTab('tools');document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})">Tools</button>
-    </div>
-  </div>
-</nav>
+<div class="navbar-spacer"></div>
 
 <div class="char-banner">
   <div class="char-banner-inner">
@@ -1204,8 +1158,6 @@ const POOL_LABELS = {
   E_CharacterGachaPoolType_Limited:   'Limited',
 };
 
-// Base prices in HUF. Rate multipliers convert to other currencies.
-// Rates are approximate as of mid-2025 — for reference only.
 const ORI_BUNDLES_BASE = [
   { label:'Shard',   huf:399,    ori:12,  firstOri:24   },
   { label:'Chip',    huf:1990,   ori:21,  firstOri:42   },
@@ -1215,7 +1167,6 @@ const ORI_BUNDLES_BASE = [
   { label:'Cache',   huf:39990,  ori:194, firstOri:388  },
 ];
 
-// currency code → { name, symbol, rate (1 HUF = X currency), decimals, symbolAfter }
 const CURRENCIES = {
   HUF: { name:'HUF — Hungarian Forint',      symbol:'Ft',   rate:1,          decimals:0, symbolAfter:true  },
   USD: { name:'USD — US Dollar',              symbol:'$',    rate:0.00264,    decimals:2  },
@@ -1926,5 +1877,11 @@ document.addEventListener('DOMContentLoaded', () => {
   recalcPulls();
 });
 </script>
+
+    <script src="js/NavBar.js"></script>
+
+    <script>
+        NavBar.init({});
+    </script>
 </body>
 </html>

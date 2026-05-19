@@ -16,7 +16,7 @@
     /* FLUID: Sidebar scales with screen width, capped gracefully */
     --sidebar-width: clamp(260px, 30vw, 450px);
     
-    --border: 0.5px solid rgba(135, 135, 135, 0.4);
+    --navbar--border: 0.5px solid rgba(135, 135, 135, 0.4);
 
     --sidebar-active-bg: #fff;
     --sidebar-active-text: #000;
@@ -68,7 +68,7 @@ body {
     display: grid !important; /* Force Grid context to remain untouched */
     grid-template-columns: var(--navbar-height) 1fr var(--navbar-height);
     align-items: center;
-    border-bottom: var(--border);
+    border-bottom: var(--navbar--border);
 }
 
 .progress-bar {
@@ -130,7 +130,7 @@ body {
     justify-content: center;
     gap: 5px;
     cursor: pointer;
-    border-right: var(--border);
+    border-right: var(--navbar--border);
     flex-shrink: 0;
 }
 
@@ -154,7 +154,7 @@ body {
     left: calc(var(--sidebar-width) * -1); 
     height: 100%;
     background: #0a0a0a;
-    border-right: var(--border);
+    border-right: var(--navbar--border);
     z-index: 2147483646;
     display: flex;
     flex-direction: column;
@@ -172,7 +172,7 @@ body {
     font-size: clamp(8px, 0.8vw, 10px);
     letter-spacing: 0.2em;
     color: rgb(255, 255, 255);
-    border-bottom: var(--border);
+    border-bottom: var(--navbar--border);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -192,7 +192,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: 8px 0;
-    border-bottom: var(--border);
+    border-bottom: var(--navbar--border);
     overflow: hidden;
     min-height: 0; 
 }
@@ -311,7 +311,7 @@ body {
     font-size: clamp(8px, 0.8vw, 10px);
     letter-spacing: 0.15em;
     color: rgb(255, 255, 255);
-    border-top: var(--border);
+    border-top: var(--navbar--border);
     display: flex;
     justify-content: space-between;
 }

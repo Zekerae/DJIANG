@@ -156,7 +156,6 @@ body::before {
 .plans-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; margin-bottom: 10px; }
 .add-btns-row { display: flex; gap: 8px; }
 .add-btns-row .btn { flex: 1; justify-content: center; }
-
 .plans-tabs-row { display: flex; flex-direction: column; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .plans-tabs { display: flex; align-items: center; padding: 6px 16px 0; }
 .plans-tab {
@@ -167,7 +166,6 @@ body::before {
 }
 .plans-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .plans-tab:hover { color: var(--text); }
-
 .plans-body { flex: 1; overflow-y: auto; padding: 10px 12px; }
 .plans-body::-webkit-scrollbar { width: 3px; }
 .plans-body::-webkit-scrollbar-thumb { background: var(--surface3); }
@@ -183,7 +181,6 @@ body::before {
 }
 .plan-card:hover::before { opacity: 1; }
 .plan-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px 6px; }
-
 .plan-avatar {
   width: 48px; height: 54px; flex-shrink: 0;
   border: 1px solid var(--border2); border-radius: 2px;
@@ -194,7 +191,6 @@ body::before {
 .plan-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
 .plan-avatar svg { width: 18px; height: 18px; }
 .plan-avatar-rarity { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
-
 .plan-meta { flex: 1; min-width: 0; }
 .plan-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1; margin-bottom: 4px; }
 .plan-tags { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
@@ -206,25 +202,21 @@ body::before {
 .tag-nature   { color: var(--nature);   border-color: rgba(74,222,128,0.4);  background: rgba(74,222,128,0.1); }
 .tag-neutral  { color: var(--muted);    border-color: var(--border2);        background: var(--surface2); }
 .tag-rarity   { color: #f0b840;         border-color: rgba(240,184,64,0.3);  background: rgba(240,184,64,0.07); }
-
 .plan-body { padding: 0 12px 10px; }
 .level-row { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 6px; align-items: end; margin-bottom: 8px; }
 .level-col label { display: block; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
 .level-slider-wrap { display: flex; align-items: center; gap: 7px; }
-
 .level-num-input {
   font-family: var(--font-display); font-size: 22px; font-weight: 700;
   min-width: 36px; width: 36px; text-align: right; line-height: 1;
   background: transparent; border: none; border-bottom: 1px solid transparent;
-  color: var(--text); outline: none; cursor: text;
-  transition: border-color 0.15s;
+  color: var(--text); outline: none; cursor: text; transition: border-color 0.15s;
   -moz-appearance: textfield;
 }
 .level-num-input::-webkit-outer-spin-button,
 .level-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .level-num-input:hover { border-bottom-color: var(--border2); }
 .level-num-input:focus { border-bottom-color: var(--accent); color: var(--accent); }
-
 .level-arrow { text-align: center; color: var(--muted); font-size: 14px; padding-bottom: 2px; }
 input[type=range] {
   -webkit-appearance: none; width: 100%; height: 2px;
@@ -232,8 +224,7 @@ input[type=range] {
   cursor: pointer; touch-action: none;
 }
 input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 14px; height: 14px;
-  background: var(--accent);
+  -webkit-appearance: none; width: 14px; height: 14px; background: var(--accent);
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   cursor: pointer; transition: transform 0.1s;
 }
@@ -268,7 +259,6 @@ input[type=range]::-moz-range-thumb {
 .skill-lvl-sel { background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 9px; padding: 2px 4px; outline: none; cursor: pointer; transition: border-color 0.15s; }
 .skill-lvl-sel:focus { border-color: var(--accent); }
 .skill-range-arrow { font-size: 9px; color: var(--muted); }
-
 .plans-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; }
 .plans-empty svg { opacity: 0.12; margin-bottom: 12px; }
 .plans-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
@@ -281,8 +271,6 @@ input[type=range]::-moz-range-thumb {
 .mid-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 3px; }
 .mid-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1; }
 .mid-badge { font-family: var(--font-mono); font-size: 9px; background: rgba(255,140,66,0.12); color: var(--accent2); padding: 2px 8px; border: 1px solid rgba(255,140,66,0.25); white-space: nowrap; }
-
-/* ── MID MODE TABS ── */
 .mid-mode-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .mid-mode-tab {
   flex: 1; padding: 8px 12px; font-family: var(--font-display); font-size: 11px; font-weight: 700;
@@ -294,14 +282,11 @@ input[type=range]::-moz-range-thumb {
 .mid-mode-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
 .mid-mode-tab:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.02); }
 .mid-mode-tab svg { width: 11px; height: 11px; flex-shrink: 0; }
-
 .mid-body { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 12px; min-width: 0; }
 .mid-body::-webkit-scrollbar { width: 3px; }
 .mid-body::-webkit-scrollbar-thumb { background: var(--surface3); }
-
 .mid-collective { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
 .mid-individual { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
-
 .mid-focus-bar { border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg); display: none; }
 .mid-focus-toggle { display: flex; align-items: center; gap: 7px; padding: 7px 14px; cursor: pointer; user-select: none; }
 .mid-focus-toggle:hover { background: rgba(255,255,255,0.02); }
@@ -315,7 +300,6 @@ input[type=range]::-moz-range-thumb {
 .mid-focus-actions { display: flex; gap: 6px; padding: 0 12px 8px; }
 .mid-focus-act { font-family: var(--font-mono); font-size: 9px; padding: 2px 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.12s; }
 .mid-focus-act:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.06); }
-
 .focus-pill { display: flex; align-items: center; gap: 5px; padding: 3px 9px 3px 6px; border: 1px solid var(--border2); background: var(--surface2); cursor: pointer; transition: all 0.12s; clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%); white-space: nowrap; }
 .focus-pill.active { border-color: var(--accent); background: rgba(0,196,163,0.08); }
 .focus-pill.active .focus-pill-name { color: var(--text); }
@@ -329,11 +313,9 @@ input[type=range]::-moz-range-thumb {
 .mid-focus-indicator { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.06em; padding: 1px 6px; border: 1px solid rgba(255,140,66,0.25); background: rgba(255,140,66,0.08); display: none; }
 .mid-focus-indicator.visible { display: inline-block; }
 
-/* ── COLLECTIVE: read-only need list ── */
+/* ── COLLECTIVE NEED LIST ── */
 .need-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .need-section-label:first-child { padding-top: 2px; }
-
-/* Read-only row (no have input, just need qty + coverage bar) */
 .need-row {
   display: flex; align-items: center; gap: 6px;
   padding: 7px 8px; background: var(--surface2); border: 1px solid var(--border);
@@ -345,13 +327,9 @@ input[type=range]::-moz-range-thumb {
 .need-row-name { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .need-row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .need-row-qty { font-family: var(--font-display); font-size: 14px; font-weight: 700; line-height: 1; }
-/* coverage fraction shown in muted small text */
 .need-row-coverage { font-family: var(--font-mono); font-size: 9px; color: var(--muted); white-space: nowrap; }
 .need-row-coverage.met { color: var(--accent); }
-/* progress bar along bottom */
 .need-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); transition: width 0.25s; opacity: 0.6; }
-
-/* ── FIND BUTTON ── */
 .need-find-btn {
   width: 20px; height: 20px; flex-shrink: 0;
   border: 1px solid var(--border2); background: var(--surface);
@@ -361,51 +339,30 @@ input[type=range]::-moz-range-thumb {
 .need-find-btn:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(255,140,66,0.08); }
 .need-find-btn svg { width: 10px; height: 10px; }
 
-/* ── COLLECTIVE EXP BREAKDOWN (read-only) ── */
-.exp-breakdown {
-  margin-bottom: 8px; padding: 10px 10px 8px;
-  background: var(--surface2); border: 1px solid var(--border);
-  min-width: 0; overflow: hidden;
-}
-.exp-breakdown-header {
-  font-family: var(--font-mono); font-size: 9px; color: var(--muted);
-  letter-spacing: 0.14em; text-transform: uppercase;
-  margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
-}
+/* ── COLLECTIVE EXP BREAKDOWN ── */
+.exp-breakdown { margin-bottom: 8px; padding: 10px 10px 8px; background: var(--surface2); border: 1px solid var(--border); min-width: 0; overflow: hidden; }
+.exp-breakdown-header { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
 .exp-breakdown-total { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--accent); }
 .exp-progress { height: 2px; background: var(--surface3); margin-bottom: 4px; }
 .exp-progress-fill { height: 100%; background: var(--accent); transition: width 0.25s; }
 .exp-coverage-text { font-family: var(--font-mono); font-size: 8px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
-
-/* read-only exp row in collective */
 .exp-item-row {
-  display: grid;
-  grid-template-columns: 7px 1fr auto auto;
+  display: grid; grid-template-columns: 7px minmax(0,1fr) auto auto;
   gap: 5px; align-items: center;
   padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
   margin-bottom: 3px; min-width: 0;
 }
 .exp-item-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .exp-item-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.exp-item-need {
-  font-family: var(--font-display); font-size: 15px; font-weight: 700;
-  min-width: 28px; text-align: right; line-height: 1; flex-shrink: 0;
-}
+.exp-item-need { font-family: var(--font-display); font-size: 15px; font-weight: 700; min-width: 28px; text-align: right; line-height: 1; flex-shrink: 0; }
 .exp-item-need.done { color: var(--accent); font-size: 13px; }
-/* read-only coverage shown instead of input */
 .exp-item-coverage { font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
 .exp-item-coverage.met { color: var(--accent); }
 .exp-item-row.satisfied { opacity: 0.5; }
 .exp-item-row.satisfied .exp-item-name { text-decoration: line-through; }
 
 /* ── FIND DROPDOWN ── */
-.find-dropdown {
-  position: fixed; z-index: 9999;
-  background: var(--surface); border: 1px solid var(--border2);
-  border-top: 2px solid var(--accent2); min-width: 200px; max-width: 280px;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.7);
-  animation: findDropIn 0.12s ease;
-}
+.find-dropdown { position: fixed; z-index: 9999; background: var(--surface); border: 1px solid var(--border2); border-top: 2px solid var(--accent2); min-width: 200px; max-width: 280px; box-shadow: 0 8px 28px rgba(0,0,0,0.7); animation: findDropIn 0.12s ease; }
 @keyframes findDropIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
 .find-dropdown-title { font-family: var(--font-mono); font-size: 8px; color: var(--accent2); letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 10px 4px; border-bottom: 1px solid var(--border); }
 .find-dropdown-item { display: flex; align-items: center; gap: 7px; padding: 7px 10px; cursor: pointer; transition: background 0.1s; border-bottom: 1px solid var(--border); }
@@ -413,7 +370,6 @@ input[type=range]::-moz-range-thumb {
 .find-dropdown-item:hover { background: rgba(255,140,66,0.08); }
 .find-dropdown-map { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; flex: 1; }
 .find-dropdown-count { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
-
 .mid-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; }
 .mid-empty svg { opacity: 0.12; margin-bottom: 12px; }
 .mid-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
@@ -424,28 +380,13 @@ input[type=range]::-moz-range-thumb {
 .indiv-empty svg { opacity:0.12; margin-bottom:12px; }
 .indiv-empty-title { font-family:var(--font-display); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
 .indiv-empty-sub { font-family:var(--font-mono); font-size:10px; color:var(--muted); opacity:0.5; }
-
 .indiv-list { flex:1; overflow-y:auto; padding:8px 12px; }
 .indiv-list::-webkit-scrollbar { width:3px; }
 .indiv-list::-webkit-scrollbar-thumb { background:var(--surface3); }
-
-.indiv-card {
-  background: var(--surface2); border: 1px solid var(--border);
-  margin-bottom: 6px; position: relative; animation: slideIn 0.18s ease;
-  overflow: hidden;
-}
-.indiv-card-head {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px; cursor: pointer; user-select: none;
-  transition: background 0.12s;
-}
+.indiv-card { background: var(--surface2); border: 1px solid var(--border); margin-bottom: 6px; position: relative; animation: slideIn 0.18s ease; overflow: hidden; }
+.indiv-card-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; user-select: none; transition: background 0.12s; }
 .indiv-card-head:hover { background: rgba(255,255,255,0.02); }
-.indiv-card-avatar {
-  width: 36px; height: 40px; flex-shrink: 0;
-  border: 1px solid var(--border2); border-radius: 2px;
-  overflow: hidden; display: flex; align-items: center; justify-content: center;
-  background: var(--surface);
-}
+.indiv-card-avatar { width: 36px; height: 40px; flex-shrink: 0; border: 1px solid var(--border2); border-radius: 2px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--surface); }
 .indiv-card-avatar img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block; }
 .indiv-card-avatar svg { width:14px; height:14px; }
 .indiv-card-meta { flex:1; min-width:0; }
@@ -459,22 +400,12 @@ input[type=range]::-moz-range-thumb {
 .indiv-card-status.done { color:var(--accent); border-color:rgba(0,196,163,0.3); background:rgba(0,196,163,0.07); }
 .indiv-card-status.inprog { color:var(--accent2); border-color:rgba(255,140,66,0.3); background:rgba(255,140,66,0.07); }
 .indiv-card-status.pending { color:var(--muted); border-color:var(--border); background:transparent; }
-
 .indiv-card-body { overflow:hidden; max-height:0; transition:max-height 0.25s ease; }
 .indiv-card.open .indiv-card-body { max-height:3000px; }
-
 .indiv-section { padding:0 10px 10px; }
-.indiv-section-head {
-  font-family:var(--font-mono); font-size:8px; color:var(--muted);
-  letter-spacing:0.14em; text-transform:uppercase;
-  padding:6px 0 4px; border-bottom:1px solid var(--border);
-  margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;
-}
-
-/* Individual material rows with have input */
+.indiv-section-head { font-family:var(--font-mono); font-size:8px; color:var(--muted); letter-spacing:0.14em; text-transform:uppercase; padding:6px 0 4px; border-bottom:1px solid var(--border); margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; }
 .indiv-mat-row {
-  display: grid;
-  grid-template-columns: 8px 1fr auto auto;
+  display: grid; grid-template-columns: 8px 1fr auto auto;
   gap: 5px; align-items: center;
   padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
   margin-bottom: 3px; position: relative;
@@ -483,55 +414,31 @@ input[type=range]::-moz-range-thumb {
 .indiv-mat-name { font-family:var(--font-display); font-size:10px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .indiv-mat-need { font-family:var(--font-display); font-size:13px; font-weight:700; line-height:1; flex-shrink:0; text-align:right; }
 .indiv-mat-need.satisfied { color: var(--accent); font-size:11px; }
-
-/* have input in individual */
-.indiv-have-wrap {
-  display: flex; align-items: center; gap: 3px;
-  font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0;
-}
-.indiv-have-input {
-  width: 42px; background: var(--surface2); border: 1px solid var(--border2);
-  color: var(--text); font-family: var(--font-mono); font-size: 10px;
-  padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s;
-}
+.indiv-have-wrap { display: flex; align-items: center; gap: 3px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0; }
+.indiv-have-input { width: 42px; background: var(--surface2); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 10px; padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s; }
 .indiv-have-input:focus { border-color: var(--accent); }
 .indiv-mat-row.zero { opacity:0.35; }
 .indiv-mat-row.satisfied-row { opacity: 0.55; }
 .indiv-mat-row.satisfied-row .indiv-mat-name { text-decoration: line-through; color: var(--muted); }
 .indiv-mat-row-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); opacity: 0.5; pointer-events: none; }
 
-/* ── INDIVIDUAL EXP SECTION (full breakdown with inputs) ── */
-.indiv-exp-block {
-  margin-bottom: 8px; padding: 10px 10px 8px;
-  background: var(--surface); border: 1px solid var(--border);
-  position: relative; overflow: hidden;
-}
-.indiv-exp-block-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 5px;
-}
+/* ── INDIVIDUAL EXP BLOCK ── */
+.indiv-exp-block { margin-bottom: 8px; padding: 10px 10px 8px; background: var(--surface); border: 1px solid var(--border); position: relative; overflow: hidden; }
+.indiv-exp-block-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
 .indiv-exp-block-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
 .indiv-exp-block-total { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
 .indiv-exp-block-bar { height: 3px; background: var(--surface3); margin-bottom: 4px; border-radius: 1px; }
 .indiv-exp-block-fill { height: 100%; background: var(--accent); transition: width 0.3s; border-radius: 1px; }
 .indiv-exp-block-coverage { font-family: var(--font-mono); font-size: 8px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
-
-/* per-tier row inside individual EXP block */
 .indiv-exp-tier-row {
-  display: grid;
-  grid-template-columns: 7px 1fr auto auto auto;
+  display: grid; grid-template-columns: 7px minmax(0,1fr) auto auto auto;
   gap: 5px; align-items: center;
   padding: 5px 7px; background: var(--surface2); border: 1px solid var(--border);
   margin-bottom: 3px; position: relative;
 }
 .indiv-exp-tier-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .indiv-exp-tier-name { font-family: var(--font-display); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.indiv-exp-tier-find {
-  width: 18px; height: 18px; flex-shrink: 0;
-  border: 1px solid var(--border2); background: transparent;
-  color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.12s;
-}
+.indiv-exp-tier-find { width: 18px; height: 18px; flex-shrink: 0; border: 1px solid var(--border2); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
 .indiv-exp-tier-find:hover { border-color: var(--accent2); color: var(--accent2); }
 .indiv-exp-tier-find svg { width: 9px; height: 9px; }
 .indiv-exp-tier-need { font-family: var(--font-display); font-size: 13px; font-weight: 700; line-height: 1; flex-shrink: 0; text-align: right; }
@@ -539,8 +446,6 @@ input[type=range]::-moz-range-thumb {
 .indiv-exp-tier-row.satisfied-row { opacity: 0.52; }
 .indiv-exp-tier-row.satisfied-row .indiv-exp-tier-name { text-decoration: line-through; color: var(--muted); }
 .indiv-exp-tier-hint { font-family: var(--font-mono); font-size: 8px; color: var(--muted); padding: 3px 2px 0; opacity: 0.55; }
-
-/* save button area */
 .indiv-save-bar { padding:8px 10px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; }
 .indiv-save-btn {
   display:inline-flex; align-items:center; gap:5px;
@@ -559,14 +464,7 @@ input[type=range]::-moz-range-thumb {
 .indiv-save-status.ok { color:var(--accent); }
 .indiv-save-status.err { color:var(--danger); }
 
-/* ── collective read-only hint ── */
-.collective-readonly-hint {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 10px; margin-bottom: 8px;
-  background: rgba(91,138,247,0.06); border: 1px solid rgba(91,138,247,0.18);
-  font-family: var(--font-mono); font-size: 9px; color: #5b8af7;
-  letter-spacing: 0.06em;
-}
+.collective-readonly-hint { display: flex; align-items: center; gap: 6px; padding: 6px 10px; margin-bottom: 8px; background: rgba(91,138,247,0.06); border: 1px solid rgba(91,138,247,0.18); font-family: var(--font-mono); font-size: 9px; color: #5b8af7; letter-spacing: 0.06em; }
 .collective-readonly-hint svg { width: 11px; height: 11px; flex-shrink: 0; }
 
 /* ── MAP PANEL ── */
@@ -576,7 +474,6 @@ input[type=range]::-moz-range-thumb {
 .map-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .map-tab:hover { color: var(--text); }
 .map-hint { margin-left: auto; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; white-space: nowrap; padding-left: 10px; }
-
 .map-filter-bar { padding: 6px 14px; border-bottom: 1px solid var(--border); display: none; gap: 6px; align-items: center; flex-wrap: wrap; flex-shrink: 0; background: var(--surface); }
 .map-filter-bar.visible { display: flex; }
 .map-filter-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; flex-shrink: 0; }
@@ -584,37 +481,16 @@ input[type=range]::-moz-range-thumb {
 .mat-chip:hover { border-color: var(--accent); color: var(--accent); }
 .mat-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.1); }
 .mat-chip-dot { width: 6px; height: 6px; border-radius: 50%; }
-
 .map-area { flex: 1; position: relative; overflow: hidden; }
-.map-deselect-hint {
-  position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%);
-  font-family: var(--font-mono); font-size: 9px; color: var(--muted);
-  background: rgba(13,15,18,0.85); border: 1px solid var(--border);
-  padding: 3px 10px; z-index: 25; pointer-events: none;
-  opacity: 0; transition: opacity 0.3s; white-space: nowrap;
-}
+.map-deselect-hint { position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 9px; color: var(--muted); background: rgba(13,15,18,0.85); border: 1px solid var(--border); padding: 3px 10px; z-index: 25; pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
 .map-deselect-hint.visible { opacity: 1; }
-
 .map-viewport { position: absolute; inset: 0; cursor: grab; overflow: hidden; }
 .map-viewport.grabbing { cursor: grabbing; }
 .map-inner { position: absolute; transform-origin: 0 0; }
 .map-canvas-wrap { position: absolute; inset: 0; display: none; }
 .map-canvas-wrap.active { display: block; }
-
-.user-pin {
-  position: absolute; transform: translate(-50%,-50%);
-  display: flex; align-items: center; gap: 5px;
-  padding: 4px 8px 4px 5px;
-  background: rgba(13,15,18,0.92); border: 1px solid rgba(255,255,255,0.18);
-  cursor: pointer; transition: border-color 0.12s, box-shadow 0.12s, opacity 0.12s;
-  white-space: nowrap; z-index: 5;
-}
-.user-pin::before {
-  content: ''; position: absolute; top: -1px; right: -1px;
-  width: 5px; height: 5px; background: var(--bg);
-  clip-path: polygon(0 0, 100% 0, 100% 100%);
-  z-index: 1; pointer-events: none;
-}
+.user-pin { position: absolute; transform: translate(-50%,-50%); display: flex; align-items: center; gap: 5px; padding: 4px 8px 4px 5px; background: rgba(13,15,18,0.92); border: 1px solid rgba(255,255,255,0.18); cursor: pointer; transition: border-color 0.12s, box-shadow 0.12s, opacity 0.12s; white-space: nowrap; z-index: 5; }
+.user-pin::before { content: ''; position: absolute; top: -1px; right: -1px; width: 5px; height: 5px; background: var(--bg); clip-path: polygon(0 0, 100% 0, 100% 100%); z-index: 1; pointer-events: none; }
 .user-pin:hover { border-color: rgba(255,255,255,0.4); z-index: 10; }
 .user-pin.highlighted { z-index: 15; }
 .user-pin.dimmed { opacity: 0.18; pointer-events: none; }
@@ -622,35 +498,11 @@ input[type=range]::-moz-range-thumb {
 .user-pin-text { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
 .user-pin-sub { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.45); }
 .user-pin.grouped { padding-right: 22px; }
-.user-pin-stack-caret {
-  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
-  font-size: 9px; color: rgba(255,255,255,0.7); transition: transform 0.15s; pointer-events: none;
-}
+.user-pin-stack-caret { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); font-size: 9px; color: rgba(255,255,255,0.7); transition: transform 0.15s; pointer-events: none; }
 .user-pin.open .user-pin-stack-caret { transform: translateY(-50%) rotate(180deg); }
-.user-pin-stack-count {
-  position: absolute; right: -8px; top: -8px;
-  background: var(--accent2); color: #0d0f12;
-  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
-  border-radius: 3px; min-width: 16px; height: 16px; padding: 0 3px;
-  display: flex; align-items: center; justify-content: center; line-height: 1;
-  pointer-events: none; border: 1px solid rgba(0,0,0,0.4);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.6); z-index: 20;
-}
-
-.pin-group-portal {
-  position: fixed; z-index: 5000;
-  background: rgba(13,15,18,0.98); border: 1px solid var(--border2);
-  border-top: 2px solid var(--accent2);
-  min-width: 240px; max-width: 320px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.85);
-  animation: findDropIn 0.12s ease;
-}
-.pin-group-portal-title {
-  font-family: var(--font-mono); font-size: 8px; color: var(--accent2);
-  letter-spacing: 0.14em; text-transform: uppercase;
-  padding: 6px 10px 5px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
+.user-pin-stack-count { position: absolute; right: -8px; top: -8px; background: var(--accent2); color: #0d0f12; font-family: var(--font-mono); font-size: 9px; font-weight: 700; border-radius: 3px; min-width: 16px; height: 16px; padding: 0 3px; display: flex; align-items: center; justify-content: center; line-height: 1; pointer-events: none; border: 1px solid rgba(0,0,0,0.4); box-shadow: 0 1px 4px rgba(0,0,0,0.6); z-index: 20; }
+.pin-group-portal { position: fixed; z-index: 5000; background: rgba(13,15,18,0.98); border: 1px solid var(--border2); border-top: 2px solid var(--accent2); min-width: 240px; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.85); animation: findDropIn 0.12s ease; }
+.pin-group-portal-title { font-family: var(--font-mono); font-size: 8px; color: var(--accent2); letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 10px 5px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
 .pin-group-portal-close { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 10px; padding: 0 2px; line-height: 1; }
 .pin-group-portal-close:hover { color: var(--text); }
 .pin-group-portal-item { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; transition: background 0.1s; border-bottom: 1px solid var(--border); cursor: pointer; }
@@ -661,18 +513,15 @@ input[type=range]::-moz-range-thumb {
 .pin-group-name { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.2; }
 .pin-group-loc { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.45); margin-top: 1px; }
 .pin-group-note { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.35); margin-top: 3px; line-height: 1.4; white-space: normal; }
-
 .map-zoom-controls { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; z-index: 20; }
 .map-zoom-btn { width: 30px; height: 30px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; font-family: var(--font-mono); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px)); }
 .map-zoom-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
 .map-zoom-btn.rst { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 4px; }
 .map-coords { position: absolute; bottom: 14px; left: 14px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); background: rgba(13,15,18,0.85); border: 1px solid var(--border); padding: 3px 8px; z-index: 20; letter-spacing: 0.06em; pointer-events: none; }
-
 .map-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: var(--bg); }
 .map-loading-ring { width: 40px; height: 40px; border: 2px solid var(--surface3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .map-loading-text { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
-
 .map-legend { position: absolute; top: 10px; left: 10px; z-index: 20; background: rgba(13,15,18,0.92); border: 1px solid var(--border2); padding: 8px 12px; min-width: 120px; display: none; }
 .map-legend.visible { display: block; }
 .map-legend-title { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
@@ -684,7 +533,6 @@ input[type=range]::-moz-range-thumb {
 .map-legend-clear { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 3px 0 0; border-top: 1px solid var(--border); margin-top: 4px; display: none; }
 .map-legend-clear.visible { display: block; }
 .map-legend-clear:hover { color: var(--accent2); }
-
 .map-info-bar { padding: 10px 14px; background: rgba(13,15,18,0.97); border-top: 1px solid var(--border); flex-shrink: 0; display: none; }
 .map-info-bar.visible { display: block; }
 .map-info-title { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 7px; display: flex; align-items: center; justify-content: space-between; }
@@ -699,11 +547,7 @@ input[type=range]::-moz-range-thumb {
 .map-info-pin-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
 .map-info-pin-name { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
 .map-info-pin-note { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.4); line-height: 1.4; }
-
-@keyframes navFlash {
-  0%,100% { box-shadow: 0 0 0 2px var(--accent2); }
-  50% { box-shadow: 0 0 0 8px rgba(255,140,66,0); }
-}
+@keyframes navFlash { 0%,100% { box-shadow: 0 0 0 2px var(--accent2); } 50% { box-shadow: 0 0 0 8px rgba(255,140,66,0); } }
 .user-pin.nav-flash { animation: navFlash 0.4s ease 3; border-color: var(--accent2) !important; z-index: 30 !important; }
 
 /* ── MODAL ── */
@@ -738,19 +582,16 @@ input[type=range]::-moz-range-thumb {
 </head>
 <body>
 
-<!-- SUB-NAVBAR -->
 <nav class="sub-navbar" id="navbar">
   <div class="sub-nav-left">
-    <div class="hamburger">
-      <span></span><span></span><span></span>
-    </div>
+    <div class="hamburger"><span></span><span></span><span></span></div>
     <div class="sub-nav-logo">DJIANG</div>
     <a href="index.html" class="sub-nav-back">
       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       BACK
     </a>
     <div class="sub-nav-crumbs">
-      <span>Home</span> <span class="sep">/</span> <span>Tools</span> <span class="sep">/</span> <span class="active">Ascension Planner</span>
+      <span>Home</span><span class="sep">/</span><span>Tools</span><span class="sep">/</span><span class="active">Ascension Planner</span>
     </div>
   </div>
   <div class="sub-nav-right">
@@ -758,16 +599,11 @@ input[type=range]::-moz-range-thumb {
   </div>
 </nav>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-label">NAVIGATION</div>
   <div class="sidebar-nav">
-    <a href="index.html" class="sidebar-item" style="text-decoration:none;">
-      <div class="sidebar-item-inner"><span class="sidebar-text">HOME</span></div>
-    </a>
-    <a href="#" class="sidebar-item active" style="text-decoration:none;">
-      <div class="sidebar-item-inner"><span class="sidebar-text">TRACKER</span></div>
-    </a>
+    <a href="index.html" class="sidebar-item" style="text-decoration:none;"><div class="sidebar-item-inner"><span class="sidebar-text">HOME</span></div></a>
+    <a href="#" class="sidebar-item active" style="text-decoration:none;"><div class="sidebar-item-inner"><span class="sidebar-text">TRACKER</span></div></a>
   </div>
 </div>
 <div class="overlay"></div>
@@ -775,21 +611,16 @@ input[type=range]::-moz-range-thumb {
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const hamburger = document.querySelector('.sub-navbar .hamburger');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.querySelector('.overlay');
+    const sidebar   = document.querySelector('.sidebar');
+    const overlay   = document.querySelector('.overlay');
     if (hamburger && sidebar && overlay) {
-      const toggleMenu = () => {
-        hamburger.classList.toggle('open');
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('visible');
-      };
+      const toggleMenu = () => { hamburger.classList.toggle('open'); sidebar.classList.toggle('open'); overlay.classList.toggle('visible'); };
       hamburger.addEventListener('click', toggleMenu);
       overlay.addEventListener('click', toggleMenu);
     }
   });
 </script>
 
-<!-- APP HEADER -->
 <div class="header">
   <div>
     <div class="header-eyebrow">Arknights: Endfield // v2.3</div>
@@ -802,8 +633,6 @@ input[type=range]::-moz-range-thumb {
 </div>
 
 <div class="main" id="main-layout">
-
-  <!-- LEFT: Plans -->
   <div class="left-panel" id="left-panel">
     <div class="plans-header">
       <div class="plans-eyebrow">Ascension Goals</div>
@@ -836,10 +665,8 @@ input[type=range]::-moz-range-thumb {
     </div>
   </div>
 
-  <!-- RESIZE HANDLE 1 -->
   <div class="resize-handle" id="resize-1" title="Drag to resize"></div>
 
-  <!-- MID: Materials -->
   <div class="mid-panel" id="mid-panel">
     <div class="mid-head">
       <div class="mid-head-row">
@@ -864,7 +691,6 @@ input[type=range]::-moz-range-thumb {
       </div>
     </div>
 
-    <!-- COLLECTIVE VIEW -->
     <div class="mid-collective" id="mid-collective-view">
       <div class="mid-focus-bar" id="mid-focus-bar">
         <div class="mid-focus-toggle" onclick="toggleFocusPanel()">
@@ -892,7 +718,6 @@ input[type=range]::-moz-range-thumb {
       </div>
     </div>
 
-    <!-- INDIVIDUAL VIEW -->
     <div class="mid-individual" id="mid-individual-view" style="display:none">
       <div class="indiv-empty" id="indiv-empty" style="display:flex">
         <svg width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="24" cy="16" r="8"/><path d="M8 42c0-8 7.2-14 16-14s16 6 16 14"/></svg>
@@ -903,10 +728,8 @@ input[type=range]::-moz-range-thumb {
     </div>
   </div>
 
-  <!-- RESIZE HANDLE 2 -->
   <div class="resize-handle" id="resize-2" title="Drag to resize"></div>
 
-  <!-- RIGHT: Map -->
   <div class="map-panel">
     <div class="map-top-bar" id="map-top-bar">
       <span class="map-hint" id="map-loading-hint" style="margin-left:0">Loading maps…</span>
@@ -918,10 +741,7 @@ input[type=range]::-moz-range-thumb {
       <button class="mat-chip" onclick="clearHighlight()" style="margin-left:auto">✕ Clear</button>
     </div>
     <div class="map-area" id="map-area">
-      <div class="map-loading" id="map-loading">
-        <div class="map-loading-ring"></div>
-        <div class="map-loading-text">Loading map data…</div>
-      </div>
+      <div class="map-loading" id="map-loading"><div class="map-loading-ring"></div><div class="map-loading-text">Loading map data…</div></div>
       <div id="map-canvases"></div>
       <div class="map-legend" id="map-legend">
         <div class="map-legend-title">Needs on this map</div>
@@ -946,7 +766,6 @@ input[type=range]::-moz-range-thumb {
   </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">
   <div class="modal">
     <div class="modal-head">
@@ -964,14 +783,122 @@ input[type=range]::-moz-range-thumb {
 <div id="pin-group-portal-root"></div>
 
 <script>
-// ── SUPABASE ──
+  // ── SUPABASE ──
 const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+let CURRENT_USER = null;
+
 function setDbStatus(state, msg) {
   document.getElementById('db-dot').className = 'db-dot ' + state;
   document.getElementById('db-status').textContent = msg;
+}
+
+// ── AUTH & DB ──
+async function initAuth() {
+  const { data: { session } } = await db.auth.getSession();
+  CURRENT_USER = session?.user || null;
+  if (CURRENT_USER) {
+    setDbStatus('loading', 'Loading your data…');
+    await loadUserData();
+  }
+}
+
+async function loadUserData() {
+  if (!CURRENT_USER) return;
+  try {
+    const { data: planRows, error: planErr } = await db
+      .from('material_list_plans')
+      .select('id, plan_type, from_level, to_level, plan_json, plan_label, character_id, weapon_id')
+      .eq('user_id', CURRENT_USER.id)
+      .order('created_at');
+    if (planErr) throw planErr;
+
+    if (planRows && planRows.length) {
+      plans = planRows.map(row => {
+        const base = row.plan_json || {};
+        return { ...base, _dbId: row.id };
+      }).filter(p => p.id && p.item);
+      plans.forEach(p => focusedPlanIds.add(p.id));
+    }
+
+    const { data: matRows, error: matErr } = await db
+      .from('material_list_user_mats')
+      .select('material_id, have_qty, exp_have')
+      .eq('user_id', CURRENT_USER.id);
+    if (matErr) throw matErr;
+
+    if (matRows && matRows.length) {
+      haveQty = {}; expHave = {};
+      for (const row of matRows) {
+        haveQty[row.material_id] = row.have_qty || 0;
+        if (row.material_id === '__exp_have__' && row.exp_have) expHave = row.exp_have;
+      }
+    }
+  } catch (e) {
+    console.warn('loadUserData error:', e);
+    setDbStatus('err', 'Failed to load saved data');
+    return;
+  }
+  setDbStatus('ok', 'Data loaded');
+}
+
+async function savePlanToDB(plan) {
+  if (!CURRENT_USER) return;
+  const payload = {
+    user_id:      CURRENT_USER.id,
+    plan_type:    plan.type,
+    from_level:   plan.fromLv,
+    to_level:     plan.toLv,
+    character_id: plan.type === 'operator' ? plan.item.id : null,
+    weapon_id:    plan.type === 'weapon'   ? plan.item.id : null,
+    plan_json:    JSON.stringify(plan),
+    plan_label:   plan.item.name,
+  };
+  if (plan._dbId) {
+    const { error } = await db.from('material_list_plans').update(payload).eq('id', plan._dbId).eq('user_id', CURRENT_USER.id);
+    if (error) throw error;
+  } else {
+    const { data, error } = await db.from('material_list_plans').insert(payload).select('id').single();
+    if (error) throw error;
+    plan._dbId = data.id;
+  }
+}
+
+async function deletePlanFromDB(plan) {
+  if (!CURRENT_USER || !plan._dbId) return;
+  await db.from('material_list_plans').delete().eq('id', plan._dbId).eq('user_id', CURRENT_USER.id);
+}
+
+const _haveDebounce = {};
+function scheduleHaveSave(matKey) {
+  if (!CURRENT_USER) return;
+  clearTimeout(_haveDebounce[matKey]);
+  _haveDebounce[matKey] = setTimeout(() => saveHaveToDB(matKey), 800);
+}
+async function saveHaveToDB(matKey) {
+  if (!CURRENT_USER) return;
+  try {
+    await db.from('material_list_user_mats').upsert({
+      user_id: CURRENT_USER.id, material_id: matKey, have_qty: haveQty[matKey] || 0,
+    }, { onConflict: 'user_id,material_id' });
+  } catch (e) { console.warn('saveHaveToDB error:', e.message); }
+}
+
+const _expHaveDebounce = {};
+function scheduleExpHaveSave() {
+  if (!CURRENT_USER) return;
+  clearTimeout(_expHaveDebounce['__exp__']);
+  _expHaveDebounce['__exp__'] = setTimeout(() => saveExpHaveToDB(), 800);
+}
+async function saveExpHaveToDB() {
+  if (!CURRENT_USER) return;
+  try {
+    await db.from('material_list_user_mats').upsert({
+      user_id: CURRENT_USER.id, material_id: '__exp_have__', have_qty: 0, exp_have: expHave,
+    }, { onConflict: 'user_id,material_id' });
+  } catch (e) { console.warn('saveExpHaveToDB error:', e.message); }
 }
 
 // ── OPERATORS & WEAPONS ──
@@ -1024,186 +951,152 @@ const WEAPONS = [
   {id:"clannibal",name:"Clannibal",type:"Handcannon",rarity:6},
   {id:"navigator",name:"Navigator",type:"Handcannon",rarity:6},
   {id:"aspirant",name:"Aspirant",type:"Sword",rarity:5},
-  {id:"finchaser-30",name:"Finchaser 3.0",type:"Sword",rarity:5},
+  {id:"finchaser-3",name:"Finchaser 3.0",type:"Sword",rarity:5},
   {id:"aggeloslayer",name:"Aggeloslayer",type:"Polearm",rarity:4},
 ];
 
 // ── MATERIAL DEFINITIONS ──
 const MATS = {
-  t_creds:              {name:"T-Creds",              color:"#f0c040", category:"Currency"},
-  elementary_combat_record:     {name:"Elem. Combat Record",  color:"#5ba85b", category:"Operator EXP", expValue:200,   isExpItem:true, expType:'operator'},
-  intermediate_combat_record:   {name:"Int. Combat Record",   color:"#70c870", category:"Operator EXP", expValue:1000,  isExpItem:true, expType:'operator'},
-  advanced_combat_record:       {name:"Adv. Combat Record",   color:"#90e090", category:"Operator EXP", expValue:10000, isExpItem:true, expType:'operator'},
-  elementary_cognitive_carrier: {name:"Elem. Cognitive Carrier",color:"#5ba85b",category:"Operator EXP (Lv61+)", expValue:1000,  isExpItem:true, expType:'operator_hi'},
-  advanced_cognitive_carrier:   {name:"Adv. Cognitive Carrier", color:"#70c870",category:"Operator EXP (Lv61+)", expValue:10000, isExpItem:true, expType:'operator_hi'},
-  arms_inspector: {name:"Arms Inspector", color:"#7ec9c9", category:"Weapon EXP", expValue:200,   isExpItem:true, expType:'weapon'},
-  arms_insp_kit:  {name:"Arms INSP Kit",  color:"#90dada", category:"Weapon EXP", expValue:1000,  isExpItem:true, expType:'weapon'},
-  arms_insp_set:  {name:"Arms INSP Set",  color:"#a8ecec", category:"Weapon EXP (Lv61+)", expValue:10000, isExpItem:true, expType:'weapon_hi'},
-  protodisk:            {name:"Protodisk",              color:"#c9a05b", category:"Promotion"},
-  protoset:             {name:"Protoset",               color:"#e0b870", category:"Promotion"},
-  pink_bolete:          {name:"Pink Bolete",            color:"#e08060", category:"Rare Growth — Boletes"},
-  red_bolete:           {name:"Red Bolete",             color:"#d84040", category:"Rare Growth — Boletes"},
-  ruby_bolete:          {name:"Ruby Bolete",            color:"#c02060", category:"Rare Growth — Boletes"},
-  bloodcap:             {name:"Bloodcap",               color:"#901020", category:"Rare Growth — Boletes"},
-  cosmagaric:           {name:"Cosmagaric",             color:"#a01830", category:"Rare Growth — Boletes"},
-  protoprism:           {name:"Protoprism",             color:"#6b8ec9", category:"Skill Upgrade"},
-  protohedron:          {name:"Protohedron",            color:"#2d6ea0", category:"Skill Upgrade"},
-  kalkodendra:          {name:"Kalkodendra",            color:"#70c98a", category:"Rare Growth — Dendras"},
-  chrysodendra:         {name:"Chrysodendra",           color:"#50d870", category:"Rare Growth — Dendras"},
-  vitrodendra:          {name:"Vitrodendra",            color:"#20e860", category:"Rare Growth — Dendras"},
-  mark_of_perseverance: {name:"Mark of Perseverance",   color:"#b870e0", category:"Mastery"},
-  cast_die:             {name:"Cast Die",               color:"#c97b5b", category:"Weapon Tuning"},
-  heavy_cast_die:       {name:"Heavy Cast Die",         color:"#e0956a", category:"Weapon Tuning"},
-  kalkonyx:             {name:"Kalkonyx",               color:"#6b8ec9", category:"Rare Ore"},
-  auronyx:              {name:"Auronyx",                color:"#8090e0", category:"Rare Ore"},
-  umbronyx:             {name:"Umbronyx",               color:"#a070d0", category:"Rare Ore"},
-  igneosite:            {name:"Igneosite",              color:"#e05030", category:"Rare Ore"},
-  wulingstone:          {name:"Wulingstone",            color:"#50a8d0", category:"Rare Ore"},
-  d96_steel:            {name:"D96 Steel Sample 4",     color:"#e8c84a", category:"Operator Rare Mat"},
-  metadiastima:         {name:"Metadiastima Tube",      color:"#d4a830", category:"Operator Rare Mat"},
-  tachyon:              {name:"Tachyon Lattice",        color:"#b08820", category:"Operator Rare Mat"},
-  quadrant:             {name:"Quadrant Fluid",         color:"#907010", category:"Operator Rare Mat"},
-  triphasic:            {name:"Triphasic Nanoflake",    color:"#705000", category:"Operator Rare Mat"},
+  t_creds:              {name:"T-Creds",color:"#f0c040",category:"Currency"},
+  elementary_combat_record:     {name:"Elem. Combat Record",color:"#5ba85b",category:"Operator EXP",expValue:200,  isExpItem:true,expType:'operator'},
+  intermediate_combat_record:   {name:"Int. Combat Record", color:"#70c870",category:"Operator EXP",expValue:1000, isExpItem:true,expType:'operator'},
+  advanced_combat_record:       {name:"Adv. Combat Record", color:"#90e090",category:"Operator EXP",expValue:10000,isExpItem:true,expType:'operator'},
+  elementary_cognitive_carrier: {name:"Elem. Cognitive Carrier",color:"#5ba85b",category:"Operator EXP (Lv61+)",expValue:1000, isExpItem:true,expType:'operator_hi'},
+  advanced_cognitive_carrier:   {name:"Adv. Cognitive Carrier", color:"#70c870",category:"Operator EXP (Lv61+)",expValue:10000,isExpItem:true,expType:'operator_hi'},
+  arms_inspector: {name:"Arms Inspector",color:"#7ec9c9",category:"Weapon EXP",expValue:200,  isExpItem:true,expType:'weapon'},
+  arms_insp_kit:  {name:"Arms INSP Kit", color:"#90dada",category:"Weapon EXP",expValue:1000, isExpItem:true,expType:'weapon'},
+  arms_insp_set:  {name:"Arms INSP Set", color:"#a8ecec",category:"Weapon EXP (Lv61+)",expValue:10000,isExpItem:true,expType:'weapon_hi'},
+  protodisk:            {name:"Protodisk",color:"#c9a05b",category:"Promotion"},
+  protoset:             {name:"Protoset", color:"#e0b870",category:"Promotion"},
+  pink_bolete:          {name:"Pink Bolete",  color:"#e08060",category:"Rare Growth — Boletes"},
+  red_bolete:           {name:"Red Bolete",   color:"#d84040",category:"Rare Growth — Boletes"},
+  ruby_bolete:          {name:"Ruby Bolete",  color:"#c02060",category:"Rare Growth — Boletes"},
+  bloodcap:             {name:"Bloodcap",     color:"#901020",category:"Rare Growth — Boletes"},
+  cosmagaric:           {name:"Cosmagaric",   color:"#a01830",category:"Rare Growth — Boletes"},
+  protoprism:           {name:"Protoprism",   color:"#6b8ec9",category:"Skill Upgrade"},
+  protohedron:          {name:"Protohedron",  color:"#2d6ea0",category:"Skill Upgrade"},
+  kalkodendra:          {name:"Kalkodendra",  color:"#70c98a",category:"Rare Growth — Dendras"},
+  chrysodendra:         {name:"Chrysodendra", color:"#50d870",category:"Rare Growth — Dendras"},
+  vitrodendra:          {name:"Vitrodendra",  color:"#20e860",category:"Rare Growth — Dendras"},
+  mark_of_perseverance: {name:"Mark of Perseverance",color:"#b870e0",category:"Mastery"},
+  cast_die:             {name:"Cast Die",      color:"#c97b5b",category:"Weapon Tuning"},
+  heavy_cast_die:       {name:"Heavy Cast Die",color:"#e0956a",category:"Weapon Tuning"},
+  kalkonyx:             {name:"Kalkonyx",  color:"#6b8ec9",category:"Rare Ore"},
+  auronyx:              {name:"Auronyx",   color:"#8090e0",category:"Rare Ore"},
+  umbronyx:             {name:"Umbronyx",  color:"#a070d0",category:"Rare Ore"},
+  igneosite:            {name:"Igneosite", color:"#e05030",category:"Rare Ore"},
+  wulingstone:          {name:"Wulingstone",color:"#50a8d0",category:"Rare Ore"},
+  d96_steel:    {name:"D96 Steel Sample 4",   color:"#e8c84a",category:"Operator Rare Mat"},
+  metadiastima: {name:"Metadiastima Tube",    color:"#d4a830",category:"Operator Rare Mat"},
+  tachyon:      {name:"Tachyon Lattice",      color:"#b08820",category:"Operator Rare Mat"},
+  quadrant:     {name:"Quadrant Fluid",       color:"#907010",category:"Operator Rare Mat"},
+  triphasic:    {name:"Triphasic Nanoflake",  color:"#705000",category:"Operator Rare Mat"},
 };
 
 // ── EXP GROUPS ──
 const EXP_GROUPS = {
-  operator: {
-    label: 'Operator EXP',
-    keys: ['advanced_combat_record','intermediate_combat_record','elementary_combat_record'],
-    rawKey: '_op_exp_raw',
-  },
-  operator_hi: {
-    label: 'Operator EXP (Lv61+)',
-    keys: ['advanced_cognitive_carrier','elementary_cognitive_carrier'],
-    rawKey: '_op_exp_hi_raw',
-  },
-  weapon: {
-    label: 'Weapon EXP',
-    keys: ['arms_insp_kit','arms_inspector'],
-    rawKey: '_wpn_exp_raw',
-  },
-  weapon_hi: {
-    label: 'Weapon EXP (Lv61+)',
-    keys: ['arms_insp_set'],
-    rawKey: '_wpn_exp_hi_raw',
-  },
+  operator:    {label:'Operator EXP',        keys:['advanced_combat_record','intermediate_combat_record','elementary_combat_record'],       rawKey:'_op_exp_raw'},
+  operator_hi: {label:'Operator EXP (Lv61+)',keys:['advanced_cognitive_carrier','elementary_cognitive_carrier'],                           rawKey:'_op_exp_hi_raw'},
+  weapon:      {label:'Weapon EXP',          keys:['arms_insp_kit','arms_inspector'],                                                      rawKey:'_wpn_exp_raw'},
+  weapon_hi:   {label:'Weapon EXP (Lv61+)', keys:['arms_insp_set'],                                                                       rawKey:'_wpn_exp_hi_raw'},
 };
 
 // ── COST TABLES ──
 const OP_EXP_BANDS = [
-  [1,  20,  22860,   820],
-  [20, 40,  248540,  12540],
-  [40, 60,  475710,  23900],
-  [60, 80,  465230,  109180],
-  [80, 90,  579950,  238980],
+  [1,20,22860,820],[20,40,248540,12540],[40,60,475710,23900],[60,80,465230,109180],[80,90,579950,238980],
 ];
 const PROMO_COSTS = {
-  P1: {protodisk:8,  protoset:0,  pink_bolete:3, red_bolete:0, ruby_bolete:0, cosmagaric:0, t_creds:1600},
-  O1: {t_creds:1800},
-  P2: {protodisk:25, protoset:0,  pink_bolete:0, red_bolete:5, ruby_bolete:0, cosmagaric:0, t_creds:6500},
-  O2: {t_creds:6500},
-  P3: {protodisk:0,  protoset:24, pink_bolete:0, red_bolete:0, ruby_bolete:5, cosmagaric:0, t_creds:18000},
-  O3: {t_creds:18000},
-  P4: {protodisk:0,  protoset:36, pink_bolete:0, red_bolete:0, ruby_bolete:0, cosmagaric:20, t_creds:100000},
+  P1:{protodisk:8, protoset:0, pink_bolete:3,red_bolete:0,ruby_bolete:0,cosmagaric:0,t_creds:1600},
+  O1:{t_creds:1800},
+  P2:{protodisk:25,protoset:0, pink_bolete:0,red_bolete:5,ruby_bolete:0,cosmagaric:0,t_creds:6500},
+  O2:{t_creds:6500},
+  P3:{protodisk:0, protoset:24,pink_bolete:0,red_bolete:0,ruby_bolete:5,cosmagaric:0,t_creds:18000},
+  O3:{t_creds:18000},
+  P4:{protodisk:0, protoset:36,pink_bolete:0,red_bolete:0,ruby_bolete:0,cosmagaric:20,t_creds:100000},
 };
 const TALENT_NODE_COSTS = [
-  {node:1, protoprism:6,  protohedron:0,  t_creds:1600},
-  {node:2, protoprism:10, protohedron:0,  t_creds:1800},
-  {node:3, protoprism:0,  protohedron:10, t_creds:6000},
-  {node:4, protoprism:0,  protohedron:20, t_creds:12000},
+  {node:1,protoprism:6, protohedron:0, t_creds:1600},
+  {node:2,protoprism:10,protohedron:0, t_creds:1800},
+  {node:3,protoprism:0, protohedron:10,t_creds:6000},
+  {node:4,protoprism:0, protohedron:20,t_creds:12000},
 ];
 const SKILL_LEVEL_COSTS = {
-  2:  {protoprism:6,   protohedron:0,  kalkodendra:1, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, t_creds:1000},
-  3:  {protoprism:12,  protohedron:0,  kalkodendra:2, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, t_creds:2700},
-  4:  {protoprism:16,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, t_creds:3200},
-  5:  {protoprism:21,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, t_creds:4200},
-  6:  {protoprism:27,  protohedron:0,  kalkodendra:0, chrysodendra:2, vitrodendra:0, mark_of_perseverance:0, t_creds:5400},
-  7:  {protoprism:0,   protohedron:6,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, t_creds:8200},
-  8:  {protoprism:0,   protohedron:8,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, t_creds:10500},
-  9:  {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:2, mark_of_perseverance:0, t_creds:18000},
-  M1: {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:1, t_creds:24000},
-  M2: {protoprism:0,   protohedron:24, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:2, t_creds:30000},
-  M3: {protoprism:0,   protohedron:50, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:3, t_creds:65000},
+  2: {protoprism:6,  protohedron:0, kalkodendra:1,chrysodendra:0,vitrodendra:0,mark_of_perseverance:0,t_creds:1000},
+  3: {protoprism:12, protohedron:0, kalkodendra:2,chrysodendra:0,vitrodendra:0,mark_of_perseverance:0,t_creds:2700},
+  4: {protoprism:16, protohedron:0, kalkodendra:0,chrysodendra:1,vitrodendra:0,mark_of_perseverance:0,t_creds:3200},
+  5: {protoprism:21, protohedron:0, kalkodendra:0,chrysodendra:1,vitrodendra:0,mark_of_perseverance:0,t_creds:4200},
+  6: {protoprism:27, protohedron:0, kalkodendra:0,chrysodendra:2,vitrodendra:0,mark_of_perseverance:0,t_creds:5400},
+  7: {protoprism:0,  protohedron:6, kalkodendra:0,chrysodendra:0,vitrodendra:1,mark_of_perseverance:0,t_creds:8200},
+  8: {protoprism:0,  protohedron:8, kalkodendra:0,chrysodendra:0,vitrodendra:1,mark_of_perseverance:0,t_creds:10500},
+  9: {protoprism:0,  protohedron:15,kalkodendra:0,chrysodendra:0,vitrodendra:2,mark_of_perseverance:0,t_creds:18000},
+  M1:{protoprism:0,  protohedron:15,kalkodendra:0,chrysodendra:0,vitrodendra:0,mark_of_perseverance:1,t_creds:24000},
+  M2:{protoprism:0,  protohedron:24,kalkodendra:0,chrysodendra:0,vitrodendra:0,mark_of_perseverance:2,t_creds:30000},
+  M3:{protoprism:0,  protohedron:50,kalkodendra:0,chrysodendra:0,vitrodendra:0,mark_of_perseverance:3,t_creds:65000},
 };
 const SKILL_LVL_ORDER = [2,3,4,5,6,7,8,9,'M1','M2','M3'];
-function skillLvlToNum(v) {
-  if(v==='M1') return 10; if(v==='M2') return 11; if(v==='M3') return 12;
-  return parseInt(v);
-}
+function skillLvlToNum(v) { if(v==='M1')return 10;if(v==='M2')return 11;if(v==='M3')return 12;return parseInt(v); }
 const WPN_EXP_BANDS = [
-  [1,  20,  8890,    640],
-  [20, 40,  96650,   9760],
-  [40, 60,  185000,  18610],
-  [60, 80,  913170,  94840],
-  [80, 90,  1320370, 217540],
+  [1,20,8890,640],[20,40,96650,9760],[40,60,185000,18610],[60,80,913170,94840],[80,90,1320370,217540],
 ];
 const TUNING_COSTS = {
-  1: {cast_die:5,   heavy_cast_die:0,  kalkonyx:3, auronyx:0, umbronyx:0, t_creds:2200},
-  2: {cast_die:18,  heavy_cast_die:0,  kalkonyx:0, auronyx:5, umbronyx:0, t_creds:8500},
-  3: {cast_die:0,   heavy_cast_die:20, kalkonyx:0, auronyx:0, umbronyx:5, t_creds:25000},
-  4: {cast_die:0,   heavy_cast_die:30, kalkonyx:0, auronyx:0, umbronyx:0, t_creds:90000},
+  1:{cast_die:5,  heavy_cast_die:0, kalkonyx:3,auronyx:0,umbronyx:0,t_creds:2200},
+  2:{cast_die:18, heavy_cast_die:0, kalkonyx:0,auronyx:5,umbronyx:0,t_creds:8500},
+  3:{cast_die:0,  heavy_cast_die:20,kalkonyx:0,auronyx:0,umbronyx:5,t_creds:25000},
+  4:{cast_die:0,  heavy_cast_die:30,kalkonyx:0,auronyx:0,umbronyx:0,t_creds:90000},
 };
 
 // ── CALC MATS ──
 function calcMats(plan) {
   const m = {};
-  const add = (k, v) => { if(v > 0) m[k] = (m[k]||0) + v; };
-
-  if (plan.type === 'operator') {
-    let rawExpLow = 0, rawExpHigh = 0;
-    for (const [s, e, exp, tcreds] of OP_EXP_BANDS) {
-      if (plan.toLv <= s || plan.fromLv >= e) continue;
-      const frac = (Math.min(plan.toLv, e) - Math.max(plan.fromLv, s)) / (e - s);
-      if (s >= 60) rawExpHigh += Math.round(exp * frac);
-      else          rawExpLow  += Math.round(exp * frac);
-      add('t_creds', Math.round(tcreds * frac));
+  const add = (k,v) => { if(v>0) m[k]=(m[k]||0)+v; };
+  if (plan.type==='operator') {
+    let rawExpLow=0,rawExpHigh=0;
+    for (const [s,e,exp,tcreds] of OP_EXP_BANDS) {
+      if(plan.toLv<=s||plan.fromLv>=e) continue;
+      const frac=(Math.min(plan.toLv,e)-Math.max(plan.fromLv,s))/(e-s);
+      if(s>=60) rawExpHigh+=Math.round(exp*frac); else rawExpLow+=Math.round(exp*frac);
+      add('t_creds',Math.round(tcreds*frac));
     }
-    if (rawExpLow  > 0) add('_op_exp_raw',    rawExpLow);
-    if (rawExpHigh > 0) add('_op_exp_hi_raw', rawExpHigh);
-
-    const pf = plan.promoFrom || 0, pt = plan.promoTo || 0;
-    for (let stage = pf + 1; stage <= pt; stage++) {
-      const pKey = 'P' + stage, oKey = 'O' + (stage - 1);
-      if (stage > 1 && PROMO_COSTS[oKey]) for (const [k,v] of Object.entries(PROMO_COSTS[oKey])) add(k, v);
-      if (PROMO_COSTS[pKey]) for (const [k,v] of Object.entries(PROMO_COSTS[pKey])) add(k, v);
+    if(rawExpLow>0)  add('_op_exp_raw',   rawExpLow);
+    if(rawExpHigh>0) add('_op_exp_hi_raw',rawExpHigh);
+    const pf=plan.promoFrom||0,pt=plan.promoTo||0;
+    for(let stage=pf+1;stage<=pt;stage++){
+      const pKey='P'+stage,oKey='O'+(stage-1);
+      if(stage>1&&PROMO_COSTS[oKey]) for(const[k,v]of Object.entries(PROMO_COSTS[oKey])) add(k,v);
+      if(PROMO_COSTS[pKey]) for(const[k,v]of Object.entries(PROMO_COSTS[pKey])) add(k,v);
     }
-    const tf = plan.talentFrom || 0, tt = plan.talentTo || 0;
-    for (const n of TALENT_NODE_COSTS) {
-      if (n.node > tf && n.node <= tt) { add('protoprism', n.protoprism); add('protohedron', n.protohedron); add('t_creds', n.t_creds); }
-    }
-    for (const sk of (plan.skills || [])) {
-      if (!sk.enabled) continue;
-      const fromN = skillLvlToNum(sk.fromLv), toN = skillLvlToNum(sk.toLv);
-      for (const lvl of SKILL_LVL_ORDER) {
-        const lvlN = skillLvlToNum(lvl);
-        if (lvlN > fromN && lvlN <= toN) {
-          const c = SKILL_LEVEL_COSTS[lvl];
-          add('protoprism', c.protoprism); add('protohedron', c.protohedron);
-          add('kalkodendra', c.kalkodendra); add('chrysodendra', c.chrysodendra);
-          add('vitrodendra', c.vitrodendra); add('mark_of_perseverance', c.mark_of_perseverance);
-          add('t_creds', c.t_creds);
+    const tf=plan.talentFrom||0,tt=plan.talentTo||0;
+    for(const n of TALENT_NODE_COSTS){if(n.node>tf&&n.node<=tt){add('protoprism',n.protoprism);add('protohedron',n.protohedron);add('t_creds',n.t_creds);}}
+    for(const sk of (plan.skills||[])){
+      if(!sk.enabled) continue;
+      const fromN=skillLvlToNum(sk.fromLv),toN=skillLvlToNum(sk.toLv);
+      for(const lvl of SKILL_LVL_ORDER){
+        const lvlN=skillLvlToNum(lvl);
+        if(lvlN>fromN&&lvlN<=toN){
+          const c=SKILL_LEVEL_COSTS[lvl];
+          add('protoprism',c.protoprism);add('protohedron',c.protohedron);
+          add('kalkodendra',c.kalkodendra);add('chrysodendra',c.chrysodendra);
+          add('vitrodendra',c.vitrodendra);add('mark_of_perseverance',c.mark_of_perseverance);
+          add('t_creds',c.t_creds);
         }
       }
     }
   } else {
-    let rawExpLow = 0, rawExpHigh = 0;
-    for (const [s, e, exp, tcreds] of WPN_EXP_BANDS) {
-      if (plan.toLv <= s || plan.fromLv >= e) continue;
-      const frac = (Math.min(plan.toLv, e) - Math.max(plan.fromLv, s)) / (e - s);
-      if (s >= 60) rawExpHigh += Math.round(exp * frac);
-      else          rawExpLow  += Math.round(exp * frac);
-      add('t_creds', Math.round(tcreds * frac));
+    let rawExpLow=0,rawExpHigh=0;
+    for(const[s,e,exp,tcreds]of WPN_EXP_BANDS){
+      if(plan.toLv<=s||plan.fromLv>=e) continue;
+      const frac=(Math.min(plan.toLv,e)-Math.max(plan.fromLv,s))/(e-s);
+      if(s>=60) rawExpHigh+=Math.round(exp*frac); else rawExpLow+=Math.round(exp*frac);
+      add('t_creds',Math.round(tcreds*frac));
     }
-    if (rawExpLow  > 0) add('_wpn_exp_raw',    rawExpLow);
-    if (rawExpHigh > 0) add('_wpn_exp_hi_raw', rawExpHigh);
-
-    const tf = plan.tuneFrom || 0, tt = plan.tuneTo || 0;
-    for (let stage = tf + 1; stage <= tt; stage++) {
-      const c = TUNING_COSTS[stage]; if (!c) continue;
-      add('cast_die', c.cast_die); add('heavy_cast_die', c.heavy_cast_die);
-      add('kalkonyx', c.kalkonyx); add('auronyx', c.auronyx); add('umbronyx', c.umbronyx);
-      add('t_creds', c.t_creds);
+    if(rawExpLow>0)  add('_wpn_exp_raw',   rawExpLow);
+    if(rawExpHigh>0) add('_wpn_exp_hi_raw',rawExpHigh);
+    const tf=plan.tuneFrom||0,tt=plan.tuneTo||0;
+    for(let stage=tf+1;stage<=tt;stage++){
+      const c=TUNING_COSTS[stage];if(!c)continue;
+      add('cast_die',c.cast_die);add('heavy_cast_die',c.heavy_cast_die);
+      add('kalkonyx',c.kalkonyx);add('auronyx',c.auronyx);add('umbronyx',c.umbronyx);
+      add('t_creds',c.t_creds);
     }
   }
   return m;
@@ -1211,164 +1104,140 @@ function calcMats(plan) {
 
 function totalMats() {
   const acc = {};
-  for (const p of plans) {
-    if (!focusedPlanIds.has(p.id)) continue;
-    const m = calcMats(p);
-    for (const [k, v] of Object.entries(m)) acc[k] = (acc[k]||0) + v;
+  for(const p of plans){
+    if(!focusedPlanIds.has(p.id)) continue;
+    const m=calcMats(p);
+    for(const[k,v]of Object.entries(m)) acc[k]=(acc[k]||0)+v;
   }
   return acc;
 }
 
-// ══════════════════════════════════════════════════════
 // ── SHARED HAVE STATE ──
-// All inputs live in Individual view; collective reads this state read-only.
-// haveQty[matKey] = number
-// expHave[groupKey][itemKey] = number
-// ══════════════════════════════════════════════════════
 let haveQty = {};
 let expHave  = {};
 
-function getHave(matKey)                  { return haveQty[matKey] || 0; }
-function setHave(matKey, val)             { haveQty[matKey] = Math.max(0, parseInt(val)||0); renderBoth(); }
-function getExpHave(groupKey, itemKey)    { return (expHave[groupKey] && expHave[groupKey][itemKey]) || 0; }
+function getHave(matKey) { return haveQty[matKey]||0; }
+function setHave(matKey, val) {
+  haveQty[matKey] = Math.max(0,parseInt(val)||0);
+  scheduleHaveSave(matKey);
+  renderBoth();
+}
+function getExpHave(groupKey, itemKey) { return (expHave[groupKey]&&expHave[groupKey][itemKey])||0; }
 function setExpHave(groupKey, itemKey, val) {
-  if (!expHave[groupKey]) expHave[groupKey] = {};
-  expHave[groupKey][itemKey] = Math.max(0, parseInt(val)||0);
+  if(!expHave[groupKey]) expHave[groupKey]={};
+  expHave[groupKey][itemKey]=Math.max(0,parseInt(val)||0);
+  scheduleExpHaveSave();
   renderBoth();
 }
 
-// renderBoth: re-renders collective and individual simultaneously
 function renderBoth() {
   renderNeed();
-  if (midMode === 'individual') renderIndividual();
+  if(midMode==='individual') renderIndividual();
 }
 
-// ── EXP BREAKDOWN COMPUTATION ──
+// ── EXP BREAKDOWN ──
 function computeExpBreakdown(rawExp, groupDef, groupKey) {
-  let remaining = rawExp;
-  const used = {};
-  for (const key of groupDef.keys) {
-    const val  = MATS[key]?.expValue || 1;
-    const have = getExpHave(groupKey, key);
-    const use  = Math.min(have, Math.floor(remaining / val));
-    used[key]  = use;
-    remaining  = Math.max(0, remaining - use * val);
+  let remaining=rawExp;
+  const used={};
+  for(const key of groupDef.keys){
+    const val=MATS[key]?.expValue||1;
+    const have=getExpHave(groupKey,key);
+    const use=Math.min(have,Math.floor(remaining/val));
+    used[key]=use; remaining=Math.max(0,remaining-use*val);
   }
-  const coveredExp = rawExp - remaining;
-  const pct = rawExp > 0 ? Math.min(100, Math.round((coveredExp / rawExp) * 100)) : 0;
-
-  const perTier = {};
-  for (const key of groupDef.keys) {
-    const val  = MATS[key]?.expValue || 1;
-    const have = getExpHave(groupKey, key);
-    const need = remaining > 0 ? Math.ceil(remaining / val) : 0;
-    perTier[key] = { standaloneTotal: Math.ceil(rawExp / val), need, have, expVal: val };
+  const coveredExp=rawExp-remaining;
+  const pct=rawExp>0?Math.min(100,Math.round((coveredExp/rawExp)*100)):0;
+  const perTier={};
+  for(const key of groupDef.keys){
+    const val=MATS[key]?.expValue||1;
+    const have=getExpHave(groupKey,key);
+    const need=remaining>0?Math.ceil(remaining/val):0;
+    perTier[key]={standaloneTotal:Math.ceil(rawExp/val),need,have,expVal:val};
   }
-  return { perTier, coveredExp, remaining, totalExp: rawExp, pct };
+  return {perTier,coveredExp,remaining,totalExp:rawExp,pct};
 }
 
 // ── SKILL DEFINITIONS ──
-const SKILL_NAMES = ['Basic Attack','Battle Skill','Combo Skill','Ultimate'];
-function defaultSkills() {
-  return SKILL_NAMES.map((name, i) => ({ name, enabled: i > 0, fromLv: 1, toLv: 'M3' }));
-}
+const SKILL_NAMES=['Basic Attack','Battle Skill','Combo Skill','Ultimate'];
+function defaultSkills() { return SKILL_NAMES.map((name,i)=>({name,enabled:i>0,fromLv:1,toLv:'M3'})); }
 
 // ── DB / MAPS ──
-let dbMaps = [];
-let dbMatsById = {};
+let dbMaps=[];
+let dbMatsById={};
 
 async function loadDbData() {
-  setDbStatus('loading', 'Loading maps…');
+  setDbStatus('loading','Loading maps…');
   try {
-    const { data: matsData } = await db.from('material_list_materials').select('id,name,farming_note,img_path');
-    if (matsData) {
-      for (const m of matsData) {
-        dbMatsById[m.id] = m;
-        if (MATS[m.id]) MATS[m.id].name = m.name;
-      }
-    }
-    const { data: maps, error: mapErr } = await db.from('material_list_maps').select('*').order('sort_order');
-    if (mapErr) throw mapErr;
-    const { data: pins, error: pinErr } = await db.from('material_list_map_pins').select('*').order('sort_order');
-    if (pinErr) throw pinErr;
-    dbMaps = (maps || []).map(m => ({
-      ...m,
-      pins: (pins || []).filter(p => p.map_id === m.id)
-    }));
-    setDbStatus('ok', `${dbMaps.length} maps loaded`);
-  } catch (e) {
-    setDbStatus('err', 'Map load failed: ' + e.message);
-    dbMaps = [];
-  }
+    const{data:matsData}=await db.from('material_list_materials').select('id,name,farming_note,img_path');
+    if(matsData){for(const m of matsData){dbMatsById[m.id]=m;if(MATS[m.id])MATS[m.id].name=m.name;}}
+    const{data:maps,error:mapErr}=await db.from('material_list_maps').select('*').order('sort_order');
+    if(mapErr) throw mapErr;
+    const{data:pins,error:pinErr}=await db.from('material_list_map_pins').select('*').order('sort_order');
+    if(pinErr) throw pinErr;
+    dbMaps=(maps||[]).map(m=>({...m,pins:(pins||[]).filter(p=>p.map_id===m.id)}));
+    setDbStatus('ok',`${dbMaps.length} maps loaded`);
+  } catch(e){setDbStatus('err','Map load failed: '+e.message);dbMaps=[];}
 }
 
-const charImgCache = {};
-const weaponImgCache = {};
+const charImgCache={};
+const weaponImgCache={};
 
+// ── FIX 3a: re-render plans after char images load ──
 async function loadCharImages() {
-  try {
-    const { data } = await db.from('v_characters_tiered').select('name,slug,img_path');
-    for (const row of (data || [])) {
-      if (row.name) charImgCache[row.name.toLowerCase()] = row.img_path ?? null;
-      if (row.slug) charImgCache[row.slug] = row.img_path ?? null;
+  try{
+    const{data}=await db.from('v_characters_tiered').select('name,slug,img_path');
+    for(const row of(data||[])){
+      if(row.name)charImgCache[row.name.toLowerCase()]=row.img_path??null;
+      if(row.slug)charImgCache[row.slug]=row.img_path??null;
     }
-  } catch (e) { console.warn('Could not load char images:', e.message); }
+  }catch(e){console.warn('Could not load char images:',e.message);}
+  renderPlans(); // re-render now that cache is warm
 }
 
+// ── FIX 3b: re-render plans after weapon images load ──
 async function loadWeaponImages() {
-  try {
-    const { data } = await db.from('weapons').select('id,img');
-    for (const row of (data || [])) {
-      if (row.id) weaponImgCache[row.id] = row.img ?? null;
+  try{
+    const{data}=await db.from('weapons').select('id,img');
+    for(const row of(data||[])){
+      if(row.id)weaponImgCache[row.id]=row.img??null;
     }
-  } catch (e) { console.warn('Could not load weapon images:', e.message); }
+  }catch(e){console.warn('Could not load weapon images:',e.message);}
+  renderPlans(); // re-render now that cache is warm
 }
 
-function getCharImg(name) {
-  const key = name.toLowerCase();
-  if (!(key in charImgCache)) return undefined;
-  return charImgCache[key] || null;
-}
-function getWeaponImg(id) {
-  if (!(id in weaponImgCache)) return undefined;
-  return weaponImgCache[id] || null;
-}
+function getCharImg(name){const key=name.toLowerCase();if(!(key in charImgCache))return undefined;return charImgCache[key]||null;}
+function getWeaponImg(id){if(!(id in weaponImgCache))return undefined;return weaponImgCache[id]||null;}
 
 // ── STATE ──
-let plans = [];
-let planFilter = 'all';
-let activeFilter = 'all';
-let modalType = null;
-let highlightedMat = null;
-let focusedPlanIds = new Set();
-let focusPanelOpen = false;
-let activeMapId = null;
-let mapView = { tx: 0, ty: 0, scale: 1 };
-let openPinGroupData = null;
-let midMode = 'collective';
+let plans=[];
+let planFilter='all';
+let activeFilter='all';
+let modalType=null;
+let highlightedMat=null;
+let focusedPlanIds=new Set();
+let focusPanelOpen=false;
+let activeMapId=null;
+let mapView={tx:0,ty:0,scale:1};
+let openPinGroupData=null;
+let midMode='collective';
+let indivSaveStatus={};
+let indivOpenCards=new Set();
+const _lastRenderedPlanConfig={};
 
-let indivSaveStatus = {};
-let indivOpenCards = new Set();
-
-// ── MID MODE SWITCH ──
+// ── MID MODE ──
 function switchMidMode(mode) {
-  midMode = mode;
-  document.getElementById('mtab-collective').classList.toggle('active', mode === 'collective');
-  document.getElementById('mtab-individual').classList.toggle('active', mode === 'individual');
-  document.getElementById('mid-collective-view').style.display = mode === 'collective' ? 'flex' : 'none';
-  document.getElementById('mid-individual-view').style.display = mode === 'individual' ? 'flex' : 'none';
-  if (mode === 'individual') renderIndividual();
-  else renderNeed();
+  midMode=mode;
+  document.getElementById('mtab-collective').classList.toggle('active',mode==='collective');
+  document.getElementById('mtab-individual').classList.toggle('active',mode==='individual');
+  document.getElementById('mid-collective-view').style.display=mode==='collective'?'flex':'none';
+  document.getElementById('mid-individual-view').style.display=mode==='individual'?'flex':'none';
+  if(mode==='individual') renderIndividual(); else renderNeed();
 }
 
 // ── HELPERS ──
-function getElColor(el) {
-  return {Heat:'#ff6b35',Cryo:'#4fc3f7',Electric:'#c084fc',Physical:'#94a3b8',Nature:'#4ade80'}[el]||'#6b7280';
-}
-function getRarityColor(rarity) {
-  return {6:'#e8a45a', 5:'#b0b0d8', 4:'#5a8ad8'}[rarity] || '#6b7280';
-}
-const EL_ICON = {
+function getElColor(el){return{Heat:'#ff6b35',Cryo:'#4fc3f7',Electric:'#c084fc',Physical:'#94a3b8',Nature:'#4ade80'}[el]||'#6b7280';}
+function getRarityColor(rarity){return{6:'#e8a45a',5:'#b0b0d8',4:'#5a8ad8'}[rarity]||'#6b7280';}
+const EL_ICON={
   Heat:`<svg viewBox="0 0 24 24" fill="none" stroke="#ff6b35" stroke-width="2"><path d="M12 2c0 6-6 8-6 14a6 6 0 0012 0c0-6-6-8-6-14z"/></svg>`,
   Cryo:`<svg viewBox="0 0 24 24" fill="none" stroke="#4fc3f7" stroke-width="2"><path d="M12 2v20M4.93 7l14.14 10M19.07 7L4.93 17M2 12h20"/></svg>`,
   Electric:`<svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>`,
@@ -1377,1147 +1246,578 @@ const EL_ICON = {
 };
 const OP_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
 const WPN_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21l7-7m0 0l2-2m-2 2l2 2m8-14l-7 7"/><path d="M14 3l7 7-3 3-7-7 3-3z"/></svg>`;
-
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-function fmtExp(v) {
-  if (v >= 1000000) return (v/1000000).toFixed(2)+'M EXP';
-  if (v >= 1000)    return (v/1000).toFixed(1)+'k EXP';
-  return v.toLocaleString()+' EXP';
-}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function fmtExp(v){if(v>=1000000)return(v/1000000).toFixed(2)+'M EXP';if(v>=1000)return(v/1000).toFixed(1)+'k EXP';return v.toLocaleString()+' EXP';}
 
 // ── PLANS ──
-function addPlan(type, item) {
-  const existing = plans.find(p => p.item.id === item.id && p.type === type);
-  if (existing) { closeModal(); return; }
-  const plan = { id: Date.now() + Math.random(), type, item, fromLv: 1, toLv: 40, promoFrom: 0, promoTo: 0, talentFrom: 0, talentTo: 0, tuneFrom: 0, tuneTo: 0, skills: type === 'operator' ? defaultSkills() : [] };
+function addPlan(type,item) {
+  const existing=plans.find(p=>p.item.id===item.id&&p.type===type);
+  if(existing){closeModal();return;}
+  const plan={id:Date.now()+Math.random(),type,item,fromLv:1,toLv:40,promoFrom:0,promoTo:0,talentFrom:0,talentTo:0,tuneFrom:0,tuneTo:0,skills:type==='operator'?defaultSkills():[]};
   plans.push(plan);
   focusedPlanIds.add(plan.id);
   renderAll();
   closeModal();
 }
+
 function removePlan(id) {
-  plans = plans.filter(p => p.id !== id);
+  const plan=plans.find(p=>p.id===id);
+  if(plan) deletePlanFromDB(plan);
+  plans=plans.filter(p=>p.id!==id);
   focusedPlanIds.delete(id);
   indivOpenCards.delete(id);
   delete indivSaveStatus[id];
   renderAll();
 }
 
-function updateFrom(id, val) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  let v = parseInt(val); if (isNaN(v)) return;
-  v = Math.max(1, Math.min(89, v));
-  p.fromLv = v;
-  if (p.fromLv >= p.toLv) p.toLv = Math.min(p.fromLv + 1, 90);
-  syncLevelUI(id);
-  renderBoth(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
+// ── FIX 2: reset plan to defaults instead of deleting ──
+function resetPlan(id) {
+  const plan=plans.find(p=>p.id===id);
+  if(!plan) return;
+  plan.fromLv=1;
+  plan.toLv=40;
+  plan.promoFrom=0; plan.promoTo=0;
+  plan.talentFrom=0; plan.talentTo=0;
+  plan.tuneFrom=0; plan.tuneTo=0;
+  if(plan.type==='operator') plan.skills=defaultSkills();
+  renderAll();
 }
-function updateTo(id, val) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  let v = parseInt(val); if (isNaN(v)) return;
-  v = Math.max(2, Math.min(90, v));
-  p.toLv = v;
-  if (p.toLv <= p.fromLv) p.fromLv = Math.max(p.toLv - 1, 1);
-  syncLevelUI(id);
-  renderBoth(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
-}
+
+function updateFrom(id,val){const p=plans.find(x=>x.id===id);if(!p)return;let v=parseInt(val);if(isNaN(v))return;v=Math.max(1,Math.min(89,v));p.fromLv=v;if(p.fromLv>=p.toLv)p.toLv=Math.min(p.fromLv+1,90);syncLevelUI(id);renderBoth();renderMapFilters();if(activeMapId)renderMapCanvas(activeMapId);}
+function updateTo(id,val){const p=plans.find(x=>x.id===id);if(!p)return;let v=parseInt(val);if(isNaN(v))return;v=Math.max(2,Math.min(90,v));p.toLv=v;if(p.toLv<=p.fromLv)p.fromLv=Math.max(p.toLv-1,1);syncLevelUI(id);renderBoth();renderMapFilters();if(activeMapId)renderMapCanvas(activeMapId);}
 
 function syncLevelUI(id) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  const card = document.querySelector(`.plan-card[data-id="${id}"]`); if (!card) return;
-  const fromSlider = card.querySelector('.from-slider');
-  const toSlider   = card.querySelector('.to-slider');
-  const fromInput  = card.querySelector('.from-num');
-  const toInput    = card.querySelector('.to-num');
-  if (fromSlider && document.activeElement !== fromSlider) fromSlider.value = p.fromLv;
-  if (toSlider   && document.activeElement !== toSlider)   toSlider.value   = p.toLv;
-  if (fromInput  && document.activeElement !== fromInput)  fromInput.value  = p.fromLv;
-  if (toInput    && document.activeElement !== toInput)    toInput.value    = p.toLv;
-  card.querySelectorAll('.quick-btn').forEach(btn => {
-    const [f, t] = btn.dataset.range.split('-').map(Number);
-    btn.classList.toggle('active', p.fromLv === f && p.toLv === t);
-  });
+  const p=plans.find(x=>x.id===id);if(!p)return;
+  const card=document.querySelector(`.plan-card[data-id="${id}"]`);if(!card)return;
+  const fromSlider=card.querySelector('.from-slider'),toSlider=card.querySelector('.to-slider');
+  const fromInput=card.querySelector('.from-num'),toInput=card.querySelector('.to-num');
+  if(fromSlider&&document.activeElement!==fromSlider)fromSlider.value=p.fromLv;
+  if(toSlider&&document.activeElement!==toSlider)toSlider.value=p.toLv;
+  if(fromInput&&document.activeElement!==fromInput)fromInput.value=p.fromLv;
+  if(toInput&&document.activeElement!==toInput)toInput.value=p.toLv;
+  card.querySelectorAll('.quick-btn').forEach(btn=>{const[f,t]=btn.dataset.range.split('-').map(Number);btn.classList.toggle('active',p.fromLv===f&&p.toLv===t);});
 }
 
-function setRange(id, f, t) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  p.fromLv = f; p.toLv = t;
-  syncLevelUI(id);
-  renderBoth(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
-}
+function setRange(id,f,t){const p=plans.find(x=>x.id===id);if(!p)return;p.fromLv=f;p.toLv=t;syncLevelUI(id);renderBoth();renderMapFilters();if(activeMapId)renderMapCanvas(activeMapId);}
+function setPromoRange(id,field,val){const p=plans.find(x=>x.id===id);if(!p)return;p[field]=parseInt(val);renderAll();}
+function setTalentRange(id,field,val){const p=plans.find(x=>x.id===id);if(!p)return;p[field]=parseInt(val);renderAll();}
+function setTuneRange(id,field,val){const p=plans.find(x=>x.id===id);if(!p)return;p[field]=parseInt(val);renderAll();}
+function toggleSkill(id,skillIdx){const p=plans.find(x=>x.id===id);if(!p||!p.skills[skillIdx])return;p.skills[skillIdx].enabled=!p.skills[skillIdx].enabled;renderAll();}
+function setSkillFrom(id,skillIdx,val){const p=plans.find(x=>x.id===id);if(!p||!p.skills[skillIdx])return;p.skills[skillIdx].fromLv=val;renderAll();}
+function setSkillTo(id,skillIdx,val){const p=plans.find(x=>x.id===id);if(!p||!p.skills[skillIdx])return;p.skills[skillIdx].toLv=val;renderAll();}
+function toggleAllSkills(id){const p=plans.find(x=>x.id===id);if(!p)return;const allOn=p.skills.every(s=>s.enabled);p.skills.forEach(s=>s.enabled=!allOn);renderAll();}
 
-function setPromoRange(id, field, val)  { const p = plans.find(x => x.id === id); if (!p) return; p[field] = parseInt(val); renderAll(); }
-function setTalentRange(id, field, val) { const p = plans.find(x => x.id === id); if (!p) return; p[field] = parseInt(val); renderAll(); }
-function setTuneRange(id, field, val)   { const p = plans.find(x => x.id === id); if (!p) return; p[field] = parseInt(val); renderAll(); }
-function toggleSkill(id, skillIdx)      { const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return; p.skills[skillIdx].enabled = !p.skills[skillIdx].enabled; renderAll(); }
-function setSkillFrom(id, skillIdx, val){ const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return; p.skills[skillIdx].fromLv = val; renderAll(); }
-function setSkillTo(id, skillIdx, val)  { const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return; p.skills[skillIdx].toLv = val; renderAll(); }
-function toggleAllSkills(id) { const p = plans.find(x => x.id === id); if (!p) return; const allOn = p.skills.every(s => s.enabled); p.skills.forEach(s => s.enabled = !allOn); renderAll(); }
+function renderAll(){renderPlans();renderFocusBar();renderNeed();renderMapFilters();if(activeMapId)renderMapCanvas(activeMapId);if(midMode==='individual')renderIndividual();}
 
-function renderAll() {
-  renderPlans(); renderFocusBar(); renderNeed(); renderMapFilters();
-  if (activeMapId) renderMapCanvas(activeMapId);
-  if (midMode === 'individual') renderIndividual();
-}
-
-function switchPlanTab(tab) {
-  planFilter = tab;
-  ['all','operator','weapon'].forEach(t => document.getElementById(`ptab-${t}`).classList.toggle('active', t===tab));
+function switchPlanTab(tab){
+  planFilter=tab;
+  ['all','operator','weapon'].forEach(t=>document.getElementById(`ptab-${t}`).classList.toggle('active',t===tab));
   renderPlans();
 }
 
-function renderPlans() {
-  const visible = planFilter === 'all' ? plans : plans.filter(p => p.type === planFilter);
-  const empty = document.getElementById('plans-empty');
-  const container = document.getElementById('plans-container');
-  empty.style.display = plans.length === 0 ? 'flex' : 'none';
-  container.innerHTML = '';
-  if (plans.length > 0 && visible.length === 0) {
-    container.innerHTML = `<div style="padding:20px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase">No matches</div></div>`;
-    return;
-  }
-  for (const plan of visible) container.appendChild(buildPlanCard(plan));
+function renderPlans(){
+  const visible=planFilter==='all'?plans:plans.filter(p=>p.type===planFilter);
+  const empty=document.getElementById('plans-empty');
+  const container=document.getElementById('plans-container');
+  empty.style.display=plans.length===0?'flex':'none';
+  container.innerHTML='';
+  if(plans.length>0&&visible.length===0){container.innerHTML=`<div style="padding:20px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase">No matches</div></div>`;return;}
+  for(const plan of visible) container.appendChild(buildPlanCard(plan));
 }
 
-function buildAvatarHTML(plan) {
-  const isOp = plan.type === 'operator';
-  const el = plan.item.element || null;
-  const elColor = getElColor(el);
-  const rarityColor = getRarityColor(plan.item.rarity);
-  if (isOp) {
-    const imgPath = getCharImg(plan.item.name);
-    if (imgPath) return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10"><img src="${imgPath}" alt="${plan.item.name}" loading="lazy"><div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
-    const icon = EL_ICON[el] || OP_ICON;
-    return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">${icon}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
-  }
-  const wpnImg = getWeaponImg(plan.item.id);
-  if (wpnImg) return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)"><img src="${wpnImg}" alt="${plan.item.name}" loading="lazy"><div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
-  return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">${WPN_ICON}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
+function buildAvatarHTML(plan){
+  const isOp=plan.type==='operator';
+  const el=plan.item.element||null,elColor=getElColor(el),rarityColor=getRarityColor(plan.item.rarity);
+  if(isOp){const imgPath=getCharImg(plan.item.name);if(imgPath)return`<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10"><img src="${imgPath}" alt="${plan.item.name}" loading="lazy"><div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;const icon=EL_ICON[el]||OP_ICON;return`<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">${icon}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;}
+  const wpnImg=getWeaponImg(plan.item.id);if(wpnImg)return`<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)"><img src="${wpnImg}" alt="${plan.item.name}" loading="lazy"><div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
+  return`<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">${WPN_ICON}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
 }
 
-function buildSkillLvlOptions(selectedVal) {
-  return [1,2,3,4,5,6,7,8,9,'M1','M2','M3'].map(v => `<option value="${v}" ${String(v)===String(selectedVal)?'selected':''}>${v}</option>`).join('');
-}
-function buildPromoOptions(selectedVal, label) {
-  return [0,1,2,3,4].map(v => `<option value="${v}" ${v===selectedVal?'selected':''}>${v===0?'None':label+v}</option>`).join('');
-}
+function buildSkillLvlOptions(selectedVal){return[1,2,3,4,5,6,7,8,9,'M1','M2','M3'].map(v=>`<option value="${v}" ${String(v)===String(selectedVal)?'selected':''}>${v}</option>`).join('');}
+function buildPromoOptions(selectedVal,label){return[0,1,2,3,4].map(v=>`<option value="${v}" ${v===selectedVal?'selected':''}>${v===0?'None':label+v}</option>`).join('');}
 
-function buildPlanCard(plan) {
-  const el = plan.item.element || null;
-  const elLower = el ? el.toLowerCase() : '';
-  const isOp = plan.type === 'operator';
-  const qRanges = [[1,40],[1,60],[1,80],[1,90],[40,80]];
-  const qBtns = qRanges.map(([f,t]) => {
-    const active = plan.fromLv===f && plan.toLv===t ? 'active' : '';
-    return `<button class="quick-btn ${active}" data-range="${f}-${t}" onclick="setRange(${plan.id},${f},${t})">${f}→${t}</button>`;
-  }).join('');
-
-  let promoRow = '';
-  if (isOp) {
-    promoRow = `<div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;flex-wrap:wrap;">
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:64px;">Promotion</div>
-      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoFrom',this.value)">${buildPromoOptions(plan.promoFrom,'P')}</select>
-      <span class="skill-range-arrow">→</span>
-      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoTo',this.value)">${buildPromoOptions(plan.promoTo,'P')}</select>
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-left:8px;min-width:48px;">Talents</div>
-      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTalentRange(${plan.id},'talentFrom',this.value)">${buildPromoOptions(plan.talentFrom,'E')}</select>
-      <span class="skill-range-arrow">→</span>
-      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTalentRange(${plan.id},'talentTo',this.value)">${buildPromoOptions(plan.talentTo,'E')}</select>
-    </div>`;
+function buildPlanCard(plan){
+  const el=plan.item.element||null,elLower=el?el.toLowerCase():'',isOp=plan.type==='operator';
+  const qRanges=[[1,40],[1,60],[1,80],[1,90],[40,80]];
+  const qBtns=qRanges.map(([f,t])=>{const active=plan.fromLv===f&&plan.toLv===t?'active':'';return`<button class="quick-btn ${active}" data-range="${f}-${t}" onclick="setRange(${plan.id},${f},${t})">${f}→${t}</button>`;}).join('');
+  let promoRow='';
+  if(isOp){promoRow=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;flex-wrap:wrap;"><div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:64px;">Promotion</div><select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoFrom',this.value)">${buildPromoOptions(plan.promoFrom,'P')}</select><span class="skill-range-arrow">→</span><select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoTo',this.value)">${buildPromoOptions(plan.promoTo,'P')}</select><div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-left:8px;min-width:48px;">Talents</div><select class="skill-lvl-sel" style="font-size:9px;" onchange="setTalentRange(${plan.id},'talentFrom',this.value)">${buildPromoOptions(plan.talentFrom,'E')}</select><span class="skill-range-arrow">→</span><select class="skill-lvl-sel" style="font-size:9px;" onchange="setTalentRange(${plan.id},'talentTo',this.value)">${buildPromoOptions(plan.talentTo,'E')}</select></div>`;}
+  let tuneRow='';
+  if(!isOp){tuneRow=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;"><div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:54px;">Tuning</div><select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneFrom',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneFrom?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select><span class="skill-range-arrow">→</span><select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneTo',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneTo?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select></div>`;}
+  let skillsSection='';
+  if(isOp&&plan.skills&&plan.skills.length){
+    const allOn=plan.skills.every(s=>s.enabled);
+    const skillRows=plan.skills.map((sk,i)=>`<div class="skill-row ${sk.enabled?'enabled':''}"><div class="skill-row-chk ${sk.enabled?'on':''}" onclick="toggleSkill(${plan.id},${i})"><div class="skill-row-chk-inner"></div></div><div class="skill-row-name">${sk.name}</div><div class="skill-range-wrap"><select class="skill-lvl-sel" onchange="setSkillFrom(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.fromLv)}</select><span class="skill-range-arrow">→</span><select class="skill-lvl-sel" onchange="setSkillTo(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.toLv)}</select></div></div>`).join('');
+    skillsSection=`<div class="skill-section"><div class="skill-section-label">Skills<button class="skill-toggle-all" onclick="toggleAllSkills(${plan.id})">${allOn?'Uncheck all':'Check all'}</button></div>${skillRows}</div>`;
   }
-
-  let tuneRow = '';
-  if (!isOp) {
-    tuneRow = `<div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;">
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:54px;">Tuning</div>
-      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneFrom',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneFrom?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select>
-      <span class="skill-range-arrow">→</span>
-      <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneTo',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneTo?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select>
-    </div>`;
-  }
-
-  let skillsSection = '';
-  if (isOp && plan.skills && plan.skills.length) {
-    const allOn = plan.skills.every(s => s.enabled);
-    const skillRows = plan.skills.map((sk,i) => `
-      <div class="skill-row ${sk.enabled?'enabled':''}">
-        <div class="skill-row-chk ${sk.enabled?'on':''}" onclick="toggleSkill(${plan.id},${i})"><div class="skill-row-chk-inner"></div></div>
-        <div class="skill-row-name">${sk.name}</div>
-        <div class="skill-range-wrap">
-          <select class="skill-lvl-sel" onchange="setSkillFrom(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.fromLv)}</select>
-          <span class="skill-range-arrow">→</span>
-          <select class="skill-lvl-sel" onchange="setSkillTo(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.toLv)}</select>
-        </div>
-      </div>`).join('');
-    skillsSection = `<div class="skill-section">
-      <div class="skill-section-label">Skills<button class="skill-toggle-all" onclick="toggleAllSkills(${plan.id})">${allOn?'Uncheck all':'Check all'}</button></div>
-      ${skillRows}
-    </div>`;
-  }
-
-  const card = document.createElement('div');
-  card.className = 'plan-card'; card.dataset.id = plan.id;
-  card.innerHTML = `
-    <div class="plan-head">
-      ${buildAvatarHTML(plan)}
-      <div class="plan-meta">
-        <div class="plan-name">${plan.item.name}</div>
-        <div class="plan-tags">
-          ${isOp ? `<span class="tag tag-${elLower}">${el}</span><span class="tag tag-neutral">${plan.item.cls}</span>`
-                 : `<span class="tag tag-neutral">${plan.item.type}</span>`}
-          <span class="tag tag-rarity">${'★'.repeat(plan.item.rarity)}</span>
-        </div>
-      </div>
-      <button class="btn btn-ghost btn-sm btn-danger" onclick="removePlan(${plan.id})">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
-      </button>
-    </div>
-    <div class="plan-body">
-      <div class="level-row">
-        <div class="level-col">
-          <label>From</label>
-          <div class="level-slider-wrap">
-            <input type="range" class="from-slider" min="1" max="89" value="${plan.fromLv}" oninput="updateFrom(${plan.id},this.value)">
-            <input type="number" class="level-num-input from-num" min="1" max="89" value="${plan.fromLv}" onchange="updateFrom(${plan.id},this.value)" onkeydown="if(event.key==='Enter'){updateFrom(${plan.id},this.value);this.blur()}">
-          </div>
-        </div>
-        <div class="level-arrow">→</div>
-        <div class="level-col">
-          <label>To</label>
-          <div class="level-slider-wrap">
-            <input type="range" class="to-slider" min="2" max="90" value="${plan.toLv}" oninput="updateTo(${plan.id},this.value)">
-            <input type="number" class="level-num-input to-num" min="2" max="90" value="${plan.toLv}" onchange="updateTo(${plan.id},this.value)" onkeydown="if(event.key==='Enter'){updateTo(${plan.id},this.value);this.blur()}">
-          </div>
-        </div>
-      </div>
-      <div class="quick-btns">${qBtns}</div>
-      ${promoRow}${tuneRow}${skillsSection}
-    </div>`;
+  const card=document.createElement('div');
+  card.className='plan-card';card.dataset.id=plan.id;
+  // ── FIX 2: trash button now calls resetPlan instead of removePlan ──
+  card.innerHTML=`<div class="plan-head">${buildAvatarHTML(plan)}<div class="plan-meta"><div class="plan-name">${plan.item.name}</div><div class="plan-tags">${isOp?`<span class="tag tag-${elLower}">${el}</span><span class="tag tag-neutral">${plan.item.cls}</span>`:`<span class="tag tag-neutral">${plan.item.type}</span>`}<span class="tag tag-rarity">${'★'.repeat(plan.item.rarity)}</span></div></div><button class="btn btn-ghost btn-sm btn-danger" onclick="resetPlan(${plan.id})" title="Reset to defaults"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button></div><div class="plan-body"><div class="level-row"><div class="level-col"><label>From</label><div class="level-slider-wrap"><input type="range" class="from-slider" min="1" max="89" value="${plan.fromLv}" oninput="updateFrom(${plan.id},this.value)"><input type="number" class="level-num-input from-num" min="1" max="89" value="${plan.fromLv}" onchange="updateFrom(${plan.id},this.value)" onkeydown="if(event.key==='Enter'){updateFrom(${plan.id},this.value);this.blur()}"></div></div><div class="level-arrow">→</div><div class="level-col"><label>To</label><div class="level-slider-wrap"><input type="range" class="to-slider" min="2" max="90" value="${plan.toLv}" oninput="updateTo(${plan.id},this.value)"><input type="number" class="level-num-input to-num" min="2" max="90" value="${plan.toLv}" onchange="updateTo(${plan.id},this.value)" onkeydown="if(event.key==='Enter'){updateTo(${plan.id},this.value);this.blur()}"></div></div></div><div class="quick-btns">${qBtns}</div>${promoRow}${tuneRow}${skillsSection}</div>`;
   return card;
 }
 
 // ── FOCUS PANEL ──
-function toggleFocusPanel() { focusPanelOpen = !focusPanelOpen; document.getElementById('mid-focus-pills-wrap').classList.toggle('open', focusPanelOpen); document.getElementById('mid-focus-caret').classList.toggle('open', focusPanelOpen); }
-function focusAll()  { plans.forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
-function focusNone() { focusedPlanIds.clear(); renderAll(); }
-function focusOnly(type) { focusedPlanIds.clear(); plans.filter(p => p.type === type).forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
-function toggleFocusPlan(id) { if (focusedPlanIds.has(id)) focusedPlanIds.delete(id); else focusedPlanIds.add(id); renderAll(); }
+function toggleFocusPanel(){focusPanelOpen=!focusPanelOpen;document.getElementById('mid-focus-pills-wrap').classList.toggle('open',focusPanelOpen);document.getElementById('mid-focus-caret').classList.toggle('open',focusPanelOpen);}
+function focusAll(){plans.forEach(p=>focusedPlanIds.add(p.id));renderAll();}
+function focusNone(){focusedPlanIds.clear();renderAll();}
+function focusOnly(type){focusedPlanIds.clear();plans.filter(p=>p.type===type).forEach(p=>focusedPlanIds.add(p.id));renderAll();}
+function toggleFocusPlan(id){if(focusedPlanIds.has(id))focusedPlanIds.delete(id);else focusedPlanIds.add(id);renderAll();}
 
-function renderFocusBar() {
-  const bar = document.getElementById('mid-focus-bar');
-  const pills = document.getElementById('mid-focus-pills');
-  const countEl = document.getElementById('mid-focus-count');
-  const indicator = document.getElementById('mid-focus-indicator');
-  if (!plans.length) { bar.style.display = 'none'; indicator.classList.remove('visible'); return; }
-  bar.style.display = 'block';
-  const allFocused = plans.every(p => focusedPlanIds.has(p.id));
-  countEl.textContent = `${plans.filter(p => focusedPlanIds.has(p.id)).length}/${plans.length}`;
-  indicator.classList.toggle('visible', !allFocused);
-  pills.innerHTML = plans.map(p => {
-    const isFocused = focusedPlanIds.has(p.id);
-    const dotColor = p.type === 'weapon' ? '#94a3b8' : getElColor(p.item.element);
-    return `<div class="focus-pill ${isFocused?'active':'inactive'}" onclick="toggleFocusPlan(${p.id})">
-      <div class="focus-pill-dot" style="background:${dotColor}"></div>
-      <div class="focus-pill-name">${p.item.name}</div>
-      <div class="focus-pill-check"><div class="focus-pill-check-inner"></div></div>
-    </div>`;
-  }).join('');
+function renderFocusBar(){
+  const bar=document.getElementById('mid-focus-bar'),pills=document.getElementById('mid-focus-pills');
+  const countEl=document.getElementById('mid-focus-count'),indicator=document.getElementById('mid-focus-indicator');
+  if(!plans.length){bar.style.display='none';indicator.classList.remove('visible');return;}
+  bar.style.display='block';
+  const allFocused=plans.every(p=>focusedPlanIds.has(p.id));
+  countEl.textContent=`${plans.filter(p=>focusedPlanIds.has(p.id)).length}/${plans.length}`;
+  indicator.classList.toggle('visible',!allFocused);
+  pills.innerHTML=plans.map(p=>{const isFocused=focusedPlanIds.has(p.id);const dotColor=p.type==='weapon'?'#94a3b8':getElColor(p.item.element);return`<div class="focus-pill ${isFocused?'active':'inactive'}" onclick="toggleFocusPlan(${p.id})"><div class="focus-pill-dot" style="background:${dotColor}"></div><div class="focus-pill-name">${p.item.name}</div><div class="focus-pill-check"><div class="focus-pill-check-inner"></div></div></div>`;}).join('');
 }
 
-// ══════════════════════════════════════════════════════
-// ── COLLECTIVE NEED LIST — READ-ONLY ──
-// Shows aggregated totals. No have inputs.
-// Coverage from global haveQty/expHave shown as progress bar + fraction text.
-// ══════════════════════════════════════════════════════
-function renderNeed() {
-  const empty      = document.getElementById('mid-empty');
-  const list       = document.getElementById('need-list');
-  const badge      = document.getElementById('mid-badge-wrap');
-  const badgeLabel = document.getElementById('mid-badge');
-
-  if (!plans.length) { empty.style.display='flex'; list.innerHTML=''; badge.style.display='none'; return; }
-  empty.style.display = 'none';
-
-  if (focusedPlanIds.size === 0) {
-    list.innerHTML = `<div style="padding:20px 8px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">No plans focused</div></div>`;
-    badge.style.display = 'none'; return;
-  }
-
-  const mats = totalMats();
-  const internalKeys = new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
-  const matsWithPinsSet = new Set();
-  for (const map of dbMaps) for (const pin of map.pins) matsWithPinsSet.add(pin.material_id);
-
-  const entries = Object.entries(mats).filter(([k]) => !internalKeys.has(k));
-  const hasExpData = Object.keys(EXP_GROUPS).some(gKey => mats[EXP_GROUPS[gKey].rawKey]);
-
-  if (!entries.length && !hasExpData) { list.innerHTML=''; badge.style.display='none'; return; }
-
-  // Tally for badge (regular mats met vs total)
-  const checkableItems = entries.filter(([k]) => { const m=MATS[k]; return m && !m.isExpItem; });
-  const metCount = checkableItems.filter(([k, qty]) => getHave(k) >= qty).length;
-  badge.style.display = 'block';
-  badgeLabel.textContent = `${metCount}/${checkableItems.length}`;
-
-  // Group by category
-  const byCategory = {};
-
-  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
-    const rawKey = gDef.rawKey;
-    if (!mats[rawKey]) continue;
-    byCategory[gDef.label] = { type:'exp', gKey, gDef, rawExp: mats[rawKey] };
-  }
-
-  for (const [k, qty] of entries) {
-    const mat = MATS[k]; if (!mat || mat.isExpItem) continue;
-    if (!byCategory[mat.category]) byCategory[mat.category] = { type:'items', items:[] };
-    if (byCategory[mat.category].type === 'items') byCategory[mat.category].items.push({k, qty, mat});
-  }
-
-  let html = `<div class="collective-readonly-hint">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
-    Enter inventory in the <strong style="color:var(--text);margin:0 3px">Individual</strong> tab — coverage updates here automatically.
-  </div>`;
-
-  for (const [cat, data] of Object.entries(byCategory)) {
-    html += `<div class="need-section-label">${cat}</div>`;
-
-    if (data.type === 'exp') {
-      const { gKey, gDef, rawExp } = data;
-      const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
-      const { perTier, pct, coveredExp, remaining } = breakdown;
-      const allDone = remaining === 0;
-
-      html += `<div class="exp-breakdown">
-        <div class="exp-breakdown-header">
-          <span>Total EXP needed</span>
-          <span class="exp-breakdown-total" style="${allDone?'color:var(--accent)':''}">${fmtExp(rawExp)}</span>
-        </div>
-        <div class="exp-progress"><div class="exp-progress-fill" style="width:${pct}%"></div></div>
-        <div class="exp-coverage-text">${allDone
-          ? '✓ Fully covered by owned items'
-          : `${pct}% covered · ${fmtExp(coveredExp)} in inventory`
-        }</div>`;
-
-      for (const itemKey of gDef.keys) {
-        const mat = MATS[itemKey]; if (!mat) continue;
-        const tier   = perTier[itemKey];
-        const isDone = tier.need === 0;
-        const hasFind = matsWithPinsSet.has(itemKey);
-        const findBtn = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-        </button>` : '';
-
-        html += `<div class="exp-item-row${isDone?' satisfied':''}">
-          <div class="exp-item-dot" style="background:${mat.color}"></div>
-          <div class="exp-item-name">${mat.name}</div>
-          ${findBtn}
-          ${isDone
-            ? `<div class="exp-item-need done" title="Covered by inventory">✓</div>`
-            : `<div class="exp-item-need" style="color:${mat.color}" title="Need approx ${tier.need} (if only using this tier)">${tier.need}</div>`}
-          <div class="exp-item-coverage${isDone?' met':''}">${isDone ? '✓ met' : `${tier.have} / ${tier.standaloneTotal}`}</div>
-        </div>`;
+// ── COLLECTIVE NEED LIST ──
+function renderNeed(){
+  const empty=document.getElementById('mid-empty'),list=document.getElementById('need-list');
+  const badge=document.getElementById('mid-badge-wrap'),badgeLabel=document.getElementById('mid-badge');
+  if(!plans.length){empty.style.display='flex';list.innerHTML='';badge.style.display='none';return;}
+  empty.style.display='none';
+  if(focusedPlanIds.size===0){list.innerHTML=`<div style="padding:20px 8px;text-align:center"><div style="font-family:var(--font-display);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">No plans focused</div></div>`;badge.style.display='none';return;}
+  const mats=totalMats();
+  const internalKeys=new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
+  const matsWithPinsSet=new Set();
+  for(const map of dbMaps) for(const pin of map.pins) matsWithPinsSet.add(pin.material_id);
+  const entries=Object.entries(mats).filter(([k])=>!internalKeys.has(k));
+  const hasExpData=Object.keys(EXP_GROUPS).some(gKey=>mats[EXP_GROUPS[gKey].rawKey]);
+  if(!entries.length&&!hasExpData){list.innerHTML='';badge.style.display='none';return;}
+  const checkableItems=entries.filter(([k])=>{const m=MATS[k];return m&&!m.isExpItem;});
+  const metCount=checkableItems.filter(([k,qty])=>getHave(k)>=qty).length;
+  badge.style.display='block';badgeLabel.textContent=`${metCount}/${checkableItems.length}`;
+  const byCategory={};
+  for(const[gKey,gDef]of Object.entries(EXP_GROUPS)){if(!mats[gDef.rawKey])continue;byCategory[gDef.label]={type:'exp',gKey,gDef,rawExp:mats[gDef.rawKey]};}
+  for(const[k,qty]of entries){const mat=MATS[k];if(!mat||mat.isExpItem)continue;if(!byCategory[mat.category])byCategory[mat.category]={type:'items',items:[]};if(byCategory[mat.category].type==='items')byCategory[mat.category].items.push({k,qty,mat});}
+  let html=`<div class="collective-readonly-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Enter inventory in the <strong style="color:var(--text);margin:0 3px">Individual</strong> tab — coverage updates here automatically.</div>`;
+  for(const[cat,data]of Object.entries(byCategory)){
+    html+=`<div class="need-section-label">${cat}</div>`;
+    if(data.type==='exp'){
+      const{gKey,gDef,rawExp}=data,breakdown=computeExpBreakdown(rawExp,gDef,gKey);
+      const{perTier,pct,coveredExp,remaining}=breakdown,allDone=remaining===0;
+      html+=`<div class="exp-breakdown"><div class="exp-breakdown-header"><span>Total EXP needed</span><span class="exp-breakdown-total" style="${allDone?'color:var(--accent)':''}">${fmtExp(rawExp)}</span></div><div class="exp-progress"><div class="exp-progress-fill" style="width:${pct}%"></div></div><div class="exp-coverage-text">${allDone?'✓ Fully covered by owned items':`${pct}% covered · ${fmtExp(coveredExp)} in inventory`}</div>`;
+      for(const itemKey of gDef.keys){
+        const mat=MATS[itemKey];if(!mat)continue;
+        const tier=perTier[itemKey],isDone=tier.need===0;
+        const hasFind=matsWithPinsSet.has(itemKey);
+        const findBtn=hasFind?`<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></button>`:'';
+        html+=`<div class="exp-item-row${isDone?' satisfied':''}"><div class="exp-item-dot" style="background:${mat.color}"></div><div class="exp-item-name">${mat.name}</div>${findBtn}${isDone?`<div class="exp-item-need done" title="Covered">✓</div>`:`<div class="exp-item-need" style="color:${mat.color}">${tier.need}</div>`}<div class="exp-item-coverage${isDone?' met':''}">${isDone?'✓ met':`${tier.have} / ${tier.standaloneTotal}`}</div></div>`;
       }
-
-      if (!allDone) {
-        html += `<div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);padding:4px 2px 0;opacity:0.55">
-          ↑ counts if only using that tier — mix freely
-        </div>`;
-      }
-      html += `</div>`;
-
+      if(!allDone) html+=`<div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);padding:4px 2px 0;opacity:0.55">↑ counts if only using that tier — mix freely</div>`;
+      html+=`</div>`;
     } else {
-      for (const {k, qty, mat} of (data.items||[])) {
-        const highlighted = highlightedMat === k ? 'highlighted' : '';
-        const have       = getHave(k);
-        const pct        = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
-        const remaining  = Math.max(0, qty - have);
-        const isMet      = have >= qty;
-        const fmtRemain  = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
-        const fmtTotal   = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
-        const hasFind    = matsWithPinsSet.has(k);
-        const findBtn    = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${k}',this,event)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-        </button>` : '';
-
-        html += `<div class="need-row ${highlighted}" style="${isMet?'opacity:0.5;':'' }">
-          <div class="need-dot" style="background:${mat.color}"></div>
-          <div class="need-row-name" style="${isMet?'text-decoration:line-through;color:var(--muted)':''}">${mat.name}</div>
-          <div class="need-row-right">
-            ${findBtn}
-            ${isMet
-              ? `<div class="need-row-qty" style="color:var(--accent);font-size:13px">✓</div>`
-              : `<div class="need-row-qty" style="color:${mat.color}">${fmtRemain}</div>`}
-            <div class="need-row-coverage${isMet?' met':''}">${have} / ${fmtTotal}</div>
-          </div>
-          ${pct > 0 && !isMet ? `<div class="need-progress" style="width:${pct}%"></div>` : ''}
-        </div>`;
+      for(const{k,qty,mat}of(data.items||[])){
+        const highlighted=highlightedMat===k?'highlighted':'';
+        const have=getHave(k),pct=qty>0?Math.min(100,Math.round((have/qty)*100)):0;
+        const remaining=Math.max(0,qty-have),isMet=have>=qty;
+        const fmtRemain=remaining>=1000?(remaining/1000).toFixed(1)+'k':remaining.toLocaleString();
+        const fmtTotal=qty>=1000?(qty/1000).toFixed(1)+'k':qty.toLocaleString();
+        const hasFind=matsWithPinsSet.has(k);
+        const findBtn=hasFind?`<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${k}',this,event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></button>`:'';
+        html+=`<div class="need-row ${highlighted}" style="${isMet?'opacity:0.5;':''}"><div class="need-dot" style="background:${mat.color}"></div><div class="need-row-name" style="${isMet?'text-decoration:line-through;color:var(--muted)':''}">${mat.name}</div><div class="need-row-right">${findBtn}${isMet?`<div class="need-row-qty" style="color:var(--accent);font-size:13px">✓</div>`:`<div class="need-row-qty" style="color:${mat.color}">${fmtRemain}</div>`}<div class="need-row-coverage${isMet?' met':''}">${have} / ${fmtTotal}</div></div>${pct>0&&!isMet?`<div class="need-progress" style="width:${pct}%"></div>`:''}</div>`;
       }
     }
   }
-
-  list.innerHTML = html;
+  list.innerHTML=html;
 }
 
-// ══════════════════════════════════════════════════════
 // ── INDIVIDUAL TRACKER ──
-// All have inputs live here. Full EXP breakdown with inputs + find buttons.
-// Writing to haveQty/expHave triggers renderBoth() which keeps collective in sync.
-// ══════════════════════════════════════════════════════
-function toggleIndivCard(id) {
-  if (indivOpenCards.has(id)) indivOpenCards.delete(id);
-  else indivOpenCards.add(id);
-  renderIndividual();
+function toggleIndivCard(id){if(indivOpenCards.has(id))indivOpenCards.delete(id);else indivOpenCards.add(id);renderIndividual();}
+
+function renderIndividual(){
+  const emptyEl=document.getElementById('indiv-empty'),listEl=document.getElementById('indiv-list');
+  if(!plans.length){emptyEl.style.display='flex';listEl.style.display='none';return;}
+  emptyEl.style.display='none';listEl.style.display='block';
+  const existingCards={};
+  listEl.querySelectorAll('.indiv-card[data-id]').forEach(el=>{existingCards[el.dataset.id]=el;});
+  Object.keys(existingCards).forEach(id=>{if(!plans.find(p=>String(p.id)===id))existingCards[id].remove();});
+  plans.forEach((plan,idx)=>{
+    const sid=String(plan.id);
+    const configKey=JSON.stringify({fromLv:plan.fromLv,toLv:plan.toLv,promoFrom:plan.promoFrom,promoTo:plan.promoTo,tuneFrom:plan.tuneFrom,tuneTo:plan.tuneTo,skills:plan.skills,isOpen:indivOpenCards.has(plan.id)});
+    const existing=existingCards[sid];
+    if(!existing||_lastRenderedPlanConfig[sid]!==configKey){
+      _lastRenderedPlanConfig[sid]=configKey;
+      const newCard=document.createElement('div');
+      newCard.innerHTML=buildIndivCard(plan);
+      const cardEl=newCard.firstElementChild;
+      if(existing){listEl.replaceChild(cardEl,existing);}
+      else{const cards=listEl.querySelectorAll('.indiv-card');if(idx<cards.length)listEl.insertBefore(cardEl,cards[idx]);else listEl.appendChild(cardEl);}
+    } else {
+      _updateIndivCardDerived(existing,plan);
+    }
+  });
 }
 
-function renderIndividual() {
-  const emptyEl = document.getElementById('indiv-empty');
-  const listEl  = document.getElementById('indiv-list');
-  if (!plans.length) { emptyEl.style.display='flex'; listEl.style.display='none'; return; }
-  emptyEl.style.display = 'none';
-  listEl.style.display  = 'block';
-  listEl.innerHTML = plans.map(plan => buildIndivCard(plan)).join('');
+function _updateIndivCardDerived(cardEl,plan){
+  const mats=calcMats(plan);
+  const internalKeys=new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
+  const matEntries=Object.entries(mats).filter(([k])=>!internalKeys.has(k)&&MATS[k]&&!MATS[k].isExpItem);
+  const totalItems=matEntries.length,doneCount=matEntries.filter(([k,qty])=>getHave(k)>=qty).length;
+  const progressPct=totalItems>0?Math.round((doneCount/totalItems)*100):0;
+  const fillEl=cardEl.querySelector('.indiv-card-progress-fill');if(fillEl)fillEl.style.width=progressPct+'%';
+  let statusClass='pending',statusLabel='Pending';
+  if(totalItems>0&&doneCount===totalItems){statusClass='done';statusLabel='Done';}
+  else if(doneCount>0){statusClass='inprog';statusLabel=`${doneCount}/${totalItems}`;}
+  const statusEl=cardEl.querySelector('.indiv-card-status');
+  if(statusEl){statusEl.className=`indiv-card-status ${statusClass}`;statusEl.textContent=statusLabel;}
+  cardEl.querySelectorAll('.indiv-mat-row[data-mat-key]').forEach(rowEl=>{
+    const k=rowEl.dataset.matKey,qty=parseInt(rowEl.dataset.matQty)||0;
+    const have=getHave(k),isSat=have>=qty;
+    const pct=qty>0?Math.min(100,Math.round((have/qty)*100)):0;
+    const fmtQty=qty>=1000?(qty/1000).toFixed(1)+'k':qty.toLocaleString();
+    const mat=MATS[k];
+    rowEl.classList.toggle('satisfied-row',isSat);rowEl.classList.toggle('zero',qty===0);
+    const needEl=rowEl.querySelector('.indiv-mat-need');
+    if(needEl){needEl.className=`indiv-mat-need${isSat?' satisfied':''}`;needEl.style.color=isSat?'':(mat?.color||'');needEl.textContent=isSat?'✓':fmtQty;}
+    const progEl=rowEl.querySelector('.indiv-mat-row-progress');
+    if(progEl)progEl.style.width=(pct>0&&!isSat)?pct+'%':'0%';
+  });
+  for(const[gKey,gDef]of Object.entries(EXP_GROUPS)){
+    const rawKey=gDef.rawKey;if(!mats[rawKey])continue;
+    const breakdown=computeExpBreakdown(mats[rawKey],gDef,gKey);
+    const{perTier,pct,coveredExp,remaining}=breakdown,allDone=remaining===0;
+    const blockEl=cardEl.querySelector(`.indiv-exp-block[data-gkey="${gKey}"]`);if(!blockEl)continue;
+    const fillEl2=blockEl.querySelector('.indiv-exp-block-fill');if(fillEl2)fillEl2.style.width=pct+'%';
+    const covEl=blockEl.querySelector('.indiv-exp-block-coverage');if(covEl)covEl.textContent=allDone?'✓ Fully covered by your inventory':`${pct}% covered · ${fmtExp(coveredExp)} in inventory`;
+    const totalEl=blockEl.querySelector('.indiv-exp-block-total');if(totalEl)totalEl.style.color=allDone?'var(--accent)':'var(--text)';
+    blockEl.querySelectorAll('.indiv-exp-tier-row[data-tier-key]').forEach(tierRow=>{
+      const itemKey=tierRow.dataset.tierKey,tier=perTier[itemKey];if(!tier)return;
+      const isSat2=tier.need===0;tierRow.classList.toggle('satisfied-row',isSat2);
+      const needEl2=tierRow.querySelector('.indiv-exp-tier-need');
+      if(needEl2){needEl2.className=`indiv-exp-tier-need${isSat2?' done':''}`;needEl2.style.color=isSat2?'':(MATS[itemKey]?.color||'');needEl2.textContent=isSat2?'✓':tier.need;}
+    });
+  }
+  _updateSaveBar(String(plan.id));
 }
 
-function buildIndivCard(plan) {
-  const isOp    = plan.type === 'operator';
-  const el      = plan.item.element || null;
-  const elColor = getElColor(el);
-  const rarityColor = getRarityColor(plan.item.rarity);
-  const isOpen  = indivOpenCards.has(plan.id);
-  const mats    = calcMats(plan);
-  const matsWithPinsSet = new Set();
-  for (const map of dbMaps) for (const pin of map.pins) matsWithPinsSet.add(pin.material_id);
+function _updateSaveBar(id){
+  const card=document.querySelector(`.indiv-card[data-id="${id}"]`);if(!card)return;
+  const saveStatus=indivSaveStatus[id]||'idle';
+  const isSaving=saveStatus==='saving',isSaved=saveStatus==='saved',isError=saveStatus==='error';
+  const btn=card.querySelector('.indiv-save-btn'),statusEl=card.querySelector('.indiv-save-status');
+  if(btn){btn.className=`indiv-save-btn${isSaving?' saving':''}${isSaved?' saved':''}`;btn.disabled=isSaving;btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> ${isSaving?'Saving…':isSaved?'✓ Saved':'Save to DB'}`;}
+  if(statusEl){statusEl.className=`indiv-save-status${isSaved?' ok':''}${isError?' err':''}`;statusEl.textContent=isSaving?'Writing to database…':isSaved?'Saved successfully':isError?'Save failed — are you logged in?':(!CURRENT_USER?'Log in to save':'Not yet saved');}
+}
 
-  const internalKeys = new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
-
-  // Regular mat entries
-  const matEntries = Object.entries(mats).filter(([k]) => !internalKeys.has(k) && MATS[k] && !MATS[k].isExpItem);
-
-  // Progress: regular mats only
-  const totalItems  = matEntries.length;
-  const doneCount   = matEntries.filter(([k, qty]) => getHave(k) >= qty).length;
-  const progressPct = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
-
-  let statusClass = 'pending', statusLabel = 'Pending';
-  if (totalItems > 0 && doneCount === totalItems) { statusClass='done'; statusLabel='Done'; }
-  else if (doneCount > 0) { statusClass='inprog'; statusLabel=`${doneCount}/${totalItems}`; }
-
-  // Avatar
+function buildIndivCard(plan){
+  const isOp=plan.type==='operator',el=plan.item.element||null;
+  const elColor=getElColor(el),rarityColor=getRarityColor(plan.item.rarity);
+  const isOpen=indivOpenCards.has(plan.id),mats=calcMats(plan);
+  const matsWithPinsSet=new Set();
+  for(const map of dbMaps) for(const pin of map.pins) matsWithPinsSet.add(pin.material_id);
+  const internalKeys=new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
+  const matEntries=Object.entries(mats).filter(([k])=>!internalKeys.has(k)&&MATS[k]&&!MATS[k].isExpItem);
+  const totalItems=matEntries.length,doneCount=matEntries.filter(([k,qty])=>getHave(k)>=qty).length;
+  const progressPct=totalItems>0?Math.round((doneCount/totalItems)*100):0;
+  let statusClass='pending',statusLabel='Pending';
+  if(totalItems>0&&doneCount===totalItems){statusClass='done';statusLabel='Done';}
+  else if(doneCount>0){statusClass='inprog';statusLabel=`${doneCount}/${totalItems}`;}
   let avatarContent;
-  if (isOp) {
-    const imgPath = getCharImg(plan.item.name);
-    avatarContent = imgPath ? `<img src="${imgPath}" alt="${plan.item.name}" loading="lazy">` : (EL_ICON[el] || OP_ICON);
-  } else {
-    const wpnImg = getWeaponImg(plan.item.id);
-    avatarContent = wpnImg ? `<img src="${wpnImg}" alt="${plan.item.name}" loading="lazy">` : WPN_ICON;
-  }
+  if(isOp){const imgPath=getCharImg(plan.item.name);avatarContent=imgPath?`<img src="${imgPath}" alt="${plan.item.name}" loading="lazy">`:(EL_ICON[el]||OP_ICON);}
+  else{const wpnImg=getWeaponImg(plan.item.id);avatarContent=wpnImg?`<img src="${wpnImg}" alt="${plan.item.name}" loading="lazy">`:WPN_ICON;}
 
-  // ── EXP sections: full breakdown with progress bar + per-tier have inputs + find btns ──
-  let expSectionsHtml = '';
-  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
-    const rawKey = gDef.rawKey;
-    if (!mats[rawKey]) continue;
-    const rawExp    = mats[rawKey];
-    const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
-    const { perTier, pct, coveredExp, remaining } = breakdown;
-    const allDone   = remaining === 0;
-    const fmtTotal  = fmtExp(rawExp);
-    const fmtCovered= fmtExp(coveredExp);
-
-    expSectionsHtml += `<div class="indiv-exp-block">
-      <div class="indiv-exp-block-header">
-        <span class="indiv-exp-block-label">${gDef.label}</span>
-        <span class="indiv-exp-block-total" style="color:${allDone?'var(--accent)':'var(--text)'}">${fmtTotal}</span>
-      </div>
-      <div class="indiv-exp-block-bar"><div class="indiv-exp-block-fill" style="width:${pct}%"></div></div>
-      <div class="indiv-exp-block-coverage">${allDone
-        ? '✓ Fully covered by your inventory'
-        : `${pct}% covered · ${fmtCovered} in inventory`
-      }</div>`;
-
-    for (const itemKey of gDef.keys) {
-      const mat = MATS[itemKey]; if (!mat) continue;
-      const expVal   = mat.expValue;
-      const expLabel = expVal >= 1000 ? (expVal/1000).toFixed(0)+'k' : expVal;
-      const tier     = perTier[itemKey];
-      const have     = tier.have;
-      const isSat    = tier.need === 0;
-      const hasFind  = matsWithPinsSet.has(itemKey);
-
-      const findBtn = hasFind ? `<button class="indiv-exp-tier-find" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-      </button>` : '<span></span>';
-
-      expSectionsHtml += `<div class="indiv-exp-tier-row${isSat?' satisfied-row':''}">
-        <div class="indiv-exp-tier-dot" style="background:${mat.color}"></div>
-        <div class="indiv-exp-tier-name" title="${mat.name} — ${expLabel} EXP each">${mat.name}</div>
-        ${findBtn}
-        <div class="indiv-exp-tier-need${isSat?' done':''}" style="${isSat?'':'color:'+mat.color}" title="${isSat?'Covered':'Need ~'+tier.need+' if only using this tier'}">
-          ${isSat ? '✓' : tier.need}
-        </div>
-        <div class="indiv-have-wrap">
-          <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
-          <input class="indiv-have-input" type="number" min="0" value="${have}"
-            onclick="event.stopPropagation()"
-            onchange="setExpHave('${gKey}','${itemKey}',this.value)"
-            oninput="setExpHave('${gKey}','${itemKey}',this.value)">
-        </div>
-      </div>`;
+  let expSectionsHtml='';
+  for(const[gKey,gDef]of Object.entries(EXP_GROUPS)){
+    const rawKey=gDef.rawKey;if(!mats[rawKey])continue;
+    const rawExp=mats[rawKey],breakdown=computeExpBreakdown(rawExp,gDef,gKey);
+    const{perTier,pct,coveredExp,remaining}=breakdown,allDone=remaining===0;
+    expSectionsHtml+=`<div class="indiv-exp-block" data-gkey="${gKey}"><div class="indiv-exp-block-header"><span class="indiv-exp-block-label">${gDef.label}</span><span class="indiv-exp-block-total" style="color:${allDone?'var(--accent)':'var(--text)'}">${fmtExp(rawExp)}</span></div><div class="indiv-exp-block-bar"><div class="indiv-exp-block-fill" style="width:${pct}%"></div></div><div class="indiv-exp-block-coverage">${allDone?'✓ Fully covered by your inventory':`${pct}% covered · ${fmtExp(coveredExp)} in inventory`}</div>`;
+    for(const itemKey of gDef.keys){
+      const mat=MATS[itemKey];if(!mat)continue;
+      const tier=perTier[itemKey],have=tier.have,isSat=tier.need===0;
+      const hasFind=matsWithPinsSet.has(itemKey);
+      const findBtn=hasFind?`<button class="indiv-exp-tier-find" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></button>`:`<span></span>`;
+      expSectionsHtml+=`<div class="indiv-exp-tier-row${isSat?' satisfied-row':''}" data-tier-key="${itemKey}"><div class="indiv-exp-tier-dot" style="background:${mat.color}"></div><div class="indiv-exp-tier-name" title="${mat.name}">${mat.name}</div>${findBtn}<div class="indiv-exp-tier-need${isSat?' done':''}" style="${isSat?'':'color:'+mat.color}">${isSat?'✓':tier.need}</div><div class="indiv-have-wrap"><span style="font-size:8px;color:var(--muted);margin-right:2px">have</span><input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setExpHave('${gKey}','${itemKey}',this.value)" oninput="setExpHave('${gKey}','${itemKey}',this.value)"></div></div>`;
     }
-
-    if (!allDone) {
-      expSectionsHtml += `<div class="indiv-exp-tier-hint">↑ counts shown if only using that tier — mix tiers freely</div>`;
-    }
-
-    expSectionsHtml += `</div>`;
+    if(!allDone) expSectionsHtml+=`<div class="indiv-exp-tier-hint">↑ counts if only using that tier — mix tiers freely</div>`;
+    expSectionsHtml+=`</div>`;
   }
 
-  // ── Regular mat sections with have inputs ──
-  const byCategory = {};
-  for (const [k, qty] of matEntries) {
-    const mat = MATS[k];
-    if (!byCategory[mat.category]) byCategory[mat.category] = [];
-    byCategory[mat.category].push({ k, qty, mat });
-  }
-
-  let matSectionsHtml = '';
-  for (const [cat, items] of Object.entries(byCategory)) {
-    matSectionsHtml += `<div class="indiv-section-head">${cat}</div>`;
-    for (const { k, qty, mat } of items) {
-      const have   = getHave(k);
-      const isSat  = have >= qty;
-      const fmtQty = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
-      const pct    = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
-      const hasFind = matsWithPinsSet.has(k);
-
-      // find button inline for individual mat rows
-      const findBtn = hasFind ? `<button class="indiv-exp-tier-find" title="Find on map" onclick="onFindBtn('${k}',this,event);event.stopPropagation()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
-      </button>` : '';
-
-      matSectionsHtml += `<div class="indiv-mat-row${qty===0?' zero':''}${isSat?' satisfied-row':''}">
-        <div class="indiv-mat-dot" style="background:${mat.color}"></div>
-        <div class="indiv-mat-name">${mat.name}</div>
-        ${findBtn ? `<div style="display:flex;align-items:center;gap:3px;">${findBtn}<div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}">${isSat ? '✓' : fmtQty}</div></div>` : `<div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}">${isSat ? '✓' : fmtQty}</div>`}
-        <div class="indiv-have-wrap">
-          <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
-          <input class="indiv-have-input" type="number" min="0" value="${have}"
-            onclick="event.stopPropagation()"
-            onchange="setHave('${k}',this.value)"
-            oninput="setHave('${k}',this.value)">
-        </div>
-        ${pct > 0 && !isSat ? `<div class="indiv-mat-row-progress" style="width:${pct}%"></div>` : ''}
-      </div>`;
+  const byCategory={};
+  for(const[k,qty]of matEntries){const mat=MATS[k];if(!byCategory[mat.category])byCategory[mat.category]=[];byCategory[mat.category].push({k,qty,mat});}
+  let matSectionsHtml='';
+  for(const[cat,items]of Object.entries(byCategory)){
+    matSectionsHtml+=`<div class="indiv-section-head">${cat}</div>`;
+    for(const{k,qty,mat}of items){
+      const have=getHave(k),isSat=have>=qty;
+      const fmtQty=qty>=1000?(qty/1000).toFixed(1)+'k':qty.toLocaleString();
+      const pct=qty>0?Math.min(100,Math.round((have/qty)*100)):0;
+      const hasFind=matsWithPinsSet.has(k);
+      const findBtn=hasFind?`<button class="indiv-exp-tier-find" title="Find on map" onclick="onFindBtn('${k}',this,event);event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></button>`:'';
+      matSectionsHtml+=`<div class="indiv-mat-row${qty===0?' zero':''}${isSat?' satisfied-row':''}" data-mat-key="${k}" data-mat-qty="${qty}"><div class="indiv-mat-dot" style="background:${mat.color}"></div><div class="indiv-mat-name">${mat.name}</div>${findBtn?`<div style="display:flex;align-items:center;gap:3px;">${findBtn}<div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}">${isSat?'✓':fmtQty}</div></div>`:`<div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}">${isSat?'✓':fmtQty}</div>`}<div class="indiv-have-wrap"><span style="font-size:8px;color:var(--muted);margin-right:2px">have</span><input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setHave('${k}',this.value)" oninput="setHave('${k}',this.value)"></div>${pct>0&&!isSat?`<div class="indiv-mat-row-progress" style="width:${pct}%"></div>`:''}</div>`;
     }
   }
+  if(!expSectionsHtml&&!matSectionsHtml) matSectionsHtml=`<div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);padding:8px 0">No materials required for this range.</div>`;
 
-  if (!expSectionsHtml && !matSectionsHtml) {
-    matSectionsHtml = `<div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);padding:8px 0">No materials required for this range.</div>`;
-  }
+  const saveStatus=indivSaveStatus[plan.id]||'idle';
+  const isSaving=saveStatus==='saving',isSaved=saveStatus==='saved',isError=saveStatus==='error';
 
-  // Save button
-  const saveStatus = indivSaveStatus[plan.id] || 'idle';
-  const isSaving   = saveStatus === 'saving';
-  const isSaved    = saveStatus === 'saved';
-  const isError    = saveStatus === 'error';
-  const saveBtnClass = `indiv-save-btn${isSaving?' saving':''}${isSaved?' saved':''}`;
-  const saveBtnLabel = isSaving ? 'Saving…' : isSaved ? '✓ Saved' : 'Save to DB';
-  const saveStatusMsg= isSaving ? 'Writing to database…' : isSaved ? 'Saved successfully' : isError ? 'Save failed' : 'Not yet saved';
-  const saveStatusClass = `indiv-save-status${isSaved?' ok':''}${isError?' err':''}`;
-
-  return `<div class="indiv-card${isOpen?' open':''}" data-id="${plan.id}">
-    <div class="indiv-card-head" onclick="toggleIndivCard(${plan.id})">
-      <div class="indiv-card-avatar" style="border-color:${isOp?elColor+'55':'var(--border2)'}">
-        ${avatarContent}
-      </div>
-      <div class="indiv-card-meta">
-        <div class="indiv-card-name" style="color:${isOp?elColor:'var(--text)'}">${plan.item.name}</div>
-        <div class="indiv-card-sub">
-          <span style="color:${rarityColor}">${'★'.repeat(plan.item.rarity)}</span>
-          <span>Lv ${plan.fromLv} → ${plan.toLv}</span>
-          ${isOp && (plan.promoFrom !== plan.promoTo) ? `<span>P${plan.promoFrom}→P${plan.promoTo}</span>` : ''}
-          ${!isOp && (plan.tuneFrom !== plan.tuneTo) ? `<span>T${plan.tuneFrom}→T${plan.tuneTo}</span>` : ''}
-        </div>
-      </div>
-      <div class="indiv-card-status ${statusClass}">${statusLabel}</div>
-      <div class="indiv-card-caret">▾</div>
-    </div>
-    ${totalItems > 0 ? `<div class="indiv-card-progress-bar"><div class="indiv-card-progress-fill" style="width:${progressPct}%"></div></div>` : ''}
-    <div class="indiv-card-body">
-      <div class="indiv-section">
-        ${expSectionsHtml}${matSectionsHtml}
-      </div>
-      <div class="indiv-save-bar">
-        <button class="${saveBtnClass}" onclick="saveIndivPlan(${plan.id})" ${isSaving?'disabled':''}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
-            <polyline points="17 21 17 13 7 13 7 21"/>
-            <polyline points="7 3 7 8 15 8"/>
-          </svg>
-          ${saveBtnLabel}
-        </button>
-        <span class="${saveStatusClass}">${saveStatusMsg}</span>
-      </div>
-    </div>
-  </div>`;
+  return`<div class="indiv-card${isOpen?' open':''}" data-id="${plan.id}"><div class="indiv-card-head" onclick="toggleIndivCard(${plan.id})"><div class="indiv-card-avatar" style="border-color:${isOp?elColor+'55':'var(--border2)'}"> ${avatarContent}</div><div class="indiv-card-meta"><div class="indiv-card-name" style="color:${isOp?elColor:'var(--text)'}">${plan.item.name}</div><div class="indiv-card-sub"><span style="color:${rarityColor}">${'★'.repeat(plan.item.rarity)}</span><span>Lv ${plan.fromLv} → ${plan.toLv}</span>${isOp&&(plan.promoFrom!==plan.promoTo)?`<span>P${plan.promoFrom}→P${plan.promoTo}</span>`:''}${!isOp&&(plan.tuneFrom!==plan.tuneTo)?`<span>T${plan.tuneFrom}→T${plan.tuneTo}</span>`:''}</div></div><div class="indiv-card-status ${statusClass}">${statusLabel}</div><div class="indiv-card-caret">▾</div></div>${totalItems>0?`<div class="indiv-card-progress-bar"><div class="indiv-card-progress-fill" style="width:${progressPct}%"></div></div>`:''}<div class="indiv-card-body"><div class="indiv-section">${expSectionsHtml}${matSectionsHtml}</div><div class="indiv-save-bar"><button class="indiv-save-btn${isSaving?' saving':''}${isSaved?' saved':''}" onclick="saveIndivPlan(${plan.id})" ${isSaving?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> ${isSaving?'Saving…':isSaved?'✓ Saved':'Save to DB'}</button><span class="indiv-save-status${isSaved?' ok':''}${isError?' err':''}">${isSaving?'Writing to database…':isSaved?'Saved successfully':isError?'Save failed — are you logged in?':(!CURRENT_USER?'Log in to save':'Not yet saved')}</span></div></div></div>`;
 }
 
-async function saveIndivPlan(id) {
-  const plan = plans.find(p => p.id === id);
-  if (!plan) return;
-  indivSaveStatus[id] = 'saving';
-  renderIndividual();
-  const payload = {
-    plan_id: String(plan.id), item_id: plan.item.id, item_name: plan.item.name,
-    type: plan.type, from_lv: plan.fromLv, to_lv: plan.toLv,
-    promo_from: plan.promoFrom||0, promo_to: plan.promoTo||0,
-    talent_from: plan.talentFrom||0, talent_to: plan.talentTo||0,
-    tune_from: plan.tuneFrom||0, tune_to: plan.tuneTo||0,
-    skills: plan.skills||[], mats: calcMats(plan),
-    have_qty: haveQty, exp_have: expHave,
-    saved_at: new Date().toISOString(),
-  };
-  console.log('[Ascension Planner] Save payload:', payload);
-  await new Promise(r => setTimeout(r, 600));
-  indivSaveStatus[id] = 'saved';
-  renderIndividual();
-  setTimeout(() => { if (indivSaveStatus[id]==='saved') { delete indivSaveStatus[id]; renderIndividual(); } }, 3000);
+async function saveIndivPlan(id){
+  const plan=plans.find(p=>p.id===id);if(!plan)return;
+  if(!CURRENT_USER){indivSaveStatus[id]='error';_updateSaveBar(id);setTimeout(()=>{delete indivSaveStatus[id];_updateSaveBar(id);},2000);return;}
+  indivSaveStatus[id]='saving';_updateSaveBar(id);
+  try{
+    await savePlanToDB(plan);
+    const pendingMats=Object.keys(_haveDebounce);
+    await Promise.all(pendingMats.map(k=>{clearTimeout(_haveDebounce[k]);return saveHaveToDB(k);}));
+    clearTimeout(_expHaveDebounce['__exp__']);await saveExpHaveToDB();
+    indivSaveStatus[id]='saved';_updateSaveBar(id);
+    setTimeout(()=>{if(indivSaveStatus[id]==='saved'){delete indivSaveStatus[id];_updateSaveBar(id);}},3000);
+  }catch(e){console.warn('save error:',e);indivSaveStatus[id]='error';_updateSaveBar(id);setTimeout(()=>{if(indivSaveStatus[id]==='error'){delete indivSaveStatus[id];_updateSaveBar(id);}},3000);}
 }
 
-// ── FIND BUTTON LOGIC ──
-function mapsWithMat(matKey) {
-  return dbMaps.map(map => {
-    const pins = map.pins.filter(p => p.material_id === matKey);
-    return pins.length ? { map, pins } : null;
-  }).filter(Boolean);
-}
-
-let activeFindDropdownEl = null;
-function closeAllFindDropdowns() {
-  if (activeFindDropdownEl && activeFindDropdownEl.parentNode) activeFindDropdownEl.parentNode.removeChild(activeFindDropdownEl);
-  activeFindDropdownEl = null;
-}
-function onFindBtn(matKey, btnEl, event) {
+// ── FIND BUTTON ──
+function mapsWithMat(matKey){return dbMaps.map(map=>{const pins=map.pins.filter(p=>p.material_id===matKey);return pins.length?{map,pins}:null;}).filter(Boolean);}
+let activeFindDropdownEl=null;
+function closeAllFindDropdowns(){if(activeFindDropdownEl&&activeFindDropdownEl.parentNode)activeFindDropdownEl.parentNode.removeChild(activeFindDropdownEl);activeFindDropdownEl=null;}
+function onFindBtn(matKey,btnEl,event){
   event.stopPropagation();
-  if (activeFindDropdownEl && activeFindDropdownEl.dataset.matKey === matKey) { closeAllFindDropdowns(); return; }
+  if(activeFindDropdownEl&&activeFindDropdownEl.dataset.matKey===matKey){closeAllFindDropdowns();return;}
   closeAllFindDropdowns();
-  const locations = mapsWithMat(matKey);
-  if (!locations.length) return;
-  if (locations.length === 1) { navigateToMat(matKey, locations[0].map.id); return; }
-  const rect = btnEl.getBoundingClientRect();
-  const dropdown = document.createElement('div');
-  dropdown.className = 'find-dropdown';
-  dropdown.dataset.matKey = matKey;
-  dropdown.style.top  = (rect.bottom + 4) + 'px';
-  dropdown.style.left = Math.max(4, rect.left - 60) + 'px';
-  dropdown.innerHTML = `<div class="find-dropdown-title">Found on ${locations.length} maps</div>` +
-    locations.map(({map, pins}) => `
-      <div class="find-dropdown-item" onclick="navigateToMat('${matKey}','${map.id}');closeAllFindDropdowns()">
-        <span class="find-dropdown-map">${escHtml(map.name)}</span>
-        <span class="find-dropdown-count">${pins.length} pin${pins.length>1?'s':''}</span>
-      </div>`).join('');
-  document.body.appendChild(dropdown);
-  activeFindDropdownEl = dropdown;
+  const locations=mapsWithMat(matKey);if(!locations.length)return;
+  if(locations.length===1){navigateToMat(matKey,locations[0].map.id);return;}
+  const rect=btnEl.getBoundingClientRect();
+  const dropdown=document.createElement('div');dropdown.className='find-dropdown';dropdown.dataset.matKey=matKey;
+  dropdown.style.top=(rect.bottom+4)+'px';dropdown.style.left=Math.max(4,rect.left-60)+'px';
+  dropdown.innerHTML=`<div class="find-dropdown-title">Found on ${locations.length} maps</div>`+locations.map(({map,pins})=>`<div class="find-dropdown-item" onclick="navigateToMat('${matKey}','${map.id}');closeAllFindDropdowns()"><span class="find-dropdown-map">${escHtml(map.name)}</span><span class="find-dropdown-count">${pins.length} pin${pins.length>1?'s':''}</span></div>`).join('');
+  document.body.appendChild(dropdown);activeFindDropdownEl=dropdown;
 }
-function navigateToMat(matKey, mapId) {
-  if (activeMapId !== mapId) switchMap(mapId);
-  highlightedMat = matKey;
-  renderMapFilters(); renderMapCanvas(mapId); renderNeed();
-  const map = dbMaps.find(m => m.id === mapId); if (!map) return;
-  const pin = map.pins.find(p => p.material_id === matKey); if (!pin) return;
-  const area = document.getElementById('map-area'); if (!area) return;
-  const rect = area.getBoundingClientRect();
-  const targetScale = Math.max(mapView.scale, 1.4);
-  mapView.scale = targetScale;
-  mapView.tx = rect.width  / 2 - pin.x * targetScale;
-  mapView.ty = rect.height / 2 - pin.y * targetScale;
+function navigateToMat(matKey,mapId){
+  if(activeMapId!==mapId)switchMap(mapId);
+  highlightedMat=matKey;renderMapFilters();renderNeed();if(activeMapId)renderMapCanvas(activeMapId);
+  const map=dbMaps.find(m=>m.id===mapId);if(!map)return;
+  const pin=map.pins.find(p=>p.material_id===matKey);if(!pin)return;
+  const area=document.getElementById('map-area');if(!area)return;
+  const rect=area.getBoundingClientRect();
+  const targetScale=Math.max(mapView.scale,1.4);mapView.scale=targetScale;
+  mapView.tx=rect.width/2-pin.x*targetScale;mapView.ty=rect.height/2-pin.y*targetScale;
   updateMapTransform();
-  setTimeout(() => {
-    const pinEl = document.querySelector(`[data-pin-mat="${matKey}"]`);
-    if (pinEl) { pinEl.classList.add('nav-flash'); setTimeout(() => pinEl.classList.remove('nav-flash'), 1400); }
-  }, 120);
-  updateInfoBar(map, matKey);
-  showDeselect();
+  setTimeout(()=>{const pinEl=document.querySelector(`[data-pin-mat="${matKey}"]`);if(pinEl){pinEl.classList.add('nav-flash');setTimeout(()=>pinEl.classList.remove('nav-flash'),1400);}},120);
+  updateInfoBar(map,matKey);showDeselect();
 }
-document.addEventListener('click', (e) => {
-  if (activeFindDropdownEl && !activeFindDropdownEl.contains(e.target)) closeAllFindDropdowns();
-});
+document.addEventListener('click',(e)=>{if(activeFindDropdownEl&&!activeFindDropdownEl.contains(e.target))closeAllFindDropdowns();});
 
 // ── MAP ──
-function initMaps() {
-  const topBar = document.getElementById('map-top-bar');
-  const hint = document.getElementById('map-loading-hint');
-  const dragHint = document.getElementById('map-drag-hint');
-  document.getElementById('map-loading').style.display = 'none';
-  if (!dbMaps.length) { hint.textContent = 'No maps in database'; return; }
-  hint.style.display = 'none';
-  dragHint.style.display = '';
-  dbMaps.forEach((map, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'map-tab' + (i===0?' active':'');
-    btn.id = `mtab-${map.id}`;
-    btn.textContent = map.name;
-    btn.onclick = () => switchMap(map.id);
-    topBar.insertBefore(btn, dragHint);
-  });
-  const canvasesEl = document.getElementById('map-canvases');
-  dbMaps.forEach((map, i) => {
-    const wrap = document.createElement('div');
-    wrap.className = 'map-canvas-wrap' + (i===0?' active':'');
-    wrap.id = `mapwrap-${map.id}`;
-    wrap.style.cssText = 'position:absolute;inset:0';
-    canvasesEl.appendChild(wrap);
-  });
-  document.getElementById('map-zoom-controls').style.display = 'flex';
-  document.getElementById('map-coords').style.display = 'block';
+function initMaps(){
+  const topBar=document.getElementById('map-top-bar'),hint=document.getElementById('map-loading-hint'),dragHint=document.getElementById('map-drag-hint');
+  document.getElementById('map-loading').style.display='none';
+  if(!dbMaps.length){hint.textContent='No maps in database';return;}
+  hint.style.display='none';dragHint.style.display='';
+  dbMaps.forEach((map,i)=>{const btn=document.createElement('button');btn.className='map-tab'+(i===0?' active':'');btn.id=`mtab-${map.id}`;btn.textContent=map.name;btn.onclick=()=>switchMap(map.id);topBar.insertBefore(btn,dragHint);});
+  const canvasesEl=document.getElementById('map-canvases');
+  dbMaps.forEach((map,i)=>{const wrap=document.createElement('div');wrap.className='map-canvas-wrap'+(i===0?' active':'');wrap.id=`mapwrap-${map.id}`;wrap.style.cssText='position:absolute;inset:0';canvasesEl.appendChild(wrap);});
+  document.getElementById('map-zoom-controls').style.display='flex';
+  document.getElementById('map-coords').style.display='block';
   setupMapInteraction();
-  if (dbMaps.length) { activeMapId = dbMaps[0].id; renderMapCanvas(activeMapId); }
+  if(dbMaps.length){activeMapId=dbMaps[0].id;renderMapCanvas(activeMapId);}
 }
 
-function switchMap(mapId) {
-  activeMapId = mapId;
-  mapView = { tx:0, ty:0, scale:1 };
-  closePinGroupPortal();
-  dbMaps.forEach(m => {
-    document.getElementById(`mtab-${m.id}`)?.classList.toggle('active', m.id===mapId);
-    document.getElementById(`mapwrap-${m.id}`)?.classList.toggle('active', m.id===mapId);
-  });
-  renderMapCanvas(mapId);
-  document.getElementById('map-info-bar').classList.remove('visible');
+function switchMap(mapId){
+  activeMapId=mapId;mapView={tx:0,ty:0,scale:1};closePinGroupPortal();
+  dbMaps.forEach(m=>{document.getElementById(`mtab-${m.id}`)?.classList.toggle('active',m.id===mapId);document.getElementById(`mapwrap-${m.id}`)?.classList.toggle('active',m.id===mapId);});
+  renderMapCanvas(mapId);document.getElementById('map-info-bar').classList.remove('visible');
 }
 
-function getMatColor(matId) { return MATS[matId]?.color || '#6b7280'; }
-function getMatName(matId)  { return MATS[matId]?.name || dbMatsById[matId]?.name || matId; }
+function getMatColor(matId){return MATS[matId]?.color||'#6b7280';}
+function getMatName(matId){return MATS[matId]?.name||dbMatsById[matId]?.name||matId;}
 
-function clearHighlight() {
-  highlightedMat = null;
-  closePinGroupPortal();
-  renderMapFilters(); renderNeed();
-  if (activeMapId) renderMapCanvas(activeMapId);
+function clearHighlight(){
+  highlightedMat=null;closePinGroupPortal();renderMapFilters();renderNeed();
+  if(activeMapId)renderMapCanvas(activeMapId);
   document.getElementById('map-info-bar').classList.remove('visible');
   document.getElementById('map-deselect-hint').classList.remove('visible');
   document.getElementById('map-legend-clear').classList.remove('visible');
 }
-function showDeselect() {
-  document.getElementById('map-deselect-hint').classList.add('visible');
-  document.getElementById('map-legend-clear').classList.add('visible');
-}
+function showDeselect(){document.getElementById('map-deselect-hint').classList.add('visible');document.getElementById('map-legend-clear').classList.add('visible');}
 
-// ── PIN GROUPING ──
-const PIN_GROUP_RADIUS = 30;
-function groupPins(pins) {
-  const groups = [], assigned = new Set();
-  for (let i=0; i<pins.length; i++) {
-    if (assigned.has(i)) continue;
-    const group = [pins[i]]; assigned.add(i);
-    for (let j=i+1; j<pins.length; j++) {
-      if (assigned.has(j)) continue;
-      const dx=pins[j].x-pins[i].x, dy=pins[j].y-pins[i].y;
-      if (Math.sqrt(dx*dx+dy*dy)<=PIN_GROUP_RADIUS) { group.push(pins[j]); assigned.add(j); }
-    }
-    groups.push(group);
-  }
+const PIN_GROUP_RADIUS=30;
+function groupPins(pins){
+  const groups=[],assigned=new Set();
+  for(let i=0;i<pins.length;i++){if(assigned.has(i))continue;const group=[pins[i]];assigned.add(i);for(let j=i+1;j<pins.length;j++){if(assigned.has(j))continue;const dx=pins[j].x-pins[i].x,dy=pins[j].y-pins[i].y;if(Math.sqrt(dx*dx+dy*dy)<=PIN_GROUP_RADIUS){group.push(pins[j]);assigned.add(j);}}groups.push(group);}
   return groups;
 }
 
-function closePinGroupPortal() {
-  openPinGroupData = null;
-  const root = document.getElementById('pin-group-portal-root');
-  if (root) root.innerHTML = '';
+function closePinGroupPortal(){openPinGroupData=null;const root=document.getElementById('pin-group-portal-root');if(root)root.innerHTML='';}
+function openPinGroupPortal(groupId,groupPins,anchorEl){
+  openPinGroupData={groupId};const root=document.getElementById('pin-group-portal-root');if(!root)return;
+  const anchorRect=anchorEl.getBoundingClientRect();
+  const portal=document.createElement('div');portal.className='pin-group-portal';portal.dataset.groupId=groupId;
+  const items=groupPins.map(p=>{const c=getMatColor(p.material_id),n=getMatName(p.material_id);const isHL=highlightedMat===p.material_id;const noteText=(p.note&&p.note.trim())?p.note:(dbMatsById[p.material_id]?.farming_note||'');return`<div class="pin-group-portal-item ${isHL?'highlighted-item':''}" onclick="onPinClick('${p.material_id}','${escHtml(p.location_name)}','${escHtml(p.note||'')}');closePinGroupPortal()"><div class="pin-group-dot" style="background:${c}"></div><div><div class="pin-group-name" style="color:${c}">${escHtml(n)}</div><div class="pin-group-loc">${escHtml(p.location_name)}</div>${noteText?`<div class="pin-group-note">${escHtml(noteText.length>100?noteText.slice(0,100)+'…':noteText)}</div>`:''}</div></div>`;}).join('');
+  portal.innerHTML=`<div class="pin-group-portal-title"><span>${groupPins.length} items at this spot</span><button class="pin-group-portal-close" onclick="closePinGroupPortal()">✕</button></div>${items}`;
+  const vpH=window.innerHeight,estH=40+groupPins.length*60;let top=anchorRect.bottom+8;if(top+estH>vpH-20)top=Math.max(10,anchorRect.top-estH-8);
+  let left=anchorRect.left-20;if(left+280>window.innerWidth-10)left=window.innerWidth-290;left=Math.max(10,left);
+  portal.style.top=top+'px';portal.style.left=left+'px';root.innerHTML='';root.appendChild(portal);
 }
 
-function openPinGroupPortal(groupId, groupPins, anchorEl) {
-  openPinGroupData = { groupId };
-  const root = document.getElementById('pin-group-portal-root');
-  if (!root) return;
-  const anchorRect = anchorEl.getBoundingClientRect();
-  const portal = document.createElement('div');
-  portal.className = 'pin-group-portal';
-  portal.dataset.groupId = groupId;
-  const items = groupPins.map(p => {
-    const c = getMatColor(p.material_id), n = getMatName(p.material_id);
-    const isHL = highlightedMat === p.material_id;
-    const noteText = (p.note&&p.note.trim()) ? p.note : (dbMatsById[p.material_id]?.farming_note||'');
-    return `<div class="pin-group-portal-item ${isHL?'highlighted-item':''}"
-      onclick="onPinClick('${p.material_id}','${escHtml(p.location_name)}','${escHtml(p.note||'')}');closePinGroupPortal()">
-      <div class="pin-group-dot" style="background:${c}"></div>
-      <div>
-        <div class="pin-group-name" style="color:${c}">${escHtml(n)}</div>
-        <div class="pin-group-loc">${escHtml(p.location_name)}</div>
-        ${noteText?`<div class="pin-group-note">${escHtml(noteText.length>100?noteText.slice(0,100)+'…':noteText)}</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
-  portal.innerHTML = `<div class="pin-group-portal-title">
-    <span>${groupPins.length} items at this spot</span>
-    <button class="pin-group-portal-close" onclick="closePinGroupPortal()">✕</button>
-  </div>${items}`;
-  const vpH=window.innerHeight, estH=40+groupPins.length*60;
-  let top=anchorRect.bottom+8;
-  if (top+estH>vpH-20) top=Math.max(10,anchorRect.top-estH-8);
-  let left=anchorRect.left-20;
-  if (left+280>window.innerWidth-10) left=window.innerWidth-290;
-  left=Math.max(10,left);
-  portal.style.top=top+'px'; portal.style.left=left+'px';
-  root.innerHTML=''; root.appendChild(portal);
-}
-
-function renderMapCanvas(mapId) {
-  const map = dbMaps.find(m=>m.id===mapId); if (!map) return;
-  const wrap = document.getElementById(`mapwrap-${mapId}`); if (!wrap) return;
-  const W=map.coord_width, H=map.coord_height;
-  const needMats = totalMats();
-  const relevantMatKeys = new Set(Object.keys(needMats).filter(k=>!k.startsWith('_')));
-  for (const [gKey,gDef] of Object.entries(EXP_GROUPS)) {
-    if (needMats[gDef.rawKey]) gDef.keys.forEach(k=>relevantMatKeys.add(k));
-  }
-  const relevantPins = map.pins.filter(pin=>relevantMatKeys.size===0||relevantMatKeys.has(pin.material_id));
-
-  if (map.image_url) {
-    const groups = groupPins(relevantPins);
-    const pinsHtml = groups.map((group,gIdx)=>{
-      const groupId=`g-${mapId}-${gIdx}`, isMulti=group.length>1;
-      if (!isMulti) {
-        const pin=group[0], matId=pin.material_id, color=getMatColor(matId), name=getMatName(matId);
-        const shortName=shortenMatName(name), isHL=highlightedMat===matId, isDim=highlightedMat&&!isHL;
-        const borderCol=isHL?color:'rgba(255,255,255,0.18)', glow=isHL?`box-shadow:0 0 12px ${color}55;`:'';
-        return `<div class="user-pin ${isHL?'highlighted':''} ${isDim?'dimmed':''}"
-          data-pin-mat="${matId}"
-          style="left:${pin.x}px;top:${pin.y}px;border-color:${borderCol};${glow}"
-          onclick="onPinClick('${matId}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')">
-          <div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div>
-          <div>
-            <div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div>
-            <div class="user-pin-sub">${escHtml(pin.location_name)}</div>
-          </div>
-        </div>`;
-      }
-      let primaryIdx=0;
-      if (highlightedMat) { const hlIdx=group.findIndex(p=>p.material_id===highlightedMat); if(hlIdx>=0) primaryIdx=hlIdx; }
-      const primary=group[primaryIdx];
-      const cx=Math.round(group.reduce((s,p)=>s+p.x,0)/group.length);
-      const cy=Math.round(group.reduce((s,p)=>s+p.y,0)/group.length);
-      const matId=primary.material_id, color=getMatColor(matId), name=getMatName(matId);
-      const shortName=shortenMatName(name);
-      const isHL=highlightedMat&&group.some(p=>p.material_id===highlightedMat), isDim=highlightedMat&&!isHL;
-      const borderCol=isHL?color:'rgba(255,255,255,0.18)', glow=isHL?`box-shadow:0 0 12px ${color}55;`:'';
-      const isOpen=openPinGroupData&&openPinGroupData.groupId===groupId;
-      return `<div class="user-pin grouped ${isHL?'highlighted':''} ${isDim?'dimmed':''} ${isOpen?'open':''}"
-        data-pin-mat="${matId}" data-group-id="${groupId}"
-        style="left:${cx}px;top:${cy}px;border-color:${borderCol};${glow}"
-        onclick="onGroupedPinClick(event,'${groupId}',this)">
-        <div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div>
-        <div>
-          <div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div>
-          <div class="user-pin-sub">${escHtml(primary.location_name)}</div>
-        </div>
-        <div class="user-pin-stack-count">${group.length}</div>
-        <div class="user-pin-stack-caret">▾</div>
-      </div>`;
-    }).join('');
-
-    wrap._pinGroups = {};
-    groups.forEach((group,gIdx)=>{ const groupId=`g-${mapId}-${gIdx}`; if(group.length>1) wrap._pinGroups[groupId]=group; });
-
-    wrap.innerHTML = `<div class="map-viewport" id="map-vp-${mapId}">
-      <div class="map-inner" id="map-inner-${mapId}" style="width:${W}px;height:${H}px;position:relative">
-        <img src="${map.image_url}" style="position:absolute;inset:0;width:${W}px;height:${H}px;object-fit:cover;pointer-events:none;display:block" loading="lazy">
-        ${pinsHtml}
-      </div>
-    </div>`;
-
-    const newWrap=document.getElementById(`mapwrap-${mapId}`);
-    if (newWrap) newWrap._pinGroups=wrap._pinGroups||{};
-
-    const vp=document.getElementById(`map-vp-${mapId}`);
-    if (vp) vp.addEventListener('mousemove',e=>{
-      const inner=document.getElementById(`map-inner-${mapId}`); if(!inner) return;
-      const rect=inner.getBoundingClientRect();
-      const x=Math.round((e.clientX-rect.left)/mapView.scale), y=Math.round((e.clientY-rect.top)/mapView.scale);
-      document.getElementById('map-coords').textContent=`x:${x} y:${y}`;
-    });
-    document.getElementById('map-zoom-controls').style.display='flex';
-    document.getElementById('map-coords').style.display='block';
-  } else {
-    const fallbackSVG=buildFallbackMapSVG(map);
-    const pinListHtml=relevantPins.length
-      ?`<div style="display:flex;flex-wrap:wrap;gap:6px;padding:14px">${relevantPins.map(pin=>{
-          const color=getMatColor(pin.material_id),name=getMatName(pin.material_id),isHL=highlightedMat===pin.material_id;
-          return `<div style="background:var(--surface);border:1px solid ${isHL?color:'var(--border2)'};background:${isHL?color+'12':'var(--surface)'};padding:7px 11px;min-width:150px;cursor:pointer" onclick="onPinClick('${pin.material_id}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')">
-            <div style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${color};margin-bottom:2px">${escHtml(name)}</div>
-            <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted)">${escHtml(pin.location_name)}</div>
-          </div>`;}).join('')}</div>`
-      :`<div style="padding:20px;font-family:var(--font-mono);font-size:10px;color:var(--muted);text-align:center">No pins match your current needs.</div>`;
-    wrap.innerHTML=`<div style="height:100%;overflow-y:auto;"><div style="position:relative;height:160px;overflow:hidden;flex-shrink:0;">${fallbackSVG}</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;padding:10px 14px 4px">Pin locations</div>${pinListHtml}</div>`;
-    document.getElementById('map-zoom-controls').style.display='none';
-    document.getElementById('map-coords').style.display='none';
-  }
-  updateMapTransform();
-  renderMapLegend(mapId);
-}
-
-function shortenMatName(name) {
-  return name.replace(' Sample 4','').replace(' Tube','').replace(' Lattice','').replace(' Fluid','').replace(' Nanoflake','').replace(' Record','').replace(' Carrier','').replace('Elementary ','Elem. ').replace('Advanced ','Adv. ');
-}
-
-function onPinClick(matId, zoneName, note) {
-  if (highlightedMat===matId) { clearHighlight(); return; }
-  highlightedMat=matId;
-  renderMapFilters(); renderNeed();
-  if (activeMapId) renderMapCanvas(activeMapId);
-  const map=dbMaps.find(m=>m.id===activeMapId);
-  if (map) updateInfoBar(map,matId);
-  showDeselect();
-}
-
-function onGroupedPinClick(event, groupId, pinEl) {
-  event.stopPropagation();
-  if (openPinGroupData&&openPinGroupData.groupId===groupId) { closePinGroupPortal(); if(activeMapId) renderMapCanvas(activeMapId); return; }
-  const wrap=document.getElementById(`mapwrap-${activeMapId}`);
-  const groupPinsArr=(wrap&&wrap._pinGroups&&wrap._pinGroups[groupId])||[];
-  openPinGroupPortal(groupId,groupPinsArr,pinEl);
-  if (groupPinsArr.length) {
-    highlightedMat=groupPinsArr[0].material_id;
-    renderMapFilters(); renderNeed();
-    const map=dbMaps.find(m=>m.id===activeMapId);
-    if (map) updateInfoBar(map,highlightedMat);
-    showDeselect();
-  }
-  if (activeMapId) renderMapCanvas(activeMapId);
-}
-
-document.addEventListener('click',e=>{
-  if (!openPinGroupData) return;
-  const portal=document.querySelector('.pin-group-portal'), isPin=e.target.closest('.user-pin');
-  if (!portal?.contains(e.target)&&!isPin) { closePinGroupPortal(); if(activeMapId) renderMapCanvas(activeMapId); }
-});
-
-function updateInfoBar(map, matId) {
-  const bar=document.getElementById('map-info-bar');
-  if (!matId||matId!==highlightedMat) { bar.classList.remove('visible'); return; }
-  const color=getMatColor(matId), name=getMatName(matId);
-  const pins=map.pins.filter(p=>p.material_id===matId);
-  if (!pins.length) { bar.classList.remove('visible'); return; }
-  document.getElementById('map-info-title-text').innerHTML=`<span style="color:${color}">●</span> ${escHtml(name)} — ${escHtml(map.name)} farming spots`;
-  const groups=groupPins(pins);
-  document.getElementById('map-info-cards').innerHTML=groups.map(grp=>{
-    const displayNote=grp[0].note&&grp[0].note.trim()?grp[0].note:(dbMatsById[matId]?.farming_note||'See map for details');
-    let innerPinList='';
-    if (grp.length>1) {
-      innerPinList=`<div class="map-info-pin-list">`+grp.map(p=>{
-        const c2=getMatColor(p.material_id), n2=getMatName(p.material_id), pNote=p.note&&p.note.trim()?p.note:'';
-        return `<div class="map-info-pin-item"><div class="map-info-pin-dot" style="background:${c2}"></div><div><div class="map-info-pin-name" style="color:${c2}">${escHtml(n2)}</div>${pNote?`<div class="map-info-pin-note">${escHtml(pNote)}</div>`:''}</div></div>`;
-      }).join('')+`</div>`;
-    }
-    return `<div class="map-info-card"><div class="map-info-card-zone" style="color:${color}">${escHtml(grp[0].location_name)}</div><div class="map-info-card-desc">${escHtml(displayNote)}</div>${innerPinList}</div>`;
-  }).join('');
-  bar.classList.add('visible');
-}
-
-function renderMapLegend(mapId) {
-  const map=dbMaps.find(m=>m.id===mapId);
-  const legend=document.getElementById('map-legend'), items=document.getElementById('legend-items'), clearBtn=document.getElementById('map-legend-clear');
-  if (!map||!map.pins.length) { legend.classList.remove('visible'); return; }
-  const needMats=totalMats();
-  const relevantMatKeys=new Set(Object.keys(needMats).filter(k=>!k.startsWith('_')));
-  for (const [gKey,gDef] of Object.entries(EXP_GROUPS)) { if(needMats[gDef.rawKey]) gDef.keys.forEach(k=>relevantMatKeys.add(k)); }
-  const matIds=[...new Set(map.pins.map(p=>p.material_id))].filter(k=>relevantMatKeys.size===0||relevantMatKeys.has(k));
-  if (!matIds.length) { legend.classList.remove('visible'); return; }
-  legend.classList.add('visible');
-  items.innerHTML=matIds.map(k=>{
-    const color=getMatColor(k), name=shortenMatName(getMatName(k)), isHL=highlightedMat===k, isDim=highlightedMat&&!isHL;
-    return `<div class="map-legend-item ${isDim?'dimmed':''}" onclick="highlightMat('${k}')">
-      <div class="map-legend-dot" style="background:${color};${isHL?`box-shadow:0 0 5px ${color}`:''}"></div>
-      <div class="map-legend-name" style="${isHL?`color:${color}`:''}"> ${escHtml(name)}</div>
-    </div>`;
-  }).join('');
-  clearBtn.classList.toggle('visible',!!highlightedMat);
-}
-
-function buildFallbackMapSVG(map) {
-  const W=map.coord_width, H=map.coord_height;
-  return `<svg width="100%" height="160" style="display:block;pointer-events:none" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${W}" height="${H}" fill="#0b1510"/>
-    <defs><pattern id="mg${map.id.slice(0,8)}" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="0.6"/></pattern></defs>
-    <rect width="${W}" height="${H}" fill="url(#mg${map.id.slice(0,8)})"/>
-    <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text>
-  </svg>`;
-}
-
-function setupMapInteraction() {
-  const area=document.getElementById('map-area');
-  let drag=false, lx=0, ly=0, movedDuringDrag=false;
-  area.addEventListener('mousedown',e=>{
-    if(e.button!==0) return;
-    drag=true; lx=e.clientX; ly=e.clientY; movedDuringDrag=false;
-    area.style.cursor='grabbing'; e.preventDefault();
-  });
-  window.addEventListener('mousemove',e=>{
-    if(!drag) return;
-    const dx=e.clientX-lx, dy=e.clientY-ly;
-    if(Math.abs(dx)>3||Math.abs(dy)>3) movedDuringDrag=true;
-    mapView.tx+=dx; mapView.ty+=dy; lx=e.clientX; ly=e.clientY;
-    updateMapTransform();
-  });
-  window.addEventListener('mouseup',e=>{
-    if(!drag) return; drag=false;
-    const a=document.getElementById('map-area'); if(a) a.style.cursor='';
-  });
-  area.addEventListener('click',e=>{
-    if(e.target.closest('.user-pin')) return;
-    if(e.target.closest('.map-legend')) return;
-    if(e.target.closest('.map-zoom-controls')) return;
-    if(!movedDuringDrag) clearHighlight();
-  });
-  area.addEventListener('wheel',e=>{
-    e.preventDefault();
-    const rect=area.getBoundingClientRect(), factor=e.deltaY<0?1.12:0.88;
-    mapView.tx=(e.clientX-rect.left)+(mapView.tx-(e.clientX-rect.left))*factor;
-    mapView.ty=(e.clientY-rect.top)+(mapView.ty-(e.clientY-rect.top))*factor;
-    mapView.scale=Math.max(0.15,Math.min(6,mapView.scale*factor));
-    updateMapTransform();
-  },{passive:false});
-}
-
-function updateMapTransform() {
-  if(!activeMapId) return;
-  const inner=document.getElementById(`map-inner-${activeMapId}`); if(!inner) return;
-  inner.style.transform=`translate(${mapView.tx}px,${mapView.ty}px) scale(${mapView.scale})`;
-  inner.style.transformOrigin='0 0';
-}
-function mapZoom(factor) {
-  const area=document.getElementById('map-area'), rect=area.getBoundingClientRect();
-  const cx=rect.width/2, cy=rect.height/2;
-  mapView.tx=cx+(mapView.tx-cx)*factor; mapView.ty=cy+(mapView.ty-cy)*factor;
-  mapView.scale=Math.max(0.15,Math.min(6,mapView.scale*factor));
-  updateMapTransform();
-}
-function mapReset() { mapView={tx:0,ty:0,scale:1}; updateMapTransform(); }
-
-function highlightMat(matId) {
-  if(highlightedMat===matId) { clearHighlight(); return; }
-  highlightedMat=matId;
-  renderMapFilters(); renderNeed();
-  if(activeMapId) { renderMapCanvas(activeMapId); const map=dbMaps.find(m=>m.id===activeMapId); if(map) updateInfoBar(map,matId); }
-  showDeselect();
-}
-
-function renderMapFilters() {
-  const bar=document.getElementById('map-filter-bar'), chipsEl=document.getElementById('mat-chips');
-  if(!plans.length||!dbMaps.length) { bar.classList.remove('visible'); return; }
-  bar.classList.add('visible');
+function renderMapCanvas(mapId){
+  const map=dbMaps.find(m=>m.id===mapId);if(!map)return;
+  const wrap=document.getElementById(`mapwrap-${mapId}`);if(!wrap)return;
+  const W=map.coord_width,H=map.coord_height;
   const needMats=totalMats();
   const relevantMatKeys=new Set(Object.keys(needMats).filter(k=>!k.startsWith('_')));
   for(const[gKey,gDef]of Object.entries(EXP_GROUPS)){if(needMats[gDef.rawKey])gDef.keys.forEach(k=>relevantMatKeys.add(k));}
-  const matsWithPins=new Set();
-  for(const map of dbMaps)for(const pin of map.pins)matsWithPins.add(pin.material_id);
-  chipsEl.innerHTML=[...relevantMatKeys].filter(k=>MATS[k]&&matsWithPins.has(k)).map(k=>{
-    const mat=MATS[k], active=highlightedMat===k?'active':'';
-    return `<div class="mat-chip ${active}" onclick="highlightMat('${k}')"><div class="mat-chip-dot" style="background:${mat.color}"></div>${mat.name.split(' ')[0]}</div>`;
-  }).join('');
+  const relevantPins=map.pins.filter(pin=>relevantMatKeys.size===0||relevantMatKeys.has(pin.material_id));
+
+  if(map.image_url){
+    const groups=groupPins(relevantPins);
+    const pinsHtml=groups.map((group,gIdx)=>{
+      const groupId=`g-${mapId}-${gIdx}`,isMulti=group.length>1;
+      if(!isMulti){
+        const pin=group[0],matId=pin.material_id,color=getMatColor(matId),name=getMatName(matId);
+        const shortName=shortenMatName(name),isHL=highlightedMat===matId,isDim=highlightedMat&&!isHL;
+        const borderCol=isHL?color:'rgba(255,255,255,0.18)',glow=isHL?`box-shadow:0 0 12px ${color}55;`:'';
+        return`<div class="user-pin ${isHL?'highlighted':''} ${isDim?'dimmed':''}" data-pin-mat="${matId}" style="left:${pin.x}px;top:${pin.y}px;border-color:${borderCol};${glow}" onclick="onPinClick('${matId}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')"><div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div><div><div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div><div class="user-pin-sub">${escHtml(pin.location_name)}</div></div></div>`;
+      }
+      let primaryIdx=0;if(highlightedMat){const hlIdx=group.findIndex(p=>p.material_id===highlightedMat);if(hlIdx>=0)primaryIdx=hlIdx;}
+      const primary=group[primaryIdx];
+      const cx=Math.round(group.reduce((s,p)=>s+p.x,0)/group.length),cy=Math.round(group.reduce((s,p)=>s+p.y,0)/group.length);
+      const matId=primary.material_id,color=getMatColor(matId),name=getMatName(matId),shortName=shortenMatName(name);
+      const isHL=highlightedMat&&group.some(p=>p.material_id===highlightedMat),isDim=highlightedMat&&!isHL;
+      const borderCol=isHL?color:'rgba(255,255,255,0.18)',glow=isHL?`box-shadow:0 0 12px ${color}55;`:'';
+      const isOpen=openPinGroupData&&openPinGroupData.groupId===groupId;
+      return`<div class="user-pin grouped ${isHL?'highlighted':''} ${isDim?'dimmed':''} ${isOpen?'open':''}" data-pin-mat="${matId}" data-group-id="${groupId}" style="left:${cx}px;top:${cy}px;border-color:${borderCol};${glow}" onclick="onGroupedPinClick(event,'${groupId}',this)"><div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div><div><div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div><div class="user-pin-sub">${escHtml(primary.location_name)}</div></div><div class="user-pin-stack-count">${group.length}</div><div class="user-pin-stack-caret">▾</div></div>`;
+    }).join('');
+    wrap._pinGroups={};groups.forEach((group,gIdx)=>{const groupId=`g-${mapId}-${gIdx}`;if(group.length>1)wrap._pinGroups[groupId]=group;});
+    wrap.innerHTML=`<div class="map-viewport" id="map-vp-${mapId}"><div class="map-inner" id="map-inner-${mapId}" style="width:${W}px;height:${H}px;position:relative"><img src="${map.image_url}" style="position:absolute;inset:0;width:${W}px;height:${H}px;object-fit:cover;pointer-events:none;display:block" loading="lazy">${pinsHtml}</div></div>`;
+    const newWrap=document.getElementById(`mapwrap-${mapId}`);if(newWrap)newWrap._pinGroups=wrap._pinGroups||{};
+    const vp=document.getElementById(`map-vp-${mapId}`);
+    if(vp)vp.addEventListener('mousemove',e=>{const inner=document.getElementById(`map-inner-${mapId}`);if(!inner)return;const rect=inner.getBoundingClientRect();const x=Math.round((e.clientX-rect.left)/mapView.scale),y=Math.round((e.clientY-rect.top)/mapView.scale);document.getElementById('map-coords').textContent=`x:${x} y:${y}`;});
+    document.getElementById('map-zoom-controls').style.display='flex';document.getElementById('map-coords').style.display='block';
+  } else {
+    const fallbackSVG=buildFallbackMapSVG(map);
+    const pinListHtml=relevantPins.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;padding:14px">${relevantPins.map(pin=>{const color=getMatColor(pin.material_id),name=getMatName(pin.material_id),isHL=highlightedMat===pin.material_id;return`<div style="background:var(--surface);border:1px solid ${isHL?color:'var(--border2)'};background:${isHL?color+'12':'var(--surface)'};padding:7px 11px;min-width:150px;cursor:pointer" onclick="onPinClick('${pin.material_id}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')"><div style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${color};margin-bottom:2px">${escHtml(name)}</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--muted)">${escHtml(pin.location_name)}</div></div>`;}).join('')}</div>`:`<div style="padding:20px;font-family:var(--font-mono);font-size:10px;color:var(--muted);text-align:center">No pins match your current needs.</div>`;
+    wrap.innerHTML=`<div style="height:100%;overflow-y:auto;"><div style="position:relative;height:160px;overflow:hidden;flex-shrink:0;">${fallbackSVG}</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;padding:10px 14px 4px">Pin locations</div>${pinListHtml}</div>`;
+    document.getElementById('map-zoom-controls').style.display='none';document.getElementById('map-coords').style.display='none';
+  }
+  updateMapTransform();renderMapLegend(mapId);
+}
+
+function shortenMatName(name){return name.replace(' Sample 4','').replace(' Tube','').replace(' Lattice','').replace(' Fluid','').replace(' Nanoflake','').replace(' Record','').replace(' Carrier','').replace('Elementary ','Elem. ').replace('Advanced ','Adv. ');}
+
+function onPinClick(matId,zoneName,note){if(highlightedMat===matId){clearHighlight();return;}highlightedMat=matId;renderMapFilters();renderNeed();if(activeMapId)renderMapCanvas(activeMapId);const map=dbMaps.find(m=>m.id===activeMapId);if(map)updateInfoBar(map,matId);showDeselect();}
+
+function onGroupedPinClick(event,groupId,pinEl){
+  event.stopPropagation();
+  if(openPinGroupData&&openPinGroupData.groupId===groupId){closePinGroupPortal();if(activeMapId)renderMapCanvas(activeMapId);return;}
+  const wrap=document.getElementById(`mapwrap-${activeMapId}`);
+  const groupPinsArr=(wrap&&wrap._pinGroups&&wrap._pinGroups[groupId])||[];
+  openPinGroupPortal(groupId,groupPinsArr,pinEl);
+  if(groupPinsArr.length){highlightedMat=groupPinsArr[0].material_id;renderMapFilters();renderNeed();const map=dbMaps.find(m=>m.id===activeMapId);if(map)updateInfoBar(map,highlightedMat);showDeselect();}
+  if(activeMapId)renderMapCanvas(activeMapId);
+}
+
+document.addEventListener('click',e=>{if(!openPinGroupData)return;const portal=document.querySelector('.pin-group-portal'),isPin=e.target.closest('.user-pin');if(!portal?.contains(e.target)&&!isPin){closePinGroupPortal();if(activeMapId)renderMapCanvas(activeMapId);}});
+
+function updateInfoBar(map,matId){
+  const bar=document.getElementById('map-info-bar');
+  if(!matId||matId!==highlightedMat){bar.classList.remove('visible');return;}
+  const color=getMatColor(matId),name=getMatName(matId),pins=map.pins.filter(p=>p.material_id===matId);
+  if(!pins.length){bar.classList.remove('visible');return;}
+  document.getElementById('map-info-title-text').innerHTML=`<span style="color:${color}">●</span> ${escHtml(name)} — ${escHtml(map.name)} farming spots`;
+  const groups=groupPins(pins);
+  document.getElementById('map-info-cards').innerHTML=groups.map(grp=>{const displayNote=grp[0].note&&grp[0].note.trim()?grp[0].note:(dbMatsById[matId]?.farming_note||'See map for details');let innerPinList='';if(grp.length>1){innerPinList=`<div class="map-info-pin-list">`+grp.map(p=>{const c2=getMatColor(p.material_id),n2=getMatName(p.material_id),pNote=p.note&&p.note.trim()?p.note:'';return`<div class="map-info-pin-item"><div class="map-info-pin-dot" style="background:${c2}"></div><div><div class="map-info-pin-name" style="color:${c2}">${escHtml(n2)}</div>${pNote?`<div class="map-info-pin-note">${escHtml(pNote)}</div>`:''}</div></div>`;}).join('')+`</div>`;}return`<div class="map-info-card"><div class="map-info-card-zone" style="color:${color}">${escHtml(grp[0].location_name)}</div><div class="map-info-card-desc">${escHtml(displayNote)}</div>${innerPinList}</div>`;}).join('');
+  bar.classList.add('visible');
+}
+
+function renderMapLegend(mapId){
+  const map=dbMaps.find(m=>m.id===mapId),legend=document.getElementById('map-legend'),items=document.getElementById('legend-items'),clearBtn=document.getElementById('map-legend-clear');
+  if(!map||!map.pins.length){legend.classList.remove('visible');return;}
+  const needMats=totalMats(),relevantMatKeys=new Set(Object.keys(needMats).filter(k=>!k.startsWith('_')));
+  for(const[gKey,gDef]of Object.entries(EXP_GROUPS)){if(needMats[gDef.rawKey])gDef.keys.forEach(k=>relevantMatKeys.add(k));}
+  const matIds=[...new Set(map.pins.map(p=>p.material_id))].filter(k=>relevantMatKeys.size===0||relevantMatKeys.has(k));
+  if(!matIds.length){legend.classList.remove('visible');return;}
+  legend.classList.add('visible');
+  items.innerHTML=matIds.map(k=>{const color=getMatColor(k),name=shortenMatName(getMatName(k)),isHL=highlightedMat===k,isDim=highlightedMat&&!isHL;return`<div class="map-legend-item ${isDim?'dimmed':''}" onclick="highlightMat('${k}')"><div class="map-legend-dot" style="background:${color};${isHL?`box-shadow:0 0 5px ${color}`:''}"></div><div class="map-legend-name" style="${isHL?`color:${color}`:''}"> ${escHtml(name)}</div></div>`;}).join('');
+  clearBtn.classList.toggle('visible',!!highlightedMat);
+}
+
+function buildFallbackMapSVG(map){const W=map.coord_width,H=map.coord_height;return`<svg width="100%" height="160" style="display:block;pointer-events:none" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><rect width="${W}" height="${H}" fill="#0b1510"/><defs><pattern id="mg${map.id.slice(0,8)}" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(0,196,163,0.05)" stroke-width="0.6"/></pattern></defs><rect width="${W}" height="${H}" fill="url(#mg${map.id.slice(0,8)})"/><text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text></svg>`;}
+
+function setupMapInteraction(){
+  const area=document.getElementById('map-area');
+  let drag=false,lx=0,ly=0,movedDuringDrag=false;
+  area.addEventListener('mousedown',e=>{if(e.button!==0)return;drag=true;lx=e.clientX;ly=e.clientY;movedDuringDrag=false;area.style.cursor='grabbing';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;if(Math.abs(dx)>3||Math.abs(dy)>3)movedDuringDrag=true;mapView.tx+=dx;mapView.ty+=dy;lx=e.clientX;ly=e.clientY;updateMapTransform();});
+  window.addEventListener('mouseup',e=>{if(!drag)return;drag=false;const a=document.getElementById('map-area');if(a)a.style.cursor='';});
+  area.addEventListener('click',e=>{if(e.target.closest('.user-pin'))return;if(e.target.closest('.map-legend'))return;if(e.target.closest('.map-zoom-controls'))return;if(!movedDuringDrag)clearHighlight();});
+  area.addEventListener('wheel',e=>{e.preventDefault();const rect=area.getBoundingClientRect(),factor=e.deltaY<0?1.12:0.88;mapView.tx=(e.clientX-rect.left)+(mapView.tx-(e.clientX-rect.left))*factor;mapView.ty=(e.clientY-rect.top)+(mapView.ty-(e.clientY-rect.top))*factor;mapView.scale=Math.max(0.15,Math.min(6,mapView.scale*factor));updateMapTransform();},{passive:false});
+}
+
+function updateMapTransform(){if(!activeMapId)return;const inner=document.getElementById(`map-inner-${activeMapId}`);if(!inner)return;inner.style.transform=`translate(${mapView.tx}px,${mapView.ty}px) scale(${mapView.scale})`;inner.style.transformOrigin='0 0';}
+function mapZoom(factor){const area=document.getElementById('map-area'),rect=area.getBoundingClientRect();const cx=rect.width/2,cy=rect.height/2;mapView.tx=cx+(mapView.tx-cx)*factor;mapView.ty=cy+(mapView.ty-cy)*factor;mapView.scale=Math.max(0.15,Math.min(6,mapView.scale*factor));updateMapTransform();}
+function mapReset(){mapView={tx:0,ty:0,scale:1};updateMapTransform();}
+function highlightMat(matId){if(highlightedMat===matId){clearHighlight();return;}highlightedMat=matId;renderMapFilters();renderNeed();if(activeMapId){renderMapCanvas(activeMapId);const map=dbMaps.find(m=>m.id===activeMapId);if(map)updateInfoBar(map,matId);}showDeselect();}
+
+function renderMapFilters(){
+  const bar=document.getElementById('map-filter-bar'),chipsEl=document.getElementById('mat-chips');
+  if(!plans.length||!dbMaps.length){bar.classList.remove('visible');return;}
+  bar.classList.add('visible');
+  const needMats=totalMats(),relevantMatKeys=new Set(Object.keys(needMats).filter(k=>!k.startsWith('_')));
+  for(const[gKey,gDef]of Object.entries(EXP_GROUPS)){if(needMats[gDef.rawKey])gDef.keys.forEach(k=>relevantMatKeys.add(k));}
+  const matsWithPins=new Set();for(const map of dbMaps)for(const pin of map.pins)matsWithPins.add(pin.material_id);
+  chipsEl.innerHTML=[...relevantMatKeys].filter(k=>MATS[k]&&matsWithPins.has(k)).map(k=>{const mat=MATS[k],active=highlightedMat===k?'active':'';return`<div class="mat-chip ${active}" onclick="highlightMat('${k}')"><div class="mat-chip-dot" style="background:${mat.color}"></div>${mat.name.split(' ')[0]}</div>`;}).join('');
 }
 
 // ── RESIZABLE PANELS ──
-function setupResize() {
-  setupResizeHandle('resize-1','left-panel',220,550);
-  setupResizeHandle('resize-2','mid-panel',180,600);
-}
-function setupResizeHandle(handleId, panelId, minW, maxW) {
-  const handle=document.getElementById(handleId), panelEl=document.getElementById(panelId);
-  let dragging=false, startX=0, startW=0;
-  handle.addEventListener('mousedown',e=>{
-    if(e.button!==0) return;
-    dragging=true; startX=e.clientX; startW=panelEl.getBoundingClientRect().width;
-    handle.classList.add('dragging'); document.body.style.cursor='col-resize'; document.body.style.userSelect='none';
-    e.preventDefault();
-  });
-  window.addEventListener('mousemove',e=>{
-    if(!dragging) return;
-    const newWidth=Math.max(minW,Math.min(maxW,startW+(e.clientX-startX)));
-    panelEl.style.width=newWidth+'px';
-  });
-  window.addEventListener('mouseup',()=>{
-    if(!dragging) return; dragging=false; handle.classList.remove('dragging');
-    document.body.style.cursor=''; document.body.style.userSelect='';
-  });
+function setupResize(){setupResizeHandle('resize-1','left-panel',220,550);setupResizeHandle('resize-2','mid-panel',180,600);}
+function setupResizeHandle(handleId,panelId,minW,maxW){
+  const handle=document.getElementById(handleId),panelEl=document.getElementById(panelId);
+  let dragging=false,startX=0,startW=0;
+  handle.addEventListener('mousedown',e=>{if(e.button!==0)return;dragging=true;startX=e.clientX;startW=panelEl.getBoundingClientRect().width;handle.classList.add('dragging');document.body.style.cursor='col-resize';document.body.style.userSelect='none';e.preventDefault();});
+  window.addEventListener('mousemove',e=>{if(!dragging)return;const newWidth=Math.max(minW,Math.min(maxW,startW+(e.clientX-startX)));panelEl.style.width=newWidth+'px';});
+  window.addEventListener('mouseup',()=>{if(!dragging)return;dragging=false;handle.classList.remove('dragging');document.body.style.cursor='';document.body.style.userSelect='';});
 }
 
 // ── MODAL ──
-function openModal(type) {
-  modalType=type; activeFilter='all';
-  document.getElementById('modal-title').textContent=type==='operator'?'Add Operator':'Add Weapon';
-  document.getElementById('modal-search').value='';
-  buildFilterButtons();
-  renderModalList(type==='operator'?OPERATORS:WEAPONS);
-  document.getElementById('modal').classList.add('open');
-  setTimeout(()=>document.getElementById('modal-search').focus(),50);
-}
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-function handleOverlayClick(e) { if(e.target===document.getElementById('modal')) closeModal(); }
-
-function buildFilterButtons() {
+function openModal(type){modalType=type;activeFilter='all';document.getElementById('modal-title').textContent=type==='operator'?'Add Operator':'Add Weapon';document.getElementById('modal-search').value='';buildFilterButtons();renderModalList(type==='operator'?OPERATORS:WEAPONS);document.getElementById('modal').classList.add('open');setTimeout(()=>document.getElementById('modal-search').focus(),50);}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function handleOverlayClick(e){if(e.target===document.getElementById('modal'))closeModal();}
+function buildFilterButtons(){
   const fb=document.getElementById('filter-buttons');
-  if(modalType==='operator'){
-    const elements=['All','Heat','Cryo','Electric','Physical','Nature'];
-    const classes=['Striker','Guard','Caster','Defender','Supporter','Vanguard'];
-    fb.innerHTML=elements.map(e=>`<button class="filter-btn ${activeFilter===e.toLowerCase()||activeFilter===e?'active':''}" onclick="setFilter('${e.toLowerCase()}')">${e}</button>`).join('')
-      +'<span style="color:var(--border2);padding:0 4px">|</span>'
-      +classes.map(c=>`<button class="filter-btn ${activeFilter===c.toLowerCase()?'active':''}" onclick="setFilter('${c.toLowerCase()}')">${c}</button>`).join('');
-  } else {
-    const types=['All','Sword','Gt. Sword','Polearm','Arts Unit','Handcannon'], rars=['6★','5★','4★'];
-    fb.innerHTML=types.map(t=>`<button class="filter-btn ${activeFilter===t.toLowerCase()?'active':''}" onclick="setFilter('${t.toLowerCase()}')">${t}</button>`).join('')
-      +'<span style="color:var(--border2);padding:0 4px">|</span>'
-      +rars.map(r=>`<button class="filter-btn ${activeFilter===r.replace('★','star')?'active':''}" onclick="setFilter('${r.replace('★','star')}')">${r}</button>`).join('');
-  }
+  if(modalType==='operator'){const elements=['All','Heat','Cryo','Electric','Physical','Nature'],classes=['Striker','Guard','Caster','Defender','Supporter','Vanguard'];fb.innerHTML=elements.map(e=>`<button class="filter-btn ${activeFilter===e.toLowerCase()||activeFilter===e?'active':''}" onclick="setFilter('${e.toLowerCase()}')">${e}</button>`).join('')+'<span style="color:var(--border2);padding:0 4px">|</span>'+classes.map(c=>`<button class="filter-btn ${activeFilter===c.toLowerCase()?'active':''}" onclick="setFilter('${c.toLowerCase()}')">${c}</button>`).join('');}
+  else{const types=['All','Sword','Gt. Sword','Polearm','Arts Unit','Handcannon'],rars=['6★','5★','4★'];fb.innerHTML=types.map(t=>`<button class="filter-btn ${activeFilter===t.toLowerCase()?'active':''}" onclick="setFilter('${t.toLowerCase()}')">${t}</button>`).join('')+'<span style="color:var(--border2);padding:0 4px">|</span>'+rars.map(r=>`<button class="filter-btn ${activeFilter===r.replace('★','star')?'active':''}" onclick="setFilter('${r.replace('★','star')}')">${r}</button>`).join('');}
 }
-function setFilter(f) { activeFilter=f; buildFilterButtons(); filterModal(); }
-function filterModal() {
+function setFilter(f){activeFilter=f;buildFilterButtons();filterModal();}
+function filterModal(){
   const q=document.getElementById('modal-search').value.toLowerCase();
   const source=modalType==='operator'?OPERATORS:WEAPONS;
   let filtered=source;
-  if(activeFilter!=='all'){
-    filtered=filtered.filter(x=>{
-      const el=(x.element||'').toLowerCase(), cls=(x.cls||'').toLowerCase(), type=(x.type||'').toLowerCase();
-      return el===activeFilter||cls===activeFilter||type===activeFilter||(x.rarity+'star')===activeFilter;
-    });
-  }
-  if(q) filtered=filtered.filter(x=>x.name.toLowerCase().includes(q));
+  if(activeFilter!=='all')filtered=filtered.filter(x=>{const el=(x.element||'').toLowerCase(),cls=(x.cls||'').toLowerCase(),type=(x.type||'').toLowerCase();return el===activeFilter||cls===activeFilter||type===activeFilter||(x.rarity+'star')===activeFilter;});
+  if(q)filtered=filtered.filter(x=>x.name.toLowerCase().includes(q));
   renderModalList(filtered);
 }
-function renderModalList(items) {
+function renderModalList(items){
   const list=document.getElementById('modal-list');
   if(!items.length){list.innerHTML='<p style="grid-column:1/-1;font-size:12px;color:var(--muted);font-family:var(--font-mono);padding:8px">No results</p>';return;}
   list.innerHTML=items.map(item=>{
-    const isOp=modalType==='operator', el=isOp?item.element:null, elColor=getElColor(el);
+    const isOp=modalType==='operator',el=isOp?item.element:null,elColor=getElColor(el);
     const inPlan=plans.some(p=>p.item.id===item.id&&p.type===modalType);
     let iconContent;
     if(isOp){const imgPath=getCharImg(item.name);iconContent=imgPath?`<img src="${imgPath}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`:(EL_ICON[el]||OP_ICON);}
     else{const wpnImg=getWeaponImg(item.id);iconContent=wpnImg?`<img src="${wpnImg}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;">`:WPN_ICON;}
-    return `<button class="modal-item" onclick='selectItem(${JSON.stringify(item).replace(/'/g,"&#39;")})' style="${inPlan?'border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)':''}">
-      <div class="modal-item-icon" style="${el?`border-color:${elColor}40;`:''}">${iconContent}</div>
-      <div>
-        <div class="modal-item-name">${item.name}${inPlan?' <span style="color:var(--accent);font-size:9px">✓</span>':''}</div>
-        <div class="modal-item-sub">${isOp?`${item.cls} · ${item.element}`:item.type} · ${item.rarity}★</div>
-      </div>
-    </button>`;
+    return`<button class="modal-item" onclick='selectItem(${JSON.stringify(item).replace(/'/g,"&#39;")})' style="${inPlan?'border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)':''}"><div class="modal-item-icon" style="${el?`border-color:${elColor}40;`:''}">${iconContent}</div><div><div class="modal-item-name">${item.name}${inPlan?' <span style="color:var(--accent);font-size:9px">✓</span>':''}</div><div class="modal-item-sub">${isOp?`${item.cls} · ${item.element}`:item.type} · ${item.rarity}★</div></div></button>`;
   }).join('');
 }
-function selectItem(item) { addPlan(modalType,item); }
+function selectItem(item){addPlan(modalType,item);}
 
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal();closePinGroupPortal();clearHighlight();}
-});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closePinGroupPortal();clearHighlight();}});
 
 // ── INIT ──
 window.addEventListener('load', async () => {
   setupResize();
-  renderAll();
+  await initAuth();
   await Promise.all([loadDbData(), loadCharImages(), loadWeaponImages()]);
-  initMaps();
   renderAll();
+  initMaps();
 });
 </script>
 <script src="js/NavBar.js"></script>
