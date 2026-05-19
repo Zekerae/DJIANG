@@ -329,29 +329,26 @@ input[type=range]::-moz-range-thumb {
 .mid-focus-indicator { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.06em; padding: 1px 6px; border: 1px solid rgba(255,140,66,0.25); background: rgba(255,140,66,0.08); display: none; }
 .mid-focus-indicator.visible { display: inline-block; }
 
-/* ── NEED LIST (Collective) ── */
+/* ── COLLECTIVE: read-only need list ── */
 .need-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .need-section-label:first-child { padding-top: 2px; }
+
+/* Read-only row (no have input, just need qty + coverage bar) */
 .need-row {
   display: flex; align-items: center; gap: 6px;
   padding: 7px 8px; background: var(--surface2); border: 1px solid var(--border);
   margin-bottom: 4px; position: relative; min-width: 0; overflow: hidden;
 }
-.need-row.checked { opacity: 0.42; }
-.need-row.checked .need-row-name { text-decoration: line-through; color: var(--muted); }
-.need-check { width: 15px; height: 15px; flex-shrink: 0; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.need-row.checked .need-check { background: var(--accent); border-color: var(--accent); }
-.need-check-inner { width: 8px; height: 5px; border-left: 2px solid #0d1a18; border-bottom: 2px solid #0d1a18; transform: rotate(-45deg) translateY(-1px); opacity: 0; }
-.need-row.checked .need-check-inner { opacity: 1; }
-.need-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.need-row-name { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.need-row-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-.need-row-qty { font-family: var(--font-display); font-size: 14px; font-weight: 700; line-height: 1; }
-.need-have-wrap { display: flex; align-items: center; gap: 2px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
-.need-row-input { width: 38px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 10px; padding: 2px 3px; outline: none; text-align: right; transition: border-color 0.15s; }
-.need-row-input:focus { border-color: var(--accent); }
 .need-row.highlighted { border-color: var(--accent) !important; background: rgba(0,196,163,0.06); }
 .need-row.highlighted .need-row-name { color: var(--accent); }
+.need-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.need-row-name { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.need-row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.need-row-qty { font-family: var(--font-display); font-size: 14px; font-weight: 700; line-height: 1; }
+/* coverage fraction shown in muted small text */
+.need-row-coverage { font-family: var(--font-mono); font-size: 9px; color: var(--muted); white-space: nowrap; }
+.need-row-coverage.met { color: var(--accent); }
+/* progress bar along bottom */
 .need-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); transition: width 0.25s; opacity: 0.6; }
 
 /* ── FIND BUTTON ── */
@@ -363,6 +360,43 @@ input[type=range]::-moz-range-thumb {
 }
 .need-find-btn:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(255,140,66,0.08); }
 .need-find-btn svg { width: 10px; height: 10px; }
+
+/* ── COLLECTIVE EXP BREAKDOWN (read-only) ── */
+.exp-breakdown {
+  margin-bottom: 8px; padding: 10px 10px 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  min-width: 0; overflow: hidden;
+}
+.exp-breakdown-header {
+  font-family: var(--font-mono); font-size: 9px; color: var(--muted);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
+}
+.exp-breakdown-total { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--accent); }
+.exp-progress { height: 2px; background: var(--surface3); margin-bottom: 4px; }
+.exp-progress-fill { height: 100%; background: var(--accent); transition: width 0.25s; }
+.exp-coverage-text { font-family: var(--font-mono); font-size: 8px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
+
+/* read-only exp row in collective */
+.exp-item-row {
+  display: grid;
+  grid-template-columns: 7px 1fr auto auto;
+  gap: 5px; align-items: center;
+  padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 3px; min-width: 0;
+}
+.exp-item-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.exp-item-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.exp-item-need {
+  font-family: var(--font-display); font-size: 15px; font-weight: 700;
+  min-width: 28px; text-align: right; line-height: 1; flex-shrink: 0;
+}
+.exp-item-need.done { color: var(--accent); font-size: 13px; }
+/* read-only coverage shown instead of input */
+.exp-item-coverage { font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+.exp-item-coverage.met { color: var(--accent); }
+.exp-item-row.satisfied { opacity: 0.5; }
+.exp-item-row.satisfied .exp-item-name { text-decoration: line-through; }
 
 /* ── FIND DROPDOWN ── */
 .find-dropdown {
@@ -379,57 +413,6 @@ input[type=range]::-moz-range-thumb {
 .find-dropdown-item:hover { background: rgba(255,140,66,0.08); }
 .find-dropdown-map { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; flex: 1; }
 .find-dropdown-count { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
-
-/* ── EXP BREAKDOWN (Collective) ── */
-.exp-breakdown {
-  margin-bottom: 8px; padding: 10px 10px 8px;
-  background: var(--surface2); border: 1px solid var(--border);
-  min-width: 0; overflow: hidden;
-}
-.exp-breakdown-header {
-  font-family: var(--font-mono); font-size: 9px; color: var(--muted);
-  letter-spacing: 0.14em; text-transform: uppercase;
-  margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
-}
-.exp-breakdown-total { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--accent); }
-.exp-progress { height: 2px; background: var(--surface3); margin-bottom: 4px; }
-.exp-progress-fill { height: 100%; background: var(--accent); transition: width 0.25s; }
-.exp-coverage-text { font-family: var(--font-mono); font-size: 8px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
-
-.exp-item-row {
-  display: grid;
-  grid-template-columns: 7px 1fr auto auto auto;
-  gap: 5px; align-items: center;
-  padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
-  margin-bottom: 3px; min-width: 0;
-}
-.exp-item-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.exp-item-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.exp-item-need {
-  font-family: var(--font-display); font-size: 15px; font-weight: 700;
-  min-width: 28px; text-align: right; line-height: 1; flex-shrink: 0;
-}
-.exp-item-need.done { color: var(--accent); font-size: 13px; }
-.exp-item-have-wrap {
-  display: flex; align-items: center; gap: 3px;
-  font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0;
-}
-.exp-item-input {
-  width: 42px; background: var(--surface2); border: 1px solid var(--border2);
-  color: var(--text); font-family: var(--font-mono); font-size: 10px;
-  padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s;
-}
-.exp-item-input:focus { border-color: var(--accent); }
-.exp-item-find-btn {
-  width: 18px; height: 18px; flex-shrink: 0;
-  border: 1px solid var(--border2); background: transparent;
-  color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.12s;
-}
-.exp-item-find-btn:hover { border-color: var(--accent2); color: var(--accent2); }
-.exp-item-find-btn svg { width: 9px; height: 9px; }
-.exp-item-row.satisfied { opacity: 0.5; }
-.exp-item-row.satisfied .exp-item-name { text-decoration: line-through; }
 
 .mid-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; }
 .mid-empty svg { opacity: 0.12; margin-bottom: 12px; }
@@ -478,7 +461,7 @@ input[type=range]::-moz-range-thumb {
 .indiv-card-status.pending { color:var(--muted); border-color:var(--border); background:transparent; }
 
 .indiv-card-body { overflow:hidden; max-height:0; transition:max-height 0.25s ease; }
-.indiv-card.open .indiv-card-body { max-height:2000px; }
+.indiv-card.open .indiv-card-body { max-height:3000px; }
 
 .indiv-section { padding:0 10px 10px; }
 .indiv-section-head {
@@ -517,25 +500,45 @@ input[type=range]::-moz-range-thumb {
 .indiv-mat-row.satisfied-row .indiv-mat-name { text-decoration: line-through; color: var(--muted); }
 .indiv-mat-row-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); opacity: 0.5; pointer-events: none; }
 
-/* EXP rows in individual */
-.indiv-exp-row {
+/* ── INDIVIDUAL EXP SECTION (full breakdown with inputs) ── */
+.indiv-exp-block {
+  margin-bottom: 8px; padding: 10px 10px 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.indiv-exp-block-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 5px;
+}
+.indiv-exp-block-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; }
+.indiv-exp-block-total { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+.indiv-exp-block-bar { height: 3px; background: var(--surface3); margin-bottom: 4px; border-radius: 1px; }
+.indiv-exp-block-fill { height: 100%; background: var(--accent); transition: width 0.3s; border-radius: 1px; }
+.indiv-exp-block-coverage { font-family: var(--font-mono); font-size: 8px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
+
+/* per-tier row inside individual EXP block */
+.indiv-exp-tier-row {
   display: grid;
-  grid-template-columns: 8px 1fr auto auto;
+  grid-template-columns: 7px 1fr auto auto auto;
   gap: 5px; align-items: center;
-  padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
+  padding: 5px 7px; background: var(--surface2); border: 1px solid var(--border);
   margin-bottom: 3px; position: relative;
 }
-.indiv-exp-row.satisfied-row { opacity: 0.55; }
-.indiv-exp-row.satisfied-row .indiv-mat-name { text-decoration: line-through; color: var(--muted); }
-
-/* EXP progress in individual card */
-.indiv-exp-progress-wrap {
-  padding: 4px 7px 6px; background: var(--surface2); border: 1px solid var(--border);
-  margin-bottom: 6px;
+.indiv-exp-tier-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.indiv-exp-tier-name { font-family: var(--font-display); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.indiv-exp-tier-find {
+  width: 18px; height: 18px; flex-shrink: 0;
+  border: 1px solid var(--border2); background: transparent;
+  color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
 }
-.indiv-exp-progress-bar { height: 3px; background: var(--surface3); margin-bottom: 3px; border-radius: 1px; }
-.indiv-exp-progress-fill { height: 100%; background: var(--accent); transition: width 0.3s; border-radius: 1px; }
-.indiv-exp-progress-text { font-family: var(--font-mono); font-size: 8px; color: var(--muted); display: flex; justify-content: space-between; }
+.indiv-exp-tier-find:hover { border-color: var(--accent2); color: var(--accent2); }
+.indiv-exp-tier-find svg { width: 9px; height: 9px; }
+.indiv-exp-tier-need { font-family: var(--font-display); font-size: 13px; font-weight: 700; line-height: 1; flex-shrink: 0; text-align: right; }
+.indiv-exp-tier-need.done { color: var(--accent); font-size: 11px; }
+.indiv-exp-tier-row.satisfied-row { opacity: 0.52; }
+.indiv-exp-tier-row.satisfied-row .indiv-exp-tier-name { text-decoration: line-through; color: var(--muted); }
+.indiv-exp-tier-hint { font-family: var(--font-mono); font-size: 8px; color: var(--muted); padding: 3px 2px 0; opacity: 0.55; }
 
 /* save button area */
 .indiv-save-bar { padding:8px 10px; border-top:1px solid var(--border); display:flex; align-items:center; gap:8px; }
@@ -555,6 +558,16 @@ input[type=range]::-moz-range-thumb {
 .indiv-save-status { font-family:var(--font-mono); font-size:9px; color:var(--muted); letter-spacing:0.06em; flex:1; }
 .indiv-save-status.ok { color:var(--accent); }
 .indiv-save-status.err { color:var(--danger); }
+
+/* ── collective read-only hint ── */
+.collective-readonly-hint {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px; margin-bottom: 8px;
+  background: rgba(91,138,247,0.06); border: 1px solid rgba(91,138,247,0.18);
+  font-family: var(--font-mono); font-size: 9px; color: #5b8af7;
+  letter-spacing: 0.06em;
+}
+.collective-readonly-hint svg { width: 11px; height: 11px; flex-shrink: 0; }
 
 /* ── MAP PANEL ── */
 .map-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); min-width: 200px; }
@@ -1207,42 +1220,32 @@ function totalMats() {
 }
 
 // ══════════════════════════════════════════════════════
-// ── SHARED HAVE STATE (used by BOTH collective & individual) ──
-// Regular mats: haveQty[matKey] = number
-// EXP items:    expHave[groupKey][itemKey] = number
-// Checked (collective strikethrough): checkedMats[matKey] = bool
+// ── SHARED HAVE STATE ──
+// All inputs live in Individual view; collective reads this state read-only.
+// haveQty[matKey] = number
+// expHave[groupKey][itemKey] = number
 // ══════════════════════════════════════════════════════
-let haveQty    = {};   // { matKey: number }
-let expHave    = {};   // { groupKey: { itemKey: number } }
-let checkedMats = {};  // { matKey: bool }
+let haveQty = {};
+let expHave  = {};
 
 function getHave(matKey)                  { return haveQty[matKey] || 0; }
-function setHave(matKey, val)             {
-  haveQty[matKey] = Math.max(0, parseInt(val)||0);
-  renderBoth();
-}
+function setHave(matKey, val)             { haveQty[matKey] = Math.max(0, parseInt(val)||0); renderBoth(); }
 function getExpHave(groupKey, itemKey)    { return (expHave[groupKey] && expHave[groupKey][itemKey]) || 0; }
 function setExpHave(groupKey, itemKey, val) {
   if (!expHave[groupKey]) expHave[groupKey] = {};
   expHave[groupKey][itemKey] = Math.max(0, parseInt(val)||0);
   renderBoth();
 }
-function toggleCheck(matKey) {
-  checkedMats[matKey] = !checkedMats[matKey];
-  renderBoth();
-}
 
-// renderBoth: re-renders both collective need list and individual tracker
+// renderBoth: re-renders collective and individual simultaneously
 function renderBoth() {
   renderNeed();
   if (midMode === 'individual') renderIndividual();
 }
 
 // ── EXP BREAKDOWN COMPUTATION ──
-// Given rawExp needed and the group definition, compute per-tier needs accounting for owned items.
 function computeExpBreakdown(rawExp, groupDef, groupKey) {
   let remaining = rawExp;
-  // First pass: apply owned items from highest to lowest tier
   const used = {};
   for (const key of groupDef.keys) {
     const val  = MATS[key]?.expValue || 1;
@@ -1251,7 +1254,6 @@ function computeExpBreakdown(rawExp, groupDef, groupKey) {
     used[key]  = use;
     remaining  = Math.max(0, remaining - use * val);
   }
-
   const coveredExp = rawExp - remaining;
   const pct = rawExp > 0 ? Math.min(100, Math.round((coveredExp / rawExp) * 100)) : 0;
 
@@ -1259,11 +1261,9 @@ function computeExpBreakdown(rawExp, groupDef, groupKey) {
   for (const key of groupDef.keys) {
     const val  = MATS[key]?.expValue || 1;
     const have = getExpHave(groupKey, key);
-    // standalone: how many of just this tier would cover remaining
     const need = remaining > 0 ? Math.ceil(remaining / val) : 0;
     perTier[key] = { standaloneTotal: Math.ceil(rawExp / val), need, have, expVal: val };
   }
-
   return { perTier, coveredExp, remaining, totalExp: rawExp, pct };
 }
 
@@ -1627,15 +1627,14 @@ function renderFocusBar() {
 }
 
 // ══════════════════════════════════════════════════════
-// ── COLLECTIVE NEED LIST ──
-// Shows aggregated totals across all focused plans.
-// Have inputs here update the same global haveQty/expHave,
-// so individual view reflects changes immediately.
+// ── COLLECTIVE NEED LIST — READ-ONLY ──
+// Shows aggregated totals. No have inputs.
+// Coverage from global haveQty/expHave shown as progress bar + fraction text.
 // ══════════════════════════════════════════════════════
 function renderNeed() {
-  const empty  = document.getElementById('mid-empty');
-  const list   = document.getElementById('need-list');
-  const badge  = document.getElementById('mid-badge-wrap');
+  const empty      = document.getElementById('mid-empty');
+  const list       = document.getElementById('need-list');
+  const badge      = document.getElementById('mid-badge-wrap');
   const badgeLabel = document.getElementById('mid-badge');
 
   if (!plans.length) { empty.style.display='flex'; list.innerHTML=''; badge.style.display='none'; return; }
@@ -1656,131 +1655,116 @@ function renderNeed() {
 
   if (!entries.length && !hasExpData) { list.innerHTML=''; badge.style.display='none'; return; }
 
-  // Build categories
+  // Tally for badge (regular mats met vs total)
+  const checkableItems = entries.filter(([k]) => { const m=MATS[k]; return m && !m.isExpItem; });
+  const metCount = checkableItems.filter(([k, qty]) => getHave(k) >= qty).length;
+  badge.style.display = 'block';
+  badgeLabel.textContent = `${metCount}/${checkableItems.length}`;
+
+  // Group by category
   const byCategory = {};
 
-  // EXP groups first
   for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
     const rawKey = gDef.rawKey;
     if (!mats[rawKey]) continue;
-    const rawExp = mats[rawKey];
-    const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
-    byCategory[gDef.label] = { type:'exp', gKey, gDef, rawExp, ...breakdown };
+    byCategory[gDef.label] = { type:'exp', gKey, gDef, rawExp: mats[rawKey] };
   }
 
-  // Regular mats
   for (const [k, qty] of entries) {
     const mat = MATS[k]; if (!mat || mat.isExpItem) continue;
     if (!byCategory[mat.category]) byCategory[mat.category] = { type:'items', items:[] };
     if (byCategory[mat.category].type === 'items') byCategory[mat.category].items.push({k, qty, mat});
   }
 
-  // Badge: checked/total for regular mats
-  const checkableItems = entries.filter(([k]) => { const m=MATS[k]; return m && !m.isExpItem; });
-  const checkedCount = checkableItems.filter(([k]) => checkedMats[k]).length;
-  badge.style.display = 'block';
-  badgeLabel.textContent = `${checkedCount}/${checkableItems.length}`;
+  let html = `<div class="collective-readonly-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+    Enter inventory in the <strong style="color:var(--text);margin:0 3px">Individual</strong> tab — coverage updates here automatically.
+  </div>`;
 
-  let html = '';
   for (const [cat, data] of Object.entries(byCategory)) {
     html += `<div class="need-section-label">${cat}</div>`;
 
     if (data.type === 'exp') {
-      const { gKey, gDef, rawExp, perTier, coveredExp, remaining, pct } = data;
-      const fmtTotal   = fmtExp(rawExp);
-      const fmtCovered = fmtExp(coveredExp);
-      const allDone    = remaining === 0;
+      const { gKey, gDef, rawExp } = data;
+      const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
+      const { perTier, pct, coveredExp, remaining } = breakdown;
+      const allDone = remaining === 0;
 
       html += `<div class="exp-breakdown">
         <div class="exp-breakdown-header">
           <span>Total EXP needed</span>
-          <span class="exp-breakdown-total" style="${allDone?'color:var(--accent)':''}">${fmtTotal}</span>
+          <span class="exp-breakdown-total" style="${allDone?'color:var(--accent)':''}">${fmtExp(rawExp)}</span>
         </div>
         <div class="exp-progress"><div class="exp-progress-fill" style="width:${pct}%"></div></div>
         <div class="exp-coverage-text">${allDone
           ? '✓ Fully covered by owned items'
-          : `${pct}% covered · ${fmtCovered} in inventory`
+          : `${pct}% covered · ${fmtExp(coveredExp)} in inventory`
         }</div>`;
 
       for (const itemKey of gDef.keys) {
         const mat = MATS[itemKey]; if (!mat) continue;
-        const tier    = perTier[itemKey];
-        const expVal  = mat.expValue;
-        const expLabel= expVal >= 1000 ? (expVal/1000).toFixed(0)+'k' : expVal;
-        const isDone  = tier.need === 0;
+        const tier   = perTier[itemKey];
+        const isDone = tier.need === 0;
         const hasFind = matsWithPinsSet.has(itemKey);
-
-        const findBtn = hasFind ? `<button class="exp-item-find-btn" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)">
+        const findBtn = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
         </button>` : '';
 
-        const needDisplay = isDone
-          ? `<div class="exp-item-need done" title="Covered by inventory">✓</div>`
-          : `<div class="exp-item-need" style="color:${mat.color}" title="Need ${tier.need} more">${tier.need}</div>`;
-
         html += `<div class="exp-item-row${isDone?' satisfied':''}">
           <div class="exp-item-dot" style="background:${mat.color}"></div>
-          <div class="exp-item-name" title="${mat.name} — ${expLabel} EXP each">${mat.name}</div>
+          <div class="exp-item-name">${mat.name}</div>
           ${findBtn}
-          ${needDisplay}
-          <div class="exp-item-have-wrap">
-            <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
-            <input class="exp-item-input" type="number" min="0" value="${tier.have}"
-              onclick="event.stopPropagation()"
-              onchange="setExpHave('${gKey}','${itemKey}',this.value)"
-              oninput="setExpHave('${gKey}','${itemKey}',this.value)">
-          </div>
+          ${isDone
+            ? `<div class="exp-item-need done" title="Covered by inventory">✓</div>`
+            : `<div class="exp-item-need" style="color:${mat.color}" title="Need approx ${tier.need} (if only using this tier)">${tier.need}</div>`}
+          <div class="exp-item-coverage${isDone?' met':''}">${isDone ? '✓ met' : `${tier.have} / ${tier.standaloneTotal}`}</div>
         </div>`;
       }
 
       if (!allDone) {
         html += `<div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);padding:4px 2px 0;opacity:0.55">
-          ↑ counts shown if you only use that tier — mix tiers as desired
+          ↑ counts if only using that tier — mix freely
         </div>`;
       }
       html += `</div>`;
 
     } else {
       for (const {k, qty, mat} of (data.items||[])) {
-        const checked     = checkedMats[k] ? 'checked' : '';
         const highlighted = highlightedMat === k ? 'highlighted' : '';
-        const have    = getHave(k);
-        const pct     = Math.min(100, Math.round((have / qty) * 100));
-        const remaining = Math.max(0, qty - have);
-        const fmtQty  = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
-        const fmtTotal= qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
-        const hasFind = matsWithPinsSet.has(k);
-        const findBtn = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${k}',this,event)">
+        const have       = getHave(k);
+        const pct        = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
+        const remaining  = Math.max(0, qty - have);
+        const isMet      = have >= qty;
+        const fmtRemain  = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
+        const fmtTotal   = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
+        const hasFind    = matsWithPinsSet.has(k);
+        const findBtn    = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${k}',this,event)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
         </button>` : '';
 
-        html += `<div class="need-row ${checked} ${highlighted}">
-          <div class="need-check" onclick="toggleCheck('${k}')"><div class="need-check-inner"></div></div>
+        html += `<div class="need-row ${highlighted}" style="${isMet?'opacity:0.5;':'' }">
           <div class="need-dot" style="background:${mat.color}"></div>
-          <div class="need-row-name">${mat.name}</div>
-          <div class="need-row-right" onclick="event.stopPropagation()">
+          <div class="need-row-name" style="${isMet?'text-decoration:line-through;color:var(--muted)':''}">${mat.name}</div>
+          <div class="need-row-right">
             ${findBtn}
-            <div class="need-row-qty" style="color:${mat.color}">${fmtQty}</div>
-            <div class="need-have-wrap">
-              <span style="color:var(--muted);font-size:8px">have:</span>
-              <input class="need-row-input" type="number" min="0" value="${have}"
-                onclick="event.stopPropagation()"
-                onchange="setHave('${k}',this.value)"
-                oninput="setHave('${k}',this.value)">/<span style="color:var(--muted)">${fmtTotal}</span>
-            </div>
+            ${isMet
+              ? `<div class="need-row-qty" style="color:var(--accent);font-size:13px">✓</div>`
+              : `<div class="need-row-qty" style="color:${mat.color}">${fmtRemain}</div>`}
+            <div class="need-row-coverage${isMet?' met':''}">${have} / ${fmtTotal}</div>
           </div>
-          ${pct > 0 && !checked ? `<div class="need-progress" style="width:${pct}%"></div>` : ''}
+          ${pct > 0 && !isMet ? `<div class="need-progress" style="width:${pct}%"></div>` : ''}
         </div>`;
       }
     }
   }
+
   list.innerHTML = html;
 }
 
 // ══════════════════════════════════════════════════════
 // ── INDIVIDUAL TRACKER ──
-// Per-plan view with its own have inputs, but they write
-// to the same global haveQty/expHave so collective stays in sync.
+// All have inputs live here. Full EXP breakdown with inputs + find buttons.
+// Writing to haveQty/expHave triggers renderBoth() which keeps collective in sync.
 // ══════════════════════════════════════════════════════
 function toggleIndivCard(id) {
   if (indivOpenCards.has(id)) indivOpenCards.delete(id);
@@ -1804,13 +1788,15 @@ function buildIndivCard(plan) {
   const rarityColor = getRarityColor(plan.item.rarity);
   const isOpen  = indivOpenCards.has(plan.id);
   const mats    = calcMats(plan);
+  const matsWithPinsSet = new Set();
+  for (const map of dbMaps) for (const pin of map.pins) matsWithPinsSet.add(pin.material_id);
 
   const internalKeys = new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
 
-  // Regular (non-EXP) mat entries for this plan
+  // Regular mat entries
   const matEntries = Object.entries(mats).filter(([k]) => !internalKeys.has(k) && MATS[k] && !MATS[k].isExpItem);
 
-  // Progress: how many mats where have >= need
+  // Progress: regular mats only
   const totalItems  = matEntries.length;
   const doneCount   = matEntries.filter(([k, qty]) => getHave(k) >= qty).length;
   const progressPct = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
@@ -1829,7 +1815,7 @@ function buildIndivCard(plan) {
     avatarContent = wpnImg ? `<img src="${wpnImg}" alt="${plan.item.name}" loading="lazy">` : WPN_ICON;
   }
 
-  // ── EXP sections (with progress bar per group) ──
+  // ── EXP sections: full breakdown with progress bar + per-tier have inputs + find btns ──
   let expSectionsHtml = '';
   for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
     const rawKey = gDef.rawKey;
@@ -1837,22 +1823,20 @@ function buildIndivCard(plan) {
     const rawExp    = mats[rawKey];
     const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
     const { perTier, pct, coveredExp, remaining } = breakdown;
+    const allDone   = remaining === 0;
     const fmtTotal  = fmtExp(rawExp);
     const fmtCovered= fmtExp(coveredExp);
-    const allDone   = remaining === 0;
 
-    expSectionsHtml += `<div class="indiv-section-head">${gDef.label}
-      <span style="color:${allDone?'var(--accent)':'var(--accent2)'};">${fmtTotal}</span>
-    </div>`;
-
-    // EXP progress bar
-    expSectionsHtml += `<div class="indiv-exp-progress-wrap">
-      <div class="indiv-exp-progress-bar"><div class="indiv-exp-progress-fill" style="width:${pct}%"></div></div>
-      <div class="indiv-exp-progress-text">
-        <span>${allDone ? '✓ Fully covered' : `${pct}% covered`}</span>
-        <span>${fmtCovered} / ${fmtTotal}</span>
+    expSectionsHtml += `<div class="indiv-exp-block">
+      <div class="indiv-exp-block-header">
+        <span class="indiv-exp-block-label">${gDef.label}</span>
+        <span class="indiv-exp-block-total" style="color:${allDone?'var(--accent)':'var(--text)'}">${fmtTotal}</span>
       </div>
-    </div>`;
+      <div class="indiv-exp-block-bar"><div class="indiv-exp-block-fill" style="width:${pct}%"></div></div>
+      <div class="indiv-exp-block-coverage">${allDone
+        ? '✓ Fully covered by your inventory'
+        : `${pct}% covered · ${fmtCovered} in inventory`
+      }</div>`;
 
     for (const itemKey of gDef.keys) {
       const mat = MATS[itemKey]; if (!mat) continue;
@@ -1860,14 +1844,19 @@ function buildIndivCard(plan) {
       const expLabel = expVal >= 1000 ? (expVal/1000).toFixed(0)+'k' : expVal;
       const tier     = perTier[itemKey];
       const have     = tier.have;
-      const standTot = tier.standaloneTotal;
       const isSat    = tier.need === 0;
+      const hasFind  = matsWithPinsSet.has(itemKey);
 
-      expSectionsHtml += `<div class="indiv-exp-row${isSat?' satisfied-row':''}">
-        <div class="indiv-mat-dot" style="background:${mat.color}"></div>
-        <div class="indiv-mat-name" title="${mat.name} — ${expLabel} EXP each">${mat.name}</div>
-        <div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}" title="Need ~${standTot} if only using this tier">
-          ${isSat ? '✓' : standTot}
+      const findBtn = hasFind ? `<button class="indiv-exp-tier-find" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+      </button>` : '<span></span>';
+
+      expSectionsHtml += `<div class="indiv-exp-tier-row${isSat?' satisfied-row':''}">
+        <div class="indiv-exp-tier-dot" style="background:${mat.color}"></div>
+        <div class="indiv-exp-tier-name" title="${mat.name} — ${expLabel} EXP each">${mat.name}</div>
+        ${findBtn}
+        <div class="indiv-exp-tier-need${isSat?' done':''}" style="${isSat?'':'color:'+mat.color}" title="${isSat?'Covered':'Need ~'+tier.need+' if only using this tier'}">
+          ${isSat ? '✓' : tier.need}
         </div>
         <div class="indiv-have-wrap">
           <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
@@ -1878,9 +1867,15 @@ function buildIndivCard(plan) {
         </div>
       </div>`;
     }
+
+    if (!allDone) {
+      expSectionsHtml += `<div class="indiv-exp-tier-hint">↑ counts shown if only using that tier — mix tiers freely</div>`;
+    }
+
+    expSectionsHtml += `</div>`;
   }
 
-  // ── Regular mat sections ──
+  // ── Regular mat sections with have inputs ──
   const byCategory = {};
   for (const [k, qty] of matEntries) {
     const mat = MATS[k];
@@ -1896,13 +1891,17 @@ function buildIndivCard(plan) {
       const isSat  = have >= qty;
       const fmtQty = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
       const pct    = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
+      const hasFind = matsWithPinsSet.has(k);
+
+      // find button inline for individual mat rows
+      const findBtn = hasFind ? `<button class="indiv-exp-tier-find" title="Find on map" onclick="onFindBtn('${k}',this,event);event.stopPropagation()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+      </button>` : '';
 
       matSectionsHtml += `<div class="indiv-mat-row${qty===0?' zero':''}${isSat?' satisfied-row':''}">
         <div class="indiv-mat-dot" style="background:${mat.color}"></div>
         <div class="indiv-mat-name">${mat.name}</div>
-        <div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}">
-          ${isSat ? '✓' : fmtQty}
-        </div>
+        ${findBtn ? `<div style="display:flex;align-items:center;gap:3px;">${findBtn}<div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}">${isSat ? '✓' : fmtQty}</div></div>` : `<div class="indiv-mat-need${isSat?' satisfied':''}" style="${isSat?'':'color:'+mat.color}">${isSat ? '✓' : fmtQty}</div>`}
         <div class="indiv-have-wrap">
           <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
           <input class="indiv-have-input" type="number" min="0" value="${have}"
