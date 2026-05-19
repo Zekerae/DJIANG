@@ -18,7 +18,20 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font-body);height:100vh;overflow:hidden;display:flex;flex-direction:column}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-
+.sidebar-pin-name {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.sidebar-pin-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 1px;
+}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));transition:all 0.15s}
 .btn:hover{background:var(--surface3);border-color:var(--accent);color:var(--accent)}
 .btn-accent{background:var(--accent);border-color:var(--accent);color:#0d1a18}
