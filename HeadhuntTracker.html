@@ -6,7 +6,6 @@
 <title>Endfield — Headhunt Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ── Reset & Variables ─────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
@@ -46,14 +45,12 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Utility ───────────────────────────────────────────── */
 .mono   { font-family: 'Share Tech Mono', monospace; }
 .cond   { font-family: 'Barlow Condensed', sans-serif; }
 .fade-in { animation: fadeIn 0.35s ease both; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
 @keyframes spin   { to { transform: rotate(360deg); } }
 
-/* ── Navbar ────────────────────────────────────────────── */
 .navbar {
   position: sticky; top: 0; z-index: 100;
   background: rgba(13,13,15,0.92);
@@ -91,7 +88,6 @@ body {
 }
 .nav-link:hover { color: var(--text2); background: var(--surface2); }
 
-/* ── Char Banner ───────────────────────────────────────── */
 .char-banner {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -129,13 +125,10 @@ body {
   padding: 3px 10px; background: var(--surface2);
   border: 1px solid var(--border2); border-radius: var(--rs); color: var(--text2);
 }
-.dot {
-  width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
-}
+.dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 .dot-accent { background: var(--accent); }
 .dot-green  { background: var(--green); }
 
-/* ── Main Layout ───────────────────────────────────────── */
 main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
 
 .sec-label {
@@ -148,7 +141,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
 .sec-label::after { content:''; flex:1; height:1px; background: var(--border); }
 .sep { margin: 16px 0 6px; }
 
-/* ── Cards ─────────────────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -162,7 +154,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
   margin-bottom: 12px; flex-wrap: wrap;
 }
 
-/* ── Tags / Badges ─────────────────────────────────────── */
 .tag {
   font-family: 'Share Tech Mono', monospace;
   font-size: 9px; letter-spacing: 2px;
@@ -176,7 +167,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
   letter-spacing: 2px; color: var(--text2); text-transform: uppercase;
 }
 
-/* ── Collapsible Guide ─────────────────────────────────── */
 .collapse-toggle {
   display: flex; align-items: center; justify-content: space-between;
   padding: 13px 16px; cursor: pointer; user-select: none; gap: 10px;
@@ -187,7 +177,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
 .collapse-body { display: none; padding: 0 16px 14px; }
 .collapse-body.open { display: block; }
 
-/* ── Method Tabs ───────────────────────────────────────── */
 .method-tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
 .mtab {
   font-family: 'Share Tech Mono', monospace;
@@ -200,7 +189,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
 .method-panel { display: none; }
 .method-panel.active { display: block; }
 
-/* ── Steps Grid ────────────────────────────────────────── */
 .steps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -224,7 +212,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
   border-radius: 3px; word-break: break-all;
 }
 
-/* ── Info / Error / Loading Boxes ──────────────────────── */
 .info-box {
   background: rgba(106,173,250,0.06);
   border: 1px solid rgba(106,173,250,0.2);
@@ -263,7 +250,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
   border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0;
 }
 
-/* ── Tip Box ───────────────────────────────────────────── */
 .tip-box {
   background: rgba(106,173,250,0.04);
   border: 1px solid rgba(106,173,250,0.18);
@@ -287,7 +273,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
 }
 .tip-body li::before { content:'›'; position:absolute; left:0; color:var(--blue); }
 
-/* ── Input Card ────────────────────────────────────────── */
 .input-local { margin-left:auto; font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:1px; color:var(--text3); }
 .input-tabs { display:flex; gap:0; margin-bottom:12px; border-bottom:1px solid var(--border); }
 .itab {
@@ -302,7 +287,6 @@ main { max-width: 1200px; margin: 0 auto; padding: 20px 20px 60px; }
 .imode { display:none; }
 .imode.active { display:block; }
 
-/* ── Inputs & Buttons ──────────────────────────────────── */
 .field {
   background: var(--bg); border: 1px solid var(--border2);
   color: var(--text); font-family: 'Share Tech Mono', monospace;
@@ -330,7 +314,6 @@ select.field { cursor: pointer; }
 .token-row { display:flex; gap:6px; flex-wrap:wrap; }
 .token-row .field { flex:1; min-width:140px; }
 
-/* ── Found Banner ──────────────────────────────────────── */
 .found-banner {
   display: none;
   background: var(--surface);
@@ -353,7 +336,6 @@ select.field { cursor: pointer; }
 .p-weapon   { background:rgba(232,97,58,0.12);   color:var(--accent); border:1px solid rgba(232,97,58,0.25); }
 .p-unknown  { background:rgba(112,112,128,0.1);  color:var(--text3);  border:1px solid var(--border2); }
 
-/* ── Stats Grid ────────────────────────────────────────── */
 .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:16px; }
 @media(max-width:680px) { .stats-grid { grid-template-columns:repeat(2,1fr); } }
 
@@ -383,7 +365,6 @@ select.field { cursor: pointer; }
 .c-purple .stat-bg { color:var(--purple); }
 .c-green  .stat-bg { color:var(--green); }
 
-/* ── Panel (pity / dist) ───────────────────────────────── */
 .two-col  { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:16px; }
 @media(max-width:600px) { .two-col { grid-template-columns:1fr; } }
 
@@ -395,7 +376,6 @@ select.field { cursor: pointer; }
 }
 .panel-title::before { content:''; display:inline-block; width:2px; height:11px; background:var(--accent); border-radius:2px; }
 
-/* Pity bars */
 .pity-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
 .pity-row:last-child { margin-bottom:0; }
 .pity-lbl { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--text2); min-width:50px; }
@@ -408,7 +388,6 @@ select.field { cursor: pointer; }
 .pn-purple { color:var(--purple); }
 .pity-cap  { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--text3); min-width:26px; }
 
-/* Dist bars */
 .dist-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
 .dist-row:last-child { margin-bottom:0; }
 .dist-lbl  { font-family:'Share Tech Mono',monospace; font-size:11px; min-width:22px; text-align:right; }
@@ -417,7 +396,6 @@ select.field { cursor: pointer; }
 .dist-fill span { font-family:'Share Tech Mono',monospace; font-size:9px; color:rgba(0,0,0,0.7); white-space:nowrap; font-weight:600; }
 .dist-count { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; min-width:28px; text-align:right; }
 
-/* ── Pull Log ──────────────────────────────────────────── */
 .pull-log-section { display:none; }
 .pull-log-section.visible { display:block; }
 
@@ -449,7 +427,6 @@ select.field { cursor: pointer; }
 .pip-weapon   { background:var(--accent); }
 .pip-unknown  { background:var(--text3); }
 
-/* Banner stats strip */
 .banner-stats-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px; }
 @media(max-width:680px) { .banner-stats-strip { grid-template-columns:repeat(2,1fr); } }
 .bstat { background:var(--surface); border:1px solid var(--border); border-radius:var(--rs); padding:10px 12px; }
@@ -457,7 +434,6 @@ select.field { cursor: pointer; }
 .bstat-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; line-height:1; }
 .bstat-sub { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--text3); margin-top:2px; }
 
-/* Filter strip */
 .filter-strip { display:flex; gap:5px; margin-bottom:10px; flex-wrap:wrap; }
 .filt {
   font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:1px;
@@ -469,7 +445,6 @@ select.field { cursor: pointer; }
 .filt.f5:hover, .filt.f5.active { background:var(--purple); border-color:var(--purple); color:#fff; }
 .filt.f4:hover, .filt.f4.active { background:var(--blue); border-color:var(--blue); color:#000; }
 
-/* Pull list */
 .results-panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
 .results-head { padding:10px 14px 0; border-bottom:1px solid var(--border); }
 .results-head-label {
@@ -501,7 +476,6 @@ select.field { cursor: pointer; }
 .no-data { padding:36px; text-align:center; font-family:'Share Tech Mono',monospace; font-size:12px; color:var(--text3); }
 .no-data-icon { font-size:22px; margin-bottom:10px; opacity:0.2; }
 
-/* ── GOY Stats ─────────────────────────────────────────── */
 .goy-section { display:none; }
 .goy-section.visible { display:block; }
 .goy-overview-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px; }
@@ -531,7 +505,6 @@ select.field { cursor: pointer; }
 .goy-six-name  { font-family:'Barlow',sans-serif; font-size:12px; color:var(--text); flex:1; }
 .goy-six-pity  { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; }
 
-/* ── Tools ─────────────────────────────────────────────── */
 .page-tab-bar {
   display:flex; gap:4px; margin-bottom:20px;
   background:var(--surface); border:1px solid var(--border);
@@ -549,7 +522,6 @@ select.field { cursor: pointer; }
 .page-section { display:none; }
 .page-section.active { display:block; }
 
-/* Planner */
 .planner-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:6px; }
 @media(max-width:680px) { .planner-grid { grid-template-columns:1fr; } }
 .planner-card { background:var(--surface); border:1px solid var(--border); border-left:2px solid var(--accent); border-radius:var(--r); padding:16px; }
@@ -610,7 +582,6 @@ select.field { cursor: pointer; }
 .ec-purple { border-top:2px solid var(--purple); } .ec-purple .est-chip-val { color:var(--purple); }
 .ec-blue   { border-top:2px solid var(--blue);   } .ec-blue   .est-chip-val { color:var(--blue); }
 
-/* Income */
 .full-card { background:var(--surface); border:1px solid var(--border); border-left:2px solid var(--accent); border-radius:var(--r); padding:16px; margin-bottom:6px; }
 .date-row  { display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap; }
 .date-label { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--text3); letter-spacing:1px; white-space:nowrap; }
@@ -636,7 +607,7 @@ select.field { cursor: pointer; }
 .tally-total-val   { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; color:var(--green); }
 .tally-pulls-val   { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:15px; color:var(--accent); }
 
-/* Shop */
+/* ── Shop styles ── */
 .shop-unit-tabs { display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:12px; }
 .sutab {
   font-family:'Barlow Condensed',sans-serif; font-weight:600; font-size:13px;
@@ -646,9 +617,32 @@ select.field { cursor: pointer; }
 }
 .sutab.active { color:var(--accent); border-bottom-color:var(--accent); }
 .sutab:hover:not(.active) { color:var(--text2); }
-.shop-input-row { display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; margin-bottom:14px; }
+.shop-top-row {
+  display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin-bottom:14px;
+}
 .shop-input { background:var(--bg); border:1px solid var(--border2); color:var(--text); font-family:'Share Tech Mono',monospace; font-size:12px; padding:8px 12px; border-radius:var(--rs); outline:none; transition:border-color 0.15s; width:130px; }
 .shop-input:focus { border-color:var(--accent); }
+
+/* currency selector */
+.currency-selector-wrap {
+  display:flex; flex-direction:column; gap:5px;
+}
+.currency-selector {
+  background:var(--bg); border:1px solid var(--border2);
+  color:var(--text); font-family:'Share Tech Mono',monospace; font-size:11px;
+  padding:8px 10px; border-radius:var(--rs); outline:none;
+  transition:border-color 0.15s; cursor:pointer; min-width:160px;
+}
+.currency-selector:focus { border-color:var(--accent); }
+
+.currency-note {
+  font-family:'Share Tech Mono',monospace; font-size:9px;
+  color:var(--text3); padding:6px 10px;
+  background:rgba(112,112,128,0.06); border:1px solid var(--border);
+  border-radius:var(--rs); margin-bottom:12px; line-height:1.6;
+}
+.currency-note strong { color:var(--text2); }
+
 .bundle-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-top:12px; }
 @media(max-width:560px) { .bundle-grid { grid-template-columns:1fr 1fr; } }
 .bundle-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--rs); padding:11px; text-align:center; transition:all 0.15s; position:relative; }
@@ -665,7 +659,6 @@ select.field { cursor: pointer; }
 .shop-total   { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--text2); }
 .shop-total strong { color:var(--green); }
 
-/* ── AppData method note ────────────────────────────────── */
 .appdata-note {
   background: rgba(176,126,248,0.06);
   border: 1px solid rgba(176,126,248,0.2);
@@ -675,7 +668,6 @@ select.field { cursor: pointer; }
   color: #c4a0f8; border-radius: var(--rs); line-height: 1.65;
 }
 
-/* ── Footer ────────────────────────────────────────────── */
 footer {
   border-top: 1px solid var(--border); padding: 12px 20px;
   display: flex; align-items: center; justify-content: space-between;
@@ -684,15 +676,14 @@ footer {
 .footer-l { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--text3); letter-spacing:1px; }
 .footer-r { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:13px; letter-spacing:3px; color:var(--accent-dim); }
 
-/* ── Responsive ────────────────────────────────────────── */
 @media(max-width:480px) {
   main { padding: 14px 12px 48px; }
   .char-badges { display: none; }
   .result-box  { flex-direction: column; align-items: flex-start; }
   .tally-total-row { flex-direction: column; align-items: flex-start; }
   .shop-input  { width: 100%; }
-  .shop-input-row { flex-direction: column; align-items: stretch; }
-  .shop-input-row .btn { width: 100%; }
+  .shop-top-row { flex-direction: column; align-items: stretch; }
+  .shop-top-row .btn { width: 100%; }
   .date-row    { flex-direction: column; }
   .date-input  { flex: none; width: 100%; }
   .page-tab    { font-size: 11px; padding: 7px 10px; }
@@ -711,7 +702,6 @@ footer {
 </head>
 <body>
 
-<!-- ── Navbar ─────────────────────────────────────────── -->
 <nav class="navbar">
   <div class="navbar-inner">
     <div class="navbar-brand">Endfield ◈</div>
@@ -725,7 +715,6 @@ footer {
   </div>
 </nav>
 
-<!-- ── Hero Banner ────────────────────────────────────── -->
 <div class="char-banner">
   <div class="char-banner-inner">
     <div>
@@ -741,7 +730,6 @@ footer {
 
 <main>
 
-<!-- ── Guide ──────────────────────────────────────────── -->
 <div class="sec-label">Extraction Protocol</div>
 <div class="card" style="margin-bottom:16px">
   <div class="collapse-toggle" onclick="toggleEl('guideBody','guideChev')">
@@ -757,8 +745,6 @@ footer {
       <button class="mtab" onclick="switchMethod('token',this)">Method 2: Token Only</button>
       <button class="mtab" onclick="switchMethod('appdata',this)">Method 3: AppData Cache</button>
     </div>
-
-    <!-- Method 1: URL -->
     <div class="method-panel active" id="method-url">
       <div class="steps-grid">
         <div class="step"><div class="step-n">01</div><div class="step-t">Open Endfield and visit <strong>pull history</strong> in-game.</div></div>
@@ -769,8 +755,6 @@ footer {
         <div class="step"><div class="step-n">06</div><div class="step-t">Copy the <strong>full link</strong> and paste it into the URL tab below.</div></div>
       </div>
     </div>
-
-    <!-- Method 2: Token -->
     <div class="method-panel" id="method-token">
       <div class="steps-grid">
         <div class="step"><div class="step-n">01</div><div class="step-t">Go to <strong>act.skport.com/endfield/recordBook</strong> and log in.</div></div>
@@ -781,25 +765,20 @@ footer {
         <div class="step"><div class="step-n">06</div><div class="step-t">Paste into the <strong>Token tab</strong> and select your server.</div></div>
       </div>
     </div>
-
-    <!-- Method 3: AppData Cache -->
     <div class="method-panel" id="method-appdata">
       <div class="steps-grid">
-        <div class="step"><div class="step-n">01</div><div class="step-t">Open <strong>File Explorer</strong> and navigate to your AppData folder. Press <code>Win+R</code>, type <code>%AppData%</code>, and hit Enter.</div></div>
-        <div class="step"><div class="step-n">02</div><div class="step-t">Go to <code>...\Arknights Endfield\</code> (or the HyperGryph/Endfield subfolder matching your install).</div></div>
-        <div class="step"><div class="step-n">03</div><div class="step-t">Open the folder named <code>webCaches</code> or <code>Cache</code> — look for a subfolder like <code>Cache_Data</code>.</div></div>
-        <div class="step"><div class="step-n">04</div><div class="step-t">Find the file called <code>data_1</code> (no extension). Open it with a text editor such as Notepad++ or VS Code.</div></div>
-        <div class="step"><div class="step-n">05</div><div class="step-t">Use <strong>Find</strong> (<code>Ctrl+F</code>) to search for <code>token=</code>. Locate the most recent match inside a <code>gryphline.com</code> URL.</div></div>
-        <div class="step"><div class="step-n">06</div><div class="step-t">Copy the entire URL containing <code>ef-webview.gryphline.com/api/record/char?</code> and paste it into the <strong>Full URL</strong> tab below.</div></div>
+        <div class="step"><div class="step-n">01</div><div class="step-t">Open <strong>File Explorer</strong>. Press <code>Win+R</code>, type <code>%AppData%</code>, hit Enter.</div></div>
+        <div class="step"><div class="step-n">02</div><div class="step-t">Go to <code>...\Arknights Endfield\</code> (or the HyperGryph/Endfield subfolder).</div></div>
+        <div class="step"><div class="step-n">03</div><div class="step-t">Open the folder named <code>webCaches</code> or <code>Cache</code> — look for <code>Cache_Data</code>.</div></div>
+        <div class="step"><div class="step-n">04</div><div class="step-t">Find <code>data_1</code> (no extension). Open with Notepad++ or VS Code.</div></div>
+        <div class="step"><div class="step-n">05</div><div class="step-t">Use <strong>Find</strong> (<code>Ctrl+F</code>) to search for <code>token=</code> inside a <code>gryphline.com</code> URL.</div></div>
+        <div class="step"><div class="step-n">06</div><div class="step-t">Copy the full URL containing <code>ef-webview.gryphline.com/api/record/char?</code> and paste below.</div></div>
       </div>
-      <div class="appdata-note">
-        ⚠ <strong>Note:</strong> The game must have been launched at least once and you must have opened pull history in-game for the cache to be populated. The <code>data_1</code> file is a binary cache — most text editors can still search it. If the URL is fragmented, try Notepad++ with the <em>HEX view</em> or use a tool like <code>strings</code> on the file to extract readable text.
-      </div>
+      <div class="appdata-note">⚠ <strong>Note:</strong> The game must have been launched and pull history opened at least once. <code>data_1</code> is binary — Notepad++ or <code>strings</code> works best.</div>
     </div>
   </div>
 </div>
 
-<!-- ── Input ───────────────────────────────────────────── -->
 <div class="sec-label" id="sec-data">Data Link</div>
 <div class="card" style="margin-bottom:16px">
   <div class="card-body">
@@ -812,8 +791,6 @@ footer {
       <button class="itab active" onclick="switchInputMode('url',this)">Full URL</button>
       <button class="itab" onclick="switchInputMode('token',this)">Token</button>
     </div>
-
-    <!-- URL mode -->
     <div class="imode active" id="imode-url">
       <div class="info-box">ℹ The full URL is fetched via a CORS proxy. Your token is never stored — only used to retrieve pull data in your browser.</div>
       <div class="url-row">
@@ -824,8 +801,6 @@ footer {
         Paste the full URL from <span style="color:var(--accent)">HGWebview.log</span> or <span style="color:var(--accent)">AppData cache (data_1)</span>
       </div>
     </div>
-
-    <!-- Token mode -->
     <div class="imode" id="imode-token">
       <div class="info-box">ℹ Your token is used directly to query the Endfield API. Processed locally, never saved or transmitted to any third-party server.</div>
       <div class="token-row">
@@ -840,7 +815,6 @@ footer {
         Token from <span style="color:var(--accent)">act.skport.com/endfield/recordBook</span> or <span style="color:var(--accent)">goyfield.moe/records/import</span>
       </div>
     </div>
-
     <div class="error-box" id="errorBox"></div>
     <div class="loading-box" id="loadingBox">
       <div class="loader"></div><span id="loadingMsg">Fetching operator acquisition data…</span>
@@ -848,7 +822,6 @@ footer {
   </div>
 </div>
 
-<!-- ── Found Banner ────────────────────────────────────── -->
 <div class="found-banner" id="foundBanner">
   <span class="found-icon">⬇</span>
   <span class="found-label">Records loaded</span>
@@ -856,10 +829,8 @@ footer {
   <div class="found-breakdown" id="foundBreakdown"></div>
 </div>
 
-<!-- ── Pull Log ────────────────────────────────────────── -->
 <div class="pull-log-section" id="pullLogSection">
   <div class="sec-label" id="sec-log">Pull Log</div>
-
   <div class="tip-box">
     <div class="tip-toggle" onclick="toggleTip('tip-pulllog')">
       <span class="tip-icon">ℹ</span>
@@ -873,14 +844,12 @@ footer {
         <li>The <strong>@N</strong> number next to each 6★ or 5★ is the pity count — pulls since the last hit of that rarity.</li>
         <li><strong style="color:var(--red)">Red pity numbers</strong> (6★ ≥50, 5★ ≥8) mean you were in or near soft pity.</li>
         <li>Use the <strong>filter buttons</strong> to isolate pulls by rarity.</li>
-        <li>Records only go back <strong>90 days</strong> — pity may display lower than the real value if your last 6★ was before that window.</li>
+        <li>Records only go back <strong>90 days</strong> — pity may display lower than real value if your last 6★ was before that window.</li>
       </ul>
     </div>
   </div>
-
   <div class="banner-tab-bar" id="bannerTabBar"></div>
   <div class="banner-stats-strip fade-in" id="bannerStatsStrip"></div>
-
   <div class="two-col" id="bannerMid">
     <div class="panel">
       <div class="panel-title">Pity Counter</div>
@@ -902,14 +871,12 @@ footer {
       <div id="distBars"></div>
     </div>
   </div>
-
   <div class="filter-strip">
     <button class="filt active" onclick="filterPulls('all',this)">All</button>
     <button class="filt f6"    onclick="filterPulls('6',this)">6★ Only</button>
     <button class="filt f5"    onclick="filterPulls('5',this)">5★ Only</button>
     <button class="filt f4"    onclick="filterPulls('4',this)">4★ Only</button>
   </div>
-
   <div class="results-panel">
     <div class="results-head">
       <div class="results-head-label" id="pullListLabel">Pull Log</div>
@@ -918,7 +885,6 @@ footer {
   </div>
 </div>
 
-<!-- ── Data Notice ─────────────────────────────────────── -->
 <div class="sec-label sep">Data Notice</div>
 <div class="warn-box">
   <span class="warn-box-icon">⚠</span>
@@ -929,9 +895,7 @@ footer {
   </div>
 </div>
 
-<!-- ── Detailed Statistics ─────────────────────────────── -->
 <div class="sec-label sep" id="sec-stats">Detailed Statistics</div>
-
 <div class="tip-box">
   <div class="tip-toggle" onclick="toggleTip('tip-stats')">
     <span class="tip-icon">ℹ</span>
@@ -944,7 +908,7 @@ footer {
       <li><strong>Total Headhunts</strong> counts all pulls across every banner within the 90-day window.</li>
       <li><strong>Oroberyl Spent</strong> is estimated at 500 per pull.</li>
       <li><strong>Spark Progress</strong> shows your position in the current 120-pull spark cycle.</li>
-      <li><strong>Lucky 6★ Pulls</strong> counts 6★ operators received in 40 or fewer pulls — well before soft pity begins at #65.</li>
+      <li><strong>Lucky 6★ Pulls</strong> counts 6★ operators received in 40 or fewer pulls.</li>
       <li>The <strong>6★ Pull History</strong> lists every 6★ with pity count. <strong style="color:var(--green)">Green = lucky (≤15)</strong>, <strong style="color:var(--red)">red = soft/hard pity (≥65)</strong>.</li>
     </ul>
   </div>
@@ -952,7 +916,6 @@ footer {
 
 <div class="goy-section" id="goySection">
   <div class="goy-overview-grid" id="goyOverview"></div>
-
   <div class="tip-box" style="margin-bottom:10px">
     <div class="tip-toggle" onclick="toggleTip('tip-banner-breakdown')">
       <span class="tip-icon">ℹ</span>
@@ -963,12 +926,11 @@ footer {
       <div class="tip-divider"></div>
       <ul>
         <li>Each card represents one banner pool. <strong>Special Headhunting</strong> (purple) is where limited operators appear.</li>
-        <li><strong>Avg 6★ Pity</strong> is the mean pulls-per-6★ — lower is luckier. Global average is roughly 50–60.</li>
+        <li><strong>Avg 6★ Pity</strong> is the mean pulls-per-6★ — lower is luckier.</li>
         <li><strong>Standard</strong> banner (blue) has no rate-up. <strong>Beginner</strong> (gold) guarantees a 6★ within 20 pulls.</li>
       </ul>
     </div>
   </div>
-
   <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Per-Banner Breakdown</div>
   <div class="goy-banner-cards" id="goyBannerCards"></div>
   <div class="sec-label" style="margin-bottom:10px">6★ Pull History</div>
@@ -980,7 +942,6 @@ footer {
   Load pull data above to see detailed statistics.
 </div>
 
-<!-- ── Tools ───────────────────────────────────────────── -->
 <div class="sec-label sep" id="sec-tools">Tools</div>
 <div class="page-tab-bar">
   <button class="page-tab active" id="ptab-planner" onclick="switchPageTab('planner')">◈ Resource Planner</button>
@@ -1037,7 +998,6 @@ footer {
         </div>
       </div>
     </div>
-
     <div class="planner-card">
       <div class="planner-title">Pull Chance Calculator</div>
       <div class="pity-sync-row">
@@ -1053,8 +1013,8 @@ footer {
       </div>
       <div class="prob-row">
         <div class="prob-lbl">≥1× 6★</div>
-        <div class="prob-bar"><div class="prob-fill" id="prob6-fill"      style="width:0%;background:var(--gold)"></div></div>
-        <div class="prob-pct rc-gold"   id="prob6-pct">0%</div>
+        <div class="prob-bar"><div class="prob-fill" id="prob6-fill" style="width:0%;background:var(--gold)"></div></div>
+        <div class="prob-pct rc-gold" id="prob6-pct">0%</div>
       </div>
       <div class="prob-row">
         <div class="prob-lbl">Featured 6★</div>
@@ -1063,8 +1023,8 @@ footer {
       </div>
       <div class="prob-row">
         <div class="prob-lbl">≥1× 5★</div>
-        <div class="prob-bar"><div class="prob-fill" id="prob5-fill"      style="width:0%;background:var(--blue)"></div></div>
-        <div class="prob-pct rc-blue"   id="prob5-pct">0%</div>
+        <div class="prob-bar"><div class="prob-fill" id="prob5-fill" style="width:0%;background:var(--blue)"></div></div>
+        <div class="prob-pct rc-blue" id="prob5-pct">0%</div>
       </div>
       <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin:12px 0 7px">Expected from Your Inventory</div>
       <div class="est-chips">
@@ -1089,8 +1049,8 @@ footer {
       <ul>
         <li>Set <strong>From</strong> to today and <strong>To</strong> to the banner end date to see how much you can farm in time.</li>
         <li><strong>Daily Missions</strong> cap at 200 Oroberyl/day. Monthly Pass adds another 200/day.</li>
-        <li><strong>Event Oroberyl</strong> is spread across ~6 weeks per patch cycle. Adjust for heavier or lighter patches.</li>
-        <li>The forecast <strong>does not include</strong> one-time rewards or login bonuses — add those manually to the Planner.</li>
+        <li><strong>Event Oroberyl</strong> is spread across ~6 weeks per patch cycle.</li>
+        <li>The forecast <strong>does not include</strong> one-time rewards — add those manually to the Planner.</li>
       </ul>
     </div>
   </div>
@@ -1151,10 +1111,11 @@ footer {
       <div class="tip-divider"></div>
       <ul>
         <li>The <strong>First Purchase Bonus</strong> doubles Origeometry on the first-ever purchase of each bundle tier.</li>
-        <li>Switch the input unit between <strong>Oroberyl</strong>, <strong>Pulls</strong>, or <strong>Origeometry</strong> — the advisor converts automatically.</li>
-        <li>The <strong>BEST</strong> badge highlights the most cost-efficient bundle combination to meet your target.</li>
-        <li><strong>1 Origeometry = 75 Oroberyl</strong>. You need ~667 Origeometry for a single pull (without first-buy bonus on the largest bundle).</li>
-        <li>Prices shown in <strong>Ft (HUF)</strong> — actual prices may differ by region.</li>
+        <li>Switch the input unit between <strong>Oroberyl</strong>, <strong>Pulls</strong>, or <strong>Origeometry</strong>.</li>
+        <li>Select your <strong>currency</strong> to see prices in your local denomination.</li>
+        <li>The <strong>BEST</strong> badge highlights the most cost-efficient bundle combination.</li>
+        <li><strong>1 Origeometry = 75 Oroberyl</strong>. You need ~667 Origeometry for a single pull.</li>
+        <li>Exchange rates are approximate — actual in-game prices may vary slightly by region/platform.</li>
       </ul>
     </div>
   </div>
@@ -1171,7 +1132,8 @@ footer {
     <div class="info-box" id="shop-unit-hint">
       Enter how many <strong style="color:var(--accent)">Oroberyl</strong> you need. 500 = 1 pull · 1 Origeometry = 75 Oroberyl.
     </div>
-    <div class="shop-input-row">
+
+    <div class="shop-top-row">
       <div>
         <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase" id="shop-input-label">Oroberyl needed</div>
         <input class="shop-input" id="shop-need" type="number" min="1" max="999999" value="5000">
@@ -1183,9 +1145,19 @@ footer {
           <option value="0">No (standard)</option>
         </select>
       </div>
-      <button class="btn" onclick="calcShop()">Find Bundles ▶</button>
+      <div class="currency-selector-wrap">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Currency</div>
+        <select class="currency-selector" id="shop-currency" onchange="onCurrencyChange()"></select>
+      </div>
+      <button class="btn" style="align-self:flex-end" onclick="calcShop()">Find Bundles ▶</button>
     </div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:7px;text-transform:uppercase">Official Bundle Tiers (Ft)</div>
+
+    <div class="currency-note" id="currency-note">
+      Prices shown in <strong id="currency-note-name">HUF (Hungarian Forint)</strong>.
+      Exchange rates are approximate and for reference only — actual in-game prices may differ.
+    </div>
+
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:7px;text-transform:uppercase">Official Bundle Tiers</div>
     <div class="bundle-grid" id="bundle-ref"></div>
     <div class="shop-result" id="shop-result" style="display:none">
       <div class="shop-result-title">Recommended Purchase</div>
@@ -1199,7 +1171,7 @@ footer {
 </main>
 
 <footer>
-  <div class="footer-l">Data processed locally // No server transmission // Endfield Ops v3.1</div>
+  <div class="footer-l">Data processed locally // No server transmission // Endfield Ops v3.2</div>
   <div class="footer-r">DIJANG</div>
 </footer>
 
@@ -1232,15 +1204,52 @@ const POOL_LABELS = {
   E_CharacterGachaPoolType_Limited:   'Limited',
 };
 
-// ── Actual in-game bundle data (Ft pricing, real Origeometry amounts) ──
-const ORI_BUNDLES = [
-  { label:'Shard',   ft:399,    ori:12,  firstOri:24   },
-  { label:'Chip',    ft:1990,   ori:21,  firstOri:42   },
-  { label:'Crystal', ft:5990,   ori:34,  firstOri:68   },
-  { label:'Block',   ft:11990,  ori:57,  firstOri:114  },
-  { label:'Crate',   ft:19990,  ori:92,  firstOri:184  },
-  { label:'Cache',   ft:39990,  ori:194, firstOri:388  },
+// Base prices in HUF. Rate multipliers convert to other currencies.
+// Rates are approximate as of mid-2025 — for reference only.
+const ORI_BUNDLES_BASE = [
+  { label:'Shard',   huf:399,    ori:12,  firstOri:24   },
+  { label:'Chip',    huf:1990,   ori:21,  firstOri:42   },
+  { label:'Crystal', huf:5990,   ori:34,  firstOri:68   },
+  { label:'Block',   huf:11990,  ori:57,  firstOri:114  },
+  { label:'Crate',   huf:19990,  ori:92,  firstOri:184  },
+  { label:'Cache',   huf:39990,  ori:194, firstOri:388  },
 ];
+
+// currency code → { name, symbol, rate (1 HUF = X currency), decimals, symbolAfter }
+const CURRENCIES = {
+  HUF: { name:'HUF — Hungarian Forint',      symbol:'Ft',   rate:1,          decimals:0, symbolAfter:true  },
+  USD: { name:'USD — US Dollar',              symbol:'$',    rate:0.00264,    decimals:2  },
+  EUR: { name:'EUR — Euro',                   symbol:'€',    rate:0.00243,    decimals:2  },
+  GBP: { name:'GBP — British Pound',          symbol:'£',    rate:0.00209,    decimals:2  },
+  CAD: { name:'CAD — Canadian Dollar',        symbol:'CA$',  rate:0.00363,    decimals:2  },
+  AUD: { name:'AUD — Australian Dollar',      symbol:'A$',   rate:0.00407,    decimals:2  },
+  JPY: { name:'JPY — Japanese Yen',           symbol:'¥',    rate:0.398,      decimals:0  },
+  CNY: { name:'CNY — Chinese Yuan',           symbol:'¥',    rate:0.01906,    decimals:2  },
+  KRW: { name:'KRW — South Korean Won',       symbol:'₩',    rate:3.64,       decimals:0  },
+  TWD: { name:'TWD — New Taiwan Dollar',      symbol:'NT$',  rate:0.0853,     decimals:1  },
+  HKD: { name:'HKD — Hong Kong Dollar',       symbol:'HK$',  rate:0.0205,     decimals:2  },
+  SGD: { name:'SGD — Singapore Dollar',       symbol:'S$',   rate:0.00354,    decimals:2  },
+  MYR: { name:'MYR — Malaysian Ringgit',      symbol:'RM',   rate:0.01241,    decimals:2  },
+  PHP: { name:'PHP — Philippine Peso',        symbol:'₱',    rate:0.153,      decimals:0  },
+  IDR: { name:'IDR — Indonesian Rupiah',      symbol:'Rp',   rate:43.2,       decimals:0  },
+  THB: { name:'THB — Thai Baht',              symbol:'฿',    rate:0.0937,     decimals:1  },
+  VND: { name:'VND — Vietnamese Dong',        symbol:'₫',    rate:67.2,       decimals:0  },
+  BRL: { name:'BRL — Brazilian Real',         symbol:'R$',   rate:0.01529,    decimals:2  },
+  MXN: { name:'MXN — Mexican Peso',           symbol:'MX$',  rate:0.0536,     decimals:2  },
+  RUB: { name:'RUB — Russian Ruble',          symbol:'₽',    rate:0.2369,     decimals:0  },
+  TRY: { name:'TRY — Turkish Lira',           symbol:'₺',    rate:0.0913,     decimals:1  },
+  SAR: { name:'SAR — Saudi Riyal',            symbol:'﷼',    rate:0.00990,    decimals:2  },
+  AED: { name:'AED — UAE Dirham',             symbol:'د.إ',  rate:0.00969,    decimals:2  },
+  PLN: { name:'PLN — Polish Złoty',           symbol:'zł',   rate:0.01039,    decimals:2, symbolAfter:true },
+  CZK: { name:'CZK — Czech Koruna',           symbol:'Kč',   rate:0.0607,     decimals:1, symbolAfter:true },
+  RON: { name:'RON — Romanian Leu',           symbol:'lei',  rate:0.01208,    decimals:2, symbolAfter:true },
+  SEK: { name:'SEK — Swedish Krona',          symbol:'kr',   rate:0.02721,    decimals:2, symbolAfter:true },
+  NOK: { name:'NOK — Norwegian Krone',        symbol:'kr',   rate:0.02849,    decimals:2, symbolAfter:true },
+  DKK: { name:'DKK — Danish Krone',           symbol:'kr',   rate:0.01812,    decimals:2, symbolAfter:true },
+  CHF: { name:'CHF — Swiss Franc',            symbol:'CHF',  rate:0.002362,   decimals:2  },
+  NZD: { name:'NZD — New Zealand Dollar',     symbol:'NZ$',  rate:0.00447,    decimals:2  },
+  ZAR: { name:'ZAR — South African Rand',     symbol:'R',    rate:0.04837,    decimals:2  },
+};
 
 const SHOP_UNIT_CFG = {
   oro:   { hint:'Enter how many <strong style="color:var(--accent)">Oroberyl</strong> you need. 500 = 1 pull · 1 Origeometry = 75 Oroberyl.', label:'Oroberyl needed',    default:5000 },
@@ -1254,6 +1263,50 @@ const CORS_PROXIES = [
   url => `https://cors.eu.org/${url}`,
   url => `https://thingproxy.freeboard.io/fetch/${url}`,
 ];
+
+/* ════════════════════════════════════
+   CURRENCY HELPERS
+════════════════════════════════════ */
+function getCurrencyKey() {
+  return document.getElementById('shop-currency').value || 'HUF';
+}
+
+function convertPrice(huf) {
+  const key = getCurrencyKey();
+  const cfg = CURRENCIES[key];
+  return huf * cfg.rate;
+}
+
+function formatPrice(huf) {
+  const key = getCurrencyKey();
+  const cfg = CURRENCIES[key];
+  const val = huf * cfg.rate;
+  const rounded = cfg.decimals === 0 ? Math.round(val) : parseFloat(val.toFixed(cfg.decimals));
+  const formatted = rounded.toLocaleString(undefined, {
+    minimumFractionDigits: cfg.decimals,
+    maximumFractionDigits: cfg.decimals,
+  });
+  return cfg.symbolAfter ? `${formatted} ${cfg.symbol}` : `${cfg.symbol}${formatted}`;
+}
+
+function initCurrencySelector() {
+  const sel = document.getElementById('shop-currency');
+  Object.entries(CURRENCIES).forEach(([code, cfg]) => {
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = cfg.name;
+    if (code === 'HUF') opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function onCurrencyChange() {
+  const key = getCurrencyKey();
+  const cfg = CURRENCIES[key];
+  document.getElementById('currency-note-name').textContent = cfg.name;
+  initBundleRef();
+  document.getElementById('shop-result').style.display = 'none';
+}
 
 /* ════════════════════════════════════
    HELPERS
@@ -1289,26 +1342,20 @@ function setLoading(msg) {
   box.style.display = 'flex';
 }
 
-/* ════════════════════════════════════
-   TOGGLE HELPERS
-════════════════════════════════════ */
 function toggleEl(bodyId, chevId) {
   document.getElementById(bodyId).classList.toggle('open');
   document.getElementById(chevId).classList.toggle('open');
 }
-
 function toggleTip(id) {
   document.getElementById(id + '-body').classList.toggle('open');
   document.getElementById(id + '-chev').classList.toggle('open');
 }
-
 function switchMethod(m, btn) {
   document.querySelectorAll('.mtab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.method-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('method-' + m).classList.add('active');
 }
-
 function switchInputMode(m, btn) {
   document.querySelectorAll('.itab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1316,7 +1363,6 @@ function switchInputMode(m, btn) {
   document.getElementById('imode-' + m).classList.add('active');
   hideError();
 }
-
 function switchPageTab(tab) {
   document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
@@ -1344,7 +1390,6 @@ async function fetchWithProxy(apiUrl) {
 async function fetchAllPages(token, serverId, poolType) {
   const records = [];
   let seqId = null;
-
   for (let page = 1; page <= 200; page++) {
     const u = new URL('https://ef-webview.gryphline.com/api/record/char');
     u.searchParams.set('lang', 'en-us');
@@ -1352,7 +1397,6 @@ async function fetchAllPages(token, serverId, poolType) {
     u.searchParams.set('token', token);
     u.searchParams.set('server_id', String(serverId));
     if (seqId !== null) u.searchParams.set('seq_id', String(seqId));
-
     setLoading(`Scanning ${resolveLabel(poolType)} — ${records.length} records…`);
     try {
       const data = await fetchWithProxy(u.toString());
@@ -1374,7 +1418,7 @@ async function fetchAllPages(token, serverId, poolType) {
 async function loadFromUrl() {
   const urlStr = document.getElementById('urlInput').value.trim();
   if (!urlStr || !urlStr.includes('ef-webview.gryphline.com')) {
-    showError('Invalid URL. Paste the full link from HGWebview.log or the AppData cache (data_1) starting with https://ef-webview.gryphline.com/...');
+    showError('Invalid URL. Paste the full link from HGWebview.log or AppData cache (data_1) starting with https://ef-webview.gryphline.com/...');
     return;
   }
   hideError();
@@ -1406,9 +1450,8 @@ async function loadAllBanners(token, serverId) {
     try { allRecords.push(...await fetchAllPages(token, serverId, poolType)); } catch(e) {}
   }
   setLoading(null);
-
   if (!allRecords.length) {
-    showError('No records found.\n• Token may have expired — re-open pull history in-game\n• CORS proxies temporarily unavailable — try again in a few seconds or use a different browser');
+    showError('No records found.\n• Token may have expired — re-open pull history in-game\n• CORS proxies temporarily unavailable — try again in a few seconds');
     return;
   }
   processData(allRecords);
@@ -1424,18 +1467,15 @@ function processData(allRecords) {
     if (!grouped[key]) grouped[key] = { rawKey: key, label: resolveLabel(key), pulls: [] };
     grouped[key].pulls.push(r);
   });
-
   const ORDER = ['E_CharacterGachaPoolType_Special','E_CharacterGachaPoolType_Standard','E_CharacterGachaPoolType_NewHorizon','E_CharacterGachaPoolType_Beginner'];
   const sorted = Object.values(grouped).sort((a, b) => {
     const ia = ORDER.indexOf(a.rawKey), ib = ORDER.indexOf(b.rawKey);
     if (ia !== -1 && ib !== -1) return ia - ib;
     return ia !== -1 ? -1 : ib !== -1 ? 1 : a.label.localeCompare(b.label);
   });
-
   bannerData   = {};
   sorted.forEach(b => { bannerData[b.label] = { rawKey: b.rawKey, pulls: b.pulls }; });
   activeBanner = Object.keys(bannerData)[0] || null;
-
   buildBannerTabs(Object.keys(bannerData));
   renderActiveBanner();
   renderFoundBanner(grouped);
@@ -1443,18 +1483,15 @@ function processData(allRecords) {
   document.getElementById('pullLogSection').classList.add('visible');
 }
 
-/* ════════════════════════════════════
-   BANNER TABS
-════════════════════════════════════ */
 function buildBannerTabs(labels) {
   const bar = document.getElementById('bannerTabBar');
   bar.innerHTML = '';
   labels.forEach((label, i) => {
     const cls = classifyBanner(bannerData[label].rawKey);
     const btn = document.createElement('button');
-    btn.className   = 'btab' + (i === 0 ? ' active' : '');
+    btn.className    = 'btab' + (i === 0 ? ' active' : '');
     btn.dataset.label = label;
-    btn.innerHTML   = `<span class="btab-pip pip-${cls}"></span>${label}<span class="btab-count">${bannerData[label].pulls.length}</span>`;
+    btn.innerHTML    = `<span class="btab-pip pip-${cls}"></span>${label}<span class="btab-count">${bannerData[label].pulls.length}</span>`;
     btn.onclick = () => {
       bar.querySelectorAll('.btab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -1467,9 +1504,6 @@ function buildBannerTabs(labels) {
   });
 }
 
-/* ════════════════════════════════════
-   RENDER ACTIVE BANNER
-════════════════════════════════════ */
 function renderActiveBanner() {
   if (!activeBanner || !bannerData[activeBanner]) return;
   const { pulls, rawKey } = bannerData[activeBanner];
@@ -1481,20 +1515,15 @@ function renderActiveBanner() {
   if (rawKey === 'E_CharacterGachaPoolType_Special') syncPityToPlanner(pulls);
 }
 
-/* ════════════════════════════════════
-   BANNER STATS STRIP
-════════════════════════════════════ */
 function renderBannerStats(pulls) {
   const total = pulls.length;
   const s6    = pulls.filter(p => getRarity(p) === '6').length;
   const s5    = pulls.filter(p => getRarity(p) === '5').length;
-
   let pity = 0;
   const sixPities = [];
   [...pulls].reverse().forEach(p => { pity++; if (getRarity(p) === '6') { sixPities.push(pity); pity = 0; } });
-  const avg = sixPities.length ? Math.round(sixPities.reduce((a, b) => a + b, 0) / sixPities.length) : 0;
+  const avg  = sixPities.length ? Math.round(sixPities.reduce((a, b) => a + b, 0) / sixPities.length) : 0;
   const rate = n => total ? (n / total * 100).toFixed(2) + '%' : '0.00%';
-
   document.getElementById('bannerStatsStrip').innerHTML = [
     { color:'var(--accent)', lbl:'Total Pulls',  val:total, sub:'Headhunts' },
     { color:'var(--gold)',   lbl:'6★ Acquired',  val:s6,    sub:rate(s6) + ' rate' },
@@ -1508,16 +1537,12 @@ function renderBannerStats(pulls) {
     </div>`).join('');
 }
 
-/* ════════════════════════════════════
-   PITY BARS
-════════════════════════════════════ */
 function renderPityBars(pulls, rawKey) {
   const isWeapon  = rawKey && /weapon|forge|raft/i.test(rawKey);
   const hardPity6 = isWeapon ? 40 : 80;
   let p6 = 0, p5 = 0;
   for (let i = pulls.length - 1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r === '6') break; p6++; }
   for (let i = pulls.length - 1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r === '6' || r === '5') break; p5++; }
-
   document.getElementById('pity6Count').textContent = p6;
   document.getElementById('pity5Count').textContent = p5;
   document.getElementById('pity6Cap').textContent   = '/ ' + hardPity6;
@@ -1539,15 +1564,11 @@ function syncPityToPlanner(pulls) {
   recalcChances(getTotalPulls());
 }
 
-/* ════════════════════════════════════
-   DISTRIBUTION
-════════════════════════════════════ */
 function renderDistribution(pulls) {
   const counts = { 6:0, 5:0, 4:0, 3:0 };
   pulls.forEach(p => { const r = getRarity(p); if (r in counts) counts[r]++; });
-  const total  = pulls.length || 1;
-  const cfg    = { 6:'var(--gold)', 5:'var(--purple)', 4:'var(--blue)', 3:'var(--text3)' };
-
+  const total = pulls.length || 1;
+  const cfg   = { 6:'var(--gold)', 5:'var(--purple)', 4:'var(--blue)', 3:'var(--text3)' };
   document.getElementById('distBars').innerHTML = [6,5,4,3].map(r => `
     <div class="dist-row">
       <div class="dist-lbl" style="color:${cfg[r]}">${r}★</div>
@@ -1556,7 +1577,6 @@ function renderDistribution(pulls) {
       </div></div>
       <div class="dist-count" style="color:${cfg[r]}">${counts[r]}</div>
     </div>`).join('');
-
   setTimeout(() => {
     [6,5,4,3].forEach(r => {
       const el = document.getElementById('df' + r);
@@ -1565,9 +1585,6 @@ function renderDistribution(pulls) {
   }, 200);
 }
 
-/* ════════════════════════════════════
-   PULL LIST
-════════════════════════════════════ */
 function filterPulls(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filt').forEach(b => b.classList.remove('active'));
@@ -1577,7 +1594,6 @@ function filterPulls(f, btn) {
 
 function renderPullList(pulls) {
   const list = document.getElementById('pullList');
-
   let pity = 0;
   const withPity = [...pulls].reverse().map((p, i) => {
     pity++;
@@ -1586,14 +1602,11 @@ function renderPullList(pulls) {
     if (r === '6' || r === '5') pity = 0;
     return { ...p, pullNum: i + 1, pityCount: snap };
   }).reverse();
-
   const filtered = currentFilter === 'all' ? withPity : withPity.filter(p => getRarity(p) === currentFilter);
-
   if (!filtered.length) {
     list.innerHTML = '<div class="no-data"><div class="no-data-icon">◈</div>No records match current filter.</div>';
     return;
   }
-
   list.innerHTML = filtered.map(p => {
     const r        = getRarity(p);
     const stars    = '★'.repeat(parseInt(r));
@@ -1609,9 +1622,6 @@ function renderPullList(pulls) {
   }).join('');
 }
 
-/* ════════════════════════════════════
-   FOUND BANNER
-════════════════════════════════════ */
 function renderFoundBanner(grouped) {
   const total = Object.values(grouped).reduce((s, b) => s + b.pulls.length, 0);
   document.getElementById('foundTotal').textContent = '+' + total;
@@ -1622,23 +1632,17 @@ function renderFoundBanner(grouped) {
   document.getElementById('foundBanner').classList.add('visible');
 }
 
-/* ════════════════════════════════════
-   GOY STATS
-════════════════════════════════════ */
 function renderGoyStats(allRecords, bData) {
   document.getElementById('goyNoData').style.display = 'none';
   document.getElementById('goySection').classList.add('visible');
-
   const total = allRecords.length;
   const all6  = allRecords.filter(p => getRarity(p) === '6');
   const all5  = allRecords.filter(p => getRarity(p) === '5');
-
   let lucky = 0, cnt = 0;
   [...allRecords].reverse().forEach(p => {
     cnt++;
     if (getRarity(p) === '6') { if (cnt <= 40) lucky++; cnt = 0; }
   });
-
   const rate = (n) => total ? (n / total * 100).toFixed(2) + '% rate' : '—';
   document.getElementById('goyOverview').innerHTML = [
     { label:'Total Headhunts', val:total.toLocaleString(),      sub:`${Object.keys(bData).length} banners` },
@@ -1668,7 +1672,6 @@ function renderGoyStats(allRecords, bData) {
     for (let i = pulls.length - 1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r === '6' || r === '5') break; p5++; }
     let pAvg = 0; { let pt = 0; const sp = []; [...pulls].reverse().forEach(p => { pt++; if (getRarity(p) === '6') { sp.push(pt); pt = 0; } }); pAvg = sp.length ? Math.round(sp.reduce((a,x) => a+x,0)/sp.length) : 0; }
     const pct = (n) => tot ? (n/tot*100).toFixed(1) : '0';
-
     const card = document.createElement('div');
     card.className = 'goy-banner-card fade-in';
     card.innerHTML = `
@@ -1700,7 +1703,6 @@ function renderGoyStats(allRecords, bData) {
     const sixes = [];
     [...pulls].reverse().forEach(p => { pity++; if (getRarity(p) === '6') { sixes.push({ name: getName(p), pity }); pity = 0; } });
     if (!sixes.length) return;
-
     const card = document.createElement('div');
     card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--r, 10px);padding:14px;';
     card.innerHTML = `
@@ -1739,7 +1741,6 @@ function recalcPulls() {
   const oroPulls = Math.floor(oro / 500);
   const oriPulls = Math.floor(ori * 75 / 500);
   const total    = oroPulls + permits + oriPulls;
-
   document.getElementById('total-pulls-val').textContent = total;
   document.getElementById('total-pulls-sub').textContent = `${oroPulls} from Oro · ${permits} Permits · ${oriPulls} from Ori`;
   document.getElementById('hard-pity-count').textContent = Math.floor(total / 80) + '×';
@@ -1779,7 +1780,6 @@ function recalcChances(pulls) {
   const p5   = Math.min(100, pull5StarProb(pulls) * 100);
   const p6f  = Math.min(100, (1 - (1 - pull6StarProb(pulls, pity)) * 0.5) * 100);
   const fmt  = v => v >= 99.9 ? '100%' : v.toFixed(1) + '%';
-
   document.getElementById('prob6-pct').textContent      = fmt(p6);
   document.getElementById('prob6-feat-pct').textContent = fmt(p6f);
   document.getElementById('prob5-pct').textContent      = fmt(p5);
@@ -1788,7 +1788,6 @@ function recalcChances(pulls) {
     document.getElementById('prob6-feat-fill').style.width = p6f + '%';
     document.getElementById('prob5-fill').style.width      = p5  + '%';
   }, 80);
-
   const est = expectedCounts(pulls, pity);
   document.getElementById('est-6star').textContent = est.six < 1 && est.six > 0 ? est.six.toFixed(1) : Math.round(est.six);
   document.getElementById('est-5star').textContent = est.five;
@@ -1804,7 +1803,6 @@ function calcTally() {
   if (!fromVal || !toVal) { alert('Please select both a start and end date.'); return; }
   const from = new Date(fromVal), to = new Date(toVal);
   if (to <= from) { alert('End date must be after start date.'); return; }
-
   const days    = Math.ceil((to - from) / 86400000);
   const weeks   = days / 7;
   const daily   = (parseInt(document.getElementById('t-daily').value)   || 0)
@@ -1812,21 +1810,17 @@ function calcTally() {
   const wRoutine = parseInt(document.getElementById('t-weekly').value)  || 0;
   const wPass    = parseInt(document.getElementById('t-pass').value)    || 0;
   const eventPP  = parseInt(document.getElementById('t-event').value)   || 0;
-
   const dailyTotal = daily * days;
   const eventTotal = Math.round(eventPP * (days / 42));
   const grand      = Math.round(dailyTotal + (wRoutine + wPass) * weeks + eventTotal);
-
   document.getElementById('tally-breakdown').innerHTML = [
     { name:`Daily Missions (${days} days)`,             val: dailyTotal },
     { name:`Weekly Routine (${weeks.toFixed(1)} weeks)`, val: Math.round(wRoutine * weeks) },
     { name:`Protocol Pass (${weeks.toFixed(1)} weeks)`,  val: Math.round(wPass * weeks) },
     { name:`Events (~${(days/42).toFixed(1)} patches)`,  val: eventTotal },
   ].map(r => `<div class="tally-row"><div class="tally-name">${r.name}</div><div class="tally-val">+${r.val.toLocaleString()}</div></div>`).join('');
-
   document.getElementById('tally-total-oro').textContent   = grand.toLocaleString() + ' Oroberyl';
   document.getElementById('tally-total-pulls').textContent = '≈ ' + Math.floor(grand / 500) + ' pulls';
-
   const fmt = d => d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
   document.getElementById('tally-date-range').textContent  = `${fmt(from)} → ${fmt(to)} (${days} days)`;
   document.getElementById('tally-result').style.display    = 'block';
@@ -1834,8 +1828,6 @@ function calcTally() {
 
 /* ════════════════════════════════════
    SHOP ADVISOR
-   Uses a DP-style greedy: find the cheapest combination of bundles
-   (by Ft cost) that covers the target Origeometry.
 ════════════════════════════════════ */
 function switchShopUnit(u, btn) {
   shopUnit = u;
@@ -1859,26 +1851,17 @@ function calcShop() {
   const rawVal   = parseInt(document.getElementById('shop-need').value) || 0;
   if (rawVal <= 0) return;
   const firstBuy  = document.getElementById('shop-firstbuy').value === '1';
-  // Convert target to Origeometry needed
   const targetOro = toOroberyl(rawVal, shopUnit);
   let targetOri   = Math.ceil(targetOro / 75);
 
-  // Build effective bundle list with Ft cost per Ori for sorting
-  const bundles = ORI_BUNDLES.map(b => ({
+  const bundles = ORI_BUNDLES_BASE.map(b => ({
     ...b,
     eff: firstBuy ? b.firstOri : b.ori,
-    costPerOri: b.ft / (firstBuy ? b.firstOri : b.ori),
   }));
 
-  // Greedy by value: pick most cost-efficient (lowest Ft/Ori) bundle that doesn't
-  // massively overshoot. We iterate largest→smallest to prefer fewer transactions.
   const combo = [];
   let rem = targetOri;
 
-  // Sort by cost-efficiency descending (best value first = lowest Ft/Ori)
-  const sorted = [...bundles].sort((a, b) => a.costPerOri - b.costPerOri);
-
-  // Use the most efficient bundle(s) that together cover the remainder
   for (const b of [...bundles].reverse()) {
     if (rem <= 0) break;
     if (b.eff <= 0) continue;
@@ -1888,17 +1871,14 @@ function calcShop() {
       rem -= b.eff * qty;
     }
   }
-  // Cover any leftover with the smallest bundle that can cover it
   if (rem > 0) {
     const cover = bundles.find(b => b.eff >= rem) || bundles[bundles.length - 1];
     const existing = combo.find(c => c.bundle.label === cover.label);
     if (existing) { existing.qty++; existing.ori += cover.eff; }
     else          { combo.push({ bundle: cover, qty: 1, ori: cover.eff }); }
-    rem = 0;
   }
 
-  // Recalculate totals
-  const totalFt    = combo.reduce((s, c) => s + c.bundle.ft * c.qty, 0);
+  const totalHuf   = combo.reduce((s, c) => s + c.bundle.huf * c.qty, 0);
   const totalOri   = combo.reduce((s, c) => s + c.ori, 0);
   const totalOro   = totalOri * 75;
   const totalPulls = Math.floor(totalOro / 500);
@@ -1911,24 +1891,23 @@ function calcShop() {
 
   document.getElementById('shop-converted-label').textContent = convLabel[shopUnit];
   document.getElementById('shop-combo').innerHTML = combo.map(c =>
-    `<div class="shop-pill">${c.qty}× ${c.bundle.label} <span>${(c.bundle.ft * c.qty).toLocaleString()} Ft</span></div>`
+    `<div class="shop-pill">${c.qty}× ${c.bundle.label} <span>${formatPrice(c.bundle.huf * c.qty)}</span></div>`
   ).join('');
   document.getElementById('shop-total').innerHTML =
-    `Total: <strong>${totalFt.toLocaleString()} Ft</strong> → ${totalOri} Origeometry → ${totalOro.toLocaleString()} Oroberyl ≈ ${totalPulls} pulls`;
+    `Total: <strong>${formatPrice(totalHuf)}</strong> → ${totalOri} Origeometry → ${totalOro.toLocaleString()} Oroberyl ≈ ${totalPulls} pulls`;
 
-  // Highlight recommended bundles in the reference grid
   const usedLabels = new Set(combo.map(c => c.bundle.label));
   document.querySelectorAll('#bundle-ref .bundle-card').forEach((el, i) => {
-    el.classList.toggle('recommended', usedLabels.has(ORI_BUNDLES[i].label));
+    el.classList.toggle('recommended', usedLabels.has(ORI_BUNDLES_BASE[i].label));
   });
   document.getElementById('shop-result').style.display = 'block';
 }
 
 function initBundleRef() {
-  document.getElementById('bundle-ref').innerHTML = ORI_BUNDLES.map(b => `
+  document.getElementById('bundle-ref').innerHTML = ORI_BUNDLES_BASE.map(b => `
     <div class="bundle-card">
       <div class="bundle-ori">${b.ori} Ori</div>
-      <div class="bundle-price">${b.ft.toLocaleString()} Ft</div>
+      <div class="bundle-price">${formatPrice(b.huf)}</div>
       <div class="bundle-oroberyls">${(b.ori*75).toLocaleString()} Oroberyl</div>
       <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">1st: ${b.firstOri} Ori (×2)</div>
     </div>`).join('');
@@ -1942,6 +1921,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextMonth = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
   document.getElementById('tally-from').value = today;
   document.getElementById('tally-to').value   = nextMonth;
+  initCurrencySelector();
   initBundleRef();
   recalcPulls();
 });

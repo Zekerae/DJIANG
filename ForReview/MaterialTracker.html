@@ -6,6 +6,7 @@
 <title>Endfield — Ascension Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/NavBar.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -26,7 +27,57 @@ body {
   font-family: var(--font-body);
   height: 100vh; overflow: hidden;
   display: flex; flex-direction: column;
+  /* Push app down to make room for the fixed navbar */
+  padding-top: clamp(48px, 6vh, 64px);
 }
+
+/* ── SUB-NAVBAR (from v2.2) ── */
+.sub-navbar {
+  position: fixed; top: 0; left: 0; width: 100%; height: 48px;
+  background: #0a0a0a; border-bottom: 1px solid var(--border);
+  z-index: 2147483647; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px 0 0;
+}
+.sub-nav-left { display: flex; align-items: center; height: 100%; }
+.sub-navbar .hamburger {
+  width: 48px; height: 100%; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; cursor: pointer;
+}
+.sub-navbar .hamburger span {
+  display: block; width: 18px; height: 1.5px; background: #878787; transition: all 0.3s;
+}
+.sub-navbar .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.sub-navbar .hamburger.open span:nth-child(2) { opacity: 0; }
+.sub-navbar .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+.sub-nav-logo {
+  background: #e05030; color: #0a0a0a; font-family: var(--font-display); font-weight: 800;
+  padding: 2px 8px; font-size: 13px; margin: 0 16px; border-radius: 2px; letter-spacing: 0.05em;
+}
+.sub-nav-back {
+  color: var(--accent); font-family: var(--font-mono); font-size: 10px; text-decoration: none;
+  font-weight: 600; margin-right: 16px; display: flex; align-items: center; gap: 6px; letter-spacing: 0.1em;
+}
+.sub-nav-back:hover { color: #fff; }
+.sub-nav-crumbs {
+  font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+  display: flex; gap: 6px; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.sub-nav-crumbs .sep { color: var(--border2); }
+.sub-nav-crumbs span.active { color: #fff; font-weight: 600; }
+.sub-nav-right { display: flex; align-items: center; height: 100%; }
+.sub-nav-user {
+  border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-mono);
+  font-size: 10px; padding: 4px 12px; cursor: pointer; letter-spacing: 0.05em; font-weight: 600;
+  background: rgba(0,196,163,0.05); transition: all 0.2s;
+}
+.sub-nav-user:hover { background: rgba(0,196,163,0.15); }
+@media (max-width: 768px) {
+  .sub-nav-crumbs, .sub-nav-logo { display: none; }
+  .sub-nav-back { margin-left: 16px; }
+  .sub-nav-user { padding: 4px 8px; font-size: 9px; }
+}
+
 body::before {
   content: ''; position: fixed; inset: 0;
   background-image:
@@ -34,6 +85,8 @@ body::before {
     linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
+
+/* ── HEADER ── */
 .header {
   position: relative; z-index: 10;
   display: flex; align-items: center; gap: 16px;
@@ -55,6 +108,7 @@ body::before {
 .db-dot.loading { background: var(--accent2); animation: pulse 1s ease-in-out infinite; }
 @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
 
+/* ── BUTTONS ── */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 14px; border: 1px solid var(--border2);
@@ -73,6 +127,7 @@ body::before {
 .btn-ghost:hover { border-color: var(--border2); color: var(--text); background: var(--surface); }
 .btn-danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(224,80,96,0.08); }
 
+/* ── LAYOUT ── */
 .main { display: flex; flex: 1; min-height: 0; position: relative; z-index: 1; overflow: hidden; }
 
 .left-panel {
@@ -96,6 +151,7 @@ body::before {
 }
 .resize-handle:hover, .resize-handle.dragging { background: var(--accent); opacity: 0.35; }
 
+/* ── PLANS PANEL ── */
 .plans-header { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .plans-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 3px; }
 .plans-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; margin-bottom: 10px; }
@@ -117,6 +173,7 @@ body::before {
 .plans-body::-webkit-scrollbar { width: 3px; }
 .plans-body::-webkit-scrollbar-thumb { background: var(--surface3); }
 
+/* ── PLAN CARDS ── */
 .plan-card {
   background: var(--surface); border: 1px solid var(--border);
   margin-bottom: 8px; position: relative; animation: slideIn 0.18s ease;
@@ -195,6 +252,7 @@ input[type=range]::-moz-range-thumb {
 }
 .quick-btn:hover, .quick-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.08); }
 
+/* ── SKILL SECTION ── */
 .skill-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
 .skill-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
 .skill-toggle-all { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.06em; color: var(--accent); cursor: pointer; text-transform: uppercase; border: none; background: transparent; padding: 0; }
@@ -217,6 +275,7 @@ input[type=range]::-moz-range-thumb {
 .plans-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .plans-empty-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); opacity: 0.5; }
 
+/* ── MID PANEL ── */
 .mid-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
 .mid-head::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 50px; height: 1px; background: var(--accent2); }
 .mid-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 3px; }
@@ -253,7 +312,7 @@ input[type=range]::-moz-range-thumb {
 .mid-focus-indicator { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.06em; padding: 1px 6px; border: 1px solid rgba(255,140,66,0.25); background: rgba(255,140,66,0.08); display: none; }
 .mid-focus-indicator.visible { display: inline-block; }
 
-/* NEED LIST */
+/* ── NEED LIST ── */
 .need-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .need-section-label:first-child { padding-top: 2px; }
 .need-row {
@@ -279,6 +338,7 @@ input[type=range]::-moz-range-thumb {
 .need-row.highlighted .need-row-name { color: var(--accent); }
 .need-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); transition: width 0.25s; opacity: 0.6; }
 
+/* ── FIND BUTTON ── */
 .need-find-btn {
   width: 20px; height: 20px; flex-shrink: 0;
   border: 1px solid var(--border2); background: var(--surface);
@@ -288,6 +348,7 @@ input[type=range]::-moz-range-thumb {
 .need-find-btn:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(255,140,66,0.08); }
 .need-find-btn svg { width: 10px; height: 10px; }
 
+/* ── FIND DROPDOWN ── */
 .find-dropdown {
   position: fixed; z-index: 9999;
   background: var(--surface); border: 1px solid var(--border2);
@@ -303,7 +364,7 @@ input[type=range]::-moz-range-thumb {
 .find-dropdown-map { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; flex: 1; }
 .find-dropdown-count { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
 
-/* ── IMPROVED EXP BREAKDOWN ── */
+/* ── EXP BREAKDOWN (v2.3 improved version) ── */
 .exp-breakdown {
   margin-bottom: 8px; padding: 10px 10px 8px;
   background: var(--surface2); border: 1px solid var(--border);
@@ -329,13 +390,11 @@ input[type=range]::-moz-range-thumb {
 }
 .exp-item-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .exp-item-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-/* The "need" count — large and prominent */
 .exp-item-need {
   font-family: var(--font-display); font-size: 15px; font-weight: 700;
   min-width: 28px; text-align: right; line-height: 1; flex-shrink: 0;
 }
 .exp-item-need.done { color: var(--accent); font-size: 13px; }
-/* "have" input */
 .exp-item-have-wrap {
   display: flex; align-items: center; gap: 3px;
   font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0;
@@ -346,7 +405,6 @@ input[type=range]::-moz-range-thumb {
   padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s;
 }
 .exp-item-input:focus { border-color: var(--accent); }
-/* find button */
 .exp-item-find-btn {
   width: 18px; height: 18px; flex-shrink: 0;
   border: 1px solid var(--border2); background: transparent;
@@ -355,7 +413,6 @@ input[type=range]::-moz-range-thumb {
 }
 .exp-item-find-btn:hover { border-color: var(--accent2); color: var(--accent2); }
 .exp-item-find-btn svg { width: 9px; height: 9px; }
-/* satisfied row style */
 .exp-item-row.satisfied { opacity: 0.5; }
 .exp-item-row.satisfied .exp-item-name { text-decoration: line-through; }
 
@@ -364,7 +421,7 @@ input[type=range]::-moz-range-thumb {
 .mid-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .mid-empty-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); opacity: 0.5; }
 
-/* MAP */
+/* ── MAP PANEL ── */
 .map-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); min-width: 200px; }
 .map-top-bar { display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; overflow-x: auto; }
 .map-tab { padding: 10px 14px; font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; background: transparent; border: none; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
@@ -372,7 +429,7 @@ input[type=range]::-moz-range-thumb {
 .map-tab:hover { color: var(--text); }
 .map-hint { margin-left: auto; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.08em; white-space: nowrap; padding-left: 10px; }
 
-.map-filter-bar { padding: 6px 14px; border-bottom: 1px solid var(--border); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; flex-shrink: 0; background: var(--surface); display: none; }
+.map-filter-bar { padding: 6px 14px; border-bottom: 1px solid var(--border); display: none; gap: 6px; align-items: center; flex-wrap: wrap; flex-shrink: 0; background: var(--surface); }
 .map-filter-bar.visible { display: flex; }
 .map-filter-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; flex-shrink: 0; }
 .mat-chip { display: flex; align-items: center; gap: 4px; padding: 2px 8px; font-family: var(--font-mono); font-size: 9px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.12s; letter-spacing: 0.04em; }
@@ -381,22 +438,24 @@ input[type=range]::-moz-range-thumb {
 .mat-chip-dot { width: 6px; height: 6px; border-radius: 50%; }
 
 .map-area { flex: 1; position: relative; overflow: hidden; }
-/* Deselect overlay — click on empty map area to clear highlight */
+
+/* Deselect hint (v2.3) */
 .map-deselect-hint {
   position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%);
   font-family: var(--font-mono); font-size: 9px; color: var(--muted);
   background: rgba(13,15,18,0.85); border: 1px solid var(--border);
   padding: 3px 10px; z-index: 25; pointer-events: none;
-  opacity: 0; transition: opacity 0.3s;
-  white-space: nowrap;
+  opacity: 0; transition: opacity 0.3s; white-space: nowrap;
 }
 .map-deselect-hint.visible { opacity: 1; }
+
 .map-viewport { position: absolute; inset: 0; cursor: grab; overflow: hidden; }
 .map-viewport.grabbing { cursor: grabbing; }
 .map-inner { position: absolute; transform-origin: 0 0; }
 .map-canvas-wrap { position: absolute; inset: 0; display: none; }
 .map-canvas-wrap.active { display: block; }
 
+/* Pins — no clip-path to avoid clipping child elements */
 .user-pin {
   position: absolute; transform: translate(-50%,-50%);
   display: flex; align-items: center; gap: 5px;
@@ -434,6 +493,7 @@ input[type=range]::-moz-range-thumb {
   box-shadow: 0 1px 4px rgba(0,0,0,0.6); z-index: 20;
 }
 
+/* Pin group portal */
 .pin-group-portal {
   position: fixed; z-index: 5000;
   background: rgba(13,15,18,0.98); border: 1px solid var(--border2);
@@ -470,9 +530,6 @@ input[type=range]::-moz-range-thumb {
 @keyframes spin { to { transform: rotate(360deg); } }
 .map-loading-text { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
 
-.map-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
-.map-placeholder-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(0,196,163,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,196,163,0.03) 1px, transparent 1px); background-size: 50px 50px; }
-
 .map-legend { position: absolute; top: 10px; left: 10px; z-index: 20; background: rgba(13,15,18,0.92); border: 1px solid var(--border2); padding: 8px 12px; min-width: 120px; display: none; }
 .map-legend.visible { display: block; }
 .map-legend-title { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
@@ -481,7 +538,7 @@ input[type=range]::-moz-range-thumb {
 .map-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .map-legend-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); }
 .map-legend-item.dimmed .map-legend-name { color: var(--muted); }
-/* Clear highlight button in legend */
+/* Clear button in legend (v2.3) */
 .map-legend-clear { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 3px 0 0; border-top: 1px solid var(--border); margin-top: 4px; display: none; }
 .map-legend-clear.visible { display: block; }
 .map-legend-clear:hover { color: var(--accent2); }
@@ -507,6 +564,7 @@ input[type=range]::-moz-range-thumb {
 }
 .user-pin.nav-flash { animation: navFlash 0.4s ease 3; border-color: var(--accent2) !important; z-index: 30 !important; }
 
+/* ── MODAL ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
 .modal-overlay.open { display: flex; }
 .modal { background: var(--surface); border: 1px solid var(--border2); border-top: 2px solid var(--accent); width: 100%; max-width: 580px; max-height: 82vh; display: flex; flex-direction: column; animation: modalIn 0.18s ease; }
@@ -538,6 +596,62 @@ input[type=range]::-moz-range-thumb {
 </head>
 <body>
 
+<!-- SUB-NAVBAR (from v2.2) -->
+<nav class="sub-navbar" id="navbar">
+  <div class="sub-nav-left">
+    <div class="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="sub-nav-logo">DJIANG</div>
+    <a href="index.html" class="sub-nav-back">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      BACK
+    </a>
+    <div class="sub-nav-crumbs">
+      <span>Home</span> <span class="sep">/</span> <span>Tools</span> <span class="sep">/</span> <span class="active">Ascension Planner</span>
+    </div>
+  </div>
+  <div class="sub-nav-right">
+    <div class="sub-nav-user">ENDMINISTRATOR ▼</div>
+  </div>
+</nav>
+
+<!-- SIDEBAR (from v2.2) -->
+<div class="sidebar">
+  <div class="sidebar-label">NAVIGATION</div>
+  <div class="sidebar-nav">
+    <a href="index.html" class="sidebar-item" style="text-decoration:none;">
+      <div class="sidebar-item-inner">
+        <span class="sidebar-text">HOME</span>
+      </div>
+    </a>
+    <a href="#" class="sidebar-item active" style="text-decoration:none;">
+      <div class="sidebar-item-inner">
+        <span class="sidebar-text">TRACKER</span>
+      </div>
+    </a>
+  </div>
+</div>
+<div class="overlay"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const hamburger = document.querySelector('.sub-navbar .hamburger');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.overlay');
+    if (hamburger && sidebar && overlay) {
+      const toggleMenu = () => {
+        hamburger.classList.toggle('open');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('visible');
+      };
+      hamburger.addEventListener('click', toggleMenu);
+      overlay.addEventListener('click', toggleMenu);
+    }
+  });
+</script>
+
+<!-- APP HEADER -->
 <div class="header">
   <div>
     <div class="header-eyebrow">Arknights: Endfield // v2.3</div>
@@ -751,7 +865,7 @@ const WEAPONS = [
 ];
 
 // ── MATERIAL DEFINITIONS ──
-// EXP values verified from Endfield Talos Wiki (2025):
+// EXP values from Endfield Talos Wiki (verified 2025):
 // Elementary Combat Record = 200, Intermediate = 1000, Advanced = 10000
 // Elementary Cognitive Carrier = 1000, Advanced Cognitive Carrier = 10000
 // Arms Inspector = 200, Arms INSP Kit = 1000, Arms INSP Set = 10000
@@ -955,17 +1069,9 @@ function setExpHave(groupKey, itemKey, val) {
 }
 
 /**
- * Compute per-tier needs for the EXP breakdown.
- *
- * For each tier we show: how many of JUST that item would be needed (standalone),
- * minus what the user already has of that tier.
- * The "covered" total across all tiers uses a greedy approach for the progress bar.
- *
- * Returns:
- *   perTier[key] = { standalone, need, have, expVal }
- *   coveredExp (greedy, how much EXP is covered by owned items)
- *   pct (0-100)
- *   remaining (after greedy coverage)
+ * Compute per-tier needs for the EXP breakdown (v2.3 greedy approach).
+ * Returns perTier[key] = { standaloneTotal, need, have, expVal }
+ * plus coveredExp, pct, remaining.
  */
 function computeExpBreakdown(rawExp, groupDef, groupKey) {
   // Greedy coverage: largest items first
@@ -981,13 +1087,13 @@ function computeExpBreakdown(rawExp, groupDef, groupKey) {
 
   const pct = rawExp > 0 ? Math.min(100, Math.round((coveredExp / rawExp) * 100)) : 0;
 
-  // Per-tier standalone count (how many if you only used THIS tier, minus what you have)
+  // Per-tier standalone count (how many if you only used THIS tier)
   const perTier = {};
   for (const key of groupDef.keys) {
     const val = MATS[key]?.expValue || 1;
     const have = getExpHave(groupKey, key);
-    const standaloneTotal = Math.ceil(rawExp / val);   // to cover full rawExp alone
-    const need = Math.max(0, standaloneTotal - have);   // minus what you have
+    const standaloneTotal = Math.ceil(rawExp / val);
+    const need = Math.max(0, standaloneTotal - have);
     perTier[key] = { standaloneTotal, need, have, expVal: val };
   }
 
@@ -1093,40 +1199,28 @@ function addPlan(type, item) {
 }
 function removePlan(id) { plans = plans.filter(p => p.id !== id); focusedPlanIds.delete(id); renderAll(); }
 
-// ── FIX: Slider/level updates — avoid full re-render during slider drag ──
-// Use a pending-render flag: sliders update the plan immediately but
-// only trigger renderNeed() (not renderPlans()) during active drag.
-let sliderDragging = false;
-
+// Sliders call updateFrom/updateTo which only re-renders need+map, NOT plans list
+// (prevents slider from being destroyed mid-drag)
 function updateFrom(id, val, fromSlider) {
   const p = plans.find(x => x.id === id); if (!p) return;
-  let v = parseInt(val);
-  if (isNaN(v)) return;
+  let v = parseInt(val); if (isNaN(v)) return;
   v = Math.max(1, Math.min(89, v));
   p.fromLv = v;
   if (p.fromLv >= p.toLv) p.toLv = Math.min(p.fromLv + 1, 90);
-  // Sync UI elements without rebuilding DOM
   syncLevelUI(id);
-  // Only re-render need/map, not plans list (avoids destroying slider mid-drag)
-  renderNeed();
-  renderMapFilters();
-  if (activeMapId) renderMapCanvas(activeMapId);
+  renderNeed(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
 }
-
 function updateTo(id, val, fromSlider) {
   const p = plans.find(x => x.id === id); if (!p) return;
-  let v = parseInt(val);
-  if (isNaN(v)) return;
+  let v = parseInt(val); if (isNaN(v)) return;
   v = Math.max(2, Math.min(90, v));
   p.toLv = v;
   if (p.toLv <= p.fromLv) p.fromLv = Math.max(p.toLv - 1, 1);
   syncLevelUI(id);
-  renderNeed();
-  renderMapFilters();
-  if (activeMapId) renderMapCanvas(activeMapId);
+  renderNeed(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
 }
 
-// Sync only the UI elements inside the card, without rebuilding
+// Sync slider + number input without rebuilding the card
 function syncLevelUI(id) {
   const p = plans.find(x => x.id === id); if (!p) return;
   const card = document.querySelector(`.plan-card[data-id="${id}"]`); if (!card) return;
@@ -1264,9 +1358,6 @@ function buildPlanCard(plan) {
   const card = document.createElement('div');
   card.className = 'plan-card'; card.dataset.id = plan.id;
 
-  // KEY FIX: Sliders use oninput but do NOT call renderAll/renderPlans.
-  // They call updateFrom/updateTo which only syncs UI + renderNeed.
-  // The number input uses onchange (fires on blur/enter) which is fine.
   card.innerHTML = `
     <div class="plan-head">
       ${buildAvatarHTML(plan)}
@@ -1491,10 +1582,9 @@ function renderNeed() {
           : `${pct}% covered · ${fmtCovered} in inventory`
         }</div>`;
 
-      // Per-tier rows — show ALL tiers with how many needed each
       for (const itemKey of gDef.keys) {
         const mat = MATS[itemKey]; if (!mat) continue;
-        const tier  = perTier[itemKey];
+        const tier   = perTier[itemKey];
         const expVal = mat.expValue;
         const expLabel = expVal >= 1000 ? (expVal/1000).toFixed(0)+'k' : expVal;
         const isDone = tier.need === 0;
@@ -1525,7 +1615,6 @@ function renderNeed() {
         </div>`;
       }
 
-      // Hint about mixing
       if (!allDone) {
         html += `<div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);padding:4px 2px 0;opacity:0.55">
           ↑ counts shown if you only use that tier — mix tiers as desired
@@ -1629,7 +1718,7 @@ function switchMap(mapId) {
 function getMatColor(matId) { return MATS[matId]?.color || '#6b7280'; }
 function getMatName(matId)  { return MATS[matId]?.name || dbMatsById[matId]?.name || matId; }
 
-// ── CLEAR HIGHLIGHT — easy deselect ──
+// ── CLEAR HIGHLIGHT (v2.3) ──
 function clearHighlight() {
   highlightedMat = null;
   closePinGroupPortal();
@@ -1642,8 +1731,7 @@ function clearHighlight() {
 }
 
 function showDeselect() {
-  const hint = document.getElementById('map-deselect-hint');
-  hint.classList.add('visible');
+  document.getElementById('map-deselect-hint').classList.add('visible');
   document.getElementById('map-legend-clear').classList.add('visible');
 }
 
@@ -1864,11 +1952,7 @@ function shortenMatName(name) {
 }
 
 function onPinClick(matId, zoneName, note) {
-  // Toggle: clicking same pin again clears highlight
-  if (highlightedMat === matId) {
-    clearHighlight();
-    return;
-  }
+  if (highlightedMat === matId) { clearHighlight(); return; }
   highlightedMat = matId;
   renderMapFilters();
   renderNeed();
@@ -1904,7 +1988,7 @@ function onGroupedPinClick(event, groupId, pinEl) {
   if (activeMapId) renderMapCanvas(activeMapId);
 }
 
-// ── Close portal + clear on outside click ──
+// Close portal on outside click
 document.addEventListener('click', e => {
   if (!openPinGroupData) return;
   const portal = document.querySelector('.pin-group-portal');
@@ -2026,16 +2110,11 @@ function setupMapInteraction() {
     drag = false;
     const a = document.getElementById('map-area');
     if (a) a.style.cursor = '';
-    // If the user clicked (not dragged) on the map background, clear highlight
-    if (!movedDuringDrag && e.target === document.getElementById(`map-vp-${activeMapId}`) || 
-        (!movedDuringDrag && e.target.id && e.target.id.startsWith('map-inner-'))) {
-      clearHighlight();
-    }
   });
 
   // Click on viewport background (not on a pin) clears highlight
   area.addEventListener('click', e => {
-    if (e.target.closest('.user-pin')) return; // pin handled separately
+    if (e.target.closest('.user-pin')) return;
     if (e.target.closest('.map-legend')) return;
     if (e.target.closest('.map-zoom-controls')) return;
     if (!movedDuringDrag) clearHighlight();
@@ -2223,5 +2302,6 @@ window.addEventListener('load', async () => {
   renderAll();
 });
 </script>
+<script src="js/NavBar.js"></script>
 </body>
 </html>
