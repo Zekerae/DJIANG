@@ -27,11 +27,10 @@ body {
   font-family: var(--font-body);
   height: 100vh; overflow: hidden;
   display: flex; flex-direction: column;
-  /* Push app down to make room for the fixed navbar */
   padding-top: clamp(48px, 6vh, 64px);
 }
 
-/* ── SUB-NAVBAR (from v2.2) ── */
+/* ── SUB-NAVBAR ── */
 .sub-navbar {
   position: fixed; top: 0; left: 0; width: 100%; height: 48px;
   background: #0a0a0a; border-bottom: 1px solid var(--border);
@@ -364,7 +363,7 @@ input[type=range]::-moz-range-thumb {
 .find-dropdown-map { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; flex: 1; }
 .find-dropdown-count { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
 
-/* ── EXP BREAKDOWN (v2.3 improved version) ── */
+/* ── EXP BREAKDOWN ── */
 .exp-breakdown {
   margin-bottom: 8px; padding: 10px 10px 8px;
   background: var(--surface2); border: 1px solid var(--border);
@@ -439,7 +438,6 @@ input[type=range]::-moz-range-thumb {
 
 .map-area { flex: 1; position: relative; overflow: hidden; }
 
-/* Deselect hint (v2.3) */
 .map-deselect-hint {
   position: absolute; bottom: 52px; left: 50%; transform: translateX(-50%);
   font-family: var(--font-mono); font-size: 9px; color: var(--muted);
@@ -455,7 +453,6 @@ input[type=range]::-moz-range-thumb {
 .map-canvas-wrap { position: absolute; inset: 0; display: none; }
 .map-canvas-wrap.active { display: block; }
 
-/* Pins — no clip-path to avoid clipping child elements */
 .user-pin {
   position: absolute; transform: translate(-50%,-50%);
   display: flex; align-items: center; gap: 5px;
@@ -493,7 +490,6 @@ input[type=range]::-moz-range-thumb {
   box-shadow: 0 1px 4px rgba(0,0,0,0.6); z-index: 20;
 }
 
-/* Pin group portal */
 .pin-group-portal {
   position: fixed; z-index: 5000;
   background: rgba(13,15,18,0.98); border: 1px solid var(--border2);
@@ -538,7 +534,6 @@ input[type=range]::-moz-range-thumb {
 .map-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .map-legend-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); }
 .map-legend-item.dimmed .map-legend-name { color: var(--muted); }
-/* Clear button in legend (v2.3) */
 .map-legend-clear { font-family: var(--font-mono); font-size: 8px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; padding: 3px 0 0; border-top: 1px solid var(--border); margin-top: 4px; display: none; }
 .map-legend-clear.visible { display: block; }
 .map-legend-clear:hover { color: var(--accent2); }
@@ -596,7 +591,7 @@ input[type=range]::-moz-range-thumb {
 </head>
 <body>
 
-<!-- SUB-NAVBAR (from v2.2) -->
+<!-- SUB-NAVBAR -->
 <nav class="sub-navbar" id="navbar">
   <div class="sub-nav-left">
     <div class="hamburger">
@@ -616,7 +611,7 @@ input[type=range]::-moz-range-thumb {
   </div>
 </nav>
 
-<!-- SIDEBAR (from v2.2) -->
+<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-label">NAVIGATION</div>
   <div class="sidebar-nav">
@@ -865,10 +860,6 @@ const WEAPONS = [
 ];
 
 // ── MATERIAL DEFINITIONS ──
-// EXP values from Endfield Talos Wiki (verified 2025):
-// Elementary Combat Record = 200, Intermediate = 1000, Advanced = 10000
-// Elementary Cognitive Carrier = 1000, Advanced Cognitive Carrier = 10000
-// Arms Inspector = 200, Arms INSP Kit = 1000, Arms INSP Set = 10000
 const MATS = {
   t_creds:              {name:"T-Creds",              color:"#f0c040", category:"Currency"},
   elementary_combat_record:     {name:"Elem. Combat Record",  color:"#5ba85b", category:"Operator EXP", expValue:200,   isExpItem:true, expType:'operator'},
@@ -906,7 +897,7 @@ const MATS = {
   triphasic:            {name:"Triphasic Nanoflake",    color:"#705000", category:"Operator Rare Mat"},
 };
 
-// ── EXP GROUPS — highest value item listed first ──
+// ── EXP GROUPS ──
 const EXP_GROUPS = {
   operator: {
     label: 'Operator EXP',
@@ -1068,13 +1059,7 @@ function setExpHave(groupKey, itemKey, val) {
   renderNeed();
 }
 
-/**
- * Compute per-tier needs for the EXP breakdown (v2.3 greedy approach).
- * Returns perTier[key] = { standaloneTotal, need, have, expVal }
- * plus coveredExp, pct, remaining.
- */
 function computeExpBreakdown(rawExp, groupDef, groupKey) {
-  // Step 1: greedily consume inventory largest-first to find remaining EXP
   let remaining = rawExp;
   const used = {};
   for (const key of groupDef.keys) {
@@ -1088,8 +1073,6 @@ function computeExpBreakdown(rawExp, groupDef, groupKey) {
   const coveredExp = rawExp - remaining;
   const pct = rawExp > 0 ? Math.min(100, Math.round((coveredExp / rawExp) * 100)) : 0;
 
-  // Step 2: per tier — how many items of THIS tier cover the remaining EXP
-  // (independent counts so the user can mix and match)
   const perTier = {};
   for (const key of groupDef.keys) {
     const val  = MATS[key]?.expValue || 1;
@@ -1105,6 +1088,7 @@ function computeExpBreakdown(rawExp, groupDef, groupKey) {
 
   return { perTier, coveredExp, remaining, totalExp: rawExp, pct };
 }
+
 // ── SKILL DEFINITIONS ──
 const SKILL_NAMES = ['Basic Attack','Battle Skill','Combo Skill','Ultimate'];
 function defaultSkills() {
@@ -1141,8 +1125,12 @@ async function loadDbData() {
   }
 }
 
-// ── PORTRAIT CACHE ──
+// ── PORTRAIT CACHE (operators — from v_characters_tiered) ──
 const charImgCache = {};
+
+// ── WEAPON IMAGE CACHE (from weapons table, same as Weapon.html) ──
+const weaponImgCache = {};
+
 async function loadCharImages() {
   try {
     const { data } = await db.from('v_characters_tiered').select('name,slug,img_path');
@@ -1152,10 +1140,25 @@ async function loadCharImages() {
     }
   } catch (e) { console.warn('Could not load char images:', e.message); }
 }
+
+async function loadWeaponImages() {
+  try {
+    const { data } = await db.from('weapons').select('id,img');
+    for (const row of (data || [])) {
+      if (row.id) weaponImgCache[row.id] = row.img ?? null;
+    }
+  } catch (e) { console.warn('Could not load weapon images:', e.message); }
+}
+
 function getCharImg(name) {
   const key = name.toLowerCase();
   if (!(key in charImgCache)) return undefined;
   return charImgCache[key] || null;
+}
+
+function getWeaponImg(id) {
+  if (!(id in weaponImgCache)) return undefined;
+  return weaponImgCache[id] || null;
 }
 
 // ── STATE ──
@@ -1205,8 +1208,6 @@ function addPlan(type, item) {
 }
 function removePlan(id) { plans = plans.filter(p => p.id !== id); focusedPlanIds.delete(id); renderAll(); }
 
-// Sliders call updateFrom/updateTo which only re-renders need+map, NOT plans list
-// (prevents slider from being destroyed mid-drag)
 function updateFrom(id, val, fromSlider) {
   const p = plans.find(x => x.id === id); if (!p) return;
   let v = parseInt(val); if (isNaN(v)) return;
@@ -1226,7 +1227,6 @@ function updateTo(id, val, fromSlider) {
   renderNeed(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId);
 }
 
-// Sync slider + number input without rebuilding the card
 function syncLevelUI(id) {
   const p = plans.find(x => x.id === id); if (!p) return;
   const card = document.querySelector(`.plan-card[data-id="${id}"]`); if (!card) return;
@@ -1285,6 +1285,7 @@ function buildAvatarHTML(plan) {
   const el = plan.item.element || null;
   const elColor = getElColor(el);
   const rarityColor = getRarityColor(plan.item.rarity);
+
   if (isOp) {
     const imgPath = getCharImg(plan.item.name);
     if (imgPath) {
@@ -1295,6 +1296,15 @@ function buildAvatarHTML(plan) {
     }
     const icon = EL_ICON[el] || OP_ICON;
     return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">${icon}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
+  }
+
+  // Weapon: try to load from weaponImgCache (weapons table, same as Weapon.html)
+  const wpnImg = getWeaponImg(plan.item.id);
+  if (wpnImg) {
+    return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">
+      <img src="${wpnImg}" alt="${plan.item.name}" loading="lazy">
+      <div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
+    </div>`;
   }
   return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">${WPN_ICON}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
 }
@@ -1545,7 +1555,6 @@ function renderNeed() {
 
   const byCategory = {};
 
-  // Inject EXP breakdown groups
   for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
     const rawKey = gDef.rawKey;
     if (!mats[rawKey]) continue;
@@ -1554,7 +1563,6 @@ function renderNeed() {
     byCategory[gDef.label] = { type: 'exp', gKey, gDef, rawExp, ...breakdown };
   }
 
-  // Regular items
   for (const [k, qty] of entries) {
     const mat = MATS[k]; if (!mat) continue;
     if (mat.isExpItem) continue;
@@ -1724,7 +1732,6 @@ function switchMap(mapId) {
 function getMatColor(matId) { return MATS[matId]?.color || '#6b7280'; }
 function getMatName(matId)  { return MATS[matId]?.name || dbMatsById[matId]?.name || matId; }
 
-// ── CLEAR HIGHLIGHT (v2.3) ──
 function clearHighlight() {
   highlightedMat = null;
   closePinGroupPortal();
@@ -1994,7 +2001,6 @@ function onGroupedPinClick(event, groupId, pinEl) {
   if (activeMapId) renderMapCanvas(activeMapId);
 }
 
-// Close portal on outside click
 document.addEventListener('click', e => {
   if (!openPinGroupData) return;
   const portal = document.querySelector('.pin-group-portal');
@@ -2118,7 +2124,6 @@ function setupMapInteraction() {
     if (a) a.style.cursor = '';
   });
 
-  // Click on viewport background (not on a pin) clears highlight
   area.addEventListener('click', e => {
     if (e.target.closest('.user-pin')) return;
     if (e.target.closest('.map-legend')) return;
@@ -2155,7 +2160,6 @@ function mapZoom(factor) {
 }
 function mapReset() { mapView = { tx:0, ty:0, scale:1 }; updateMapTransform(); }
 
-// ── HIGHLIGHT (legend click) ──
 function highlightMat(matId) {
   if (highlightedMat === matId) { clearHighlight(); return; }
   highlightedMat = matId;
@@ -2169,7 +2173,6 @@ function highlightMat(matId) {
   showDeselect();
 }
 
-// ── MAP FILTER BAR ──
 function renderMapFilters() {
   const bar = document.getElementById('map-filter-bar');
   const chipsEl = document.getElementById('mat-chips');
@@ -2283,7 +2286,13 @@ function renderModalList(items) {
       iconContent = imgPath
         ? `<img src="${imgPath}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`
         : (EL_ICON[el] || OP_ICON);
-    } else { iconContent = WPN_ICON; }
+    } else {
+      // Weapon modal: use cached image from weapons table
+      const wpnImg = getWeaponImg(item.id);
+      iconContent = wpnImg
+        ? `<img src="${wpnImg}" alt="${item.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;">`
+        : WPN_ICON;
+    }
     return `<button class="modal-item" onclick='selectItem(${JSON.stringify(item).replace(/'/g,"&#39;")})' style="${inPlan?'border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)':''}">
       <div class="modal-item-icon" style="${el?`border-color:${elColor}40;`:''}">${iconContent}</div>
       <div>
@@ -2303,7 +2312,8 @@ document.addEventListener('keydown', e => {
 window.addEventListener('load', async () => {
   setupResize();
   renderAll();
-  await Promise.all([loadDbData(), loadCharImages()]);
+  // Load all three data sources in parallel: maps, operator portraits, weapon images
+  await Promise.all([loadDbData(), loadCharImages(), loadWeaponImages()]);
   initMaps();
   renderAll();
 });
