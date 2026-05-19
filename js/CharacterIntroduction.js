@@ -296,8 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn('Supabase unavailable:', e);
   }
 
-  updateProfileStats();
-  updateSkills();
+  initProfileSliders();
   recalcDmg();
   recalcMats();
   updateCheckProgress();
@@ -493,8 +492,7 @@ function renderCharacter(char) {
   renderSkillTracks(char.skills || []);
   renderChecklist(char);
 
-  updateProfileStats();
-  updateSkills();
+  initProfileSliders();
   recalcDmg();
   recalcMats();
   updateCheckProgress();
@@ -524,27 +522,45 @@ function renderAttributes(char) {
     { key:'wil', label:'Will',      icon: char.icon_wil || '🛡️', id:'attr-wil' }
   ];
   const primary = char.primary_attr || 'int';
-  document.getElementById('dom-attr-grid').innerHTML = attrMap.map(a => `
+  // Store max-level value on each row so the progress bar can scale correctly
+  document.getElementById('dom-attr-grid').innerHTML = attrMap.map(a => {
+    const maxVal = char['attr_' + a.key] || 0;
+    return `
     <div class="attr-row${a.key === primary ? ' primary' : ''}">
       <div class="attr-icon">${iconImg(a.icon, 24, 'has-char-img')}</div>
       <div class="attr-body">
         <div class="attr-label">${a.label}</div>
-        <div class="attr-val" id="${a.id}">${char['attr_' + a.key] || 0}</div>
+        <div class="attr-val" id="${a.id}" data-max="${maxVal}">${maxVal}</div>
+        <div class="attr-bar-wrap"><div class="attr-bar-fill" id="bar-${a.id}" style="width:100%"></div></div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderSkills(skills) {
   document.getElementById('dom-skills').innerHTML = skills.map(s => {
     const multipliersHtml = (s.multipliers && s.multipliers.length)
       ? `<div class="skill-multipliers">
-          ${s.multipliers.map(m => `
+          ${s.multipliers.map(m => {
+            // Support both new {values:[...12]} and legacy {value: number} shapes
+            const values = Array.isArray(m.values) && m.values.length
+              ? m.values
+              : Array.from({length: 12}, (_, i) => (m.value || 0) * (0.5 + 0.5 * ((i + 1) / 12)));
+            const displayVal = values[11]; // show rank-12 value by default
+            const pips = Array.from({length: 12}, (_, i) =>
+              `<div class="sk-pip${i === 11 ? ' lit' : ''}"></div>`
+            ).join('');
+            return `
             <div class="skill-mult-row">
-              <span class="skill-mult-label">${m.label.replace(/[\d.]+%/, '')}</span>
-              <span class="skill-val highlight" data-base="${m.value}">${(m.value * 100).toFixed(1).replace('.0', '')}%</span>
-            </div>
-          `).join('')}
+              <span class="skill-mult-label">${m.label.replace(/[\d.]+%/, '').trim()}</span>
+              <div class="skill-mult-right">
+                <span class="skill-val highlight"
+                      data-values='${JSON.stringify(values)}'
+                >${(displayVal * 100).toFixed(1).replace('.0', '')}%</span>
+                <div class="sk-pip-row">${pips}</div>
+              </div>
+            </div>`;
+          }).join('')}
         </div>`
       : '';
     return `
@@ -716,27 +732,213 @@ function updateCheckProgress() {
   if (label) label.textContent = `${done} / ${rows.length}`;
 }
 
+// ─── STAT CURVE HELPERS ──────────────────────────────────────
+/**
+ * Given the stat_curves array and a target level, returns interpolated
+ * stat values. Breakpoints can be sparse (e.g. only levels 1,20,40,...,90).
+ * Falls back to simple linear scale if no curve data exists.
+ */
+function getStatsAtLevel(char, level) {
+  const curve = char.stat_curves;
+  const keys  = ['str', 'agi', 'int', 'wil'];
+
+  // No curve data — linear fallback
+  if (!curve || curve.length === 0) {
+    const scale = 0.3 + 0.7 * (level / 90);
+    const result = {};
+    keys.forEach(k => { result[k] = Math.floor((char['attr_' + k] || 0) * scale); });
+    return result;
+  }
+
+  // Sort breakpoints ascending
+  const sorted = [...curve].sort((a, b) => a.level - b.level);
+
+  // Exact match
+  const exact = sorted.find(c => c.level === level);
+  if (exact) return exact;
+
+  // Below first breakpoint — return first
+  if (level <= sorted[0].level) return sorted[0];
+  // Above last breakpoint — return last
+  if (level >= sorted[sorted.length - 1].level) return sorted[sorted.length - 1];
+
+  // Lerp between surrounding breakpoints
+  let lo = sorted[0], hi = sorted[sorted.length - 1];
+  for (let i = 0; i < sorted.length - 1; i++) {
+    if (sorted[i].level <= level && sorted[i + 1].level >= level) {
+      lo = sorted[i]; hi = sorted[i + 1]; break;
+    }
+  }
+  const t = (level - lo.level) / (hi.level - lo.level);
+  const result = { level };
+  keys.forEach(k => {
+    result[k] = Math.floor((lo[k] || 0) + ((hi[k] || 0) - (lo[k] || 0)) * t);
+  });
+  return result;
+}
+
+// ─── CURRENT SLIDER VALUES (replaces reading from input elements) ──
+let _profLevel = 90;
+let _profRank  = 12;
+
 function updateProfileStats() {
-  const level = parseInt(document.getElementById('prof-level').value) || 1;
-  document.getElementById('prof-level-out').textContent = level;
+  const level = _profLevel;
+
+  // Update display
+  const outEl = document.getElementById('prof-level-out');
+  if (outEl) outEl.innerHTML = `${level}<span class="prof-lv-max">/ 90</span>`;
+
+  // Update fill + thumb
+  const pct = ((level - 1) / 89) * 100;
+  const fillEl  = document.getElementById('prof-level-fill');
+  const thumbEl = document.getElementById('prof-level-thumb');
+  if (fillEl)  fillEl.style.width = pct + '%';
+  if (thumbEl) thumbEl.style.left = pct + '%';
+
+  // Update milestone pips
+  document.querySelectorAll('#prof-level-pips .prof-milestone-pip').forEach(p => {
+    p.classList.toggle('reached', level >= parseInt(p.dataset.lv));
+  });
+
   if (!CHAR) return;
-  const scale = 0.3 + 0.7 * (level / 90);
-  ['str','agi','int','wil'].forEach(a => {
-    const el = document.getElementById('attr-' + a);
-    if (el) el.textContent = Math.floor((CHAR['attr_' + a] || 0) * scale);
+
+  const stats = getStatsAtLevel(CHAR, level);
+
+  ['str', 'agi', 'int', 'wil'].forEach(a => {
+    const el    = document.getElementById('attr-' + a);
+    const barEl = document.getElementById('bar-attr-' + a);
+    if (!el) return;
+
+    const newVal = stats[a] ?? Math.floor((CHAR['attr_' + a] || 0) * (0.3 + 0.7 * level / 90));
+    el.textContent = newVal;
+
+    // Bump animation
+    el.classList.remove('attr-bump');
+    void el.offsetWidth;
+    el.classList.add('attr-bump');
+    setTimeout(() => el.classList.remove('attr-bump'), 280);
+
+    // Progress bar
+    if (barEl) {
+      const maxVal = parseFloat(el.getAttribute('data-max')) || CHAR['attr_' + a] || 1;
+      barEl.style.width = Math.min(100, (newVal / maxVal) * 100) + '%';
+    }
   });
 }
 
 function updateSkills() {
-  const rank = parseInt(document.getElementById('prof-rank').value) || 1;
-  document.getElementById('prof-rank-out').textContent = rank;
-  const scale = 0.5 + 0.5 * (rank / 12);
+  const rank = _profRank;
+
+  // Update display
+  const outEl = document.getElementById('prof-rank-out');
+  if (outEl) outEl.innerHTML = `${rank}<span class="prof-lv-max">/ 12</span>`;
+
+  // Update fill + thumb
+  const pct = ((rank - 1) / 11) * 100;
+  const fillEl  = document.getElementById('prof-rank-fill');
+  const thumbEl = document.getElementById('prof-rank-thumb');
+  if (fillEl)  fillEl.style.width = pct + '%';
+  if (thumbEl) thumbEl.style.left = pct + '%';
+
+  // Update milestone pips
+  document.querySelectorAll('#prof-rank-pips .prof-milestone-pip').forEach(p => {
+    p.classList.toggle('reached', rank >= parseInt(p.dataset.lv));
+  });
+
+  // Update skill multiplier values
   document.querySelectorAll('.skill-val').forEach(el => {
-    const base = parseFloat(el.getAttribute('data-base'));
-    if (!isNaN(base)) {
-      const scaled = base * scale * 100;
-      el.textContent = scaled % 1 === 0 ? scaled.toFixed(0) + '%' : scaled.toFixed(1) + '%';
+    let pctVal;
+
+    const rawValues = el.getAttribute('data-values');
+    if (rawValues) {
+      try {
+        const values = JSON.parse(rawValues);
+        if (Array.isArray(values) && values.length > 0) {
+          const idx = Math.min(rank, values.length) - 1;
+          pctVal = values[idx] * 100;
+        }
+      } catch(e) {}
     }
+
+    // Legacy fallback
+    if (pctVal === undefined) {
+      const base = parseFloat(el.getAttribute('data-base'));
+      if (!isNaN(base)) {
+        const scale = 0.5 + 0.5 * (rank / 12);
+        pctVal = base * scale * 100;
+      }
+    }
+
+    if (pctVal !== undefined) {
+      el.textContent = pctVal % 1 === 0 ? pctVal.toFixed(0) + '%' : pctVal.toFixed(1) + '%';
+      el.classList.remove('skill-val-bump');
+      void el.offsetWidth;
+      el.classList.add('skill-val-bump');
+      setTimeout(() => el.classList.remove('skill-val-bump'), 280);
+    }
+  });
+
+  // Update pip rows
+  document.querySelectorAll('.sk-pip-row').forEach(row => {
+    row.querySelectorAll('.sk-pip').forEach((pip, i) => {
+      pip.classList.toggle('lit', i < rank);
+    });
+  });
+}
+
+// ─── DRAG SLIDER INIT ────────────────────────────────────────
+function initProfileSliders() {
+  // Level slider — milestones at ascension breakpoints
+  const levelMilestones = [1, 20, 40, 50, 60, 70, 80, 90];
+  const rankMilestones  = [1, 3, 6, 9, 12];
+
+  function buildMilestonePips(containerId, milestones, max) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = milestones.map(lv => {
+      const pct = ((lv - 1) / (max - 1)) * 100;
+      return `<div class="prof-milestone-pip" data-lv="${lv}" style="position:absolute;left:${pct}%;transform:translateX(-50%)"></div>`;
+    }).join('');
+  }
+
+  buildMilestonePips('prof-level-pips', levelMilestones, 90);
+  buildMilestonePips('prof-rank-pips',  rankMilestones,  12);
+
+  function makeDragSlider(trackId, min, max, initialVal, onChangeFn) {
+    const track = document.getElementById(trackId);
+    if (!track) return;
+    let dragging = false;
+
+    function posPct(e) {
+      const r = track.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+      return Math.max(0, Math.min(1, x / r.width));
+    }
+
+    function applyPos(e) {
+      const val = Math.round(posPct(e) * (max - min)) + min;
+      onChangeFn(val);
+    }
+
+    track.addEventListener('mousedown',  e => { dragging = true; track.classList.add('dragging'); applyPos(e); });
+    track.addEventListener('touchstart', e => { dragging = true; track.classList.add('dragging'); applyPos(e); }, { passive: true });
+    document.addEventListener('mousemove',  e => { if (dragging) applyPos(e); });
+    document.addEventListener('touchmove',  e => { if (dragging) applyPos(e); }, { passive: true });
+    document.addEventListener('mouseup',  () => { dragging = false; track.classList.remove('dragging'); });
+    document.addEventListener('touchend', () => { dragging = false; track.classList.remove('dragging'); });
+
+    // Set initial position
+    onChangeFn(initialVal);
+  }
+
+  makeDragSlider('prof-level-track', 1, 90, 90, val => {
+    _profLevel = val;
+    updateProfileStats();
+  });
+
+  makeDragSlider('prof-rank-track', 1, 12, 12, val => {
+    _profRank = val;
+    updateSkills();
   });
 }
 

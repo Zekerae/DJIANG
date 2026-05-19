@@ -392,3 +392,107 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
   object-fit: cover;
   display: block;
 }
+/* ══════════════════════════════════════
+   CUSTOM DRAG SLIDERS — Level & Rank
+══════════════════════════════════════ */
+.prof-slider-wrap {
+  display: flex; flex-direction: column; gap: 6px;
+  min-width: 180px; flex: 1; max-width: 320px;
+}
+.prof-slider-labels {
+  display: flex; align-items: baseline; justify-content: space-between;
+}
+.prof-slider-label {
+  font-family: 'Rajdhani', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--text3);
+}
+.prof-lv-display {
+  font-family: 'Bebas Neue', sans-serif; font-size: 20px;
+  letter-spacing: 1px; color: #fff; line-height: 1;
+}
+.prof-lv-display span.prof-lv-max {
+  font-family: 'Rajdhani', sans-serif; font-size: 11px;
+  color: var(--text3); font-weight: 600; margin-left: 3px;
+}
+.prof-track-wrap {
+  position: relative; height: 20px;
+  display: flex; align-items: center;
+  cursor: pointer; user-select: none;
+}
+.prof-track-bg {
+  position: absolute; left: 0; right: 0; height: 4px;
+  border-radius: 3px; background: rgba(255,255,255,0.07);
+}
+.prof-track-fill {
+  position: absolute; left: 0; height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-text));
+  box-shadow: 0 0 8px var(--primary-glow);
+  transition: width 0.04s linear;
+  pointer-events: none;
+}
+.prof-thumb {
+  position: absolute; transform: translateX(-50%);
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--primary), 0 0 10px var(--primary-glow);
+  transition: left 0.04s linear, box-shadow 0.2s;
+  pointer-events: none; z-index: 2;
+}
+.prof-track-wrap:active .prof-thumb,
+.prof-track-wrap.dragging .prof-thumb {
+  box-shadow: 0 0 0 4px var(--primary), 0 0 18px var(--primary-glow);
+}
+.prof-milestones {
+  position: absolute; left: 0; right: 0;
+  display: flex; justify-content: space-between;
+  pointer-events: none;
+}
+.prof-milestone-pip {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  transition: background 0.2s, box-shadow 0.2s;
+  margin-top: 8px;
+}
+.prof-milestone-pip.reached {
+  background: var(--primary);
+  box-shadow: 0 0 5px var(--primary-glow);
+}
+
+/* ══════════════════════════════════════
+   STAT BAR + BUMP ANIMATIONS
+══════════════════════════════════════ */
+.attr-bar-wrap {
+  height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,0.07);
+  overflow: hidden; margin-top: 5px; flex: 1;
+}
+.attr-bar-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-text));
+  transition: width 0.35s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 6px var(--primary-glow);
+}
+.attr-bump { animation: charBump 0.28s ease; }
+@keyframes charBump {
+  0%,100% { transform: scale(1); color: inherit; }
+  50%      { transform: scale(1.14); color: var(--primary-text); }
+}
+.skill-val-bump { animation: charBump 0.28s ease; }
+
+/* ══════════════════════════════════════
+   SKILL RANK PIPS
+══════════════════════════════════════ */
+.skill-mult-right {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+}
+.sk-pip-row { display: flex; gap: 3px; }
+.sk-pip {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.10);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.sk-pip.lit {
+  background: var(--primary);
+  box-shadow: 0 0 4px var(--primary-glow);
+}

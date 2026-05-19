@@ -90,10 +90,17 @@
       <div class="card">
         <div class="card-header">
           <div class="card-title">Attributes</div>
-          <div class="control-row">
-            <span class="control-label">Level</span>
-            <input type="range" class="control-slider" id="prof-level" min="1" max="90" value="90" oninput="updateProfileStats()">
-            <span class="control-val" id="prof-level-out">90</span>
+          <div class="prof-slider-wrap">
+            <div class="prof-slider-labels">
+              <span class="prof-slider-label">LV</span>
+              <span class="prof-lv-display" id="prof-level-out">90<span class="prof-lv-max">/ 90</span></span>
+            </div>
+            <div class="prof-track-wrap" id="prof-level-track">
+              <div class="prof-track-bg"></div>
+              <div class="prof-track-fill" id="prof-level-fill" style="width:100%"></div>
+              <div class="prof-milestones" id="prof-level-pips"></div>
+              <div class="prof-thumb" id="prof-level-thumb" style="left:100%"></div>
+            </div>
           </div>
         </div>
         <div class="attr-grid" id="dom-attr-grid"></div>
@@ -106,10 +113,17 @@
     <div class="card mb-16">
       <div class="card-header">
         <div class="card-title">Skills (Scalable)</div>
-        <div class="control-row">
-          <span class="control-label">Rank</span>
-          <input type="range" class="control-slider" id="prof-rank" min="1" max="12" value="12" oninput="updateSkills()">
-          <span class="control-val" id="prof-rank-out">12</span>
+        <div class="prof-slider-wrap">
+          <div class="prof-slider-labels">
+            <span class="prof-slider-label">RANK</span>
+            <span class="prof-lv-display" id="prof-rank-out">12<span class="prof-lv-max">/ 12</span></span>
+          </div>
+          <div class="prof-track-wrap" id="prof-rank-track">
+            <div class="prof-track-bg"></div>
+            <div class="prof-track-fill" id="prof-rank-fill" style="width:100%"></div>
+            <div class="prof-milestones" id="prof-rank-pips"></div>
+            <div class="prof-thumb" id="prof-rank-thumb" style="left:100%"></div>
+          </div>
         </div>
       </div>
       <div class="skill-list" id="dom-skills"></div>
