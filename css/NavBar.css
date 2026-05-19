@@ -42,7 +42,8 @@
 .nav-links a,
 .navbar a {
     /* FIX 1: Apply the font directly to the links and the container */
-    font-family: 'HarmonyOS Sans Regular', sans-serif !important; 
+    font-family: 'HarmonyOS Sans Regular', sans-serif !important;
+    font-weight: bolder; 
     line-height: 1.5 !important;
     
     /* FIX 2: Changed 'center' to 'flex' so 'align-items: center' actually works */
@@ -371,7 +372,35 @@ body {
         --sidebar-notch: 12px;
     }
     
-    .nav-links { display: none; } /* Hide the top links, force hamburger usage */
+    /* 1. Unhide the links container so it fits in the center 1fr grid space */
+    .nav-links { 
+        display: flex !important; 
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    /* 2. Hide all the navigation text menu items by default on mobile */
+    nav-links .nav-btn {
+        display: none !important;
+    }
+
+    /* 3. ONLY display the button that your scroll JS flags as active! */
+    .nav-links .nav-btn.active {
+        display: flex !important; /* Re-appears like magic in the center */
+        color: #fff !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.15em !important;
+        padding: 0 !important;
+        pointer-events: none !important; /* Disables clicking so it behaves like a clear title header */
+    }
+
+    /* 4. Remove the desktop top-line decoration so it functions as a clean readout */
+    .nav-btn.active::after {
+        display: none !important;
+    }
     .sidebar-page-num { display: none; } /* Hide page numbers to save screen space */
     
     .navbar { grid-template-columns: var(--navbar-height) 1fr var(--navbar-height); }
