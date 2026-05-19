@@ -103,16 +103,16 @@ const ELEMENT_PALETTES = {
 };
 /* ── STATIC ICON RESOLVERS ── */
 const ELEMENT_ICONS = {
-  cryo:     '../assets/ElementAssets/Cryoicon.png',
-  ice:      '../assets/ElementAssets/Cryoicon.png',
-  heat:     '../assets/ElementAssets/Heaticon.png',
-  fire:     '../assets/ElementAssets/Heaticon.png',
-  electric: '../assets/ElementAssets/Electricicon.png',
-  shock:    '../assets/ElementAssets/Electricicon.png',
-  nature:   '../assets/ElementAssets/Natureicon.png',
-  grass:    '../assets/ElementAssets/Natureicon.png',
-  physical: '../assets/ElementAssets/Physicalicon.png',
-  steel:    '../assets/ElementAssets/Physicalicon.png',
+  cryo:     'assets/ElementAssets/Cryoicon.png',
+  ice:      'assets/ElementAssets/Cryoicon.png',
+  heat:     'assets/ElementAssets/Heaticon.png',
+  fire:     'assets/ElementAssets/Heaticon.png',
+  electric: 'assets/ElementAssets/Electricicon.png',
+  shock:    'assets/ElementAssets/Electricicon.png',
+  nature:   'assets/ElementAssets/Natureicon.png',
+  grass:    'assets/ElementAssets/Natureicon.png',
+  physical: 'assets/ElementAssets/Physicalicon.png',
+  steel:    'assets/ElementAssets/Physicalicon.png',
 };
 function resolveElementIcon(element) {
   const key = (element || '').toLowerCase().trim();
@@ -120,12 +120,12 @@ function resolveElementIcon(element) {
 }
 
 const WEAPON_ICONS = {
-  'arts unit':  '../assets/WeaponCharAssets/36px-Arts_Unit.png',
-  'great sword':'../assets/WeaponCharAssets/36px-Great_Sword.webp',
-  'greatsword': '../assets/WeaponCharAssets/36px-Great_Sword.webp',
-  'handcannon': '../assets/WeaponCharAssets/36px-Handcannon.webp',
-  'polearm':    '../assets/WeaponCharAssets/36px-Polearm.webp',
-  'sword':'../assets/WeaponCharAssets/Short-Weapon.webp',
+  'arts unit':  'assets/WeaponCharAssets/36px-Arts_Unit.png',
+  'great sword':'assets/WeaponCharAssets/36px-Great_Sword.webp',
+  'greatsword': 'assets/WeaponCharAssets/36px-Great_Sword.webp',
+  'handcannon': 'assets/WeaponCharAssets/36px-Handcannon.webp',
+  'polearm':    'assets/WeaponCharAssets/36px-Polearm.webp',
+  'sword':'assets/WeaponCharAssets/Short-Weapon.webp',
 };
 function resolveWeaponIcon(weapon) {
   const key = (weapon || '').toLowerCase().trim();
@@ -133,11 +133,12 @@ function resolveWeaponIcon(weapon) {
 }
 
 const CLASS_ICONS = {
-  caster:   '../assets/ClassAssets/CasterIcon.png',
-  defender: '../assets/ClassAssets/DefenderIcon.png',
-  guard:    '../assets/ClassAssets/GuardIcon.png',
-  striker:  '../assets/ClassAssets/StrikerIcon.png',
-  vanguard: '../assets/ClassAssets/VanguardIcon.png',
+  caster:   'assets/ClassAssets/CasterIcon.png',
+  defender: 'assets/ClassAssets/DefenderIcon.png',
+  guard:    'assets/ClassAssets/GuardIcon.png',
+  striker:  'assets/ClassAssets/StrikerIcon.png',
+  vanguard: 'assets/ClassAssets/VanguardIcon.png',
+  supporter: 'assets/ClassAssets/SupporterIcon.png',
 };
 function resolveClassIcon(cls) {
   const key = (cls || '').toLowerCase().trim();
