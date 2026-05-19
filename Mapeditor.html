@@ -127,6 +127,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .admin-pin.selected{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,0.15)}
 .admin-pin.filtered-out{opacity:0.08;pointer-events:none}
 .admin-pin-label{position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);background:rgba(13,15,18,0.93);border:1px solid rgba(255,255,255,0.12);padding:2px 7px;white-space:nowrap;font-family:var(--font-mono);font-size:9px;pointer-events:none;z-index:20}
+
+/* ── GROUPED ADMIN PIN ── */
+.admin-pin-group{position:absolute;transform:translate(-50%,-50%);z-index:10;cursor:pointer}
+.admin-pin-group-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);position:relative;transition:transform 0.1s,box-shadow 0.1s;display:flex;align-items:center;justify-content:center}
+.canvas-wrap:not(.drag-mode) .admin-pin-group:hover .admin-pin-group-dot{transform:scale(1.4)}
+.admin-pin-group.selected .admin-pin-group-dot{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,0.15)}
+.admin-pin-group.filtered-out{opacity:0.08;pointer-events:none}
+.admin-pin-group-count{position:absolute;top:-7px;right:-7px;background:var(--accent2);color:#0d1a18;font-family:var(--font-mono);font-size:7px;font-weight:700;border-radius:50%;width:13px;height:13px;display:flex;align-items:center;justify-content:center;line-height:1;pointer-events:none;z-index:21}
+.admin-pin-group-label{position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%);background:rgba(13,15,18,0.93);border:1px solid rgba(255,255,255,0.12);padding:2px 7px;white-space:nowrap;font-family:var(--font-mono);font-size:9px;pointer-events:none;z-index:20}
+
 .canvas-status{position:absolute;bottom:0;left:0;right:0;background:rgba(13,15,18,0.9);border-top:1px solid var(--border);padding:4px 12px;display:none;align-items:center;gap:14px;font-family:var(--font-mono);font-size:9px;color:var(--muted);z-index:30}
 .canvas-status.visible{display:flex}
 .status-dot{width:6px;height:6px;border-radius:50%}
@@ -140,6 +150,24 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .prop-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-mono);font-size:11px;padding:6px 8px;outline:none;transition:border-color 0.15s}
 .prop-input:focus{border-color:var(--accent)}
 .prop-textarea{resize:vertical;min-height:60px}
+
+/* ── LOCATION GROUP PANEL ── */
+.loc-group-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:8px 10px;background:var(--surface2);border:1px solid rgba(255,140,66,0.2);border-left:2px solid var(--accent2)}
+.loc-group-eyebrow{font-family:var(--font-mono);font-size:8px;color:var(--accent2);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:2px}
+.loc-group-coord{font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+.loc-group-pin-list{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.loc-pin-row{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:all 0.12s;position:relative}
+.loc-pin-row:hover{border-color:var(--border2)}
+.loc-pin-row.active{border-color:rgba(0,196,163,0.4);background:rgba(0,196,163,0.05)}
+.loc-pin-row-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.loc-pin-row-name{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.loc-pin-row-sub{font-family:var(--font-mono);font-size:8px;color:var(--muted)}
+.loc-pin-row-del{width:18px;height:18px;flex-shrink:0;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.12s;border-radius:1px}
+.loc-pin-row-del:hover{border-color:var(--danger);color:var(--danger);background:rgba(224,80,96,0.08)}
+.loc-add-btn{display:flex;align-items:center;gap:6px;width:100%;padding:6px 8px;background:transparent;border:1px dashed rgba(255,140,66,0.25);color:var(--accent2);font-family:var(--font-mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;transition:all 0.15s;margin-bottom:8px}
+.loc-add-btn:hover{border-color:var(--accent2);background:rgba(255,140,66,0.06)}
+.loc-add-btn svg{width:10px;height:10px;flex-shrink:0}
+.loc-group-divider{border:none;border-top:1px solid var(--border);margin:10px 0 8px}
 
 /* Custom note section styling */
 .note-mode-tabs{display:flex;gap:0;margin-bottom:6px;border:1px solid var(--border)}
@@ -156,7 +184,6 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .mat-pick-list{max-height:180px;overflow-y:auto;border:1px solid var(--border);background:var(--surface2)}
 .mat-pick-list::-webkit-scrollbar{width:3px}
 .mat-pick-list::-webkit-scrollbar-thumb{background:var(--surface3)}
-/* Group header inside mat-pick-list */
 .mat-group-head{padding:4px 9px;font-family:var(--font-mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent2);background:rgba(255,140,66,0.05);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
 .mat-pick-item{display:flex;align-items:center;gap:7px;padding:6px 9px;cursor:pointer;transition:background 0.1s;border-bottom:1px solid var(--border)}
 .mat-pick-item:last-child{border-bottom:none}
@@ -168,16 +195,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .mat-check{width:10px;height:10px;border:1px solid rgba(0,196,163,0.5);background:var(--accent);display:none;align-items:center;justify-content:center;border-radius:1px}
 .mat-pick-item.selected .mat-check{display:flex}
 .mat-check::after{content:'✓';font-size:7px;color:#0d1a18}
-
-/* Mat search */
 .mat-search{width:100%;background:var(--surface2);border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--font-mono);font-size:10px;padding:5px 9px;outline:none}
 .mat-search::placeholder{color:var(--muted)}
 
 .sidebar-pin-item{display:flex;align-items:center;gap:7px;padding:6px 9px;background:var(--surface);border:1px solid var(--border);margin-bottom:4px;cursor:pointer;transition:all 0.12s}
 .sidebar-pin-item:hover{border-color:var(--border2)}
 .sidebar-pin-item.selected{border-color:rgba(0,196,163,0.35);background:rgba(0,196,163,0.05)}
-.sidebar-pin-name{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sidebar-pin-sub{font-family:var(--font-mono);font-size:9px;color:var(--muted)}
 .sidebar-divider{border:none;border-top:1px solid var(--border);margin:10px 0 8px}
 .coord-row{display:flex;gap:6px;align-items:center}
 .coord-row .prop-input{width:80px}
@@ -422,7 +445,6 @@ function setDbStatus(state, msg) {
 }
 
 // ── MATERIAL DEFINITIONS ──────────────────────────────────
-// Groups and colors keyed to material_list_materials IDs
 const MAT_GROUPS = [
   {
     group: 'Operator EXP',
@@ -515,7 +537,6 @@ const MAT_GROUPS = [
   },
 ];
 
-// Flat lookup maps
 const MAT_BY_ID   = {};
 const MAT_COLOR   = {};
 MAT_GROUPS.forEach(g => g.items.forEach(m => {
@@ -526,6 +547,39 @@ MAT_GROUPS.forEach(g => g.items.forEach(m => {
 function getMat(id)   { return MAT_BY_ID[id] || { id, name: id, group: 'Unknown', sub: '' }; }
 function getColor(id) { return MAT_COLOR[id] || '#6b7280'; }
 
+// ── GROUPING HELPERS ──────────────────────────────────────
+// Pins within this pixel radius are considered "at the same location"
+const GROUP_RADIUS = 16;
+
+function getPinGroups(map) {
+  if (!map || !map.pins.length) return [];
+  const pins = map.pins;
+  const assigned = new Set();
+  const groups = [];
+  for (let i = 0; i < pins.length; i++) {
+    if (assigned.has(i)) continue;
+    const group = [pins[i]];
+    assigned.add(i);
+    for (let j = i + 1; j < pins.length; j++) {
+      if (assigned.has(j)) continue;
+      const dx = pins[j].x - pins[i].x;
+      const dy = pins[j].y - pins[i].y;
+      if (Math.sqrt(dx * dx + dy * dy) <= GROUP_RADIUS) {
+        group.push(pins[j]);
+        assigned.add(j);
+      }
+    }
+    groups.push(group);
+  }
+  return groups;
+}
+
+// Return the group (array of pins) that a given pin belongs to
+function getGroupForPin(map, pinId) {
+  const groups = getPinGroups(map);
+  return groups.find(g => g.some(p => p.id === pinId)) || null;
+}
+
 // ── STATE ─────────────────────────────────────────────────
 let MAPS = [];
 const admin = {
@@ -534,7 +588,7 @@ const admin = {
   cropMode:      false,
   dragMode:      false,
   filterMatId:   null,
-  noteTab:       {},   // pinId → 'default' | 'custom'
+  noteTab:       {},
   matSearch:     '',
 };
 const user = {
@@ -620,7 +674,6 @@ async function dbPatchPin(pinId, fields) {
 }
 
 // ── MATERIAL DEFAULT NOTES ────────────────────────────────
-// Keyed by material_id — sourced from material_list_materials.farming_note
 const DEFAULT_NOTES = {
   elementary_combat_record:   'Protocol Space: Operation EXP (any difficulty); exploration chests throughout the world.',
   intermediate_combat_record: 'Protocol Space: Operation EXP; Dijiang Manufacturing Cabin (passive production).',
@@ -804,32 +857,105 @@ function renderAdminCanvas() {
   renderAdminFilterBar();
 }
 
+// ── RENDER ADMIN PINS (with grouping) ────────────────────
 function renderAdminPins() {
   const map = getActiveMap(); if (!map) return;
   const layer = document.getElementById('admin-pins-layer');
   layer.innerHTML = '';
-  map.pins.forEach(pin => {
-    const color    = getColor(pin.material_id);
-    const pctX     = (pin.x / map.coord_width)  * 100;
-    const pctY     = (pin.y / map.coord_height) * 100;
-    const sel      = admin.selectedPinId === pin.id;
-    const filtered = admin.filterMatId !== null && pin.material_id !== admin.filterMatId;
-    const el = document.createElement('div');
-    el.className = 'admin-pin' + (sel ? ' selected' : '') + (filtered ? ' filtered-out' : '');
-    el.style.cssText = `left:${pctX}%;top:${pctY}%;background:${color};pointer-events:all`;
-    el.dataset.pinId = pin.id;
-    // Show custom note indicator as a small ring if pin has custom note
-    if (pin.note && pin.note.trim()) {
-      el.style.boxShadow = `0 0 0 2px ${color}, 0 0 0 4px rgba(255,140,66,0.5)`;
+
+  const groups = getPinGroups(map);
+
+  groups.forEach(group => {
+    const isMulti  = group.length > 1;
+    const isFiltered = admin.filterMatId !== null && !group.some(p => p.material_id === admin.filterMatId);
+    const isSelected = group.some(p => p.id === admin.selectedPinId);
+
+    if (!isMulti) {
+      // Single pin — render exactly as before
+      const pin   = group[0];
+      const color = getColor(pin.material_id);
+      const pctX  = (pin.x / map.coord_width)  * 100;
+      const pctY  = (pin.y / map.coord_height) * 100;
+      const sel   = admin.selectedPinId === pin.id;
+      const filtered = admin.filterMatId !== null && pin.material_id !== admin.filterMatId;
+
+      const el = document.createElement('div');
+      el.className = 'admin-pin' + (sel ? ' selected' : '') + (filtered ? ' filtered-out' : '');
+      el.style.cssText = `left:${pctX}%;top:${pctY}%;background:${color};pointer-events:all`;
+      el.dataset.pinId = pin.id;
+      if (pin.note && pin.note.trim()) {
+        el.style.boxShadow = `0 0 0 2px ${color}, 0 0 0 4px rgba(255,140,66,0.5)`;
+      }
+      const label = document.createElement('div');
+      label.className = 'admin-pin-label'; label.style.color = color;
+      label.textContent = getMat(pin.material_id).name;
+      el.appendChild(label);
+      el.addEventListener('click', e => { if (admin.dragMode) return; e.stopPropagation(); adminSelectPin(pin.id); });
+      if (admin.dragMode) el.addEventListener('mousedown', e => { if (e.button !== 0) return; e.stopPropagation(); e.preventDefault(); startPinDrag(pin.id, el, e); });
+      layer.appendChild(el);
+
+    } else {
+      // Grouped pin — render as a cluster dot with count badge
+      // Use centroid
+      const cx = group.reduce((s, p) => s + p.x, 0) / group.length;
+      const cy = group.reduce((s, p) => s + p.y, 0) / group.length;
+      const pctX = (cx / map.coord_width)  * 100;
+      const pctY = (cy / map.coord_height) * 100;
+
+      // Primary color: selected pin's color, or first pin's color
+      const selectedInGroup = group.find(p => p.id === admin.selectedPinId);
+      const primaryPin  = selectedInGroup || group[0];
+      const primaryColor = getColor(primaryPin.material_id);
+
+      // Show multi-color ring strips for the group
+      const uniqueColors = [...new Set(group.map(p => getColor(p.material_id)))];
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'admin-pin-group' + (isSelected ? ' selected' : '') + (isFiltered ? ' filtered-out' : '');
+      wrapper.style.cssText = `left:${pctX}%;top:${pctY}%;pointer-events:all`;
+      wrapper.dataset.groupLeadId = group[0].id;
+
+      // Build color segments as a conic-gradient on the dot
+      const segSize = 100 / uniqueColors.length;
+      const conicStops = uniqueColors.map((c, i) => `${c} ${Math.round(i * segSize)}% ${Math.round((i + 1) * segSize)}%`).join(', ');
+      const dotBg = uniqueColors.length > 1 ? `conic-gradient(${conicStops})` : primaryColor;
+
+      const dot = document.createElement('div');
+      dot.className = 'admin-pin-group-dot';
+      dot.style.cssText = `background:${dotBg};pointer-events:all`;
+
+      const count = document.createElement('div');
+      count.className = 'admin-pin-group-count';
+      count.textContent = group.length;
+
+      const label = document.createElement('div');
+      label.className = 'admin-pin-group-label';
+      label.style.color = primaryColor;
+      const matNames = [...new Set(group.map(p => getMat(p.material_id).name))];
+      label.textContent = matNames.length <= 2 ? matNames.join(' + ') : `${matNames[0]} +${matNames.length - 1} more`;
+
+      dot.appendChild(count);
+      wrapper.appendChild(dot);
+      wrapper.appendChild(label);
+
+      wrapper.addEventListener('click', e => {
+        if (admin.dragMode) return;
+        e.stopPropagation();
+        adminSelectPin(primaryPin.id);
+      });
+
+      if (admin.dragMode) {
+        // Drag all pins in the group together
+        wrapper.addEventListener('mousedown', e => {
+          if (e.button !== 0) return; e.stopPropagation(); e.preventDefault();
+          startGroupDrag(group, wrapper, e);
+        });
+      }
+
+      layer.appendChild(wrapper);
     }
-    const label = document.createElement('div');
-    label.className = 'admin-pin-label'; label.style.color = color;
-    label.textContent = getMat(pin.material_id).name;
-    el.appendChild(label);
-    el.addEventListener('click', e => { if (admin.dragMode) return; e.stopPropagation(); adminSelectPin(pin.id); });
-    if (admin.dragMode) el.addEventListener('mousedown', e => { if (e.button !== 0) return; e.stopPropagation(); e.preventDefault(); startPinDrag(pin.id, el, e); });
-    layer.appendChild(el);
   });
+
   document.getElementById('sb-pin-count').textContent = map.pins.length;
 }
 
@@ -860,8 +986,47 @@ function startPinDrag(pinId, el, startEvt) {
     window.removeEventListener('mouseup', onUp);
     try { await dbPatchPin(pin.id, { x: pin.x, y: pin.y }); showToast(`Moved to ${pin.x}, ${pin.y}`, 'ok'); }
     catch (e) { showToast('Save failed: ' + e.message, 'err'); }
-    renderAdminProps();
+    renderAdminPins(); renderAdminProps();
   };
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+}
+
+function startGroupDrag(group, wrapperEl, startEvt) {
+  const map = getActiveMap(); if (!map) return;
+  const img = document.getElementById('map-preview-img'); if (!img) return;
+  wrapperEl.style.cursor = 'grabbing';
+
+  const startX = startEvt.clientX, startY = startEvt.clientY;
+  const origPos = group.map(p => ({ id: p.id, x: p.x, y: p.y }));
+
+  const onMove = e => {
+    const rect  = img.getBoundingClientRect();
+    const dxPx  = e.clientX - startX;
+    const dyPx  = e.clientY - startY;
+    const dxCoord = (dxPx / rect.width)  * map.coord_width;
+    const dyCoord = (dyPx / rect.height) * map.coord_height;
+    group.forEach((p, i) => {
+      p.x = Math.round(Math.max(0, Math.min(map.coord_width,  origPos[i].x + dxCoord)));
+      p.y = Math.round(Math.max(0, Math.min(map.coord_height, origPos[i].y + dyCoord)));
+    });
+    const cx = group.reduce((s, p) => s + p.x, 0) / group.length;
+    const cy = group.reduce((s, p) => s + p.y, 0) / group.length;
+    wrapperEl.style.left = ((cx / map.coord_width)  * 100) + '%';
+    wrapperEl.style.top  = ((cy / map.coord_height) * 100) + '%';
+  };
+
+  const onUp = async () => {
+    wrapperEl.style.cursor = '';
+    window.removeEventListener('mousemove', onMove);
+    window.removeEventListener('mouseup', onUp);
+    try {
+      await Promise.all(group.map(p => dbPatchPin(p.id, { x: p.x, y: p.y })));
+      showToast(`Group moved (${group.length} pins)`, 'ok');
+    } catch (e) { showToast('Save failed: ' + e.message, 'err'); }
+    renderAdminPins(); renderAdminProps();
+  };
+
   window.addEventListener('mousemove', onMove);
   window.addEventListener('mouseup', onUp);
 }
@@ -904,6 +1069,38 @@ document.getElementById('canvas-wrap').addEventListener('mousemove', e => {
 
 function adminSelectPin(id) { admin.selectedPinId = id; renderAdminPins(); renderAdminProps(); }
 
+// ── ADD PIN TO SAME LOCATION ──────────────────────────────
+async function addPinToLocation(refPinId) {
+  const map = getActiveMap(); if (!map) return;
+  const refPin = getPin(map, refPinId); if (!refPin) return;
+
+  // Pick a different material so it's immediately distinguishable
+  const usedMats = new Set(map.pins.filter(p => p.x === refPin.x && p.y === refPin.y).map(p => p.material_id));
+  let defaultMat = MAT_GROUPS[0].items[0].id;
+  for (const g of MAT_GROUPS) {
+    for (const m of g.items) {
+      if (!usedMats.has(m.id)) { defaultMat = m.id; break; }
+    }
+    if (defaultMat !== MAT_GROUPS[0].items[0].id || !usedMats.has(defaultMat)) break;
+  }
+
+  const pin = {
+    id:            uid(),
+    map_id:        map.id,
+    x:             refPin.x,
+    y:             refPin.y,
+    material_id:   defaultMat,
+    location_name: refPin.location_name,
+    note:          '',
+    sort_order:    map.pins.length,
+  };
+  map.pins.push(pin);
+  admin.selectedPinId = pin.id;
+  try { await dbUpsertPin(pin); showToast('Pin added to location', 'ok'); }
+  catch (err) { showToast('Pin save failed: ' + err.message, 'err'); }
+  renderAdminPins(); renderAdminProps(); renderAdminFilterBar();
+}
+
 // ── CROP ──────────────────────────────────────────────────
 function toggleCropMode() { admin.cropMode = !admin.cropMode; renderAdminCanvas(); }
 function cancelCrop() { admin.cropMode = false; document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active')); renderAdminCanvas(); }
@@ -939,6 +1136,11 @@ function renderAdminProps() {
   const pin = getPin(map, admin.selectedPinId);
   if (pin) {
     panelTitle.textContent = 'Pin Properties';
+
+    // Find the group this pin belongs to
+    const group   = getGroupForPin(map, pin.id);
+    const isGroup = group && group.length > 1;
+
     const mat         = getMat(pin.material_id);
     const color       = getColor(pin.material_id);
     const tab         = getNoteTab(pin.id);
@@ -946,29 +1148,74 @@ function renderAdminProps() {
     const hasCustom   = !!(pin.note && pin.note.trim());
     const search      = admin.matSearch.toLowerCase();
 
-    // Build grouped material list HTML
-    const matListHtml = MAT_GROUPS.map(g => {
-      const filtered = g.items.filter(m => !search || m.name.toLowerCase().includes(search) || g.group.toLowerCase().includes(search));
-      if (!filtered.length) return '';
-      return `<div class="mat-group-head" style="color:${g.color}">${g.group}</div>` +
-        filtered.map(m => `<div class="mat-pick-item ${m.id === pin.material_id ? 'selected' : ''}" onclick="setPinMat('${pin.id}','${m.id}')">
-          <div class="mat-dot" style="background:${g.color}"></div>
-          <div style="flex:1;min-width:0"><div class="mat-name">${m.name}</div><div class="mat-sub">${m.sub}</div></div>
-          <div class="mat-check"></div>
-        </div>`).join('');
-    }).join('');
+    const matListHtml = buildMatListHtml(pin.id, pin.material_id, search);
+
+    // ── Location group section ──
+    let locationGroupHtml = '';
+    if (isGroup) {
+      const otherPins = group.filter(p => p.id !== pin.id);
+      const pinListRows = group.map(p => {
+        const c2  = getColor(p.material_id);
+        const m2  = getMat(p.material_id);
+        const act = p.id === pin.id ? ' active' : '';
+        const cust = p.note && p.note.trim() ? ' <span style="font-size:8px;color:var(--accent2)">✎</span>' : '';
+        return `<div class="loc-pin-row${act}" onclick="adminSelectPin('${p.id}')">
+          <div class="loc-pin-row-dot" style="background:${c2}"></div>
+          <div style="flex:1;min-width:0">
+            <div class="loc-pin-row-name">${escHtml(p.location_name)}${cust}</div>
+            <div class="loc-pin-row-sub">${m2.name}</div>
+          </div>
+          <button class="loc-pin-row-del" title="Remove this pin" onclick="event.stopPropagation();adminDeletePin('${p.id}')">✕</button>
+        </div>`;
+      }).join('');
+
+      locationGroupHtml = `
+        <div class="prop-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+            <div class="prop-label" style="margin-bottom:0">Location Group <span style="color:var(--accent2)">(${group.length} pins)</span></div>
+          </div>
+          <div class="loc-group-header">
+            <div>
+              <div class="loc-group-eyebrow">Grouped at same location</div>
+              <div class="loc-group-coord">x:${pin.x} · y:${pin.y}</div>
+            </div>
+          </div>
+          <div class="loc-group-pin-list">${pinListRows}</div>
+          <button class="loc-add-btn" onclick="addPinToLocation('${pin.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Add material at this location
+          </button>
+          <hr class="loc-group-divider">
+        </div>`;
+    } else {
+      // Single pin — offer the "add to location" shortcut
+      locationGroupHtml = `
+        <div class="prop-section">
+          <button class="loc-add-btn" onclick="addPinToLocation('${pin.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Add another material here
+          </button>
+        </div>`;
+    }
 
     body.innerHTML = `
+      ${locationGroupHtml}
       <div class="prop-section">
         <div class="prop-label">Material</div>
         <input class="mat-search prop-input" type="text" placeholder="Search materials…" value="${escHtml(admin.matSearch)}"
-          oninput="admin.matSearch=this.value; document.getElementById('mat-pick-list-${pin.id}').innerHTML=rebuildMatList('${pin.id}')">
+          oninput="admin.matSearch=this.value; document.getElementById('mat-pick-list-${pin.id}').innerHTML=rebuildMatListHtml('${pin.id}','${pin.material_id}')">
         <div class="mat-pick-list" id="mat-pick-list-${pin.id}">${matListHtml}</div>
       </div>
       <div class="prop-section">
         <div class="prop-label">Location Name</div>
         <input class="prop-input" type="text" value="${escHtml(pin.location_name)}" placeholder="e.g. Mineral Beds"
           oninput="updatePinField('${pin.id}','location_name',this.value)">
+        ${isGroup ? `<div style="font-family:var(--font-mono);font-size:8px;color:var(--muted);margin-top:4px;line-height:1.5">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="checkbox" id="sync-loc-name" style="cursor:pointer">
+            <span>Sync name to all ${group.length} pins at this location</span>
+          </label>
+        </div>` : ''}
       </div>
       <div class="prop-section">
         <div class="prop-label">Farming Note</div>
@@ -1000,7 +1247,7 @@ function renderAdminProps() {
         </div>
       </div>
       <div class="prop-section">
-        <button class="btn btn-sm btn-danger" onclick="adminDeletePin('${pin.id}')">Delete Pin</button>
+        <button class="btn btn-sm btn-danger" onclick="adminDeletePin('${pin.id}')">Delete This Pin</button>
       </div>
       <hr class="sidebar-divider">
       <div class="prop-label">All Pins (${map.pins.length})</div>
@@ -1015,6 +1262,27 @@ function renderAdminProps() {
         </div>`;
       }).join('')}
       ${!map.pins.length ? '<div class="lib-empty" style="padding:8px 0">No pins yet.</div>' : ''}</div>`;
+
+    // Wire up sync-loc-name checkbox after render
+    if (isGroup) {
+      const syncCb = document.getElementById('sync-loc-name');
+      if (syncCb) {
+        syncCb.addEventListener('change', () => {
+          if (!syncCb.checked) return;
+          const nameInput = body.querySelector('.prop-section input[placeholder="e.g. Mineral Beds"]');
+          if (nameInput) syncLocName(pin.id, nameInput.value, group);
+        });
+        // Also wire the name input to sync on blur if checkbox is checked
+        const nameInput = body.querySelector('.prop-section input[placeholder="e.g. Mineral Beds"]');
+        if (nameInput) {
+          nameInput.addEventListener('blur', () => {
+            const cb = document.getElementById('sync-loc-name');
+            if (cb && cb.checked) syncLocName(pin.id, nameInput.value, group);
+          });
+        }
+      }
+    }
+
   } else {
     panelTitle.textContent = 'Map Properties';
     const isStorageUrl = map.image_url && !map.image_url.startsWith('data:');
@@ -1057,20 +1325,40 @@ function renderAdminProps() {
   }
 }
 
-function rebuildMatList(pinId) {
-  const map = getActiveMap(); if (!map) return '';
-  const pin = getPin(map, pinId); if (!pin) return '';
-  const search = admin.matSearch.toLowerCase();
+// ── Sync location name across group ──────────────────────
+async function syncLocName(refPinId, name, group) {
+  const map = getActiveMap(); if (!map) return;
+  for (const p of group) { p.location_name = name; }
+  try {
+    await Promise.all(group.map(p => dbPatchPin(p.id, { location_name: name })));
+    showToast(`Name synced to ${group.length} pins`, 'ok');
+  } catch (e) { showToast('Sync failed: ' + e.message, 'err'); }
+  renderAdminPins();
+}
+
+// ── Mat list HTML builders ────────────────────────────────
+function buildMatListHtml(pinId, matId, search) {
   return MAT_GROUPS.map(g => {
     const filtered = g.items.filter(m => !search || m.name.toLowerCase().includes(search) || g.group.toLowerCase().includes(search));
     if (!filtered.length) return '';
     return `<div class="mat-group-head" style="color:${g.color}">${g.group}</div>` +
-      filtered.map(m => `<div class="mat-pick-item ${m.id === pin.material_id ? 'selected' : ''}" onclick="setPinMat('${pin.id}','${m.id}')">
+      filtered.map(m => `<div class="mat-pick-item ${m.id === matId ? 'selected' : ''}" onclick="setPinMat('${pinId}','${m.id}')">
         <div class="mat-dot" style="background:${g.color}"></div>
         <div style="flex:1;min-width:0"><div class="mat-name">${m.name}</div><div class="mat-sub">${m.sub}</div></div>
         <div class="mat-check"></div>
       </div>`).join('');
   }).join('');
+}
+
+function rebuildMatListHtml(pinId, matId) {
+  const search = admin.matSearch.toLowerCase();
+  return buildMatListHtml(pinId, matId, search);
+}
+
+function rebuildMatList(pinId) {
+  const map = getActiveMap(); if (!map) return '';
+  const pin = getPin(map, pinId); if (!pin) return '';
+  return rebuildMatListHtml(pinId, pin.material_id);
 }
 
 // ── PROP UPDATE HELPERS ───────────────────────────────────
@@ -1125,7 +1413,7 @@ function updatePinField(pinId, field, val) {
   pinFieldTimers[pinId + field] = setTimeout(async () => {
     try { await dbPatchPin(pin.id, { [field]: val }); }
     catch (e) { showToast('Save failed: ' + e.message, 'err'); }
-    renderAdminPins(); // re-render to update custom note ring indicator
+    renderAdminPins();
   }, 700);
 }
 
@@ -1152,8 +1440,18 @@ function updatePinXY(pinId, axis, val) {
 
 async function adminDeletePin(pinId) {
   const map = getActiveMap(); if (!map) return;
+  const wasSelected = admin.selectedPinId === pinId;
+  // If pin was part of a group, select the next pin in the group after deletion
+  const group = getGroupForPin(map, pinId);
   map.pins = map.pins.filter(p => p.id !== pinId);
-  admin.selectedPinId = null;
+  if (wasSelected) {
+    if (group && group.length > 1) {
+      const remaining = group.find(p => p.id !== pinId);
+      admin.selectedPinId = remaining ? remaining.id : null;
+    } else {
+      admin.selectedPinId = null;
+    }
+  }
   try { await dbDeletePin(pinId); showToast('Pin deleted', 'ok'); }
   catch (e) { showToast('Delete failed: ' + e.message, 'err'); }
   renderAdminPins(); renderAdminProps(); renderAdminFilterBar();
@@ -1292,7 +1590,6 @@ function renderUserMap() {
     if (mat && matchPins.length) {
       document.getElementById('u-info-title').innerHTML = `<span style="color:${color}">●</span> ${escHtml(mat.name)} — ${escHtml(map.name)}`;
       document.getElementById('u-info-cards').innerHTML = matchPins.map(p => {
-        // Show custom note if set, otherwise show default note
         const hasCustom   = !!(p.note && p.note.trim());
         const displayNote = hasCustom ? p.note : getDefaultNote(p.material_id);
         return `<div class="map-info-card">

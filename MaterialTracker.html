@@ -18,6 +18,8 @@
   --font-display: 'Rajdhani', sans-serif;
   --font-body: 'IBM Plex Sans', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
+  --left-w: 350px;
+  --mid-w: 300px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -73,15 +75,31 @@ body::before {
 .btn-ghost:hover { border-color: var(--border2); color: var(--text); background: var(--surface); }
 .btn-danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(224,80,96,0.08); }
 
-.main { display: flex; flex: 1; min-height: 0; position: relative; z-index: 1; }
+.main { display: flex; flex: 1; min-height: 0; position: relative; z-index: 1; overflow: hidden; }
 
-/* LEFT PANEL */
+/* ── RESIZABLE PANELS ── */
 .left-panel {
-  width: 350px; flex-shrink: 0;
+  width: var(--left-w); flex-shrink: 0;
   display: flex; flex-direction: column;
   border-right: 1px solid var(--border);
   background: var(--bg); overflow: hidden;
+  min-width: 220px; max-width: 550px;
 }
+.mid-panel {
+  width: var(--mid-w); flex-shrink: 0;
+  display: flex; flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--surface); overflow: hidden;
+  min-width: 180px; max-width: 600px;
+}
+.resize-handle {
+  width: 5px; flex-shrink: 0; cursor: col-resize;
+  background: transparent; position: relative; z-index: 20;
+  transition: background 0.15s;
+}
+.resize-handle:hover, .resize-handle.dragging { background: var(--accent); opacity: 0.35; }
+
+/* Plan cards */
 .plans-header { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .plans-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 3px; }
 .plans-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1; margin-bottom: 10px; }
@@ -141,11 +159,40 @@ body::before {
 .level-row { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 6px; align-items: end; margin-bottom: 8px; }
 .level-col label { display: block; font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
 .level-slider-wrap { display: flex; align-items: center; gap: 7px; }
-.level-num { font-family: var(--font-display); font-size: 22px; font-weight: 700; min-width: 28px; text-align: right; line-height: 1; }
+
+/* FIX 2: Editable level number input */
+.level-num-input {
+  font-family: var(--font-display); font-size: 22px; font-weight: 700;
+  min-width: 36px; width: 36px; text-align: right; line-height: 1;
+  background: transparent; border: none; border-bottom: 1px solid transparent;
+  color: var(--text); outline: none; cursor: text;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+.level-num-input::-webkit-outer-spin-button,
+.level-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.level-num-input:hover { border-bottom-color: var(--border2); }
+.level-num-input:focus { border-bottom-color: var(--accent); color: var(--accent); }
+
 .level-arrow { text-align: center; color: var(--muted); font-size: 14px; padding-bottom: 2px; }
-input[type=range] { -webkit-appearance: none; width: 100%; height: 2px; background: var(--surface3); border-radius: 0; outline: none; border: none; cursor: pointer; }
-input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 11px; height: 11px; background: var(--accent); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); cursor: pointer; transition: transform 0.1s; }
+input[type=range] {
+  -webkit-appearance: none; width: 100%; height: 2px;
+  background: var(--surface3); border-radius: 0; outline: none; border: none;
+  cursor: pointer;
+  /* FIX: ensure touch/drag works everywhere */
+  touch-action: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px;
+  background: var(--accent);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  cursor: pointer; transition: transform 0.1s;
+}
 input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
+input[type=range]::-moz-range-thumb {
+  width: 14px; height: 14px; background: var(--accent);
+  border: none; border-radius: 0; cursor: pointer;
+}
 .quick-btns { display: flex; gap: 4px; flex-wrap: wrap; }
 .quick-btn {
   font-family: var(--font-mono); font-size: 9px; padding: 3px 7px;
@@ -155,57 +202,21 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 }
 .quick-btn:hover, .quick-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,196,163,0.08); }
 
-/* ── SKILL SECTION (added) ── */
-.skill-section {
-  margin-top: 8px; padding-top: 8px;
-  border-top: 1px solid var(--border);
-}
-.skill-section-label {
-  font-family: var(--font-mono); font-size: 9px; color: var(--muted);
-  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.skill-toggle-all {
-  font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.06em;
-  color: var(--accent); cursor: pointer; text-transform: uppercase;
-  border: none; background: transparent; padding: 0;
-}
+/* ── SKILL SECTION ── */
+.skill-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+.skill-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+.skill-toggle-all { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.06em; color: var(--accent); cursor: pointer; text-transform: uppercase; border: none; background: transparent; padding: 0; }
 .skill-toggle-all:hover { opacity: 0.7; }
-.skill-row {
-  display: flex; align-items: center; gap: 7px;
-  margin-bottom: 5px; padding: 5px 8px;
-  background: var(--surface2); border: 1px solid var(--border);
-}
-.skill-row-chk {
-  width: 13px; height: 13px; flex-shrink: 0;
-  border: 1px solid var(--border2); background: var(--surface);
-  display: flex; align-items: center; justify-content: center; cursor: pointer;
-  transition: all 0.12s;
-}
+.skill-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; padding: 5px 8px; background: var(--surface2); border: 1px solid var(--border); }
+.skill-row-chk { width: 13px; height: 13px; flex-shrink: 0; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.12s; }
 .skill-row-chk.on { background: var(--accent); border-color: var(--accent); }
-.skill-row-chk-inner {
-  width: 7px; height: 4px;
-  border-left: 1.5px solid #0d1a18; border-bottom: 1.5px solid #0d1a18;
-  transform: rotate(-45deg) translateY(-0.5px); opacity: 0;
-}
+.skill-row-chk-inner { width: 7px; height: 4px; border-left: 1.5px solid #0d1a18; border-bottom: 1.5px solid #0d1a18; transform: rotate(-45deg) translateY(-0.5px); opacity: 0; }
 .skill-row-chk.on .skill-row-chk-inner { opacity: 1; }
-.skill-row-name {
-  font-family: var(--font-display); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
-  flex: 1; min-width: 0;
-}
+.skill-row-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); flex: 1; min-width: 0; }
 .skill-row.enabled .skill-row-name { color: var(--text); }
-.skill-range-wrap {
-  display: flex; align-items: center; gap: 4px;
-  opacity: 0.3; pointer-events: none; transition: opacity 0.15s;
-}
+.skill-range-wrap { display: flex; align-items: center; gap: 4px; opacity: 0.3; pointer-events: none; transition: opacity 0.15s; }
 .skill-row.enabled .skill-range-wrap { opacity: 1; pointer-events: auto; }
-.skill-lvl-sel {
-  background: var(--surface); border: 1px solid var(--border2);
-  color: var(--text); font-family: var(--font-mono); font-size: 9px;
-  padding: 2px 4px; outline: none; cursor: pointer;
-  transition: border-color 0.15s;
-}
+.skill-lvl-sel { background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 9px; padding: 2px 4px; outline: none; cursor: pointer; transition: border-color 0.15s; }
 .skill-lvl-sel:focus { border-color: var(--accent); }
 .skill-range-arrow { font-size: 9px; color: var(--muted); }
 
@@ -214,14 +225,13 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .plans-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .plans-empty-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); opacity: 0.5; }
 
-/* MID PANEL */
-.mid-panel { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--surface); overflow: hidden; }
+/* ── MID PANEL ── */
 .mid-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
 .mid-head::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 50px; height: 1px; background: var(--accent2); }
 .mid-eyebrow { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 3px; }
 .mid-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1; }
 .mid-badge { font-family: var(--font-mono); font-size: 9px; background: rgba(255,140,66,0.12); color: var(--accent2); padding: 2px 8px; border: 1px solid rgba(255,140,66,0.25); white-space: nowrap; }
-.mid-body { flex: 1; overflow-y: auto; padding: 10px 12px; }
+.mid-body { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 12px; min-width: 0; }
 .mid-body::-webkit-scrollbar { width: 3px; }
 .mid-body::-webkit-scrollbar-thumb { background: var(--surface3); }
 
@@ -252,37 +262,109 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .mid-focus-indicator { font-family: var(--font-mono); font-size: 9px; color: var(--accent2); letter-spacing: 0.06em; padding: 1px 6px; border: 1px solid rgba(255,140,66,0.25); background: rgba(255,140,66,0.08); display: none; }
 .mid-focus-indicator.visible { display: inline-block; }
 
-.need-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 0 5px; }
+/* ── NEED LIST ── */
+.need-section-label { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .need-section-label:first-child { padding-top: 2px; }
 .need-row {
-  display: flex; align-items: center; gap: 9px;
-  padding: 7px 10px; background: var(--surface2); border: 1px solid var(--border);
-  margin-bottom: 4px; cursor: pointer; transition: all 0.12s; position: relative;
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 8px; background: var(--surface2); border: 1px solid var(--border);
+  margin-bottom: 4px; position: relative; min-width: 0; overflow: hidden;
 }
-.need-row:hover { border-color: var(--border2); }
 .need-row.checked { opacity: 0.42; }
 .need-row.checked .need-row-name { text-decoration: line-through; color: var(--muted); }
-.need-check { width: 15px; height: 15px; flex-shrink: 0; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; }
+.need-check { width: 15px; height: 15px; flex-shrink: 0; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .need-row.checked .need-check { background: var(--accent); border-color: var(--accent); }
 .need-check-inner { width: 8px; height: 5px; border-left: 2px solid #0d1a18; border-bottom: 2px solid #0d1a18; transform: rotate(-45deg) translateY(-1px); opacity: 0; }
 .need-row.checked .need-check-inner { opacity: 1; }
-.need-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.need-row-name { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.need-row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.need-row-qty { font-family: var(--font-display); font-size: 15px; font-weight: 700; line-height: 1; }
-.need-have-wrap { display: flex; align-items: center; gap: 3px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
-.need-row-input { width: 42px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 10px; padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s; }
+.need-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.need-row-name { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.need-row-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.need-row-qty { font-family: var(--font-display); font-size: 14px; font-weight: 700; line-height: 1; }
+.need-have-wrap { display: flex; align-items: center; gap: 2px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+.need-have-label { display: inline; }
+.need-row-input { width: 38px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-family: var(--font-mono); font-size: 10px; padding: 2px 3px; outline: none; text-align: right; transition: border-color 0.15s; }
 .need-row-input:focus { border-color: var(--accent); }
 .need-row.highlighted { border-color: var(--accent) !important; background: rgba(0,196,163,0.06); }
 .need-row.highlighted .need-row-name { color: var(--accent); }
 .need-progress { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--accent); transition: width 0.25s; opacity: 0.6; }
+
+/* ── FIND BUTTON ── */
+.need-find-btn {
+  width: 20px; height: 20px; flex-shrink: 0;
+  border: 1px solid var(--border2); background: var(--surface);
+  color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s; clip-path: polygon(0 0, calc(100% - 3px) 0, 100% 3px, 100% 100%, 3px 100%, 0 calc(100% - 3px));
+}
+.need-find-btn:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(255,140,66,0.08); }
+.need-find-btn svg { width: 10px; height: 10px; }
+
+/* ── FIND DROPDOWN ── */
+.find-dropdown {
+  position: fixed; z-index: 9999;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-top: 2px solid var(--accent2); min-width: 200px; max-width: 280px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.7);
+  animation: findDropIn 0.12s ease;
+}
+@keyframes findDropIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+.find-dropdown-title { font-family: var(--font-mono); font-size: 8px; color: var(--accent2); letter-spacing: 0.14em; text-transform: uppercase; padding: 6px 10px 4px; border-bottom: 1px solid var(--border); }
+.find-dropdown-item { display: flex; align-items: center; gap: 7px; padding: 7px 10px; cursor: pointer; transition: background 0.1s; border-bottom: 1px solid var(--border); }
+.find-dropdown-item:last-child { border-bottom: none; }
+.find-dropdown-item:hover { background: rgba(255,140,66,0.08); }
+.find-dropdown-map { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; flex: 1; }
+.find-dropdown-count { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
+
+/* ── EXP BREAKDOWN BLOCK ── */
+.exp-breakdown {
+  margin-bottom: 8px; padding: 8px 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  min-width: 0; overflow: hidden;
+}
+.exp-breakdown-header { font-family: var(--font-mono); font-size: 9px; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; }
+.exp-breakdown-total { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--accent); }
+.exp-progress { height: 2px; background: var(--surface3); margin-bottom: 3px; }
+.exp-progress-fill { height: 100%; background: var(--accent); transition: width 0.25s; }
+.exp-progress-done { height: 100%; background: var(--accent); }
+.exp-coverage-text { font-family: var(--font-mono); font-size: 8px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
+
+/* FIX 1: EXP item rows in the breakdown — cleaner layout */
+.exp-item-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 7px; background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 3px; min-width: 0;
+}
+.exp-item-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.exp-item-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+.exp-item-value { font-family: var(--font-mono); font-size: 8px; color: var(--muted); opacity: 0.6; flex-shrink: 0; }
+/* Needed count: prominent */
+.exp-item-need-count { font-family: var(--font-display); font-size: 15px; font-weight: 700; min-width: 32px; text-align: right; flex-shrink: 0; line-height: 1; }
+.exp-item-need-count.satisfied { color: var(--accent); }
+/* Have input */
+.exp-item-have-wrap { display: flex; align-items: center; gap: 2px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); flex-shrink: 0; }
+.exp-item-input {
+  width: 40px; background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--text); font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 4px; outline: none; text-align: right; transition: border-color 0.15s;
+}
+.exp-item-input:focus { border-color: var(--accent); }
+.exp-item-find-btn {
+  width: 18px; height: 18px; flex-shrink: 0;
+  border: 1px solid var(--border2); background: transparent;
+  color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.exp-item-find-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+.exp-item-find-btn svg { width: 9px; height: 9px; }
+/* Surplus indicator inside exp row */
+.exp-item-surplus { font-family: var(--font-mono); font-size: 8px; color: var(--accent); flex-shrink: 0; }
+
 .mid-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; }
 .mid-empty svg { opacity: 0.12; margin-bottom: 12px; }
 .mid-empty-title { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .mid-empty-sub { font-family: var(--font-mono); font-size: 10px; color: var(--muted); opacity: 0.5; }
 
-/* MAP PANEL */
-.map-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); min-width: 0; }
+/* ── MAP PANEL ── */
+.map-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); min-width: 200px; }
 .map-top-bar { display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; overflow-x: auto; }
 .map-tab { padding: 10px 14px; font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; background: transparent; border: none; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
 .map-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -304,39 +386,89 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .map-canvas-wrap { position: absolute; inset: 0; display: none; }
 .map-canvas-wrap.active { display: block; }
 
-.map-zoom-controls { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; z-index: 20; }
-.map-zoom-btn { width: 30px; height: 30px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; font-family: var(--font-mono); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px)); }
-.map-zoom-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
-.map-zoom-btn.rst { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 4px; }
-
-.map-coords { position: absolute; bottom: 14px; left: 14px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); background: rgba(13,15,18,0.85); border: 1px solid var(--border); padding: 3px 8px; z-index: 20; letter-spacing: 0.06em; pointer-events: none; }
-
-.user-pin { position: absolute; transform: translate(-50%,-50%); display: flex; align-items: center; gap: 5px; padding: 3px 8px 3px 5px; background: rgba(13,15,18,0.92); border: 1px solid rgba(255,255,255,0.15); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 0 100%); cursor: pointer; transition: all 0.12s; white-space: nowrap; z-index: 5; }
-.user-pin:hover { border-color: rgba(255,255,255,0.35); z-index: 10; transform: translate(-50%,-50%) scale(1.05); }
+/* FIX 3: Grouped pin — REMOVED clip-path from .user-pin entirely.
+   Use a simple corner decoration via pseudo-element instead. */
+.user-pin {
+  position: absolute; transform: translate(-50%,-50%);
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 8px 4px 5px;
+  background: rgba(13,15,18,0.92); border: 1px solid rgba(255,255,255,0.18);
+  cursor: pointer; transition: border-color 0.12s, box-shadow 0.12s, opacity 0.12s;
+  white-space: nowrap; z-index: 5;
+  /* NO clip-path — it was clipping the child dropdown */
+  /* Corner cut via box-shadow trick on pseudo */
+}
+.user-pin::before {
+  content: ''; position: absolute; top: -1px; right: -1px;
+  width: 5px; height: 5px;
+  background: var(--bg);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  z-index: 1; pointer-events: none;
+}
+.user-pin:hover { border-color: rgba(255,255,255,0.4); z-index: 10; }
 .user-pin.highlighted { z-index: 15; }
 .user-pin.dimmed { opacity: 0.18; pointer-events: none; }
 .user-pin-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .user-pin-text { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
 .user-pin-sub { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.45); }
 
-.map-info-bar { padding: 10px 14px; background: rgba(13,15,18,0.97); border-top: 1px solid var(--border); flex-shrink: 0; display: none; }
-.map-info-bar.visible { display: block; }
-.map-info-title { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 7px; }
-.map-info-cards { display: flex; gap: 8px; flex-wrap: wrap; }
-.map-info-card { background: var(--surface); border: 1px solid var(--border2); padding: 7px 11px; min-width: 130px; }
-.map-info-card-zone { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
-.map-info-card-desc { font-family: var(--font-mono); font-size: 9px; color: var(--muted); line-height: 1.5; }
-
-/* ── MAP PIN LIST FALLBACK (added) ── */
-.map-pin-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px; }
-.map-pin-list-item {
-  background: var(--surface); border: 1px solid var(--border2); padding: 7px 11px; min-width: 150px;
-  cursor: pointer; transition: border-color 0.12s;
+/* FIX 3: Grouped pin count badge — much more visible */
+.user-pin.grouped { padding-right: 22px; }
+.user-pin-stack-caret {
+  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+  font-size: 9px; color: rgba(255,255,255,0.7); transition: transform 0.15s; pointer-events: none;
 }
-.map-pin-list-item:hover { border-color: var(--accent); }
-.map-pin-list-mat { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2px; }
-.map-pin-list-loc { font-family: var(--font-mono); font-size: 9px; color: var(--muted); }
-.map-pin-list-note { font-family: var(--font-mono); font-size: 8px; color: var(--muted); opacity: 0.6; margin-top: 2px; line-height: 1.4; }
+.user-pin.open .user-pin-stack-caret { transform: translateY(-50%) rotate(180deg); }
+/* IMPROVED BADGE: larger, higher contrast, more visible */
+.user-pin-stack-count {
+  position: absolute; right: -8px; top: -8px;
+  background: var(--accent2); color: #0d0f12;
+  font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+  border-radius: 3px; min-width: 16px; height: 16px; padding: 0 3px;
+  display: flex; align-items: center; justify-content: center; line-height: 1;
+  pointer-events: none; border: 1px solid rgba(0,0,0,0.4);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  z-index: 20;
+}
+
+/* FIX 3: Pin group dropdown — rendered as FIXED overlay portal (via JS), not a child */
+/* CSS for the portal dropdown is below */
+.pin-group-portal {
+  position: fixed; z-index: 5000;
+  background: rgba(13,15,18,0.98); border: 1px solid var(--border2);
+  border-top: 2px solid var(--accent2);
+  min-width: 240px; max-width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.85);
+  animation: findDropIn 0.12s ease;
+}
+.pin-group-portal-title {
+  font-family: var(--font-mono); font-size: 8px; color: var(--accent2);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 6px 10px 5px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.pin-group-portal-close {
+  background: transparent; border: none; color: var(--muted);
+  cursor: pointer; font-size: 10px; padding: 0 2px; line-height: 1;
+}
+.pin-group-portal-close:hover { color: var(--text); }
+.pin-group-portal-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 10px; transition: background 0.1s; border-bottom: 1px solid var(--border);
+}
+.pin-group-portal-item:last-child { border-bottom: none; }
+.pin-group-portal-item:hover { background: rgba(255,255,255,0.04); }
+.pin-group-portal-item.highlighted-item { background: rgba(0,196,163,0.08); }
+.pin-group-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.pin-group-name { font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.2; }
+.pin-group-loc { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.45); margin-top: 1px; }
+.pin-group-note { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.35); margin-top: 3px; line-height: 1.4; white-space: normal; }
+
+.map-zoom-controls { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; z-index: 20; }
+.map-zoom-btn { width: 30px; height: 30px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; font-family: var(--font-mono); clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px)); }
+.map-zoom-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
+.map-zoom-btn.rst { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 4px; }
+.map-coords { position: absolute; bottom: 14px; left: 14px; font-family: var(--font-mono); font-size: 9px; color: var(--muted); background: rgba(13,15,18,0.85); border: 1px solid var(--border); padding: 3px 8px; z-index: 20; letter-spacing: 0.06em; pointer-events: none; }
 
 .map-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: var(--bg); }
 .map-loading-ring { width: 40px; height: 40px; border: 2px solid var(--surface3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -358,7 +490,26 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 .map-legend-name { font-family: var(--font-display); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text); }
 .map-legend-item.dimmed .map-legend-name { color: var(--muted); }
 
-/* MODAL */
+.map-info-bar { padding: 10px 14px; background: rgba(13,15,18,0.97); border-top: 1px solid var(--border); flex-shrink: 0; display: none; }
+.map-info-bar.visible { display: block; }
+.map-info-title { font-family: var(--font-mono); font-size: 9px; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 7px; }
+.map-info-cards { display: flex; gap: 8px; flex-wrap: wrap; }
+.map-info-card { background: var(--surface); border: 1px solid var(--border2); padding: 7px 11px; min-width: 130px; max-width: 280px; }
+.map-info-card-zone { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+.map-info-card-desc { font-family: var(--font-mono); font-size: 9px; color: var(--muted); line-height: 1.5; }
+.map-info-pin-list { margin-top: 5px; border-top: 1px solid var(--border); padding-top: 4px; }
+.map-info-pin-item { display: flex; align-items: flex-start; gap: 6px; padding: 3px 0; }
+.map-info-pin-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.map-info-pin-name { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.map-info-pin-note { font-family: var(--font-mono); font-size: 8px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+@keyframes navFlash {
+  0%,100% { box-shadow: 0 0 0 2px var(--accent2); }
+  50% { box-shadow: 0 0 0 8px rgba(255,140,66,0); }
+}
+.user-pin.nav-flash { animation: navFlash 0.4s ease 3; border-color: var(--accent2) !important; z-index: 30 !important; }
+
+/* ── MODAL ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 24px; }
 .modal-overlay.open { display: flex; }
 .modal { background: var(--surface); border: 1px solid var(--border2); border-top: 2px solid var(--accent); width: 100%; max-width: 580px; max-height: 82vh; display: flex; flex-direction: column; animation: modalIn 0.18s ease; }
@@ -392,7 +543,7 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
 
 <div class="header">
   <div>
-    <div class="header-eyebrow">Arknights: Endfield // v2.0</div>
+    <div class="header-eyebrow">Arknights: Endfield // v2.2</div>
     <div class="header-title">Ascension <span>Planner</span></div>
   </div>
   <div class="db-indicator">
@@ -401,10 +552,10 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
   </div>
 </div>
 
-<div class="main">
+<div class="main" id="main-layout">
 
   <!-- LEFT: Plans -->
-  <div class="left-panel">
+  <div class="left-panel" id="left-panel">
     <div class="plans-header">
       <div class="plans-eyebrow">Ascension Goals</div>
       <div class="plans-title">Active Plans</div>
@@ -436,8 +587,11 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
     </div>
   </div>
 
+  <!-- RESIZE HANDLE 1 -->
+  <div class="resize-handle" id="resize-1" title="Drag to resize"></div>
+
   <!-- MID: Materials -->
-  <div class="mid-panel">
+  <div class="mid-panel" id="mid-panel">
     <div class="mid-head">
       <div>
         <div class="mid-eyebrow">Materials Required</div>
@@ -473,6 +627,9 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
       <div id="need-list"></div>
     </div>
   </div>
+
+  <!-- RESIZE HANDLE 2 -->
+  <div class="resize-handle" id="resize-2" title="Drag to resize"></div>
 
   <!-- RIGHT: Map -->
   <div class="map-panel">
@@ -523,6 +680,9 @@ input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.3); }
     <div class="modal-list" id="modal-list"></div>
   </div>
 </div>
+
+<!-- FIX 3: Pin group dropdown portal container (rendered here, positioned by JS) -->
+<div id="pin-group-portal-root"></div>
 
 <script>
 // ── SUPABASE ──
@@ -592,14 +752,14 @@ const WEAPONS = [
 // ── MATERIAL DEFINITIONS ──
 const MATS = {
   t_creds:              {name:"T-Creds",              color:"#f0c040", category:"Currency"},
-  elementary_combat_record: {name:"Combat Record (Elem)",color:"#5ba85b", category:"Operator EXP"},
-  intermediate_combat_record:{name:"Combat Record (Int)",color:"#70c870", category:"Operator EXP"},
-  advanced_combat_record:   {name:"Combat Record (Adv)",color:"#90e090", category:"Operator EXP"},
-  elementary_cognitive_carrier:{name:"Cognitive Carrier (Elem)",color:"#5ba85b",category:"Operator EXP (Lv61+)"},
-  advanced_cognitive_carrier:  {name:"Cognitive Carrier (Adv)",color:"#70c870", category:"Operator EXP (Lv61+)"},
-  arms_inspector:       {name:"Arms Inspector",        color:"#7ec9c9", category:"Weapon EXP"},
-  arms_insp_kit:        {name:"Arms INSP Kit",          color:"#90dada", category:"Weapon EXP"},
-  arms_insp_set:        {name:"Arms INSP Set",          color:"#a8ecec", category:"Weapon EXP (Lv61+)"},
+  elementary_combat_record:     {name:"Elem. Combat Record",  color:"#5ba85b", category:"Operator EXP", expValue:1000,  isExpItem:true, expType:'operator'},
+  intermediate_combat_record:   {name:"Int. Combat Record",   color:"#70c870", category:"Operator EXP", expValue:2000,  isExpItem:true, expType:'operator'},
+  advanced_combat_record:       {name:"Adv. Combat Record",   color:"#90e090", category:"Operator EXP", expValue:5000,  isExpItem:true, expType:'operator'},
+  elementary_cognitive_carrier: {name:"Elem. Cognitive Carrier",color:"#5ba85b",category:"Operator EXP (Lv61+)", expValue:1000, isExpItem:true, expType:'operator_hi'},
+  advanced_cognitive_carrier:   {name:"Adv. Cognitive Carrier", color:"#70c870",category:"Operator EXP (Lv61+)", expValue:5000, isExpItem:true, expType:'operator_hi'},
+  arms_inspector: {name:"Arms Inspector", color:"#7ec9c9", category:"Weapon EXP", expValue:500,   isExpItem:true, expType:'weapon'},
+  arms_insp_kit:  {name:"Arms INSP Kit",  color:"#90dada", category:"Weapon EXP", expValue:2000,  isExpItem:true, expType:'weapon'},
+  arms_insp_set:  {name:"Arms INSP Set",  color:"#a8ecec", category:"Weapon EXP (Lv61+)", expValue:10000, isExpItem:true, expType:'weapon_hi'},
   protodisk:            {name:"Protodisk",              color:"#c9a05b", category:"Promotion"},
   protoset:             {name:"Protoset",               color:"#e0b870", category:"Promotion"},
   pink_bolete:          {name:"Pink Bolete",            color:"#e08060", category:"Rare Growth — Boletes"},
@@ -627,14 +787,31 @@ const MATS = {
   triphasic:            {name:"Triphasic Nanoflake",    color:"#705000", category:"Operator Rare Mat"},
 };
 
-// ────────────────────────────────────────────────
-// COST TABLES — exact values from
-// Arknights_Endfield_Data_Compilation_v1_2_0.xlsx
-// ────────────────────────────────────────────────
+// ── EXP GROUPS ── sorted highest value → lowest
+const EXP_GROUPS = {
+  operator: {
+    label: 'Operator EXP',
+    keys: ['advanced_combat_record','intermediate_combat_record','elementary_combat_record'],
+    rawKey: '_op_exp_raw',
+  },
+  operator_hi: {
+    label: 'Operator EXP (Lv61+)',
+    keys: ['advanced_cognitive_carrier','elementary_cognitive_carrier'],
+    rawKey: '_op_exp_hi_raw',
+  },
+  weapon: {
+    label: 'Weapon EXP',
+    keys: ['arms_insp_kit','arms_inspector'],
+    rawKey: '_wpn_exp_raw',
+  },
+  weapon_hi: {
+    label: 'Weapon EXP (Lv61+)',
+    keys: ['arms_insp_set'],
+    rawKey: '_wpn_exp_hi_raw',
+  },
+};
 
-// Operator leveling EXP + T-Creds per band
-// [fromLv, toLv, exp, tcreds]
-// EXP is in raw units; we distribute across record tiers below
+// ── COST TABLES ──
 const OP_EXP_BANDS = [
   [1,  20,  22860,   820],
   [20, 40,  248540,  12540],
@@ -642,10 +819,6 @@ const OP_EXP_BANDS = [
   [60, 80,  465230,  109180],
   [80, 90,  579950,  238980],
 ];
-
-// Promotion costs — exact from sheet (P1/P2/P3/P4)
-// Also includes O1/O2/O3 T-Cred costs (intermediate outpost)
-// promotionMats indexed 1–4
 const PROMO_COSTS = {
   P1: {protodisk:8,  protoset:0,  pink_bolete:3, red_bolete:0, ruby_bolete:0, cosmagaric:0, t_creds:1600},
   O1: {t_creds:1800},
@@ -654,40 +827,31 @@ const PROMO_COSTS = {
   P3: {protodisk:0,  protoset:24, pink_bolete:0, red_bolete:0, ruby_bolete:5, cosmagaric:0, t_creds:18000},
   O3: {t_creds:18000},
   P4: {protodisk:0,  protoset:36, pink_bolete:0, red_bolete:0, ruby_bolete:0, cosmagaric:20, t_creds:100000},
-  // Note: P4 rare_mat=8 is operator-specific (their unique mat); we mark it separately
-  // The "Rare Plant" in P4 is Cosmagaric (20) per the sheet col 20/21
 };
-
-// Talent node (Expertise) costs — E1 to E4
 const TALENT_NODE_COSTS = [
   {node:1, protoprism:6,  protohedron:0,  t_creds:1600},
   {node:2, protoprism:10, protohedron:0,  t_creds:1800},
   {node:3, protoprism:0,  protohedron:10, t_creds:6000},
   {node:4, protoprism:0,  protohedron:20, t_creds:12000},
 ];
-
-// Per-skill upgrade costs — exact from sheet, per level
-// skill goes 1→2→3→…→9→M1→M2→M3
 const SKILL_LEVEL_COSTS = {
-  2:  {protoprism:6,   protohedron:0,  kalkodendra:1, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:1000},
-  3:  {protoprism:12,  protohedron:0,  kalkodendra:2, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:2700},
-  4:  {protoprism:16,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:3200},
-  5:  {protoprism:21,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:4200},
-  6:  {protoprism:27,  protohedron:0,  kalkodendra:0, chrysodendra:2, vitrodendra:0, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:5400},
-  7:  {protoprism:0,   protohedron:6,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:8200},
-  8:  {protoprism:0,   protohedron:8,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:10500},
-  9:  {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:2, mark_of_perseverance:0, rare_mat_qty:0,  t_creds:18000},
-  M1: {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:1, rare_mat_qty:6,  t_creds:24000},
-  M2: {protoprism:0,   protohedron:24, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:2, rare_mat_qty:16, t_creds:30000},
-  M3: {protoprism:0,   protohedron:50, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:3, rare_mat_qty:36, t_creds:65000},
+  2:  {protoprism:6,   protohedron:0,  kalkodendra:1, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, t_creds:1000},
+  3:  {protoprism:12,  protohedron:0,  kalkodendra:2, chrysodendra:0, vitrodendra:0, mark_of_perseverance:0, t_creds:2700},
+  4:  {protoprism:16,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, t_creds:3200},
+  5:  {protoprism:21,  protohedron:0,  kalkodendra:0, chrysodendra:1, vitrodendra:0, mark_of_perseverance:0, t_creds:4200},
+  6:  {protoprism:27,  protohedron:0,  kalkodendra:0, chrysodendra:2, vitrodendra:0, mark_of_perseverance:0, t_creds:5400},
+  7:  {protoprism:0,   protohedron:6,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, t_creds:8200},
+  8:  {protoprism:0,   protohedron:8,  kalkodendra:0, chrysodendra:0, vitrodendra:1, mark_of_perseverance:0, t_creds:10500},
+  9:  {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:2, mark_of_perseverance:0, t_creds:18000},
+  M1: {protoprism:0,   protohedron:15, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:1, t_creds:24000},
+  M2: {protoprism:0,   protohedron:24, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:2, t_creds:30000},
+  M3: {protoprism:0,   protohedron:50, kalkodendra:0, chrysodendra:0, vitrodendra:0, mark_of_perseverance:3, t_creds:65000},
 };
 const SKILL_LVL_ORDER = [2,3,4,5,6,7,8,9,'M1','M2','M3'];
 function skillLvlToNum(v) {
   if(v==='M1') return 10; if(v==='M2') return 11; if(v==='M3') return 12;
   return parseInt(v);
 }
-
-// Weapon EXP + T-Creds per band — exact from sheet
 const WPN_EXP_BANDS = [
   [1,  20,  8890,    640],
   [20, 40,  96650,   9760],
@@ -695,131 +859,74 @@ const WPN_EXP_BANDS = [
   [60, 80,  913170,  94840],
   [80, 90,  1320370, 217540],
 ];
-
-// Weapon Tuning — exact from sheet
-// T1: CastDie=5, Kalkonyx=3, T-Creds=2200
-// T2: CastDie=18, Auronyx=5, T-Creds=8500
-// T3: HeavyCastDie=20, Umbronyx=5, T-Creds=25000
-// T4: HeavyCastDie=30, RareMat=16, RareMineral=8, T-Creds=90000
 const TUNING_COSTS = {
-  1: {cast_die:5,   heavy_cast_die:0,  kalkonyx:3, auronyx:0, umbronyx:0, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:2200},
-  2: {cast_die:18,  heavy_cast_die:0,  kalkonyx:0, auronyx:5, umbronyx:0, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:8500},
-  3: {cast_die:0,   heavy_cast_die:20, kalkonyx:0, auronyx:0, umbronyx:5, rare_mat_qty:0,  rare_mineral_qty:0, t_creds:25000},
-  4: {cast_die:0,   heavy_cast_die:30, kalkonyx:0, auronyx:0, umbronyx:0, rare_mat_qty:16, rare_mineral_qty:8, t_creds:90000},
+  1: {cast_die:5,   heavy_cast_die:0,  kalkonyx:3, auronyx:0, umbronyx:0, t_creds:2200},
+  2: {cast_die:18,  heavy_cast_die:0,  kalkonyx:0, auronyx:5, umbronyx:0, t_creds:8500},
+  3: {cast_die:0,   heavy_cast_die:20, kalkonyx:0, auronyx:0, umbronyx:5, t_creds:25000},
+  4: {cast_die:0,   heavy_cast_die:30, kalkonyx:0, auronyx:0, umbronyx:0, t_creds:90000},
 };
 
-// ────────────────────────────────────────────────
-// CALC MATS — corrected
-// plan.skills = [{name, enabled, fromLv, toLv}, ...]
-// plan.promoFrom, plan.promoTo (0=none, 1=P1 … 4=P4)
-// plan.talentFrom, plan.talentTo (0=none, 1=E1 … 4=E4)
-// plan.tuneFrom, plan.tuneTo (0=none, 1=T1 … 4=T4)
-// ────────────────────────────────────────────────
+// ── CALC MATS ──
 function calcMats(plan) {
   const m = {};
   const add = (k, v) => { if(v > 0) m[k] = (m[k]||0) + v; };
 
   if (plan.type === 'operator') {
-    // EXP leveling
+    let rawExpLow = 0, rawExpHigh = 0;
     for (const [s, e, exp, tcreds] of OP_EXP_BANDS) {
       if (plan.toLv <= s || plan.fromLv >= e) continue;
       const frac = (Math.min(plan.toLv, e) - Math.max(plan.fromLv, s)) / (e - s);
-      const totalExp = Math.round(exp * frac);
-      if (s >= 60) {
-        add('elementary_cognitive_carrier', Math.round(totalExp * 0.3));
-        add('advanced_cognitive_carrier',   Math.round(totalExp * 0.7));
-      } else {
-        add('elementary_combat_record',    Math.round(totalExp * 0.35));
-        add('intermediate_combat_record',  Math.round(totalExp * 0.3));
-        add('advanced_combat_record',      Math.round(totalExp * 0.35));
-      }
+      if (s >= 60) rawExpHigh += Math.round(exp * frac);
+      else          rawExpLow  += Math.round(exp * frac);
       add('t_creds', Math.round(tcreds * frac));
     }
+    if (rawExpLow  > 0) add('_op_exp_raw',    rawExpLow);
+    if (rawExpHigh > 0) add('_op_exp_hi_raw', rawExpHigh);
 
-    // Promotions
-    const pf = plan.promoFrom || 0;
-    const pt = plan.promoTo   || 0;
-    const promoOrder = ['P1','O1','P2','O2','P3','O3','P4'];
-    // Each Px/Ox step index: P1=idx0, O1=idx1, P2=idx2, O2=idx3, P3=idx4, O3=idx5, P4=idx6
-    // pf=0 means nothing done, pt=1 means P1 done, etc.
-    // Map: promo stage N → we need P(N)'s cost + O(N-1) if N>1
+    const pf = plan.promoFrom || 0, pt = plan.promoTo || 0;
     for (let stage = pf + 1; stage <= pt; stage++) {
-      const pKey = 'P' + stage;
-      const oKey = 'O' + (stage - 1);
-      if (stage > 1 && PROMO_COSTS[oKey]) {
-        for (const [k,v] of Object.entries(PROMO_COSTS[oKey])) add(k, v);
-      }
-      if (PROMO_COSTS[pKey]) {
-        for (const [k,v] of Object.entries(PROMO_COSTS[pKey])) add(k, v);
-      }
+      const pKey = 'P' + stage, oKey = 'O' + (stage - 1);
+      if (stage > 1 && PROMO_COSTS[oKey]) for (const [k,v] of Object.entries(PROMO_COSTS[oKey])) add(k, v);
+      if (PROMO_COSTS[pKey]) for (const [k,v] of Object.entries(PROMO_COSTS[pKey])) add(k, v);
     }
-
-    // Talent nodes (Expertise)
-    const tf = plan.talentFrom || 0;
-    const tt = plan.talentTo   || 0;
+    const tf = plan.talentFrom || 0, tt = plan.talentTo || 0;
     for (const n of TALENT_NODE_COSTS) {
-      if (n.node > tf && n.node <= tt) {
-        add('protoprism',  n.protoprism);
-        add('protohedron', n.protohedron);
-        add('t_creds',     n.t_creds);
-      }
+      if (n.node > tf && n.node <= tt) { add('protoprism', n.protoprism); add('protohedron', n.protohedron); add('t_creds', n.t_creds); }
     }
-
-    // Skills
     for (const sk of (plan.skills || [])) {
       if (!sk.enabled) continue;
-      const fromN = skillLvlToNum(sk.fromLv);
-      const toN   = skillLvlToNum(sk.toLv);
+      const fromN = skillLvlToNum(sk.fromLv), toN = skillLvlToNum(sk.toLv);
       for (const lvl of SKILL_LVL_ORDER) {
         const lvlN = skillLvlToNum(lvl);
         if (lvlN > fromN && lvlN <= toN) {
           const c = SKILL_LEVEL_COSTS[lvl];
-          add('protoprism',          c.protoprism);
-          add('protohedron',         c.protohedron);
-          add('kalkodendra',         c.kalkodendra);
-          add('chrysodendra',        c.chrysodendra);
-          add('vitrodendra',         c.vitrodendra);
-          add('mark_of_perseverance',c.mark_of_perseverance);
-          add('t_creds',             c.t_creds);
-          // rare_mat_qty tracked generically (operator unique mat, shown separately)
-          if (c.rare_mat_qty) add('_skill_rare_mat', c.rare_mat_qty);
+          add('protoprism', c.protoprism); add('protohedron', c.protohedron);
+          add('kalkodendra', c.kalkodendra); add('chrysodendra', c.chrysodendra);
+          add('vitrodendra', c.vitrodendra); add('mark_of_perseverance', c.mark_of_perseverance);
+          add('t_creds', c.t_creds);
         }
       }
     }
-
   } else {
-    // WEAPON — EXP
+    let rawExpLow = 0, rawExpHigh = 0;
     for (const [s, e, exp, tcreds] of WPN_EXP_BANDS) {
       if (plan.toLv <= s || plan.fromLv >= e) continue;
       const frac = (Math.min(plan.toLv, e) - Math.max(plan.fromLv, s)) / (e - s);
-      const totalExp = Math.round(exp * frac);
-      if (s >= 60) {
-        add('arms_insp_set', totalExp);
-      } else if (s >= 20) {
-        add('arms_insp_kit', totalExp);
-      } else {
-        add('arms_inspector', totalExp);
-      }
+      if (s >= 60) rawExpHigh += Math.round(exp * frac);
+      else          rawExpLow  += Math.round(exp * frac);
       add('t_creds', Math.round(tcreds * frac));
     }
+    if (rawExpLow  > 0) add('_wpn_exp_raw',    rawExpLow);
+    if (rawExpHigh > 0) add('_wpn_exp_hi_raw', rawExpHigh);
 
-    // Tuning stages
-    const tf = plan.tuneFrom || 0;
-    const tt = plan.tuneTo   || 0;
+    const tf = plan.tuneFrom || 0, tt = plan.tuneTo || 0;
     for (let stage = tf + 1; stage <= tt; stage++) {
-      const c = TUNING_COSTS[stage];
-      if (!c) continue;
-      add('cast_die',       c.cast_die);
-      add('heavy_cast_die', c.heavy_cast_die);
-      add('kalkonyx',       c.kalkonyx);
-      add('auronyx',        c.auronyx);
-      add('umbronyx',       c.umbronyx);
-      add('t_creds',        c.t_creds);
-      if (c.rare_mat_qty)     add('_tune_rare_mat',     c.rare_mat_qty);
-      if (c.rare_mineral_qty) add('_tune_rare_mineral',  c.rare_mineral_qty);
+      const c = TUNING_COSTS[stage]; if (!c) continue;
+      add('cast_die', c.cast_die); add('heavy_cast_die', c.heavy_cast_die);
+      add('kalkonyx', c.kalkonyx); add('auronyx', c.auronyx); add('umbronyx', c.umbronyx);
+      add('t_creds', c.t_creds);
     }
   }
-
   return m;
 }
 
@@ -833,16 +940,64 @@ function totalMats() {
   return acc;
 }
 
-// ── SKILL DEFINITIONS per operator ──
-const SKILL_NAMES = ['Basic Attack','Battle Skill','Combo Skill','Ultimate'];
+// ── FIX 1: EXP BREAKDOWN HELPERS ──
+// expHave[groupKey][itemKey] = quantity of that item the user owns
+let expHave = {};
 
+function getExpHave(groupKey, itemKey) {
+  return (expHave[groupKey] && expHave[groupKey][itemKey]) || 0;
+}
+function setExpHave(groupKey, itemKey, val) {
+  if (!expHave[groupKey]) expHave[groupKey] = {};
+  expHave[groupKey][itemKey] = Math.max(0, parseInt(val)||0);
+  renderNeed();
+}
+
+/**
+ * FIX 1 — Compute how many of each item tier is needed.
+ *
+ * Logic:
+ * 1. Start with totalExpNeeded.
+ * 2. For each tier (highest value first), subtract the EXP already covered
+ *    by items the user HAS of that tier.
+ * 3. If remaining > 0 after a tier's owned items, compute how many MORE
+ *    of the NEXT tiers are needed (greedy, largest tier first).
+ *
+ * Returns { need: {itemKey: count}, totalExpCovered, remaining, totalExp }
+ * where need[key] = number of ADDITIONAL items to collect (NOT counting what you have).
+ */
+function computeExpBreakdown(rawExp, groupDef, groupKey) {
+  // Compute EXP already covered by owned items
+  let coveredExp = 0;
+  for (const key of groupDef.keys) {
+    const have = getExpHave(groupKey, key);
+    coveredExp += have * (MATS[key]?.expValue || 0);
+  }
+
+  const remaining = Math.max(0, rawExp - coveredExp);
+
+  // Greedy fill: highest tier first, compute how many MORE we need
+  let left = remaining;
+  const need = {};
+  for (const key of groupDef.keys) {
+    const val = MATS[key]?.expValue || 1;
+    if (left <= 0) {
+      need[key] = 0;
+      continue;
+    }
+    const cnt = Math.ceil(left / val);
+    need[key] = cnt;
+    left = Math.max(0, left - cnt * val);
+  }
+
+  const pct = Math.min(100, rawExp > 0 ? Math.round((coveredExp / rawExp) * 100) : 0);
+  return { need, coveredExp, remaining, totalExp: rawExp, pct };
+}
+
+// ── SKILL DEFINITIONS ──
+const SKILL_NAMES = ['Basic Attack','Battle Skill','Combo Skill','Ultimate'];
 function defaultSkills() {
-  return SKILL_NAMES.map((name, i) => ({
-    name,
-    enabled: i > 0,  // Basic Attack off by default
-    fromLv: 1,
-    toLv: 'M3',
-  }));
+  return SKILL_NAMES.map((name, i) => ({ name, enabled: i > 0, fromLv: 1, toLv: 'M3' }));
 }
 
 // ── DB / MAPS ──
@@ -903,6 +1058,8 @@ let focusedPlanIds = new Set();
 let focusPanelOpen = false;
 let activeMapId = null;
 let mapView = { tx: 0, ty: 0, scale: 1 };
+// FIX 3: pin group portal state
+let openPinGroupData = null; // { groupId, pins, anchorRect }
 
 // ── HELPERS ──
 function getElColor(el) {
@@ -929,80 +1086,65 @@ function escHtml(s) {
 function addPlan(type, item) {
   const existing = plans.find(p => p.item.id === item.id && p.type === type);
   if (existing) { closeModal(); return; }
-  const plan = {
-    id: Date.now() + Math.random(),
-    type, item,
-    fromLv: 1, toLv: 40,
-    promoFrom: 0, promoTo: 0,
-    talentFrom: 0, talentTo: 0,
-    tuneFrom: 0, tuneTo: 0,
-    skills: type === 'operator' ? defaultSkills() : [],
-  };
+  const plan = { id: Date.now() + Math.random(), type, item, fromLv: 1, toLv: 40, promoFrom: 0, promoTo: 0, talentFrom: 0, talentTo: 0, tuneFrom: 0, tuneTo: 0, skills: type === 'operator' ? defaultSkills() : [] };
   plans.push(plan);
   focusedPlanIds.add(plan.id);
   renderAll();
   closeModal();
 }
-function removePlan(id) {
-  plans = plans.filter(p => p.id !== id);
-  focusedPlanIds.delete(id);
-  renderAll();
-}
+function removePlan(id) { plans = plans.filter(p => p.id !== id); focusedPlanIds.delete(id); renderAll(); }
+
+// FIX 2: Level update functions now handle both slider and text input
 function updateFrom(id, val) {
   const p = plans.find(x => x.id === id); if (!p) return;
-  p.fromLv = parseInt(val);
+  let v = parseInt(val);
+  if (isNaN(v)) return;
+  v = Math.max(1, Math.min(89, v));
+  p.fromLv = v;
   if (p.fromLv >= p.toLv) p.toLv = Math.min(p.fromLv + 1, 90);
+  syncLevelUI(id);
   renderAll();
 }
 function updateTo(id, val) {
   const p = plans.find(x => x.id === id); if (!p) return;
-  p.toLv = parseInt(val);
+  let v = parseInt(val);
+  if (isNaN(v)) return;
+  v = Math.max(2, Math.min(90, v));
+  p.toLv = v;
   if (p.toLv <= p.fromLv) p.fromLv = Math.max(p.toLv - 1, 1);
-  renderAll();
-}
-function setRange(id, f, t) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  p.fromLv = f; p.toLv = t; renderAll();
-}
-function setPromoRange(id, field, val) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  p[field] = parseInt(val); renderAll();
-}
-function setTalentRange(id, field, val) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  p[field] = parseInt(val); renderAll();
-}
-function setTuneRange(id, field, val) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  p[field] = parseInt(val); renderAll();
-}
-function toggleSkill(id, skillIdx) {
-  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
-  p.skills[skillIdx].enabled = !p.skills[skillIdx].enabled;
-  renderAll();
-}
-function setSkillFrom(id, skillIdx, val) {
-  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
-  p.skills[skillIdx].fromLv = val; renderAll();
-}
-function setSkillTo(id, skillIdx, val) {
-  const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return;
-  p.skills[skillIdx].toLv = val; renderAll();
-}
-function toggleAllSkills(id) {
-  const p = plans.find(x => x.id === id); if (!p) return;
-  const allOn = p.skills.every(s => s.enabled);
-  p.skills.forEach(s => s.enabled = !allOn);
+  syncLevelUI(id);
   renderAll();
 }
 
-function renderAll() {
-  renderPlans();
-  renderFocusBar();
-  renderNeed();
-  renderMapFilters();
-  if (activeMapId) renderMapCanvas(activeMapId);
+// Sync slider and number input without full re-render
+function syncLevelUI(id) {
+  const p = plans.find(x => x.id === id); if (!p) return;
+  const card = document.querySelector(`.plan-card[data-id="${id}"]`); if (!card) return;
+  const fromSlider = card.querySelector('.from-slider');
+  const toSlider   = card.querySelector('.to-slider');
+  const fromInput  = card.querySelector('.from-num');
+  const toInput    = card.querySelector('.to-num');
+  if (fromSlider) fromSlider.value = p.fromLv;
+  if (toSlider)   toSlider.value   = p.toLv;
+  if (fromInput && document.activeElement !== fromInput) fromInput.value = p.fromLv;
+  if (toInput   && document.activeElement !== toInput)   toInput.value   = p.toLv;
+  // Update quick btn highlights
+  card.querySelectorAll('.quick-btn').forEach(btn => {
+    const [f, t] = btn.dataset.range.split('-').map(Number);
+    btn.classList.toggle('active', p.fromLv === f && p.toLv === t);
+  });
 }
+
+function setRange(id, f, t)  { const p = plans.find(x => x.id === id); if (!p) return; p.fromLv = f; p.toLv = t; renderAll(); }
+function setPromoRange(id, field, val)  { const p = plans.find(x => x.id === id); if (!p) return; p[field] = parseInt(val); renderAll(); }
+function setTalentRange(id, field, val) { const p = plans.find(x => x.id === id); if (!p) return; p[field] = parseInt(val); renderAll(); }
+function setTuneRange(id, field, val)   { const p = plans.find(x => x.id === id); if (!p) return; p[field] = parseInt(val); renderAll(); }
+function toggleSkill(id, skillIdx) { const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return; p.skills[skillIdx].enabled = !p.skills[skillIdx].enabled; renderAll(); }
+function setSkillFrom(id, skillIdx, val) { const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return; p.skills[skillIdx].fromLv = val; renderAll(); }
+function setSkillTo(id, skillIdx, val)   { const p = plans.find(x => x.id === id); if (!p || !p.skills[skillIdx]) return; p.skills[skillIdx].toLv = val; renderAll(); }
+function toggleAllSkills(id) { const p = plans.find(x => x.id === id); if (!p) return; const allOn = p.skills.every(s => s.enabled); p.skills.forEach(s => s.enabled = !allOn); renderAll(); }
+
+function renderAll() { renderPlans(); renderFocusBar(); renderNeed(); renderMapFilters(); if (activeMapId) renderMapCanvas(activeMapId); }
 
 function switchPlanTab(tab) {
   planFilter = tab;
@@ -1037,20 +1179,15 @@ function buildAvatarHTML(plan) {
       </div>`;
     }
     const icon = EL_ICON[el] || OP_ICON;
-    return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">
-      ${icon}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
-    </div>`;
+    return `<div class="plan-avatar" style="border-color:${elColor}55;background:${elColor}10">${icon}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
   }
-  return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">
-    ${WPN_ICON}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div>
-  </div>`;
+  return `<div class="plan-avatar" style="border-color:var(--border2);background:var(--surface2)">${WPN_ICON}<div class="plan-avatar-rarity" style="background:${rarityColor}"></div></div>`;
 }
 
 function buildSkillLvlOptions(selectedVal) {
   const opts = [1,2,3,4,5,6,7,8,9,'M1','M2','M3'];
   return opts.map(v => `<option value="${v}" ${String(v)===String(selectedVal)?'selected':''}>${v}</option>`).join('');
 }
-
 function buildPromoOptions(selectedVal, label) {
   return [0,1,2,3,4].map(v => `<option value="${v}" ${v===selectedVal?'selected':''}>${v===0?'None':label+v}</option>`).join('');
 }
@@ -1060,16 +1197,16 @@ function buildPlanCard(plan) {
   const elLower = el ? el.toLowerCase() : '';
   const isOp = plan.type === 'operator';
   const qRanges = [[1,40],[1,60],[1,80],[1,90],[40,80]];
+
+  // FIX 2: quick buttons have data-range attribute for sync
   const qBtns = qRanges.map(([f, t]) => {
     const active = plan.fromLv === f && plan.toLv === t ? 'active' : '';
-    return `<button class="quick-btn ${active}" onclick="setRange(${plan.id},${f},${t})">${f}→${t}</button>`;
+    return `<button class="quick-btn ${active}" data-range="${f}-${t}" onclick="setRange(${plan.id},${f},${t})">${f}→${t}</button>`;
   }).join('');
 
-  // Promotion row (operator only)
   let promoRow = '';
   if (isOp) {
-    promoRow = `
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;flex-wrap:wrap;">
+    promoRow = `<div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;flex-wrap:wrap;">
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:64px;">Promotion</div>
       <select class="skill-lvl-sel" style="font-size:9px;" onchange="setPromoRange(${plan.id},'promoFrom',this.value)">${buildPromoOptions(plan.promoFrom,'P')}</select>
       <span class="skill-range-arrow">→</span>
@@ -1081,11 +1218,9 @@ function buildPlanCard(plan) {
     </div>`;
   }
 
-  // Tuning row (weapon only)
   let tuneRow = '';
   if (!isOp) {
-    tuneRow = `
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;">
+    tuneRow = `<div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;">
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;min-width:54px;">Tuning</div>
       <select class="skill-lvl-sel" style="font-size:9px;" onchange="setTuneRange(${plan.id},'tuneFrom',this.value)">${[0,1,2,3,4].map(v=>`<option value="${v}" ${v===plan.tuneFrom?'selected':''}>${v===0?'None':'T'+v}</option>`).join('')}</select>
       <span class="skill-range-arrow">→</span>
@@ -1093,15 +1228,12 @@ function buildPlanCard(plan) {
     </div>`;
   }
 
-  // Skills section (operator only)
   let skillsSection = '';
   if (isOp && plan.skills && plan.skills.length) {
     const allOn = plan.skills.every(s => s.enabled);
     const skillRows = plan.skills.map((sk, i) => `
       <div class="skill-row ${sk.enabled?'enabled':''}">
-        <div class="skill-row-chk ${sk.enabled?'on':''}" onclick="toggleSkill(${plan.id},${i})">
-          <div class="skill-row-chk-inner"></div>
-        </div>
+        <div class="skill-row-chk ${sk.enabled?'on':''}" onclick="toggleSkill(${plan.id},${i})"><div class="skill-row-chk-inner"></div></div>
         <div class="skill-row-name">${sk.name}</div>
         <div class="skill-range-wrap">
           <select class="skill-lvl-sel" onchange="setSkillFrom(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.fromLv)}</select>
@@ -1109,19 +1241,16 @@ function buildPlanCard(plan) {
           <select class="skill-lvl-sel" onchange="setSkillTo(${plan.id},${i},this.value)">${buildSkillLvlOptions(sk.toLv)}</select>
         </div>
       </div>`).join('');
-
-    skillsSection = `
-    <div class="skill-section">
-      <div class="skill-section-label">
-        Skills
-        <button class="skill-toggle-all" onclick="toggleAllSkills(${plan.id})">${allOn?'Uncheck all':'Check all'}</button>
-      </div>
+    skillsSection = `<div class="skill-section">
+      <div class="skill-section-label">Skills<button class="skill-toggle-all" onclick="toggleAllSkills(${plan.id})">${allOn?'Uncheck all':'Check all'}</button></div>
       ${skillRows}
     </div>`;
   }
 
   const card = document.createElement('div');
   card.className = 'plan-card'; card.dataset.id = plan.id;
+
+  // FIX 2: level-num is now an <input type="number"> — editable, syncs with slider
   card.innerHTML = `
     <div class="plan-head">
       ${buildAvatarHTML(plan)}
@@ -1142,40 +1271,46 @@ function buildPlanCard(plan) {
         <div class="level-col">
           <label>From</label>
           <div class="level-slider-wrap">
-            <input type="range" min="1" max="89" value="${plan.fromLv}" oninput="updateFrom(${plan.id},this.value)">
-            <div class="level-num">${plan.fromLv}</div>
+            <input type="range" class="from-slider" min="1" max="89" value="${plan.fromLv}"
+              oninput="updateFrom(${plan.id},this.value)"
+              onmousedown="this.focus()"
+            >
+            <input type="number" class="level-num-input from-num" min="1" max="89" value="${plan.fromLv}"
+              title="Type a level"
+              onchange="updateFrom(${plan.id},this.value)"
+              onkeydown="if(event.key==='Enter'){updateFrom(${plan.id},this.value);this.blur()}"
+            >
           </div>
         </div>
         <div class="level-arrow">→</div>
         <div class="level-col">
           <label>To</label>
           <div class="level-slider-wrap">
-            <input type="range" min="2" max="90" value="${plan.toLv}" oninput="updateTo(${plan.id},this.value)">
-            <div class="level-num">${plan.toLv}</div>
+            <input type="range" class="to-slider" min="2" max="90" value="${plan.toLv}"
+              oninput="updateTo(${plan.id},this.value)"
+              onmousedown="this.focus()"
+            >
+            <input type="number" class="level-num-input to-num" min="2" max="90" value="${plan.toLv}"
+              title="Type a level"
+              onchange="updateTo(${plan.id},this.value)"
+              onkeydown="if(event.key==='Enter'){updateTo(${plan.id},this.value);this.blur()}"
+            >
           </div>
         </div>
       </div>
       <div class="quick-btns">${qBtns}</div>
-      ${promoRow}
-      ${tuneRow}
-      ${skillsSection}
+      ${promoRow}${tuneRow}${skillsSection}
     </div>`;
   return card;
 }
 
 // ── FOCUS PANEL ──
-function toggleFocusPanel() {
-  focusPanelOpen = !focusPanelOpen;
-  document.getElementById('mid-focus-pills-wrap').classList.toggle('open', focusPanelOpen);
-  document.getElementById('mid-focus-caret').classList.toggle('open', focusPanelOpen);
-}
+function toggleFocusPanel() { focusPanelOpen = !focusPanelOpen; document.getElementById('mid-focus-pills-wrap').classList.toggle('open', focusPanelOpen); document.getElementById('mid-focus-caret').classList.toggle('open', focusPanelOpen); }
 function focusAll()  { plans.forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
 function focusNone() { focusedPlanIds.clear(); renderAll(); }
 function focusOnly(type) { focusedPlanIds.clear(); plans.filter(p => p.type === type).forEach(p => focusedPlanIds.add(p.id)); renderAll(); }
-function toggleFocusPlan(id) {
-  if (focusedPlanIds.has(id)) focusedPlanIds.delete(id); else focusedPlanIds.add(id);
-  renderAll();
-}
+function toggleFocusPlan(id) { if (focusedPlanIds.has(id)) focusedPlanIds.delete(id); else focusedPlanIds.add(id); renderAll(); }
+
 function renderFocusBar() {
   const bar = document.getElementById('mid-focus-bar');
   const pills = document.getElementById('mid-focus-pills');
@@ -1197,6 +1332,88 @@ function renderFocusBar() {
   }).join('');
 }
 
+// ── FIND BUTTON LOGIC ──
+function mapsWithMat(matKey) {
+  return dbMaps.map(map => {
+    const pins = map.pins.filter(p => p.material_id === matKey);
+    return pins.length ? { map, pins } : null;
+  }).filter(Boolean);
+}
+
+let activeFindDropdownEl = null;
+
+function closeAllFindDropdowns() {
+  if (activeFindDropdownEl && activeFindDropdownEl.parentNode) activeFindDropdownEl.parentNode.removeChild(activeFindDropdownEl);
+  activeFindDropdownEl = null;
+}
+
+function onFindBtn(matKey, btnEl, event) {
+  event.stopPropagation();
+  if (activeFindDropdownEl && activeFindDropdownEl.dataset.matKey === matKey) {
+    closeAllFindDropdowns(); return;
+  }
+  closeAllFindDropdowns();
+
+  const locations = mapsWithMat(matKey);
+  if (!locations.length) return;
+
+  if (locations.length === 1) {
+    navigateToMat(matKey, locations[0].map.id);
+    return;
+  }
+
+  const rect = btnEl.getBoundingClientRect();
+  const dropdown = document.createElement('div');
+  dropdown.className = 'find-dropdown';
+  dropdown.dataset.matKey = matKey;
+  dropdown.style.top  = (rect.bottom + 4) + 'px';
+  dropdown.style.left = Math.max(4, rect.left - 60) + 'px';
+  dropdown.innerHTML = `<div class="find-dropdown-title">Found on ${locations.length} maps — pick one</div>` +
+    locations.map(({map, pins}) => `
+      <div class="find-dropdown-item" onclick="navigateToMat('${matKey}','${map.id}');closeAllFindDropdowns()">
+        <span class="find-dropdown-map">${escHtml(map.name)}</span>
+        <span class="find-dropdown-count">${pins.length} pin${pins.length>1?'s':''}</span>
+      </div>`).join('');
+
+  document.body.appendChild(dropdown);
+  activeFindDropdownEl = dropdown;
+}
+
+function navigateToMat(matKey, mapId) {
+  if (activeMapId !== mapId) switchMap(mapId);
+  highlightedMat = matKey;
+  renderMapFilters();
+  renderMapCanvas(mapId);
+
+  const map = dbMaps.find(m => m.id === mapId);
+  if (!map) return;
+  const pin = map.pins.find(p => p.material_id === matKey);
+  if (!pin) return;
+
+  const area = document.getElementById('map-area');
+  if (!area) return;
+  const rect = area.getBoundingClientRect();
+  const targetScale = Math.max(mapView.scale, 1.4);
+  mapView.scale = targetScale;
+  mapView.tx = rect.width  / 2 - pin.x * targetScale;
+  mapView.ty = rect.height / 2 - pin.y * targetScale;
+  updateMapTransform();
+
+  setTimeout(() => {
+    const pinEl = document.querySelector(`[data-pin-mat="${matKey}"]`);
+    if (pinEl) {
+      pinEl.classList.add('nav-flash');
+      setTimeout(() => pinEl.classList.remove('nav-flash'), 1400);
+    }
+  }, 120);
+
+  updateInfoBar(map, matKey);
+}
+
+document.addEventListener('click', (e) => {
+  if (activeFindDropdownEl && !activeFindDropdownEl.contains(e.target)) closeAllFindDropdowns();
+});
+
 // ── NEED LIST ──
 function toggleCheck(matKey) { checkedMats[matKey] = !checkedMats[matKey]; renderNeed(); }
 function updateHave(matKey, val) { haveQty[matKey] = Math.max(0, parseInt(val)||0); renderNeed(); }
@@ -1216,55 +1433,140 @@ function renderNeed() {
   }
 
   const mats = totalMats();
-  // Filter out internal tracking keys
-  const entries = Object.entries(mats).filter(([k]) => !k.startsWith('_'));
-  if (!entries.length) { list.innerHTML = ''; badge.style.display = 'none'; return; }
+  const internalKeys = new Set(['_op_exp_raw','_op_exp_hi_raw','_wpn_exp_raw','_wpn_exp_hi_raw']);
 
-  const byCategory = {};
-  for (const [k, qty] of entries) {
-    const mat = MATS[k]; if (!mat) continue;
-    if (!byCategory[mat.category]) byCategory[mat.category] = [];
-    byCategory[mat.category].push({k, qty, mat});
+  const matsWithPinsSet = new Set();
+  for (const map of dbMaps) for (const pin of map.pins) matsWithPinsSet.add(pin.material_id);
+
+  const entries = Object.entries(mats).filter(([k]) => !internalKeys.has(k));
+  const hasExpData = mats['_op_exp_raw'] || mats['_op_exp_hi_raw'] || mats['_wpn_exp_raw'] || mats['_wpn_exp_hi_raw'];
+
+  if (!entries.length && !hasExpData) {
+    list.innerHTML = ''; badge.style.display = 'none'; return;
   }
 
-  const checkedCount = entries.filter(([k]) => checkedMats[k]).length;
+  const byCategory = {};
+
+  // Inject EXP breakdown groups
+  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
+    const rawKey = gDef.rawKey;
+    if (!mats[rawKey]) continue;
+    const rawExp = mats[rawKey];
+    const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
+    byCategory[gDef.label] = { type: 'exp', gKey, gDef, rawExp, ...breakdown };
+  }
+
+  // Regular items
+  for (const [k, qty] of entries) {
+    const mat = MATS[k]; if (!mat) continue;
+    if (mat.isExpItem) continue;
+    if (!byCategory[mat.category]) byCategory[mat.category] = { type: 'items', items: [] };
+    if (byCategory[mat.category].type === 'items')
+      byCategory[mat.category].items.push({k, qty, mat});
+  }
+
+  const checkableItems = entries.filter(([k]) => { const m = MATS[k]; return m && !m.isExpItem; });
+  const checkedCount = checkableItems.filter(([k]) => checkedMats[k]).length;
   badge.style.display = 'block';
-  badgeLabel.textContent = `${checkedCount}/${entries.length}`;
+  badgeLabel.textContent = `${checkedCount}/${checkableItems.length}`;
 
   let html = '';
-  for (const [cat, items] of Object.entries(byCategory)) {
+  for (const [cat, data] of Object.entries(byCategory)) {
     html += `<div class="need-section-label">${cat}</div>`;
-    for (const {k, qty, mat} of items) {
-      const checked = checkedMats[k] ? 'checked' : '';
-      const highlighted = highlightedMat === k ? 'highlighted' : '';
-      const have = haveQty[k] || 0;
-      const pct  = Math.min(100, Math.round((have / qty) * 100));
-      const remaining = Math.max(0, qty - have);
-      const fmtQty   = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
-      const fmtTotal = qty     >= 1000 ? (qty/1000).toFixed(1)+'k'     : qty.toLocaleString();
-      html += `<div class="need-row ${checked} ${highlighted}" onclick="onNeedRowClick('${k}',event)">
-        <div class="need-check"><div class="need-check-inner"></div></div>
-        <div class="need-dot" style="background:${mat.color}"></div>
-        <div class="need-row-name">${mat.name}</div>
-        <div class="need-row-right" onclick="event.stopPropagation()">
-          <div class="need-row-qty" style="color:${mat.color}">${fmtQty}</div>
-          <div class="need-have-wrap">
-            Have:<input class="need-row-input" type="number" min="0" value="${have}"
-              onclick="event.stopPropagation()"
-              onchange="updateHave('${k}',this.value)"
-              oninput="updateHave('${k}',this.value)">/${fmtTotal}
-          </div>
+
+    if (data.type === 'exp') {
+      // ── FIX 1: Improved EXP breakdown rendering ──
+      const { gKey, gDef, rawExp, need, coveredExp, remaining, pct } = data;
+      const fmtTotal  = rawExp >= 1000 ? (rawExp/1000).toFixed(1)+'k EXP' : rawExp.toLocaleString()+' EXP';
+      const fmtCovered = coveredExp >= 1000 ? (coveredExp/1000).toFixed(1)+'k' : coveredExp.toLocaleString();
+      const allDone   = remaining === 0;
+
+      html += `<div class="exp-breakdown">
+        <div class="exp-breakdown-header">
+          <span>Total EXP needed</span>
+          <span class="exp-breakdown-total" style="${allDone?'color:var(--accent)':''}">${fmtTotal}</span>
         </div>
-        ${pct > 0 && !checked ? `<div class="need-progress" style="width:${pct}%"></div>` : ''}
-      </div>`;
+        <div class="exp-progress"><div class="exp-progress-fill" style="width:${pct}%"></div></div>
+        <div class="exp-coverage-text">${allDone
+          ? '✓ Fully covered by owned items'
+          : `${pct}% covered · ${fmtCovered} EXP in inventory`
+        }</div>`;
+
+      // Each item tier row
+      for (const itemKey of gDef.keys) {
+        const mat = MATS[itemKey]; if (!mat) continue;
+        const haveAmt = getExpHave(gKey, itemKey);
+        const needAmt = need[itemKey] || 0;
+        const hasFind = matsWithPinsSet.has(itemKey);
+        const expVal  = mat.expValue || 0;
+        const expValLabel = expVal >= 1000 ? (expVal/1000).toFixed(0)+'k' : expVal;
+        // needAmt = 0 means this tier is fully satisfied (or not needed)
+        const isSatisfied = needAmt === 0;
+
+        const findBtn = hasFind ? `<button class="exp-item-find-btn" title="Find on map"
+          onclick="onFindBtn('${itemKey}',this,event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+        </button>` : '';
+
+        html += `<div class="exp-item-row">
+          <div class="exp-item-dot" style="background:${mat.color}"></div>
+          <div class="exp-item-name" style="${isSatisfied?'':'color:var(--text)'}">${mat.name}</div>
+          <div class="exp-item-value">${expValLabel} ea</div>
+          ${findBtn}
+          <div class="exp-item-need-count ${isSatisfied?'satisfied':''}"
+            style="${isSatisfied?'':'color:'+mat.color}"
+            title="${isSatisfied?'Satisfied':'Need '+needAmt+' more'}">
+            ${isSatisfied ? '✓' : needAmt}
+          </div>
+          <div class="exp-item-have-wrap">
+            <span style="color:var(--muted);font-size:8px;margin-right:2px">have</span>
+            <input class="exp-item-input" type="number" min="0" value="${haveAmt}"
+              title="How many you own"
+              onclick="event.stopPropagation()"
+              onchange="setExpHave('${gKey}','${itemKey}',this.value)"
+              oninput="setExpHave('${gKey}','${itemKey}',this.value)">
+          </div>
+        </div>`;
+      }
+
+      html += `</div>`;
+
+    } else {
+      // Regular items
+      for (const {k, qty, mat} of (data.items||[])) {
+        const checked = checkedMats[k] ? 'checked' : '';
+        const highlighted = highlightedMat === k ? 'highlighted' : '';
+        const have = haveQty[k] || 0;
+        const pct  = Math.min(100, Math.round((have / qty) * 100));
+        const remaining = Math.max(0, qty - have);
+        const fmtQty   = remaining >= 1000 ? (remaining/1000).toFixed(1)+'k' : remaining.toLocaleString();
+        const fmtTotal = qty >= 1000 ? (qty/1000).toFixed(1)+'k' : qty.toLocaleString();
+        const hasFind  = matsWithPinsSet.has(k);
+        const findBtn  = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${k}',this,event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+        </button>` : '';
+
+        html += `<div class="need-row ${checked} ${highlighted}">
+          <div class="need-check" onclick="toggleCheck('${k}')"><div class="need-check-inner"></div></div>
+          <div class="need-dot" style="background:${mat.color}"></div>
+          <div class="need-row-name">${mat.name}</div>
+          <div class="need-row-right" onclick="event.stopPropagation()">
+            ${findBtn}
+            <div class="need-row-qty" style="color:${mat.color}">${fmtQty}</div>
+            <div class="need-have-wrap">
+              <span class="need-have-label" style="color:var(--muted);font-size:8px">have:</span>
+              <input class="need-row-input" type="number" min="0" value="${have}"
+                onclick="event.stopPropagation()"
+                onchange="updateHave('${k}',this.value)"
+                oninput="updateHave('${k}',this.value)">/<span style="color:var(--muted)">${fmtTotal}</span>
+            </div>
+          </div>
+          ${pct > 0 && !checked ? `<div class="need-progress" style="width:${pct}%"></div>` : ''}
+        </div>`;
+      }
     }
   }
   list.innerHTML = html;
-}
-
-function onNeedRowClick(matKey, e) {
-  if (e.shiftKey || e.ctrlKey || e.metaKey) highlightMat(matKey);
-  else toggleCheck(matKey);
 }
 
 // ── MAP ──
@@ -1307,6 +1609,7 @@ function initMaps() {
 function switchMap(mapId) {
   activeMapId = mapId;
   mapView = { tx: 0, ty: 0, scale: 1 };
+  closePinGroupPortal();
   dbMaps.forEach(m => {
     document.getElementById(`mtab-${m.id}`)?.classList.toggle('active', m.id === mapId);
     document.getElementById(`mapwrap-${m.id}`)?.classList.toggle('active', m.id === mapId);
@@ -1318,6 +1621,86 @@ function switchMap(mapId) {
 function getMatColor(matId) { return MATS[matId]?.color || '#6b7280'; }
 function getMatName(matId)  { return MATS[matId]?.name || dbMatsById[matId]?.name || matId; }
 
+// ── PIN GROUPING ──
+const PIN_GROUP_RADIUS = 30;
+
+function groupPins(pins) {
+  const groups = [];
+  const assigned = new Set();
+  for (let i = 0; i < pins.length; i++) {
+    if (assigned.has(i)) continue;
+    const group = [pins[i]];
+    assigned.add(i);
+    for (let j = i + 1; j < pins.length; j++) {
+      if (assigned.has(j)) continue;
+      const dx = pins[j].x - pins[i].x;
+      const dy = pins[j].y - pins[i].y;
+      if (Math.sqrt(dx*dx + dy*dy) <= PIN_GROUP_RADIUS) {
+        group.push(pins[j]);
+        assigned.add(j);
+      }
+    }
+    groups.push(group);
+  }
+  return groups;
+}
+
+// ── FIX 3: Pin group portal — rendered outside the map DOM to avoid clip-path issues ──
+function closePinGroupPortal() {
+  openPinGroupData = null;
+  const root = document.getElementById('pin-group-portal-root');
+  if (root) root.innerHTML = '';
+}
+
+function openPinGroupPortal(groupId, groupPins, anchorEl) {
+  openPinGroupData = { groupId };
+  const root = document.getElementById('pin-group-portal-root');
+  if (!root) return;
+
+  const anchorRect = anchorEl.getBoundingClientRect();
+  const portal = document.createElement('div');
+  portal.className = 'pin-group-portal';
+  portal.dataset.groupId = groupId;
+
+  const items = groupPins.map(p => {
+    const c = getMatColor(p.material_id);
+    const n = getMatName(p.material_id);
+    const isHL = highlightedMat === p.material_id;
+    const noteText = (p.note && p.note.trim()) ? p.note : (dbMatsById[p.material_id]?.farming_note || '');
+    return `<div class="pin-group-portal-item ${isHL?'highlighted-item':''}"
+      onclick="onPinClick('${p.material_id}','${escHtml(p.location_name)}','${escHtml(p.note||'')}');closePinGroupPortal()">
+      <div class="pin-group-dot" style="background:${c}"></div>
+      <div>
+        <div class="pin-group-name" style="color:${c}">${escHtml(n)}</div>
+        <div class="pin-group-loc">${escHtml(p.location_name)}</div>
+        ${noteText ? `<div class="pin-group-note">${escHtml(noteText.length > 100 ? noteText.slice(0,100)+'…' : noteText)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  portal.innerHTML = `
+    <div class="pin-group-portal-title">
+      <span>${groupPins.length} items at this spot</span>
+      <button class="pin-group-portal-close" onclick="closePinGroupPortal()">✕</button>
+    </div>
+    ${items}`;
+
+  // Position: try below the pin, flip if near bottom
+  const vpH = window.innerHeight;
+  const estH = 40 + groupPins.length * 60;
+  let top = anchorRect.bottom + 8;
+  if (top + estH > vpH - 20) top = Math.max(10, anchorRect.top - estH - 8);
+  let left = anchorRect.left - 20;
+  if (left + 280 > window.innerWidth - 10) left = window.innerWidth - 290;
+  left = Math.max(10, left);
+
+  portal.style.top  = top  + 'px';
+  portal.style.left = left + 'px';
+
+  root.innerHTML = '';
+  root.appendChild(portal);
+}
+
 function renderMapCanvas(mapId) {
   const map = dbMaps.find(m => m.id === mapId);
   if (!map) return;
@@ -1326,32 +1709,84 @@ function renderMapCanvas(mapId) {
   const W = map.coord_width, H = map.coord_height;
   const needMats = totalMats();
 
+  const relevantMatKeys = new Set(Object.keys(needMats).filter(k => !k.startsWith('_')));
+  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
+    if (needMats[gDef.rawKey]) gDef.keys.forEach(k => relevantMatKeys.add(k));
+  }
+
   const relevantPins = map.pins.filter(pin => {
-    return Object.keys(needMats).length === 0 || needMats[pin.material_id];
+    return relevantMatKeys.size === 0 || relevantMatKeys.has(pin.material_id);
   });
 
   if (map.image_url) {
-    // Image-based map with pin overlay
-    const pinsHtml = relevantPins.map(pin => {
-      const matId = pin.material_id;
+    const groups = groupPins(relevantPins);
+
+    const pinsHtml = groups.map((group, gIdx) => {
+      const groupId = `g-${mapId}-${gIdx}`;
+      const isMulti = group.length > 1;
+
+      if (!isMulti) {
+        const pin = group[0];
+        const matId = pin.material_id;
+        const color = getMatColor(matId);
+        const name = getMatName(matId);
+        const shortName = shortenMatName(name);
+        const isHL = highlightedMat === matId;
+        const isDim = highlightedMat && !isHL;
+        const borderCol = isHL ? color : 'rgba(255,255,255,0.18)';
+        const glow = isHL ? `box-shadow:0 0 12px ${color}55;` : '';
+        return `<div class="user-pin ${isHL?'highlighted':''} ${isDim?'dimmed':''}"
+          data-pin-mat="${matId}"
+          style="left:${pin.x}px;top:${pin.y}px;border-color:${borderCol};${glow}"
+          onclick="onPinClick('${matId}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')">
+          <div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div>
+          <div>
+            <div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div>
+            <div class="user-pin-sub">${escHtml(pin.location_name)}</div>
+          </div>
+        </div>`;
+      }
+
+      // ── GROUPED PIN ──
+      // Pick primary: if highlighting, prefer highlighted mat
+      let primaryIdx = 0;
+      if (highlightedMat) {
+        const hlIdx = group.findIndex(p => p.material_id === highlightedMat);
+        if (hlIdx >= 0) primaryIdx = hlIdx;
+      }
+      const primary = group[primaryIdx];
+      const cx = Math.round(group.reduce((s,p) => s+p.x, 0) / group.length);
+      const cy = Math.round(group.reduce((s,p) => s+p.y, 0) / group.length);
+      const matId = primary.material_id;
       const color = getMatColor(matId);
       const name = getMatName(matId);
-      const shortName = name.replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
-      const isHL = highlightedMat === matId;
+      const shortName = shortenMatName(name);
+      const isHL = highlightedMat && group.some(p => p.material_id === highlightedMat);
       const isDim = highlightedMat && !isHL;
       const borderCol = isHL ? color : 'rgba(255,255,255,0.18)';
       const glow = isHL ? `box-shadow:0 0 12px ${color}55;` : '';
-      return `<div class="user-pin ${isHL?'highlighted':''} ${isDim?'dimmed':''}"
-        style="left:${pin.x}px;top:${pin.y}px;border-color:${borderCol};${glow}"
-        onclick="onPinClick('${matId}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')"
-        title="${escHtml(name)} — ${escHtml(pin.location_name)}">
+      const isOpen = openPinGroupData && openPinGroupData.groupId === groupId;
+
+      return `<div class="user-pin grouped ${isHL?'highlighted':''} ${isDim?'dimmed':''} ${isOpen?'open':''}"
+        data-pin-mat="${matId}" data-group-id="${groupId}"
+        style="left:${cx}px;top:${cy}px;border-color:${borderCol};${glow}"
+        onclick="onGroupedPinClick(event,'${groupId}',this)">
         <div class="user-pin-dot" style="background:${color}${isHL?`;box-shadow:0 0 5px ${color}`:''}"></div>
         <div>
           <div class="user-pin-text" style="color:${color}">${escHtml(shortName)}</div>
-          <div class="user-pin-sub">${escHtml(pin.location_name)}</div>
+          <div class="user-pin-sub">${escHtml(primary.location_name)}</div>
         </div>
+        <div class="user-pin-stack-count">${group.length}</div>
+        <div class="user-pin-stack-caret">▾</div>
       </div>`;
     }).join('');
+
+    // Store group data for portal use
+    wrap._pinGroups = {};
+    groups.forEach((group, gIdx) => {
+      const groupId = `g-${mapId}-${gIdx}`;
+      if (group.length > 1) wrap._pinGroups[groupId] = group;
+    });
 
     wrap.innerHTML = `<div class="map-viewport" id="map-vp-${mapId}">
       <div class="map-inner" id="map-inner-${mapId}" style="width:${W}px;height:${H}px;position:relative">
@@ -1359,6 +1794,10 @@ function renderMapCanvas(mapId) {
         ${pinsHtml}
       </div>
     </div>`;
+
+    // Re-attach group data after innerHTML set
+    const newWrap = document.getElementById(`mapwrap-${mapId}`);
+    if (newWrap) newWrap._pinGroups = wrap._pinGroups || {};
 
     const vp = document.getElementById(`map-vp-${mapId}`);
     if (vp) vp.addEventListener('mousemove', e => {
@@ -1372,33 +1811,27 @@ function renderMapCanvas(mapId) {
 
     document.getElementById('map-zoom-controls').style.display = 'flex';
     document.getElementById('map-coords').style.display = 'block';
-
   } else {
-    // No image — fallback: SVG background + pin list below
+    // Fallback list (no image)
     const fallbackSVG = buildFallbackMapSVG(map);
     const pinListHtml = relevantPins.length
-      ? `<div class="map-pin-list">${relevantPins.map(pin => {
+      ? `<div style="display:flex;flex-wrap:wrap;gap:6px;padding:14px">${relevantPins.map(pin => {
           const color = getMatColor(pin.material_id);
           const name  = getMatName(pin.material_id);
           const isHL  = highlightedMat === pin.material_id;
-          return `<div class="map-pin-list-item" style="${isHL?`border-color:${color};background:${color}12`:''}"
-            onclick="onPinClick('${pin.material_id}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')">
-            <div class="map-pin-list-mat" style="color:${color}">${escHtml(name)}</div>
-            <div class="map-pin-list-loc">${escHtml(pin.location_name)}</div>
-            ${pin.note?`<div class="map-pin-list-note">${escHtml(pin.note)}</div>`:''}
+          return `<div style="background:var(--surface);border:1px solid ${isHL?color:'var(--border2)'};background:${isHL?color+'12':'var(--surface)'};padding:7px 11px;min-width:150px;cursor:pointer" onclick="onPinClick('${pin.material_id}','${escHtml(pin.location_name)}','${escHtml(pin.note||'')}')">
+            <div style="font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${color};margin-bottom:2px">${escHtml(name)}</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted)">${escHtml(pin.location_name)}</div>
           </div>`;
         }).join('')}</div>`
-      : `<div style="padding:20px;font-family:var(--font-mono);font-size:10px;color:var(--muted);text-align:center">No pinned locations match your current material needs.</div>`;
+      : `<div style="padding:20px;font-family:var(--font-mono);font-size:10px;color:var(--muted);text-align:center">No pins match your current needs.</div>`;
 
     wrap.innerHTML = `<div style="height:100%;overflow-y:auto;">
       <div style="position:relative;height:160px;overflow:hidden;flex-shrink:0;">${fallbackSVG}</div>
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;padding:10px 14px 4px;">
-        Pin locations — upload a map image to enable the interactive view
-      </div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;padding:10px 14px 4px">Pin locations</div>
       ${pinListHtml}
     </div>`;
 
-    // Hide zoom/coords for list view
     document.getElementById('map-zoom-controls').style.display = 'none';
     document.getElementById('map-coords').style.display = 'none';
   }
@@ -1407,11 +1840,61 @@ function renderMapCanvas(mapId) {
   renderMapLegend(mapId);
 }
 
+function shortenMatName(name) {
+  return name
+    .replace(' Sample 4','').replace(' Tube','').replace(' Lattice','')
+    .replace(' Fluid','').replace(' Nanoflake','').replace(' Record','')
+    .replace(' Carrier','').replace('Elementary ','Elem. ')
+    .replace('Advanced ','Adv. ');
+}
+
 function onPinClick(matId, zoneName, note) {
   highlightMat(matId);
   const map = dbMaps.find(m => m.id === activeMapId);
   if (map) updateInfoBar(map, matId);
 }
+
+// FIX 3: Grouped pin click — open portal overlay instead of inline dropdown
+function onGroupedPinClick(event, groupId, pinEl) {
+  event.stopPropagation();
+
+  // If same group already open, close it
+  if (openPinGroupData && openPinGroupData.groupId === groupId) {
+    closePinGroupPortal();
+    // Update visual state
+    if (activeMapId) renderMapCanvas(activeMapId);
+    return;
+  }
+
+  // Get group pins from the wrap element
+  const wrap = document.getElementById(`mapwrap-${activeMapId}`);
+  const groupPinsArr = (wrap && wrap._pinGroups && wrap._pinGroups[groupId]) || [];
+
+  openPinGroupPortal(groupId, groupPinsArr, pinEl);
+
+  // Highlight the first item
+  if (groupPinsArr.length) {
+    highlightedMat = groupPinsArr[0].material_id;
+    renderMapFilters();
+    renderNeed();
+    const map = dbMaps.find(m => m.id === activeMapId);
+    if (map) updateInfoBar(map, highlightedMat);
+  }
+
+  // Re-render to show open state on pin
+  if (activeMapId) renderMapCanvas(activeMapId);
+}
+
+// Close portal on outside click
+document.addEventListener('click', e => {
+  if (!openPinGroupData) return;
+  const portal = document.querySelector('.pin-group-portal');
+  const isPin  = e.target.closest('.user-pin');
+  if (!portal?.contains(e.target) && !isPin) {
+    closePinGroupPortal();
+    if (activeMapId) renderMapCanvas(activeMapId);
+  }
+});
 
 function updateInfoBar(map, matId) {
   const bar = document.getElementById('map-info-bar');
@@ -1420,17 +1903,40 @@ function updateInfoBar(map, matId) {
   const name  = getMatName(matId);
   const pins  = map.pins.filter(p => p.material_id === matId);
   if (!pins.length) { bar.classList.remove('visible'); return; }
+
   document.getElementById('map-info-title').innerHTML =
     `<span style="color:${color}">●</span> ${escHtml(name)} — ${escHtml(map.name)} farming locations`;
-  document.getElementById('map-info-cards').innerHTML = pins.map(p => {
-    const displayNote = p.note && p.note.trim()
-      ? p.note
+
+  const groups = groupPins(pins);
+  document.getElementById('map-info-cards').innerHTML = groups.map(grp => {
+    const displayNote = grp[0].note && grp[0].note.trim()
+      ? grp[0].note
       : (dbMatsById[matId]?.farming_note || 'See map for details');
+
+    let innerPinList = '';
+    if (grp.length > 1) {
+      innerPinList = `<div class="map-info-pin-list">` +
+        grp.map(p => {
+          const c2 = getMatColor(p.material_id);
+          const n2 = getMatName(p.material_id);
+          const pNote = p.note && p.note.trim() ? p.note : '';
+          return `<div class="map-info-pin-item">
+            <div class="map-info-pin-dot" style="background:${c2}"></div>
+            <div>
+              <div class="map-info-pin-name" style="color:${c2}">${escHtml(n2)}</div>
+              ${pNote ? `<div class="map-info-pin-note">${escHtml(pNote)}</div>` : ''}
+            </div>
+          </div>`;
+        }).join('') + `</div>`;
+    }
+
     return `<div class="map-info-card">
-      <div class="map-info-card-zone" style="color:${color}">${escHtml(p.location_name)}</div>
+      <div class="map-info-card-zone" style="color:${color}">${escHtml(grp[0].location_name)}</div>
       <div class="map-info-card-desc">${escHtml(displayNote)}</div>
+      ${innerPinList}
     </div>`;
   }).join('');
+
   bar.classList.add('visible');
 }
 
@@ -1439,15 +1945,22 @@ function renderMapLegend(mapId) {
   const legend = document.getElementById('map-legend');
   const items  = document.getElementById('legend-items');
   if (!map || !map.pins.length) { legend.classList.remove('visible'); return; }
+
   const needMats = totalMats();
-  const matIds = [...new Set(map.pins.map(p => p.material_id))].filter(k => {
-    return Object.keys(needMats).length === 0 || needMats[k];
-  });
+  const relevantMatKeys = new Set(Object.keys(needMats).filter(k => !k.startsWith('_')));
+  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
+    if (needMats[gDef.rawKey]) gDef.keys.forEach(k => relevantMatKeys.add(k));
+  }
+
+  const matIds = [...new Set(map.pins.map(p => p.material_id))].filter(k =>
+    relevantMatKeys.size === 0 || relevantMatKeys.has(k)
+  );
+
   if (!matIds.length) { legend.classList.remove('visible'); return; }
   legend.classList.add('visible');
   items.innerHTML = matIds.map(k => {
     const color = getMatColor(k);
-    const name  = getMatName(k).replace(' Sample 4','').replace(' Photoemission Tube','').replace(' Screening Lattice','').replace(' Fitting Fluid','').replace(' Nanoflake','');
+    const name  = shortenMatName(getMatName(k));
     const isHL  = highlightedMat === k;
     const isDim = highlightedMat && !isHL;
     return `<div class="map-legend-item ${isDim?'dimmed':''}" onclick="highlightMat('${k}')">
@@ -1466,7 +1979,6 @@ function buildFallbackMapSVG(map) {
     </pattern></defs>
     <rect width="${W}" height="${H}" fill="url(#mg${map.id.slice(0,8)})"/>
     <text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.04)" letter-spacing="6">${escHtml(map.name.toUpperCase())}</text>
-    <text x="${W/2}" y="${H/2+32}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="rgba(255,255,255,0.06)" letter-spacing="3">UPLOAD MAP IMAGE TO ENABLE INTERACTIVE VIEW</text>
   </svg>`;
 }
 
@@ -1474,10 +1986,13 @@ function buildFallbackMapSVG(map) {
 function setupMapInteraction() {
   const area = document.getElementById('map-area');
   let drag = false, lx = 0, ly = 0;
+
+  // Close portal when dragging starts
   area.addEventListener('mousedown', e => {
     if (e.button !== 0 || e.target.closest('.user-pin')) return;
     drag = true; lx = e.clientX; ly = e.clientY;
-    area.style.cursor = 'grabbing'; e.preventDefault();
+    area.style.cursor = 'grabbing';
+    e.preventDefault();
   });
   window.addEventListener('mousemove', e => {
     if (!drag) return;
@@ -1485,7 +2000,11 @@ function setupMapInteraction() {
     lx = e.clientX; ly = e.clientY;
     updateMapTransform();
   });
-  window.addEventListener('mouseup', () => { drag = false; if(document.getElementById('map-area')) document.getElementById('map-area').style.cursor=''; });
+  window.addEventListener('mouseup', () => {
+    drag = false;
+    const a = document.getElementById('map-area');
+    if (a) a.style.cursor = '';
+  });
   area.addEventListener('wheel', e => {
     e.preventDefault();
     const rect = area.getBoundingClientRect();
@@ -1496,6 +2015,7 @@ function setupMapInteraction() {
     updateMapTransform();
   }, { passive: false });
 }
+
 function updateMapTransform() {
   if (!activeMapId) return;
   const inner = document.getElementById(`map-inner-${activeMapId}`);
@@ -1521,7 +2041,7 @@ function highlightMat(matId) {
   if (activeMapId) {
     renderMapCanvas(activeMapId);
     const map = dbMaps.find(m => m.id === activeMapId);
-    if (map) updateInfoBar(map, matId);
+    if (map && matId) updateInfoBar(map, matId);
     else document.getElementById('map-info-bar').classList.remove('visible');
   }
   renderNeed();
@@ -1534,15 +2054,52 @@ function renderMapFilters() {
   if (!plans.length || !dbMaps.length) { bar.classList.remove('visible'); return; }
   bar.classList.add('visible');
   const needMats = totalMats();
+  const relevantMatKeys = new Set(Object.keys(needMats).filter(k => !k.startsWith('_')));
+  for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
+    if (needMats[gDef.rawKey]) gDef.keys.forEach(k => relevantMatKeys.add(k));
+  }
   const matsWithPins = new Set();
   for (const map of dbMaps) for (const pin of map.pins) matsWithPins.add(pin.material_id);
-  chipsEl.innerHTML = Object.keys(needMats).filter(k => MATS[k] && matsWithPins.has(k) && !k.startsWith('_')).map(k => {
+
+  chipsEl.innerHTML = [...relevantMatKeys].filter(k => MATS[k] && matsWithPins.has(k)).map(k => {
     const mat = MATS[k];
     const active = highlightedMat === k ? 'active' : '';
     return `<div class="mat-chip ${active}" onclick="highlightMat('${k}')">
       <div class="mat-chip-dot" style="background:${mat.color}"></div>${mat.name.split(' ')[0]}
     </div>`;
   }).join('');
+}
+
+// ── RESIZABLE PANELS ──
+function setupResize() {
+  setupResizeHandle('resize-1', 'left-panel',  220, 550);
+  setupResizeHandle('resize-2', 'mid-panel',   180, 600);
+}
+function setupResizeHandle(handleId, panelId, minW, maxW) {
+  const handle = document.getElementById(handleId);
+  const panelEl = document.getElementById(panelId);
+  let dragging = false, startX = 0, startW = 0;
+  handle.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    dragging = true; startX = e.clientX;
+    startW = panelEl.getBoundingClientRect().width;
+    handle.classList.add('dragging');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const newWidth = Math.max(minW, Math.min(maxW, startW + (e.clientX - startX)));
+    panelEl.style.width = newWidth + 'px';
+  });
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
 }
 
 // ── MODAL ──
@@ -1616,10 +2173,11 @@ function renderModalList(items) {
 }
 function selectItem(item) { addPlan(modalType, item); }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closePinGroupPortal(); } });
 
 // ── INIT ──
 window.addEventListener('load', async () => {
+  setupResize();
   renderAll();
   await Promise.all([loadDbData(), loadCharImages()]);
   initMaps();
