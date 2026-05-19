@@ -62,28 +62,32 @@ body {
 }
 .navbar-inner {
   max-width: 1200px; margin: 0 auto;
-  padding: 0 20px;
-  display: flex; align-items: center; gap: 12px; height: 48px;
+  padding: 0 16px;
+  display: flex; align-items: center; gap: 10px; height: 48px;
+  min-width: 0;
 }
 .navbar-brand {
   font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 800; font-size: 16px;
-  letter-spacing: 3px; text-transform: uppercase;
+  font-weight: 800; font-size: 15px;
+  letter-spacing: 2px; text-transform: uppercase;
   color: var(--accent); white-space: nowrap;
+  flex-shrink: 0;
 }
-.navbar-sep { width: 1px; height: 20px; background: var(--border2); }
+.navbar-sep { width: 1px; height: 20px; background: var(--border2); flex-shrink: 0; }
 .navbar-links {
-  display: flex; gap: 2px; overflow-x: auto;
-  scrollbar-width: none; flex: 1;
+  display: flex; gap: 2px;
+  overflow-x: auto; scrollbar-width: none;
+  flex: 1; min-width: 0;
 }
 .navbar-links::-webkit-scrollbar { display: none; }
 .nav-link {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--text3); padding: 6px 10px;
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text3); padding: 6px 9px;
   border-radius: var(--rs); white-space: nowrap;
   cursor: pointer; border: none; background: none;
   transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
 }
 .nav-link:hover { color: var(--text2); background: var(--surface2); }
 
@@ -700,7 +704,7 @@ footer {
   .est-chips   { grid-template-columns: 1fr 1fr 1fr; }
 }
 @media(max-width:380px) {
-  .navbar-brand { font-size: 13px; letter-spacing: 2px; }
+  .navbar-brand { font-size: 12px; letter-spacing: 1px; }
   .est-chips   { grid-template-columns: 1fr; }
 }
 </style>
@@ -713,10 +717,10 @@ footer {
     <div class="navbar-brand">Endfield ◈</div>
     <div class="navbar-sep"></div>
     <div class="navbar-links">
-      <button class="nav-link" onclick="scrollTo('sec-data')">Data Link</button>
-      <button class="nav-link" onclick="scrollTo('sec-log')">Pull Log</button>
-      <button class="nav-link" onclick="scrollTo('sec-stats')">Statistics</button>
-      <button class="nav-link" onclick="switchPageTab('tools');scrollTo('sec-tools')">Tools</button>
+      <button class="nav-link" onclick="document.getElementById('sec-data').scrollIntoView({behavior:'smooth'})">Data Link</button>
+      <button class="nav-link" onclick="document.getElementById('sec-log').scrollIntoView({behavior:'smooth'})">Pull Log</button>
+      <button class="nav-link" onclick="document.getElementById('sec-stats').scrollIntoView({behavior:'smooth'})">Statistics</button>
+      <button class="nav-link" onclick="switchPageTab('tools');document.getElementById('sec-tools').scrollIntoView({behavior:'smooth'})">Tools</button>
     </div>
   </div>
 </nav>
@@ -778,7 +782,7 @@ footer {
       </div>
     </div>
 
-    <!-- Method 3: AppData Cache (NEW) -->
+    <!-- Method 3: AppData Cache -->
     <div class="method-panel" id="method-appdata">
       <div class="steps-grid">
         <div class="step"><div class="step-n">01</div><div class="step-t">Open <strong>File Explorer</strong> and navigate to your AppData folder. Press <code>Win+R</code>, type <code>%AppData%</code>, and hit Enter.</div></div>
@@ -979,9 +983,9 @@ footer {
 <!-- ── Tools ───────────────────────────────────────────── -->
 <div class="sec-label sep" id="sec-tools">Tools</div>
 <div class="page-tab-bar">
-  <button class="page-tab active" onclick="switchPageTab('planner')">◈ Resource Planner</button>
-  <button class="page-tab" onclick="switchPageTab('income')">📈 Income Forecast</button>
-  <button class="page-tab" onclick="switchPageTab('shop')">🛒 Shop Advisor</button>
+  <button class="page-tab active" id="ptab-planner" onclick="switchPageTab('planner')">◈ Resource Planner</button>
+  <button class="page-tab"        id="ptab-income"  onclick="switchPageTab('income')">📈 Income Forecast</button>
+  <button class="page-tab"        id="ptab-shop"    onclick="switchPageTab('shop')">🛒 Shop Advisor</button>
 </div>
 
 <!-- Planner -->
@@ -1148,9 +1152,9 @@ footer {
       <ul>
         <li>The <strong>First Purchase Bonus</strong> doubles Origeometry on the first-ever purchase of each bundle tier.</li>
         <li>Switch the input unit between <strong>Oroberyl</strong>, <strong>Pulls</strong>, or <strong>Origeometry</strong> — the advisor converts automatically.</li>
-        <li>The <strong>BEST</strong> badge highlights the recommended bundle combination, prioritizing larger bundles to minimize leftover Origeometry.</li>
-        <li><strong>1 Origeometry = 75 Oroberyl</strong>. You need ~667 Origeometry for a single pull with no first-buy bonus.</li>
-        <li>Prices shown in <strong>USD</strong>. Actual prices may differ by region.</li>
+        <li>The <strong>BEST</strong> badge highlights the most cost-efficient bundle combination to meet your target.</li>
+        <li><strong>1 Origeometry = 75 Oroberyl</strong>. You need ~667 Origeometry for a single pull (without first-buy bonus on the largest bundle).</li>
+        <li>Prices shown in <strong>Ft (HUF)</strong> — actual prices may differ by region.</li>
       </ul>
     </div>
   </div>
@@ -1181,7 +1185,7 @@ footer {
       </div>
       <button class="btn" onclick="calcShop()">Find Bundles ▶</button>
     </div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:7px;text-transform:uppercase">Official Bundle Tiers (USD)</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:7px;text-transform:uppercase">Official Bundle Tiers (Ft)</div>
     <div class="bundle-grid" id="bundle-ref"></div>
     <div class="shop-result" id="shop-result" style="display:none">
       <div class="shop-result-title">Recommended Purchase</div>
@@ -1228,13 +1232,14 @@ const POOL_LABELS = {
   E_CharacterGachaPoolType_Limited:   'Limited',
 };
 
+// ── Actual in-game bundle data (Ft pricing, real Origeometry amounts) ──
 const ORI_BUNDLES = [
-  { label:'Shard',   usd:0.99,  ori:6,   firstOri:12   },
-  { label:'Chip',    usd:4.99,  ori:29,  firstOri:58   },
-  { label:'Crystal', usd:14.99, ori:92,  firstOri:184  },
-  { label:'Block',   usd:29.99, ori:194, firstOri:388  },
-  { label:'Crate',   usd:49.99, ori:328, firstOri:656  },
-  { label:'Cache',   usd:99.99, ori:680, firstOri:1360 },
+  { label:'Shard',   ft:399,    ori:12,  firstOri:24   },
+  { label:'Chip',    ft:1990,   ori:21,  firstOri:42   },
+  { label:'Crystal', ft:5990,   ori:34,  firstOri:68   },
+  { label:'Block',   ft:11990,  ori:57,  firstOri:114  },
+  { label:'Crate',   ft:19990,  ori:92,  firstOri:184  },
+  { label:'Cache',   ft:39990,  ori:194, firstOri:388  },
 ];
 
 const SHOP_UNIT_CFG = {
@@ -1275,7 +1280,6 @@ function resolveLabel(key) {
 /* ════════════════════════════════════
    UI HELPERS
 ════════════════════════════════════ */
-function scrollTo(id) { document.getElementById(id)?.scrollIntoView({ behavior:'smooth' }); }
 function showError(msg) { const b = document.getElementById('errorBox'); b.innerHTML = '⚠ ' + msg.replace(/\n/g,'<br>'); b.style.display = 'block'; }
 function hideError()    { document.getElementById('errorBox').style.display = 'none'; }
 function setLoading(msg) {
@@ -1314,9 +1318,9 @@ function switchInputMode(m, btn) {
 }
 
 function switchPageTab(tab) {
-  const tabs = ['planner','income','shop'];
-  document.querySelectorAll('.page-tab').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
+  document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('ptab-' + tab).classList.add('active');
   document.getElementById('tab-' + tab).classList.add('active');
 }
 
@@ -1332,7 +1336,6 @@ async function fetchWithProxy(apiUrl) {
       return JSON.parse(await r.text());
     } catch(e) { lastErr = e; }
   }
-  // Direct fallback
   try {
     return await (await fetch(apiUrl, { signal: AbortSignal.timeout(8000) })).json();
   } catch(e) { throw lastErr || e; }
@@ -1415,7 +1418,6 @@ async function loadAllBanners(token, serverId) {
    DATA PROCESSING
 ════════════════════════════════════ */
 function processData(allRecords) {
-  // Group by pool type
   const grouped = {};
   allRecords.forEach(r => {
     const key = getPool(r);
@@ -1423,7 +1425,6 @@ function processData(allRecords) {
     grouped[key].pulls.push(r);
   });
 
-  // Sort by known order
   const ORDER = ['E_CharacterGachaPoolType_Special','E_CharacterGachaPoolType_Standard','E_CharacterGachaPoolType_NewHorizon','E_CharacterGachaPoolType_Beginner'];
   const sorted = Object.values(grouped).sort((a, b) => {
     const ia = ORDER.indexOf(a.rawKey), ib = ORDER.indexOf(b.rawKey);
@@ -1488,7 +1489,6 @@ function renderBannerStats(pulls) {
   const s6    = pulls.filter(p => getRarity(p) === '6').length;
   const s5    = pulls.filter(p => getRarity(p) === '5').length;
 
-  // Calculate average 6★ pity
   let pity = 0;
   const sixPities = [];
   [...pulls].reverse().forEach(p => { pity++; if (getRarity(p) === '6') { sixPities.push(pity); pity = 0; } });
@@ -1578,7 +1578,6 @@ function filterPulls(f, btn) {
 function renderPullList(pulls) {
   const list = document.getElementById('pullList');
 
-  // Attach pity counters (counting from oldest to newest)
   let pity = 0;
   const withPity = [...pulls].reverse().map((p, i) => {
     pity++;
@@ -1634,7 +1633,6 @@ function renderGoyStats(allRecords, bData) {
   const all6  = allRecords.filter(p => getRarity(p) === '6');
   const all5  = allRecords.filter(p => getRarity(p) === '5');
 
-  // Lucky 6★ count (≤40 pity)
   let lucky = 0, cnt = 0;
   [...allRecords].reverse().forEach(p => {
     cnt++;
@@ -1656,7 +1654,6 @@ function renderGoyStats(allRecords, bData) {
       <div class="goy-card-sub">${d.sub}</div>
     </div>`).join('');
 
-  // Per-banner cards
   const gbc = document.getElementById('goyBannerCards');
   gbc.innerHTML = '';
   const colMap = { special:'var(--purple)', standard:'var(--blue)', beginner:'var(--gold)', weapon:'var(--accent)', unknown:'var(--text2)' };
@@ -1670,7 +1667,7 @@ function renderGoyStats(allRecords, bData) {
     for (let i = pulls.length - 1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r === '6') break; p6++; }
     for (let i = pulls.length - 1; i >= 0; i--) { const r = getRarity(pulls[i]); if (r === '6' || r === '5') break; p5++; }
     let pAvg = 0; { let pt = 0; const sp = []; [...pulls].reverse().forEach(p => { pt++; if (getRarity(p) === '6') { sp.push(pt); pt = 0; } }); pAvg = sp.length ? Math.round(sp.reduce((a,x) => a+x,0)/sp.length) : 0; }
-    const pct = (n, d) => tot ? (n/tot*100).toFixed(1) : '0';
+    const pct = (n) => tot ? (n/tot*100).toFixed(1) : '0';
 
     const card = document.createElement('div');
     card.className = 'goy-banner-card fade-in';
@@ -1696,7 +1693,6 @@ function renderGoyStats(allRecords, bData) {
     gbc.appendChild(card);
   });
 
-  // 6★ history per banner
   const histEl = document.getElementById('goy6History');
   histEl.innerHTML = '';
   Object.entries(bData).forEach(([label, { pulls }]) => {
@@ -1751,7 +1747,6 @@ function recalcPulls() {
   recalcChances(total);
 }
 
-// Probability math
 function pull6StarProb(n, startPity = 0) {
   let pNoSix = 1.0;
   for (let i = 1; i <= n; i++) {
@@ -1839,6 +1834,8 @@ function calcTally() {
 
 /* ════════════════════════════════════
    SHOP ADVISOR
+   Uses a DP-style greedy: find the cheapest combination of bundles
+   (by Ft cost) that covers the target Origeometry.
 ════════════════════════════════════ */
 function switchShopUnit(u, btn) {
   shopUnit = u;
@@ -1859,43 +1856,70 @@ function toOroberyl(val, unit) {
 }
 
 function calcShop() {
-  const rawVal  = parseInt(document.getElementById('shop-need').value) || 0;
+  const rawVal   = parseInt(document.getElementById('shop-need').value) || 0;
   if (rawVal <= 0) return;
   const firstBuy  = document.getElementById('shop-firstbuy').value === '1';
-  let rem         = Math.ceil(toOroberyl(rawVal, shopUnit) / 75);
-  const combo     = [];
+  // Convert target to Origeometry needed
+  const targetOro = toOroberyl(rawVal, shopUnit);
+  let targetOri   = Math.ceil(targetOro / 75);
 
-  for (const b of [...ORI_BUNDLES].reverse()) {
-    const eff = firstBuy ? b.firstOri : b.ori;
-    if (!eff) continue;
-    if (eff >= rem) { combo.push({ bundle:b, qty:1, ori:eff }); rem = 0; break; }
-    const qty = Math.floor(rem / eff);
-    if (qty > 0) { combo.push({ bundle:b, qty, ori:eff*qty }); rem -= eff*qty; }
+  // Build effective bundle list with Ft cost per Ori for sorting
+  const bundles = ORI_BUNDLES.map(b => ({
+    ...b,
+    eff: firstBuy ? b.firstOri : b.ori,
+    costPerOri: b.ft / (firstBuy ? b.firstOri : b.ori),
+  }));
+
+  // Greedy by value: pick most cost-efficient (lowest Ft/Ori) bundle that doesn't
+  // massively overshoot. We iterate largest→smallest to prefer fewer transactions.
+  const combo = [];
+  let rem = targetOri;
+
+  // Sort by cost-efficiency descending (best value first = lowest Ft/Ori)
+  const sorted = [...bundles].sort((a, b) => a.costPerOri - b.costPerOri);
+
+  // Use the most efficient bundle(s) that together cover the remainder
+  for (const b of [...bundles].reverse()) {
+    if (rem <= 0) break;
+    if (b.eff <= 0) continue;
+    const qty = Math.floor(rem / b.eff);
+    if (qty > 0) {
+      combo.push({ bundle: b, qty, ori: b.eff * qty });
+      rem -= b.eff * qty;
+    }
   }
+  // Cover any leftover with the smallest bundle that can cover it
   if (rem > 0) {
-    const sm  = ORI_BUNDLES[0];
-    const eff = firstBuy ? sm.firstOri : sm.ori;
-    combo.push({ bundle:sm, qty:1, ori:eff });
+    const cover = bundles.find(b => b.eff >= rem) || bundles[bundles.length - 1];
+    const existing = combo.find(c => c.bundle.label === cover.label);
+    if (existing) { existing.qty++; existing.ori += cover.eff; }
+    else          { combo.push({ bundle: cover, qty: 1, ori: cover.eff }); }
+    rem = 0;
   }
 
-  const totalUsd   = combo.reduce((s, c) => s + c.bundle.usd * c.qty, 0);
+  // Recalculate totals
+  const totalFt    = combo.reduce((s, c) => s + c.bundle.ft * c.qty, 0);
   const totalOri   = combo.reduce((s, c) => s + c.ori, 0);
   const totalOro   = totalOri * 75;
   const totalPulls = Math.floor(totalOro / 500);
 
   const convLabel = {
-    oro:   `Target: ${rawVal.toLocaleString()} Oroberyl → ${Math.ceil(rawVal/75)} Origeometry needed`,
-    pulls: `Target: ${rawVal} pulls = ${(rawVal*500).toLocaleString()} Oroberyl → ${Math.ceil(rawVal*500/75)} Origeometry needed`,
+    oro:   `Target: ${rawVal.toLocaleString()} Oroberyl → ${targetOri} Origeometry needed`,
+    pulls: `Target: ${rawVal} pulls = ${(rawVal*500).toLocaleString()} Oroberyl → ${targetOri} Origeometry needed`,
     ori:   `Target: ${rawVal} Origeometry = ${(rawVal*75).toLocaleString()} Oroberyl`,
   };
 
   document.getElementById('shop-converted-label').textContent = convLabel[shopUnit];
   document.getElementById('shop-combo').innerHTML = combo.map(c =>
-    `<div class="shop-pill">${c.qty}× ${c.bundle.label} <span>$${(c.bundle.usd*c.qty).toFixed(2)}</span></div>`
+    `<div class="shop-pill">${c.qty}× ${c.bundle.label} <span>${(c.bundle.ft * c.qty).toLocaleString()} Ft</span></div>`
   ).join('');
-  document.getElementById('shop-total').innerHTML = `Total: <strong>$${totalUsd.toFixed(2)} USD</strong> → ${totalOri} Origeometry → ${totalOro.toLocaleString()} Oroberyl ≈ ${totalPulls} pulls`;
+  document.getElementById('shop-total').innerHTML =
+    `Total: <strong>${totalFt.toLocaleString()} Ft</strong> → ${totalOri} Origeometry → ${totalOro.toLocaleString()} Oroberyl ≈ ${totalPulls} pulls`;
+
+  // Highlight recommended bundles in the reference grid
+  const usedLabels = new Set(combo.map(c => c.bundle.label));
   document.querySelectorAll('#bundle-ref .bundle-card').forEach((el, i) => {
-    el.classList.toggle('recommended', combo.some(c => c.bundle.label === ORI_BUNDLES[i].label));
+    el.classList.toggle('recommended', usedLabels.has(ORI_BUNDLES[i].label));
   });
   document.getElementById('shop-result').style.display = 'block';
 }
@@ -1904,7 +1928,7 @@ function initBundleRef() {
   document.getElementById('bundle-ref').innerHTML = ORI_BUNDLES.map(b => `
     <div class="bundle-card">
       <div class="bundle-ori">${b.ori} Ori</div>
-      <div class="bundle-price">$${b.usd.toFixed(2)} USD</div>
+      <div class="bundle-price">${b.ft.toLocaleString()} Ft</div>
       <div class="bundle-oroberyls">${(b.ori*75).toLocaleString()} Oroberyl</div>
       <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">1st: ${b.firstOri} Ori (×2)</div>
     </div>`).join('');
