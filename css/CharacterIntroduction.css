@@ -67,6 +67,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 .hero-pill{background:var(--surface3);border:1px solid var(--border2);padding:4px 12px 4px 9px;border-radius:20px;font-size:12px;color:var(--text2);font-weight:500;display:flex;align-items:center;gap:5px}
 .hero-pill strong{color:var(--text);font-weight:700}
 .hero-pill img,.hero-pill svg{width:15px;height:15px;object-fit:contain;flex-shrink:0}
+.hero-pill img.has-char-img{width:15px;height:15px;object-fit:contain}
 .hero-banner{position:absolute;top:0;right:0;width:65%;height:100%;background-size:cover;background-position:center 50%;background-repeat:no-repeat;z-index:0;opacity:0.45;mask-image:linear-gradient(to right,transparent 0%,black 60%);-webkit-mask-image:linear-gradient(to right,transparent 0%,black 60%);pointer-events:none}
 
 /* ── TABS ── */
@@ -107,8 +108,8 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 .attr-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);transition:border-color 0.2s}
 .attr-row.primary{border-color:var(--primary-border);background:var(--primary-bg2)}
 .attr-icon{width:34px;height:34px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface3);border:1px solid var(--border);overflow:hidden}
-.attr-icon img{width:24px;height:24px;object-fit:contain;display:block}
-.attr-icon.has-char-img img{width:100%;height:100%;object-fit:cover;border-radius:6px}
+.attr-icon img{width:22px;height:22px;object-fit:contain;display:block}
+.attr-icon img.has-char-img{width:28px;height:28px;object-fit:contain}
 .attr-body{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
 .attr-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;font-family:'Rajdhani',sans-serif;white-space:nowrap}
 .attr-val{font-size:24px;font-weight:700;color:var(--text);font-family:'Bebas Neue',sans-serif;letter-spacing:1px;margin-left:auto}
@@ -127,7 +128,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 .talent-header{display:flex;gap:8px;align-items:center;margin-bottom:6px}
 .talent-icon{width:30px;height:30px;border-radius:6px;flex-shrink:0;background:var(--surface3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .talent-icon img{width:20px;height:20px;object-fit:contain;display:block}
-.talent-icon.has-char-img img{width:30px;height:30px;object-fit:cover}
+.talent-icon img.has-char-img{width:24px;height:24px;object-fit:contain}
 .talent-name{font-size:14px;font-weight:700;color:var(--primary-text)}
 .talent-row.base-talent .talent-name{color:var(--text2)}
 .talent-desc{font-size:13px;color:var(--text2);line-height:1.55}
@@ -137,7 +138,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 .pot-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);flex-wrap:wrap}
 .pot-icon{width:30px;height:30px;border-radius:6px;flex-shrink:0;overflow:hidden;background:var(--surface3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center}
 .pot-icon img{width:20px;height:20px;object-fit:contain;display:block}
-.pot-icon.has-char-img img{width:100%;height:100%;object-fit:cover}
+.pot-icon img.has-char-img{width:24px;height:24px;object-fit:contain}
 .pot-badge{background:var(--purple-bg);color:var(--purple-text);border:1px solid rgba(124,111,232,0.3);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:4px;flex-shrink:0}
 .pot-desc{font-size:13px;color:var(--text);font-weight:500;line-height:1.45;flex:1;min-width:140px}
 
@@ -249,8 +250,8 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 .skill-card-header{display:flex;align-items:center;gap:14px;padding:16px;cursor:pointer;transition:background 0.2s;user-select:none}
 .skill-card-header:hover{background:rgba(255,255,255,0.02)}
 .skill-ico{width:44px;height:44px;border-radius:10px;flex-shrink:0;background:var(--primary-bg);border:1px solid var(--primary-border);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.skill-ico img{width:28px;height:28px;object-fit:contain}
-.skill-ico.has-char-img img{width:44px;height:44px;object-fit:cover}
+.skill-ico img{width:28px;height:28px;object-fit:contain;display:block}
+.skill-ico img.has-char-img{width:32px;height:32px;object-fit:contain}
 .skill-card-info{flex:1;min-width:0}
 .skill-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
 .skill-sub-brief{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
@@ -283,6 +284,12 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);min
 .sk-pip-row{display:flex;gap:3px}
 .sk-pip{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.10);transition:background 0.15s,box-shadow 0.15s}
 .sk-pip.lit{background:var(--primary);box-shadow:0 0 4px var(--primary-glow)}
+
+/* ── VIDEO GUIDE ── */
+.video-plug{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;position:relative;margin-bottom:18px}
+.video-plug::before{content:'';position:absolute;top:0;left:0;width:40px;height:2px;background:var(--primary);opacity:0.6;border-radius:0 0 2px 0;z-index:1}
+.video-label{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:12px 18px 10px;border-bottom:1px solid var(--border)}
+.video-plug iframe{display:block;width:100%;aspect-ratio:16/9;height:auto;border:none;background:var(--bg)}
 
 /* ── SAVE BADGE ── */
 .save-badge{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 12px;border-radius:6px;border:1px solid transparent;transition:0.3s;opacity:0;pointer-events:none}
