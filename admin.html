@@ -33,7 +33,6 @@
   --font-label:   'Poppins', sans-serif;
   --font-mono:    'Share Tech Mono', monospace;
 
-  /* Tier colors */
   --t0:#e8c85a; --t05:#a06fe8; --t1:#5ba0e8; --t15:#4ec69a; --t2:#8b8fa8;
 }
 
@@ -72,8 +71,8 @@ body::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:
 .sidebar-item svg { width:15px; height:15px; flex-shrink:0; }
 .sidebar-badge { margin-left:auto; font-family:var(--font-label); font-size:9px; font-weight:600; letter-spacing:1px; padding:2px 7px; border-radius:2px; background:rgba(0,229,192,0.1); color:var(--teal); border:1px solid rgba(0,229,192,0.2); }
 .sidebar-sub-menu { max-height:0; overflow:hidden; transition:max-height 0.3s ease; background:rgba(0,0,0,0.2); }
-.sidebar-sub-menu.open { max-height:350px; }
-.sidebar-sub-item { position:relative; padding:10px 20px 10px 46px; color:var(--dim2); font-family:var(--font-body); font-size:12px; cursor:pointer; transition:all 0.15s; }
+.sidebar-sub-menu.open { max-height:400px; }
+.sidebar-sub-item { position:relative; padding:10px 20px 10px 46px; color:var(--dim2); font-family:var(--font-body); font-size:12px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; }
 .sidebar-sub-item:hover { color:var(--text); background:rgba(255,255,255,0.03); }
 .sidebar-sub-item.active { color:var(--teal); background:rgba(0,229,192,0.04); }
 .sidebar-sub-item.active::before { content:''; position:absolute; left:24px; top:0; bottom:0; width:2px; background:var(--teal); box-shadow:0 0 8px rgba(0,229,192,0.5); }
@@ -223,7 +222,6 @@ td { padding:11px 14px; font-size:13px; vertical-align:middle; }
 .empty-icon { font-size:32px; margin-bottom:12px; opacity:0.3; }
 .empty-text { font-family:var(--font-label); font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); }
 
-/* Pagination */
 .pagination { display:flex; align-items:center; justify-content:space-between; padding:13px 20px; border-top:1px solid var(--border); flex-wrap:wrap; gap:12px; }
 .pagination-info { font-family:var(--font-label); font-size:10px; letter-spacing:1.5px; color:var(--dim2); }
 .filter-bar { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
@@ -243,10 +241,8 @@ td { padding:11px 14px; font-size:13px; vertical-align:middle; }
 .sidebar-backdrop.show { display:block; opacity:1; }
 
 /* ══════════════════════════════════════════
-   TIER LIST PANEL — Matched to DJIANG theme
+   TIER LIST PANEL
 ══════════════════════════════════════════ */
-
-/* Tier badges */
 .tier-badge { display:inline-flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; padding:2px 8px; border-radius:2px; border:1px solid; white-space:nowrap; }
 .tier-T0  { color:var(--t0);  border-color:rgba(232,200,90,0.35);  background:rgba(232,200,90,0.07); }
 .tier-T05 { color:var(--t05); border-color:rgba(160,111,232,0.35); background:rgba(160,111,232,0.07); }
@@ -254,65 +250,40 @@ td { padding:11px 14px; font-size:13px; vertical-align:middle; }
 .tier-T15 { color:var(--t15); border-color:rgba(78,198,154,0.35);  background:rgba(78,198,154,0.07); }
 .tier-T2  { color:var(--t2);  border-color:rgba(139,143,168,0.35); background:rgba(139,143,168,0.07); }
 
-/* Inline selects in tier table — match dashboard style */
 .tl-inline-select, .tl-inline-input {
-  background:rgba(0,0,0,0.45);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:2px;
-  color:var(--text);
-  font-family:var(--font-mono);
-  font-size:11px;
-  padding:5px 8px;
-  outline:none;
-  transition:border-color 0.2s;
-  width:100%;
+  background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.07); border-radius:2px;
+  color:var(--text); font-family:var(--font-mono); font-size:11px; padding:5px 8px;
+  outline:none; transition:border-color 0.2s; width:100%;
 }
 .tl-inline-select:focus, .tl-inline-input:focus { border-color:rgba(0,229,192,0.35); }
 td .tl-inline-select, td .tl-inline-input { width:auto; min-width:80px; }
 
-/* Toggle checkboxes */
-.tl-tog {
-  appearance:none; width:30px; height:17px; background:rgba(255,255,255,0.08);
-  border:1px solid var(--border); border-radius:9px; position:relative;
-  cursor:pointer; transition:background 0.2s;
-}
+.tl-tog { appearance:none; width:30px; height:17px; background:rgba(255,255,255,0.08); border:1px solid var(--border); border-radius:9px; position:relative; cursor:pointer; transition:background 0.2s; }
 .tl-tog::after { content:''; position:absolute; top:2px; left:2px; width:11px; height:11px; border-radius:50%; background:var(--dim2); transition:transform 0.2s,background 0.2s; }
 .tl-tog:checked { background:rgba(0,229,192,0.15); border-color:rgba(0,229,192,0.35); }
 .tl-tog:checked::after { transform:translateX(13px); background:var(--teal); }
-
-/* "New" toggle — gold tint */
 .tl-tog.is-new:checked { background:rgba(232,200,90,0.12); border-color:rgba(232,200,90,0.35); }
 .tl-tog.is-new:checked::after { background:var(--t0); }
-
-/* "Expert" toggle — red tint */
 .tl-tog.is-expert:checked { background:rgba(224,90,90,0.12); border-color:rgba(224,90,90,0.35); }
 .tl-tog.is-expert:checked::after { background:var(--error); }
-
-/* Watchlist select */
 .tl-wl-sel { background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.07); border-radius:2px; color:var(--text); font-family:var(--font-mono); font-size:11px; padding:4px 7px; outline:none; }
 
-/* Dirty row highlight */
 tbody tr.tl-dirty { background:rgba(0,229,192,0.03); border-left:2px solid rgba(0,229,192,0.2); }
 
-/* Filter chips — tier list style, using dashboard pill classes */
 .tl-chip { padding:4px 11px; background:transparent; border:1px solid var(--border); border-radius:2px; color:var(--dim2); font-family:var(--font-label); font-size:9px; font-weight:600; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.15s; }
 .tl-chip:hover { border-color:var(--border2); color:var(--text); }
 .tl-chip.sel { border-color:var(--teal); color:var(--teal); background:rgba(0,229,192,0.05); }
-
-/* Tier-tinted chips */
 .tl-chip[data-tier="T0"].sel  { border-color:rgba(232,200,90,0.5);  color:var(--t0);  background:rgba(232,200,90,0.06); }
 .tl-chip[data-tier="T0.5"].sel{ border-color:rgba(160,111,232,0.5); color:var(--t05); background:rgba(160,111,232,0.06); }
 .tl-chip[data-tier="T1"].sel  { border-color:rgba(91,160,232,0.5);  color:var(--t1);  background:rgba(91,160,232,0.06); }
 .tl-chip[data-tier="T1.5"].sel{ border-color:rgba(78,198,154,0.5);  color:var(--t15); background:rgba(78,198,154,0.06); }
 .tl-chip[data-tier="T2"].sel  { border-color:rgba(139,143,168,0.5); color:var(--t2);  background:rgba(139,143,168,0.06); }
 
-/* Add character form — styled like dashboard table card */
 .tl-add-form { background:var(--bg2); border:1px solid var(--border); border-left:2px solid var(--teal); border-radius:2px; padding:16px 20px; margin-bottom:18px; display:none; position:relative; }
 .tl-add-form::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,rgba(0,229,192,0.2),transparent); pointer-events:none; }
 .tl-add-form.visible { display:block; }
 .tl-add-form-title { font-family:var(--font-label); font-size:9px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:var(--teal); margin-bottom:14px; }
 
-/* Char picker */
 .tl-char-picker { position:relative; width:260px; }
 .tl-picker-wrap { display:flex; align-items:center; background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:2px; transition:border-color 0.2s; overflow:hidden; }
 .tl-picker-wrap:focus-within { border-color:rgba(0,229,192,0.35); }
@@ -339,16 +310,13 @@ tbody tr.tl-dirty { background:rgba(0,229,192,0.03); border-left:2px solid rgba(
 .tl-picker-item-info .picker-slug { font-family:var(--font-mono); font-size:9px; color:var(--dim2); }
 .tl-picker-no-results { padding:14px 12px; font-family:var(--font-mono); font-size:10px; color:var(--dim2); text-align:center; }
 
-/* Rarity bars */
 .rarity-6 { background:linear-gradient(90deg,#e8a45a,#e8d25a); }
 .rarity-5 { background:linear-gradient(90deg,#b0b0d8,#d8c0ff); }
 .rarity-4 { background:linear-gradient(90deg,#5a8ad8,#5abde8); }
 
-/* Skeleton loading */
 .skeleton-block { height:14px; border-radius:2px; background:linear-gradient(90deg,var(--bg2) 25%,rgba(255,255,255,0.05) 50%,var(--bg2) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-/* Meta / Endmin Log */
 .tl-meta-section { background:var(--bg2); border:1px solid var(--border); border-left:2px solid var(--teal); border-radius:2px; padding:18px 20px; margin-bottom:16px; max-width:720px; position:relative; }
 .tl-meta-section::before { content:''; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg,transparent,rgba(0,229,192,0.2),transparent); pointer-events:none; }
 .tl-meta-section-title { font-family:var(--font-label); font-size:9px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:var(--teal); margin-bottom:14px; }
@@ -357,7 +325,6 @@ tbody tr.tl-dirty { background:rgba(0,229,192,0.03); border-left:2px solid rgba(
 .tl-meta-field input[type=date], .tl-meta-field input[type=text] { background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.07); border-radius:2px; color:var(--text); font-family:var(--font-mono); font-size:12px; padding:8px 12px; outline:none; transition:border-color 0.2s; width:220px; }
 .tl-meta-field input:focus { border-color:rgba(0,229,192,0.35); }
 
-/* Accordion editor */
 .tl-acc-item { background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:2px; margin-bottom:8px; overflow:hidden; }
 .tl-acc-head { display:flex; align-items:center; gap:10px; padding:10px 14px; background:rgba(0,0,0,0.3); border-bottom:1px solid var(--border); }
 .tl-acc-icon { font-family:var(--font-mono); font-size:10px; color:var(--teal); width:20px; flex-shrink:0; }
@@ -368,28 +335,137 @@ tbody tr.tl-dirty { background:rgba(0,229,192,0.03); border-left:2px solid rgba(
 .tl-acc-body textarea:focus { border-color:rgba(0,229,192,0.35); }
 .tl-acc-note { font-family:var(--font-mono); font-size:9px; color:var(--dim); letter-spacing:.08em; margin-top:5px; }
 
-/* Schema note */
 .tl-schema-note { background:rgba(240,160,64,0.04); border:1px solid rgba(240,160,64,0.18); border-left:2px solid var(--gold); border-radius:2px; padding:11px 14px; margin-bottom:18px; font-family:var(--font-mono); font-size:10px; color:rgba(212,148,58,0.8); letter-spacing:.06em; line-height:1.7; }
 .tl-schema-note strong { color:var(--text); }
 .tl-schema-note code { background:rgba(0,0,0,0.4); padding:1px 6px; border-radius:2px; font-size:10px; color:var(--teal); }
 
-/* Row form inputs */
 .form-row { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
 .form-field { display:flex; flex-direction:column; gap:5px; }
 .form-field .form-label-sm { font-family:var(--font-label); font-size:9px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--dim2); }
 .form-field input[type=text], .form-field select { background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.07); border-radius:2px; color:var(--text); font-family:var(--font-mono); font-size:11px; padding:7px 10px; outline:none; transition:border-color 0.2s; }
 .form-field input[type=text]:focus, .form-field select:focus { border-color:rgba(0,229,192,0.35); }
 
-/* Filter row */
 .tl-filter-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
 .tl-filter-row input[type=text] { background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:2px; color:var(--text); font-family:var(--font-mono); font-size:11px; padding:7px 12px; outline:none; transition:border-color 0.2s; width:200px; }
 .tl-filter-row input[type=text]:focus { border-color:rgba(0,229,192,0.35); }
 .tl-filter-divider { width:1px; height:18px; background:var(--border2); margin:0 4px; }
 
-/* Slug / ID cells */
 td.tl-slug-cell { font-family:var(--font-mono); font-size:10px; color:var(--dim2); }
 td.tl-id-cell   { font-family:var(--font-mono); font-size:9px; color:var(--dim); }
 td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; color:var(--text); }
+
+/* ══════════════════════════════════════════
+   TEAMS PANEL
+══════════════════════════════════════════ */
+.teams-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:16px; }
+
+.team-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:2px;
+  overflow:hidden; transition:border-color 0.2s; position:relative;
+}
+.team-card::before {
+  content:''; position:absolute; top:0; left:10%; right:10%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,192,0.15),transparent); pointer-events:none;
+}
+.team-card:hover { border-color:rgba(0,229,192,0.18); }
+
+.team-card-head {
+  display:flex; align-items:center; gap:10px; padding:12px 16px;
+  background:rgba(0,0,0,0.3); border-bottom:1px solid var(--border);
+}
+.team-card-name-input {
+  flex:1; background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.07);
+  color:var(--text); font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; outline:none; padding-bottom:2px;
+  transition:border-color 0.2s;
+}
+.team-card-name-input:focus { border-bottom-color:var(--teal); }
+
+.team-card-body { padding:14px 16px; }
+
+.team-field-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+.team-field-label { font-family:var(--font-label); font-size:9px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--dim); width:60px; flex-shrink:0; }
+.team-field-row select, .team-field-row .tl-tog { vertical-align:middle; }
+.team-field-row select {
+  background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.07); border-radius:2px;
+  color:var(--text); font-family:var(--font-mono); font-size:11px; padding:5px 8px; outline:none;
+  transition:border-color 0.2s; cursor:pointer;
+}
+.team-field-row select:focus { border-color:rgba(0,229,192,0.35); }
+
+.team-slots-label { font-family:var(--font-label); font-size:9px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--dim); margin:12px 0 8px; }
+
+.member-groups { display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
+
+.member-group {
+  background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:2px; padding:8px 10px;
+}
+.group-label {
+  font-family:var(--font-mono); font-size:8px; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--dim); margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;
+}
+.group-label-remove {
+  background:none; border:none; color:var(--dim); cursor:pointer; font-size:10px;
+  line-height:1; padding:0; transition:color 0.12s;
+}
+.group-label-remove:hover { color:var(--error); }
+
+.group-members { display:flex; flex-wrap:wrap; gap:5px; align-items:center; margin-bottom:6px; }
+
+.member-chip {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(0,229,192,0.05); border:1px solid rgba(0,229,192,0.15); border-radius:2px;
+  padding:3px 8px; font-family:var(--font-mono); font-size:10px; color:var(--teal);
+}
+.member-chip-remove {
+  background:none; border:none; color:rgba(0,229,192,0.4); cursor:pointer;
+  padding:0; font-size:11px; line-height:1; transition:color 0.12s;
+}
+.member-chip-remove:hover { color:var(--error); }
+
+.add-member-row { display:flex; gap:5px; margin-top:4px; }
+.add-member-sel {
+  flex:1; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.07); border-radius:2px;
+  color:var(--text); font-family:var(--font-mono); font-size:10px; padding:4px 7px; outline:none;
+  transition:border-color 0.2s; cursor:pointer;
+}
+.add-member-sel:focus { border-color:rgba(0,229,192,0.35); }
+.add-member-btn {
+  padding:4px 10px; background:transparent; border:1px solid rgba(0,229,192,0.2); border-radius:2px;
+  color:rgba(0,229,192,0.6); font-family:var(--font-label); font-size:9px; font-weight:600;
+  letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.15s; white-space:nowrap;
+}
+.add-member-btn:hover { border-color:var(--teal); color:var(--teal); }
+
+.btn-add-slot {
+  width:100%; padding:7px 0; background:transparent;
+  border:1px dashed rgba(0,229,192,0.15); border-radius:2px;
+  color:rgba(0,229,192,0.4); font-family:var(--font-label); font-size:9px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; margin-top:4px;
+}
+.btn-add-slot:hover { border-color:rgba(0,229,192,0.4); color:rgba(0,229,192,0.8); }
+
+.team-card-footer {
+  display:flex; gap:8px; padding:10px 16px 12px;
+  border-top:1px solid var(--border); justify-content:flex-end;
+}
+.btn-team-delete {
+  padding:7px 14px; background:transparent; border:1px solid rgba(224,90,90,0.2); border-radius:2px;
+  color:rgba(224,90,90,0.6); font-family:var(--font-label); font-size:9px; font-weight:600;
+  letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.15s;
+}
+.btn-team-delete:hover { border-color:var(--error); color:var(--error); background:rgba(224,90,90,0.07); }
+.btn-team-save {
+  padding:7px 16px; background:transparent; border:1px solid var(--teal); border-radius:2px;
+  color:var(--teal); font-family:var(--font-label); font-size:9px; font-weight:700;
+  letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden;
+}
+.btn-team-save::before { content:''; position:absolute; inset:0; background:var(--teal); transform:translateX(-101%); transition:transform 0.2s cubic-bezier(0.4,0,0.2,1); z-index:0; }
+.btn-team-save:hover::before { transform:translateX(0); }
+.btn-team-save:hover { color:#050a0d; }
+.btn-team-save > span { position:relative; z-index:1; }
+.btn-team-save:disabled { opacity:0.4; cursor:not-allowed; }
+.btn-team-save:disabled::before { display:none; }
 
 @media(max-width:860px){
   .mobile-menu-btn{display:flex}
@@ -403,6 +479,7 @@ td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; fon
   .stats-grid{grid-template-columns:1fr 1fr}
   table{font-size:12px}
   td,th{padding:9px 10px}
+  .teams-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -452,15 +529,18 @@ td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; fon
         <span class="sidebar-badge" id="sidebar-wpn-count">—</span>
       </div>
 
-      <!-- TIER LIST -->
       <div class="sidebar-item" onclick="toggleSubMenu('tier-list-menu')" id="nav-tier-list">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="14" height="4" rx="1"/><rect x="3" y="17" width="10" height="4" rx="1"/></svg>
         Tier List
-        <span class="sidebar-badge" id="sidebar-tl-count">—</span>
-        <span style="margin-left:4px;font-size:10px;display:inline-block;transition:transform 0.3s" id="tier-list-chevron">▼</span>
+        <span style="margin-left:auto;font-size:10px;display:inline-block;transition:transform 0.3s" id="tier-list-chevron">▼</span>
       </div>
       <div class="sidebar-sub-menu" id="tier-list-menu">
-        <div class="sidebar-sub-item" onclick="showTlPanel('tl-chars', this)">Character Tiers</div>
+        <div class="sidebar-sub-item" onclick="showTlPanel('tl-chars', this)">Character Tiers
+          <span class="sidebar-badge" id="sidebar-tl-count">—</span>
+        </div>
+        <div class="sidebar-sub-item" onclick="showTlPanel('tl-teams', this)">Team Compositions
+          <span class="sidebar-badge" style="margin-left:6px" id="sidebar-team-count">—</span>
+        </div>
         <div class="sidebar-sub-item" onclick="showTlPanel('tl-meta', this)">Endmin Log</div>
       </div>
 
@@ -611,10 +691,7 @@ td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; fon
     <!-- ══ TIER LIST — CHARACTER TIERS ══ -->
     <div class="panel" id="panel-tl-chars">
       <div class="page-header">
-        <div>
-          <h1>Character Tiers</h1>
-          <div class="sub">character_tier_info · Manage tier assignments</div>
-        </div>
+        <div><h1>Character Tiers</h1><div class="sub">character_tier_info · Manage tier assignments</div></div>
         <div class="header-actions">
           <button class="btn-secondary" onclick="tlLoadChars()">↺ Refresh</button>
           <button class="btn-primary" id="tl-btn-add-char" onclick="tlToggleAddForm()"><span>+ Add Character</span></button>
@@ -628,7 +705,6 @@ td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; fon
         <code>ALTER TABLE character_tier_info ADD COLUMN id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY;</code>
       </div>
 
-      <!-- Add form -->
       <div class="tl-add-form" id="tl-add-char-form">
         <div class="tl-add-form-title">Add character to tier list</div>
         <div class="form-row">
@@ -685,7 +761,6 @@ td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; fon
         </div>
       </div>
 
-      <!-- Filters -->
       <div class="tl-filter-row">
         <input type="text" id="tl-char-search" placeholder="Search name or slug…" oninput="tlSearchQ=this.value.trim();tlRenderTable()">
         <span class="tl-chip sel" data-tier="all" onclick="tlSetTierFilter(this,'all')">All</span>
@@ -714,6 +789,20 @@ td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; fon
             <tr><td colspan="9"><div class="table-loading"><div class="spinner"></div></div></td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- ══ TIER LIST — TEAM COMPOSITIONS ══ -->
+    <div class="panel" id="panel-tl-teams">
+      <div class="page-header">
+        <div><h1>Team Compositions</h1><div class="sub">teams · team_members · Manage team tier assignments</div></div>
+        <div class="header-actions">
+          <button class="btn-secondary" onclick="tlLoadTeams()">↺ Refresh</button>
+          <button class="btn-primary" onclick="tlAddTeam()"><span>+ New Team</span></button>
+        </div>
+      </div>
+      <div id="teams-grid" class="teams-grid">
+        <div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">Loading teams…</div></div>
       </div>
     </div>
 
@@ -769,7 +858,7 @@ td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; fon
   </div><!-- /main -->
 </div><!-- /layout -->
 
-<!-- MODALS (unchanged from original) -->
+<!-- MODALS -->
 <div class="modal-overlay" id="invite-modal" onclick="if(event.target===this)closeModal('invite-modal')">
   <div class="modal small-modal">
     <button class="modal-close" onclick="closeModal('invite-modal')">✕</button>
@@ -905,12 +994,8 @@ td.tl-name-cell { font-family:'Barlow Condensed',sans-serif; font-size:15px; fon
 <div class="toast-container" id="toast-container"></div>
 
 <script>
-/* ════════════════════════════════════
-   SUPABASE CONFIG
-════════════════════════════════════ */
 const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
-const SUPABASE_ADMIN_KEY = ''; // Set this for tier list admin operations if needed
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ════════════════════════════════════
@@ -920,7 +1005,6 @@ let allUsers=[], allOperators=[], allWeapons=[], currentUser=null, pendingAction
 let editingOpId=null, editingWpnId=null;
 let roleFilter='all', opFilters={rarity:'all'}, wpnFilters={type:'all'};
 
-// Tier list state
 const TL_TIERS=['T0','T0.5','T1','T1.5','T2'];
 const TL_ROLES=['damage','enabler','buffer'];
 const TL_TIER_CSS={'T0':'tier-T0','T0.5':'tier-T05','T1':'tier-T1','T1.5':'tier-T15','T2':'tier-T2'};
@@ -937,12 +1021,17 @@ const TL_FALLBACK_ACC={
     {key:'team-changelog',icon:'03',title:'Changelog',html:'<p>Team changelog here.</p>'},
   ],
 };
+
+// Tier list state
 let tlCharData=[], tlPickerSelectedSlug=null, tlTierFilter='all', tlRoleFilter='all', tlSearchQ='';
 let tlAccState={general:[],team:[]};
+// All characters from the characters table (used for picker + team member selects)
 let tlAllCharsRaw=[], tlAllSlugs=[], tlCharNames={}, tlCharImgs={}, tlCharRarities={};
+// Teams
+let tlTeamsData=[];
 
 /* ════════════════════════════════════
-   AUTH GUARD & SIGN OUT
+   AUTH
 ════════════════════════════════════ */
 async function authGuard() {
   const{data:{session}}=await db.auth.getSession();
@@ -980,7 +1069,6 @@ function showTlPanel(panelSuffix, el){
   document.getElementById('nav-tier-list')?.classList.add('active');
   document.getElementById('panel-'+panelSuffix)?.classList.add('active');
   if(el)el.classList.add('active');
-  // Open the sub-menu if not already open
   const menu=document.getElementById('tier-list-menu');
   if(!menu.classList.contains('open')){menu.classList.add('open');document.getElementById('tier-list-chevron').style.transform='rotate(180deg)';}
 }
@@ -1481,11 +1569,291 @@ async function tlConfirmAddChar(){
 }
 
 /* ════════════════════════════════════
+   TIER LIST — TEAMS
+   Ported from standalone tierlist admin
+   for reliability. Key fixes:
+   - tlBuildGroupHTML uses tlAllCharsRaw
+     (name+slug from characters table)
+   - tlAddTeam appends card directly without
+     re-rendering entire grid (preserves state)
+   - wireGroupListeners uses scoped selectors
+   - saveTeam collected from DOM, not state
+════════════════════════════════════ */
+async function tlLoadTeams(){
+  const grid=document.getElementById('teams-grid');
+  grid.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">Loading…</div></div>';
+  const{data:teams,error}=await db.from('teams').select('*,team_members(*)').order('sort_order');
+  if(error){toast('error','Failed to load teams: '+error.message);grid.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">Failed to load teams</div></div>';return;}
+  tlTeamsData=(teams||[]).map(team=>{
+    const members=(team.team_members||[]).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+    const groups={};
+    for(const m of members){
+      const gi=m.group_index||0;
+      if(!groups[gi])groups[gi]=[];
+      groups[gi].push({id:m.id,slug:m.character_slug,sort_order:m.sort_order});
+    }
+    return{...team,groups:Object.keys(groups).sort((a,b)=>Number(a)-Number(b)).map(k=>groups[k])};
+  });
+  document.getElementById('sidebar-team-count').textContent=tlTeamsData.length;
+  tlRenderTeams();
+}
+
+function tlRenderTeams(){
+  const grid=document.getElementById('teams-grid');
+  if(!tlTeamsData.length){
+    grid.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No teams yet — click New Team</div></div>';
+    return;
+  }
+  grid.innerHTML='';
+  tlTeamsData.forEach(team=>grid.appendChild(tlBuildTeamCard(team)));
+}
+
+/* Build a single team card. Uses tlAllCharsRaw for member selects. */
+function tlBuildTeamCard(team){
+  const card=document.createElement('div');
+  card.className='team-card';
+  card.dataset.tid=team.id;
+
+  const sortOpts=[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}"${n===team.sort_order?' selected':''}>${n}</option>`).join('');
+  const tierBadgeClass=TL_TIER_CSS[team.tier]||'tier-T1';
+
+  card.innerHTML=`
+    <div class="team-card-head">
+      <input type="text" class="team-card-name-input" value="${(team.name||'').replace(/"/g,'&quot;')}" placeholder="Team name">
+      <span class="tier-badge ${tierBadgeClass} team-tier-badge">${team.tier||'T1'}</span>
+    </div>
+    <div class="team-card-body">
+      <div class="team-field-row">
+        <span class="team-field-label">Tier</span>
+        <select class="team-tier-sel">${TL_TIERS.map(t=>`<option value="${t}"${t===team.tier?' selected':''}>${t}</option>`).join('')}</select>
+      </div>
+      <div class="team-field-row">
+        <span class="team-field-label">Expert</span>
+        <input type="checkbox" class="tl-tog is-expert team-expert-tog"${team.is_expert?' checked':''}>
+      </div>
+      <div class="team-field-row">
+        <span class="team-field-label">Sort</span>
+        <select class="team-sort-sel">${sortOpts}</select>
+      </div>
+      <div class="team-slots-label">Member Slots <span style="color:var(--dim);font-size:9px;text-transform:none;letter-spacing:0">(OR groups per slot)</span></div>
+      <div class="member-groups" id="tl-groups-${team.id}"></div>
+      <button class="btn-add-slot">+ Add Slot</button>
+    </div>
+    <div class="team-card-footer">
+      <button class="btn-team-delete">Delete</button>
+      <button class="btn-team-save"><span>Save</span></button>
+    </div>`;
+
+  // Render existing groups
+  const groupsContainer=card.querySelector(`#tl-groups-${team.id}`);
+  const groupsData=team.groups&&team.groups.length?team.groups:[];
+  if(groupsData.length===0){
+    // New team — start with one empty slot
+    const div=tlCreateGroupEl(0,[]);
+    groupsContainer.appendChild(div);
+    tlWireGroupListeners(div);
+  } else {
+    groupsData.forEach((members,gi)=>{
+      const div=tlCreateGroupEl(gi,members);
+      groupsContainer.appendChild(div);
+      tlWireGroupListeners(div);
+    });
+  }
+
+  // Tier select → badge sync
+  const tierSel=card.querySelector('.team-tier-sel');
+  const tierBadgeEl=card.querySelector('.team-tier-badge');
+  tierSel.addEventListener('change',()=>{
+    tierBadgeEl.textContent=tierSel.value;
+    tierBadgeEl.className=`tier-badge ${TL_TIER_CSS[tierSel.value]||'tier-T1'} team-tier-badge`;
+  });
+
+  // Add slot button
+  card.querySelector('.btn-add-slot').addEventListener('click',()=>{
+    const gi=groupsContainer.querySelectorAll('.member-group').length;
+    const div=tlCreateGroupEl(gi,[]);
+    groupsContainer.appendChild(div);
+    tlWireGroupListeners(div);
+  });
+
+  // Save button
+  card.querySelector('.btn-team-save').addEventListener('click',()=>tlSaveTeam(card,team.id));
+
+  // Delete button
+  card.querySelector('.btn-team-delete').addEventListener('click',()=>{
+    const teamName=card.querySelector('.team-card-name-input').value||team.name||'this team';
+    pendingAction=async()=>{
+      const{error}=await db.from('teams').delete().eq('id',team.id);
+      if(error){toast('error','Delete failed: '+error.message);return;}
+      tlTeamsData=tlTeamsData.filter(t=>t.id!==team.id);
+      document.getElementById('sidebar-team-count').textContent=tlTeamsData.length;
+      toast('info',`"${teamName}" deleted`);
+      card.remove();
+      // If grid is empty now, show empty state
+      const grid=document.getElementById('teams-grid');
+      if(!grid.querySelector('.team-card')){
+        grid.innerHTML='<div class="empty-state"><div class="empty-icon">◌</div><div class="empty-text">No teams yet — click New Team</div></div>';
+      }
+    };
+    document.getElementById('confirm-title').textContent='Delete Team';
+    document.getElementById('confirm-sub').textContent=`"${teamName}" and all members will be permanently deleted.`;
+    openModal('confirm-modal');
+  });
+
+  return card;
+}
+
+/* Create a group (slot) element with member chips + add-member row */
+function tlCreateGroupEl(gi, members){
+  const div=document.createElement('div');
+  div.className='member-group';
+  div.dataset.gi=gi;
+
+  // Build slug options from the global characters list
+  const slugOpts=tlAllCharsRaw.map(c=>`<option value="${c.slug}">${c.name}</option>`).join('');
+
+  div.innerHTML=`
+    <div class="group-label">
+      <span>Slot ${gi+1} — OR group</span>
+      <button class="group-label-remove" title="Remove slot">✕</button>
+    </div>
+    <div class="group-members"></div>
+    <div class="add-member-row">
+      <select class="add-member-sel">
+        <option value="">— select character —</option>
+        ${slugOpts}
+      </select>
+      <button class="add-member-btn">+ Add</button>
+    </div>`;
+
+  // Add existing member chips
+  const membersContainer=div.querySelector('.group-members');
+  (members||[]).forEach(m=>{
+    if(m.slug){
+      membersContainer.appendChild(tlCreateChip(m.slug));
+    }
+  });
+
+  return div;
+}
+
+/* Create a member chip element */
+function tlCreateChip(slug){
+  const name=tlCharNames[slug]||slug;
+  const chip=document.createElement('span');
+  chip.className='member-chip';
+  chip.dataset.slug=slug;
+  chip.innerHTML=`${name}<button class="member-chip-remove" title="Remove">✕</button>`;
+  chip.querySelector('.member-chip-remove').addEventListener('click',()=>chip.remove());
+  return chip;
+}
+
+/* Wire event listeners on a group element */
+function tlWireGroupListeners(groupEl){
+  // Add member button
+  const addBtn=groupEl.querySelector('.add-member-btn');
+  if(addBtn){
+    addBtn.addEventListener('click',()=>{
+      const sel=groupEl.querySelector('.add-member-sel');
+      const slug=sel.value;
+      if(!slug)return;
+      groupEl.querySelector('.group-members').appendChild(tlCreateChip(slug));
+      sel.value='';
+    });
+  }
+
+  // Remove group/slot button
+  const removeBtn=groupEl.querySelector('.group-label-remove');
+  if(removeBtn){
+    removeBtn.addEventListener('click',()=>{
+      const container=groupEl.closest('.member-groups');
+      if(container.querySelectorAll('.member-group').length<=1){
+        toast('info','A team must have at least one slot.');
+        return;
+      }
+      groupEl.remove();
+    });
+  }
+}
+
+/* Save a team: update teams row + replace all team_members */
+async function tlSaveTeam(card, teamId){
+  const saveBtn=card.querySelector('.btn-team-save');
+  const name=card.querySelector('.team-card-name-input').value.trim();
+  const tier=card.querySelector('.team-tier-sel').value;
+  const is_expert=card.querySelector('.team-expert-tog').checked;
+  const sort_order=parseInt(card.querySelector('.team-sort-sel').value)||0;
+
+  if(!name){toast('error','Team name is required.');return;}
+
+  saveBtn.querySelector('span').textContent='Saving…';
+  saveBtn.disabled=true;
+
+  // 1. Update teams row
+  const{error:te}=await db.from('teams').update({name,tier,is_expert,sort_order}).eq('id',teamId);
+  if(te){toast('error','Save failed: '+te.message);saveBtn.querySelector('span').textContent='Save';saveBtn.disabled=false;return;}
+
+  // 2. Delete all existing team_members for this team
+  const{error:de}=await db.from('team_members').delete().eq('team_id',teamId);
+  if(de){toast('error','Member delete failed: '+de.message);saveBtn.querySelector('span').textContent='Save';saveBtn.disabled=false;return;}
+
+  // 3. Collect members from DOM and re-insert
+  const newMembers=[];
+  card.querySelectorAll('.member-group').forEach((group,gi)=>{
+    group.querySelectorAll('.member-chip').forEach((chip,si)=>{
+      const slug=chip.dataset.slug;
+      if(slug)newMembers.push({team_id:teamId,character_slug:slug,group_index:gi,sort_order:si+1});
+    });
+  });
+
+  if(newMembers.length){
+    const{error:ie}=await db.from('team_members').insert(newMembers);
+    if(ie){toast('error','Member insert failed: '+ie.message);saveBtn.querySelector('span').textContent='Save';saveBtn.disabled=false;return;}
+  }
+
+  // 4. Update local state
+  const idx=tlTeamsData.findIndex(t=>t.id===teamId);
+  if(idx!==-1)Object.assign(tlTeamsData[idx],{name,tier,is_expert,sort_order});
+
+  saveBtn.querySelector('span').textContent='Saved ✓';
+  toast('success',`"${name}" saved.`);
+  setTimeout(()=>{saveBtn.querySelector('span').textContent='Save';saveBtn.disabled=false;},2000);
+}
+
+/* Create a brand-new team row in DB, then append a card without re-rendering */
+async function tlAddTeam(){
+  const{data,error}=await db.from('teams')
+    .insert({name:'New Team',tier:'T1',is_expert:false,sort_order:tlTeamsData.length+1})
+    .select().single();
+  if(error){toast('error','Failed to create team: '+error.message);return;}
+
+  // Give it an empty groups structure
+  const newTeam={...data,groups:[]};
+  tlTeamsData.push(newTeam);
+  document.getElementById('sidebar-team-count').textContent=tlTeamsData.length;
+
+  // Clear any empty-state message
+  const grid=document.getElementById('teams-grid');
+  const emptyState=grid.querySelector('.empty-state');
+  if(emptyState)emptyState.remove();
+
+  // Append only the new card
+  const card=tlBuildTeamCard(newTeam);
+  grid.appendChild(card);
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+  card.querySelector('.team-card-name-input').focus();
+  toast('success','New team created — edit and save.');
+}
+
+/* ════════════════════════════════════
    TIER LIST — ENDMIN LOG (META)
 ════════════════════════════════════ */
 async function tlLoadMeta(){
   const{data}=await db.from('tier_meta').select('value').eq('key','last_updated').single();
-  if(data?.value){try{const d=new Date(data.value);document.getElementById('tl-meta-last-updated').value=d.toISOString().slice(0,10);}catch{document.getElementById('tl-meta-last-updated').value=data.value;}}
+  if(data?.value){
+    try{const d=new Date(data.value);document.getElementById('tl-meta-last-updated').value=d.toISOString().slice(0,10);}
+    catch{document.getElementById('tl-meta-last-updated').value=data.value;}
+  }
 }
 async function tlSaveLastUpdated(){
   const val=document.getElementById('tl-meta-last-updated').value;
@@ -1531,11 +1899,16 @@ async function tlLoadAccordion(sectionKey){
   const user=await authGuard();
   if(!user)return;
 
-  // Load all characters for the picker
+  // Load all characters for picker + team member selects
   const{data:allChars}=await db.from('characters').select('id,name,img_path,rarity').order('name');
   if(allChars&&allChars.length){
+    // In this project characters.id IS the slug
     tlAllCharsRaw=allChars.map(c=>({...c,slug:c.id}));
-    tlAllCharsRaw.forEach(c=>{tlCharNames[c.id]=c.name;tlCharImgs[c.id]=c.img_path||null;tlCharRarities[c.id]=c.rarity||5;});
+    tlAllCharsRaw.forEach(c=>{
+      tlCharNames[c.id]=c.name;
+      tlCharImgs[c.id]=c.img_path||null;
+      tlCharRarities[c.id]=c.rarity||5;
+    });
     tlAllSlugs=tlAllCharsRaw.map(c=>c.id);
   }
 
@@ -1544,6 +1917,7 @@ async function tlLoadAccordion(sectionKey){
     loadOperators(),
     loadWeapons(),
     tlLoadChars(),
+    tlLoadTeams(),
     tlLoadMeta(),
     tlLoadAccordion('general'),
     tlLoadAccordion('team'),
