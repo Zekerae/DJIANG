@@ -654,7 +654,7 @@ function renderCharacter(char) {
 function renderAttributes(char) {
   const attrMap = [
     { key:'str', label:'Strength',  icon: char.icon_str || 'assets/AttributesAssets/STR.png',  id:'attr-str' },
-    { key:'agi', label:'Agility',   icon: char.icon_agi || 'assets/AttributeAssets/AGI.png',   id:'attr-agi' },
+    { key:'agi', label:'Agility',   icon: char.icon_agi || 'assets/AttributesAssets/AGI.png',   id:'attr-agi' },
     { key:'int', label:'Intellect', icon: char.icon_int || 'assets/AttributesAssets/INT.png',  id:'attr-int' },
     { key:'wil', label:'Will',      icon: char.icon_wil || 'assets/AttributesAssets/WILL.png', id:'attr-wil' }
   ];
