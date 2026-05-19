@@ -116,3 +116,11 @@
   };
 
 })();
+
+// Inside js/TextGlitch.js
+const isLowEnd = window.innerWidth <= 768;
+const glitchSpeed = isLowEnd ? 150 : 50; // Slower updates on phones
+
+setInterval(() => {
+    // Run glitch logic
+}, glitchSpeed);
