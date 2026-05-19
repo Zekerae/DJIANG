@@ -137,6 +137,48 @@
     opacity: 0.8; 
 }
 
+/* ═══════════════════════════════════════════════
+   TACTICAL FEED CONTROL BUTTON
+═══════════════════════════════════════════════ */
+.ei-video-toggle {
+    margin-top: 20px;
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid rgba(135, 135, 135, 0.4);
+    color: rgba(135, 135, 135, 0.8);
+    font-family: 'HarmonyOS Sans Regular', sans-serif !important;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    padding: 8px 16px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    /* Clean angled geometric cut matching Endfield architecture */
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    user-select: none;
+}
+
+.ei-video-toggle:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Alert Warning State when Feed is frozen */
+.ei-video-toggle.paused {
+    border-color: #ff8c42;
+    color: #ff8c42;
+    background: rgba(255, 140, 66, 0.08);
+    box-shadow: 0 0 10px rgba(255, 140, 66, 0.15);
+}
+
+.ei-video-toggle .status-icon {
+    font-size: 7px;
+    line-height: 1;
+}
+
 /* Forces the YouTube video to fill the space without black bars */
 .ei-video-bg iframe {
     position: absolute;

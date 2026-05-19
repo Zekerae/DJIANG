@@ -6,6 +6,7 @@
 <title>Endfield — Ascension Planner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/NavBar.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
@@ -27,7 +28,61 @@ body {
   font-family: var(--font-body);
   height: 100vh; overflow: hidden;
   display: flex; flex-direction: column;
+  
+  /* THE FIX: Push the app down to make room for the fixed navbar */
+  padding-top: clamp(48px, 6vh, 64px); 
 }
+
+.sub-navbar {
+  position: fixed; top: 0; left: 0; width: 100%; height: 48px;
+  background: #0a0a0a; border-bottom: 1px solid var(--border);
+  z-index: 2147483647; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px 0 0;
+}
+.sub-nav-left { display: flex; align-items: center; height: 100%; }
+
+/* Custom Hamburger specifically for the Sub-Navbar */
+.sub-navbar .hamburger {
+  width: 48px; height: 100%; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 5px; cursor: pointer;
+}
+.sub-navbar .hamburger span {
+  display: block; width: 18px; height: 1.5px; background: #878787; transition: all 0.3s;
+}
+.sub-navbar .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.sub-navbar .hamburger.open span:nth-child(2) { opacity: 0; }
+.sub-navbar .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.sub-nav-logo {
+  background: #e05030; color: #0a0a0a; font-family: var(--font-display); font-weight: 800;
+  padding: 2px 8px; font-size: 13px; margin: 0 16px; border-radius: 2px; letter-spacing: 0.05em;
+}
+.sub-nav-back {
+  color: var(--accent); font-family: var(--font-mono); font-size: 10px; text-decoration: none;
+  font-weight: 600; margin-right: 16px; display: flex; align-items: center; gap: 6px; letter-spacing: 0.1em;
+}
+.sub-nav-back:hover { color: #fff; }
+.sub-nav-crumbs {
+  font-family: var(--font-mono); font-size: 10px; color: var(--muted); display: flex; gap: 6px; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.sub-nav-crumbs .sep { color: var(--border2); }
+.sub-nav-crumbs span.active { color: #fff; font-weight: 600; }
+.sub-nav-right { display: flex; align-items: center; height: 100%; }
+.sub-nav-user {
+  border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-mono);
+  font-size: 10px; padding: 4px 12px; cursor: pointer; letter-spacing: 0.05em; font-weight: 600;
+  background: rgba(0,196,163,0.05); transition: all 0.2s;
+}
+.sub-nav-user:hover { background: rgba(0,196,163,0.15); }
+
+/* Mobile formatting */
+@media (max-width: 768px) {
+  .sub-nav-crumbs, .sub-nav-logo { display: none; }
+  .sub-nav-back { margin-left: 16px; }
+  .sub-nav-user { padding: 4px 8px; font-size: 9px; }
+}
+
 body::before {
   content: ''; position: fixed; inset: 0;
   background-image:
@@ -540,7 +595,59 @@ input[type=range]::-moz-range-thumb {
 </style>
 </head>
 <body>
+  <nav class="sub-navbar" id="navbar">
+    <div class="sub-nav-left">
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="sub-nav-logo">DJIANG</div>
+        <a href="index.html" class="sub-nav-back">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            BACK
+        </a>
+        <div class="sub-nav-crumbs">
+            <span>Home</span> <span class="sep">/</span> <span>Tools</span> <span class="sep">/</span> <span class="active">Ascension Planner</span>
+        </div>
+    </div>
+    <div class="sub-nav-right">
+        <div class="sub-nav-user">ENDMINISTRATOR ▼</div>
+    </div>
+</nav>
 
+<div class="sidebar">
+    <div class="sidebar-label">NAVIGATION</div>
+    <div class="sidebar-nav">
+        <a href="index.html" class="sidebar-item" style="text-decoration:none;">
+            <div class="sidebar-item-inner">
+                <span class="sidebar-text">HOME</span>
+            </div>
+        </a>
+        <a href="#" class="sidebar-item active" style="text-decoration:none;">
+            <div class="sidebar-item-inner">
+                <span class="sidebar-text">TRACKER</span>
+            </div>
+        </a>
+    </div>
+</div>
+<div class="overlay"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+      const hamburger = document.querySelector('.sub-navbar .hamburger');
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.overlay');
+
+      if (hamburger && sidebar && overlay) {
+          const toggleMenu = () => {
+              hamburger.classList.toggle('open');
+              sidebar.classList.toggle('open');
+              overlay.classList.toggle('visible');
+          };
+          hamburger.addEventListener('click', toggleMenu);
+          overlay.addEventListener('click', toggleMenu);
+      }
+  });
+</script>
 <div class="header">
   <div>
     <div class="header-eyebrow">Arknights: Endfield // v2.2</div>
@@ -1092,9 +1199,11 @@ function addPlan(type, item) {
   renderAll();
   closeModal();
 }
-function removePlan(id) { plans = plans.filter(p => p.id !== id); focusedPlanIds.delete(id); renderAll(); }
-
-// FIX 2: Level update functions now handle both slider and text input
+function removePlan(id) {
+  plans = plans.filter(p => p.id !== id);
+  focusedPlanIds.delete(id);
+  renderAll();
+}
 function updateFrom(id, val) {
   const p = plans.find(x => x.id === id); if (!p) return;
   let v = parseInt(val);
@@ -1102,9 +1211,9 @@ function updateFrom(id, val) {
   v = Math.max(1, Math.min(89, v));
   p.fromLv = v;
   if (p.fromLv >= p.toLv) p.toLv = Math.min(p.fromLv + 1, 90);
-  syncLevelUI(id);
   renderAll();
 }
+
 function updateTo(id, val) {
   const p = plans.find(x => x.id === id); if (!p) return;
   let v = parseInt(val);
@@ -1112,7 +1221,6 @@ function updateTo(id, val) {
   v = Math.max(2, Math.min(90, v));
   p.toLv = v;
   if (p.toLv <= p.fromLv) p.fromLv = Math.max(p.toLv - 1, 1);
-  syncLevelUI(id);
   renderAll();
 }
 
@@ -2184,5 +2292,6 @@ window.addEventListener('load', async () => {
   renderAll();
 });
 </script>
+<script src="js/NavBar.js"></script>
 </body>
 </html>

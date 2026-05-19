@@ -227,3 +227,16 @@
   .landing-page .hero-blurb { display: none; } /* Hide the tiny text on phones to keep it clean */
   .landing-page .hero-headline .line { letter-spacing: -1px; } /* Less aggressive squish on mobile */
 }
+
+.hero-scanlines {
+  /* Existing code... */
+  
+  /* 1. Force the browser to use the GPU */
+  transform: translateZ(0); 
+  
+  /* 2. Tell the browser exactly what will change ahead of time */
+  will-change: transform, opacity; 
+  
+  /* 3. NEVER animate background-position. If it moves, use transform: translateY() */
+  pointer-events: none; /* Stops it from capturing taps and slowing down scrolling */
+}

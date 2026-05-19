@@ -1,3 +1,13 @@
+function initHeroCanvas() {
+  // THE KILLSWITCH: If it's a phone, don't run the heavy animation loop!
+  if (window.innerWidth <= 768) {
+      document.getElementById('heroCanvas').style.display = 'none';
+      // The CSS .hero-bg will act as a beautiful, lightweight static fallback
+      return; 
+  }
+
+  // ... continue with your normal desktop canvas setup below ...
+}
 function initLandingPage() {
   // ── HERO CANVAS ANIMATION ──
   const canvas = document.getElementById('heroCanvas');
