@@ -77,11 +77,9 @@ const SHOP_UNIT_CFG = {
   ori:   { hint:'Enter how many <strong style="color:var(--accent)">Origeometry</strong> you need. 1 Ori = 75 Oroberyl.',                     label:'Origeometry needed', default:70   },
 };
 
+// 🔧 Replace with your actual Vercel deployment URL after deploying
 const CORS_PROXIES = [
-  url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-  url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  url => `https://cors.eu.org/${url}`,
-  url => `https://thingproxy.freeboard.io/fetch/${url}`,
+  url => `https://headhunt-proxy.vercel.app/api/proxy?url=${encodeURIComponent(url)}`,
 ];
 
 /* ════════════════════════════════════
