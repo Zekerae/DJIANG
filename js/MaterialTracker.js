@@ -1,6 +1,16 @@
 
   // ════════════════════════════════════════════════════════════════════════
 // Endfield Ascension Planner — tracker.js
+
+
+
+
+
+
+
+
+
+
 // ════════════════════════════════════════════════════════════════════════
 
 // ── SUPABASE ─────────────────────────────────────────────────────────────
@@ -73,11 +83,6 @@ async function loadUserData() {
       plans.forEach(p => focusedPlanIds.add(p.id));
     }
 
-    const { data: matRows, error: matErr } = await db
-      .from('material_list_user_mats')
-      .select('material_id, have_qty, exp_have')
-      .eq('user_id', CURRENT_USER.id);
-    if (matErr) throw matErr;
 
     if (matRows?.length) {
       haveQty = {}; expHave = {};
@@ -142,35 +147,28 @@ async function deletePlanFromDB(plan) {
 }
 
 const _haveDebounce = {};
-function scheduleHaveSave(matKey) {
+function scheduleHaveSave(matKey, planId) {
   if (!CURRENT_USER) return;
-  clearTimeout(_haveDebounce[matKey]);
-  _haveDebounce[matKey] = setTimeout(() => saveHaveToDB(matKey), 800);
+  const key = planId + ':' + matKey;
+  clearTimeout(_haveDebounce[key]);
+  _haveDebounce[key] = setTimeout(() => saveHaveToDB(planId), 800);
 }
-async function saveHaveToDB(matKey) {
+async function saveHaveToDB(planId) {
   if (!CURRENT_USER) return;
+  const plan = plans.find(p => String(p.id) === String(planId)); if (!plan || !plan._dbId) return;
   try {
-    await db.from('material_list_user_mats').upsert(
-      { user_id: CURRENT_USER.id, material_id: matKey, have_qty: haveQty[matKey] || 0 },
-      { onConflict: 'user_id,material_id' }
-    );
+    await db.from('material_list_plans')
+      .update({ plan_json: { ...plan, _haveQty: haveQty[planId] || {}, _expHave: expHave[planId] || {} } })
+      .eq('id', plan._dbId)
+      .eq('user_id', CURRENT_USER.id);
   } catch (e) { console.warn('saveHaveToDB error:', e.message); }
 }
 
 const _expHaveDebounce = {};
-function scheduleExpHaveSave() {
+function scheduleExpHaveSave(planId) {
   if (!CURRENT_USER) return;
-  clearTimeout(_expHaveDebounce['__exp__']);
-  _expHaveDebounce['__exp__'] = setTimeout(() => saveExpHaveToDB(), 800);
-}
-async function saveExpHaveToDB() {
-  if (!CURRENT_USER) return;
-  try {
-    await db.from('material_list_user_mats').upsert(
-      { user_id: CURRENT_USER.id, material_id: '__exp_have__', have_qty: 0, exp_have: expHave },
-      { onConflict: 'user_id,material_id' }
-    );
-  } catch (e) { console.warn('saveExpHaveToDB error:', e.message); }
+  clearTimeout(_expHaveDebounce[planId]);
+  _expHaveDebounce[planId] = setTimeout(() => saveHaveToDB(planId), 800);
 }
 
 
@@ -490,17 +488,19 @@ function totalMats() {
 let haveQty = {};
 let expHave  = {};
 
-function getHave(matKey)        { return haveQty[matKey] || 0; }
-function setHave(matKey, val)   {
-  haveQty[matKey] = Math.max(0, parseInt(val) || 0);
-  scheduleHaveSave(matKey);
+function getHave(matKey, planId)      { return (haveQty[planId]?.[matKey]) || 0; }
+function setHave(matKey, val, planId) {
+  if (!haveQty[planId]) haveQty[planId] = {};
+  haveQty[planId][matKey] = Math.max(0, parseInt(val) || 0);
+  scheduleHaveSave(matKey, planId);
   renderBoth();
 }
-function getExpHave(groupKey, itemKey)        { return (expHave[groupKey]?.[itemKey]) || 0; }
-function setExpHave(groupKey, itemKey, val)   {
-  if (!expHave[groupKey]) expHave[groupKey] = {};
-  expHave[groupKey][itemKey] = Math.max(0, parseInt(val) || 0);
-  scheduleExpHaveSave();
+function getExpHave(groupKey, itemKey, planId)        { return (expHave[planId]?.[groupKey]?.[itemKey]) || 0; }
+function setExpHave(groupKey, itemKey, val, planId)   {
+  if (!expHave[planId]) expHave[planId] = {};
+  if (!expHave[planId][groupKey]) expHave[planId][groupKey] = {};
+  expHave[planId][groupKey][itemKey] = Math.max(0, parseInt(val) || 0);
+  scheduleExpHaveSave(planId);
   renderBoth();
 }
 
@@ -509,12 +509,12 @@ function renderBoth() {
   if (midMode === 'individual') renderIndividual();
 }
 
-function computeExpBreakdown(rawExp, groupDef, groupKey) {
+function computeExpBreakdown(rawExp, groupDef, groupKey, planId) {
   let remaining = rawExp;
   const used = {};
   for (const key of groupDef.keys) {
     const val  = MATS[key]?.expValue || 1;
-    const have = getExpHave(groupKey, key);
+    const have = getExpHave(groupKey, key, planId);
     const use  = Math.min(have, Math.floor(remaining / val));
     used[key]  = use;
     remaining  = Math.max(0, remaining - use * val);
@@ -524,7 +524,7 @@ function computeExpBreakdown(rawExp, groupDef, groupKey) {
   const perTier    = {};
   for (const key of groupDef.keys) {
     const val  = MATS[key]?.expValue || 1;
-    const have = getExpHave(groupKey, key);
+    const have = getExpHave(groupKey, key, planId);
     const need = remaining > 0 ? Math.ceil(remaining / val) : 0;
     perTier[key] = { standaloneTotal: Math.ceil(rawExp / val), need, have, expVal: val };
   }
@@ -976,7 +976,10 @@ function renderNeed() {
   if (!entries.length && !hasExpData) { list.innerHTML = ''; badge.style.display = 'none'; return; }
 
   const checkableItems = entries.filter(([k]) => { const m = MATS[k]; return m && !m.isExpItem; });
-  const metCount       = checkableItems.filter(([k, qty]) => getHave(k) >= qty).length;
+  const metCount = checkableItems.filter(([k, qty]) => {
+    const totalHave = plans.reduce((sum, p) => sum + getHave(k, p.id), 0);
+    return totalHave >= qty;
+  }).length;
   badge.style.display  = 'block';
   badgeLabel.textContent = `${metCount}/${checkableItems.length}`;
 
@@ -1000,7 +1003,7 @@ function renderNeed() {
     html += `<div class="need-section-label">${cat}</div>`;
     if (data.type === 'exp') {
       const { gKey, gDef, rawExp } = data;
-      const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
+      const breakdown = computeExpBreakdown(rawExp, gDef, gKey,null);
       const { perTier, pct, coveredExp, remaining } = breakdown;
       const allDone = remaining === 0;
       html += `<div class="exp-breakdown">
@@ -1089,7 +1092,7 @@ function _updateIndivCardDerived(cardEl, plan) {
   const internalKeys = new Set(['_op_exp_raw', '_op_exp_hi_raw', '_wpn_exp_raw', '_wpn_exp_hi_raw']);
   const matEntries  = Object.entries(mats).filter(([k]) => !internalKeys.has(k) && MATS[k] && !MATS[k].isExpItem);
   const totalItems  = matEntries.length;
-  const doneCount   = matEntries.filter(([k, qty]) => getHave(k) >= qty).length;
+  const doneCount = matEntries.filter(([k, qty]) => getHave(k, plan.id) >= qty).length;
   const progressPct = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
   const fillEl      = cardEl.querySelector('.indiv-card-progress-fill');
   if (fillEl) fillEl.style.width = progressPct + '%';
@@ -1102,7 +1105,7 @@ function _updateIndivCardDerived(cardEl, plan) {
 
   cardEl.querySelectorAll('.indiv-mat-row[data-mat-key]').forEach(rowEl => {
     const k   = rowEl.dataset.matKey, qty = parseInt(rowEl.dataset.matQty) || 0;
-    const have = getHave(k), isSat = have >= qty;
+    const have = getHave(k, plan.id), isSat = have >= qty;
     const pct  = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
     const fmtQty = qty >= 1000 ? (qty / 1000).toFixed(1) + 'k' : qty.toLocaleString();
     const mat  = MATS[k];
@@ -1116,7 +1119,7 @@ function _updateIndivCardDerived(cardEl, plan) {
 
   for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
     if (!mats[gDef.rawKey]) continue;
-    const breakdown = computeExpBreakdown(mats[gDef.rawKey], gDef, gKey);
+    const breakdown = computeExpBreakdown(mats[gDef.rawKey], gDef, gKey, plan.id);
     const { perTier, pct, coveredExp, remaining } = breakdown;
     const allDone   = remaining === 0;
     const blockEl   = cardEl.querySelector(`.indiv-exp-block[data-gkey="${gKey}"]`); if (!blockEl) continue;
@@ -1165,7 +1168,7 @@ function buildIndivCard(plan) {
   const internalKeys = new Set(['_op_exp_raw', '_op_exp_hi_raw', '_wpn_exp_raw', '_wpn_exp_hi_raw']);
   const matEntries   = Object.entries(mats).filter(([k]) => !internalKeys.has(k) && MATS[k] && !MATS[k].isExpItem);
   const totalItems   = matEntries.length;
-  const doneCount    = matEntries.filter(([k, qty]) => getHave(k) >= qty).length;
+  const doneCount = matEntries.filter(([k, qty]) => getHave(k, plan.id) >= qty).length;
   const progressPct  = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
 
   let statusClass = 'pending', statusLabel = 'Pending';
@@ -1186,7 +1189,7 @@ function buildIndivCard(plan) {
   for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
     const rawKey = gDef.rawKey; if (!mats[rawKey]) continue;
     const rawExp    = mats[rawKey];
-    const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
+    const breakdown = computeExpBreakdown(rawExp, gDef, gKey, plan.id);
     const { perTier, pct, coveredExp, remaining } = breakdown;
     const allDone   = remaining === 0;
     expSectionsHtml += `<div class="indiv-exp-block" data-gkey="${gKey}">
@@ -1208,8 +1211,7 @@ function buildIndivCard(plan) {
         <div class="indiv-exp-tier-need${isSat ? ' done' : ''}" style="${isSat ? '' : 'color:' + mat.color}">${isSat ? '✓' : tier.need}</div>
         <div class="indiv-have-wrap">
           <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
-          <input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setExpHave('${gKey}','${itemKey}',this.value)" oninput="setExpHave('${gKey}','${itemKey}',this.value)">
-        </div>
+          <input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setHave('${k}',this.value,${plan.id})" oninput="setHave('${k}',this.value,${plan.id})">
       </div>`;
     }
     if (!allDone) expSectionsHtml += `<div class="indiv-exp-tier-hint">↑ counts if only using that tier — mix tiers freely</div>`;
@@ -1240,7 +1242,7 @@ function buildIndivCard(plan) {
           : `<div class="indiv-mat-need${isSat ? ' satisfied' : ''}" style="${isSat ? '' : 'color:' + mat.color}">${isSat ? '✓' : fmtQty}</div>`}
         <div class="indiv-have-wrap">
           <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
-          <input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setHave('${k}',this.value)" oninput="setHave('${k}',this.value)">
+          <input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setHave('${k}',this.value,${plan.id})" oninput="setHave('${k}',this.value,${plan.id})">
         </div>
         ${pct > 0 && !isSat ? `<div class="indiv-mat-row-progress" style="width:${pct}%"></div>` : ''}
       </div>`;
@@ -1292,9 +1294,8 @@ async function saveIndivPlan(id) {
   indivSaveStatus[id] = 'saving'; _updateSaveBar(id);
   try {
     await savePlanToDB(plan);
-    const pendingMats = Object.keys(_haveDebounce);
-    await Promise.all(pendingMats.map(k => { clearTimeout(_haveDebounce[k]); return saveHaveToDB(k); }));
-    clearTimeout(_expHaveDebounce['__exp__']); await saveExpHaveToDB();
+    clearTimeout(_expHaveDebounce[id]);
+    await saveHaveToDB(id);
     indivSaveStatus[id] = 'saved'; _updateSaveBar(id);
     setTimeout(() => { if (indivSaveStatus[id] === 'saved') { delete indivSaveStatus[id]; _updateSaveBar(id); } }, 3000);
   } catch (e) {
