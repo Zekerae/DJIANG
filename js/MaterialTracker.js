@@ -1882,21 +1882,6 @@ document.addEventListener('keydown', e => {
 });
 
 
-// ── HAMBURGER / SIDEBAR ───────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const hamburger = document.querySelector('.sub-navbar .hamburger');
-  const sidebar   = document.querySelector('.sidebar');
-  const overlay   = document.querySelector('.overlay');
-  if (hamburger && sidebar && overlay) {
-    const toggleMenu = () => {
-      hamburger.classList.toggle('open');
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('visible');
-    };
-    hamburger.addEventListener('click', toggleMenu);
-    overlay.addEventListener('click', toggleMenu);
-  }
-});
 
 
 // ── INIT ──────────────────────────────────────────────────────────────────

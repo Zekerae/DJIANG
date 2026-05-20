@@ -21,47 +21,6 @@ body {
   padding-top: var(--navbar-h);
 }
 
-/* ── SUB-NAVBAR ── */
-.sub-navbar {
-  position: fixed; top: 0; left: 0; width: 100%; height: var(--navbar-h);
-  background: #0a0a0a; border-bottom: 1px solid var(--border);
-  z-index: 2147483647; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 16px 0 0;
-}
-.sub-nav-left { display: flex; align-items: center; height: 100%; }
-.sub-navbar .hamburger {
-  width: 48px; height: 100%; border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 5px; cursor: pointer;
-}
-.sub-navbar .hamburger span {
-  display: block; width: 18px; height: 1.5px; background: #878787; transition: all 0.3s;
-}
-.sub-navbar .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-.sub-navbar .hamburger.open span:nth-child(2) { opacity: 0; }
-.sub-navbar .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-.sub-nav-logo {
-  background: #e05030; color: #0a0a0a; font-family: var(--font-display); font-weight: 800;
-  padding: 2px 8px; font-size: 13px; margin: 0 16px; border-radius: 2px; letter-spacing: 0.05em;
-}
-.sub-nav-back {
-  color: var(--accent); font-family: var(--font-mono); font-size: 10px; text-decoration: none;
-  font-weight: 600; margin-right: 16px; display: flex; align-items: center; gap: 6px; letter-spacing: 0.1em;
-}
-.sub-nav-back:hover { color: #fff; }
-.sub-nav-crumbs {
-  font-family: var(--font-mono); font-size: 10px; color: var(--muted);
-  display: flex; gap: 6px; letter-spacing: 0.05em; text-transform: uppercase;
-}
-.sub-nav-crumbs .sep { color: var(--border2); }
-.sub-nav-crumbs span.active { color: #fff; font-weight: 600; }
-.sub-nav-right { display: flex; align-items: center; height: 100%; }
-.sub-nav-user {
-  border: 1px solid var(--accent); color: var(--accent); font-family: var(--font-mono);
-  font-size: 10px; padding: 4px 12px; cursor: pointer; letter-spacing: 0.05em; font-weight: 600;
-  background: rgba(0,196,163,0.05); transition: all 0.2s;
-}
-.sub-nav-user:hover { background: rgba(0,196,163,0.15); }
 
 body::before {
   content: ''; position: fixed; inset: 0;
