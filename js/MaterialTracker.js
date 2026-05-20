@@ -1,6 +1,11 @@
 
   // ════════════════════════════════════════════════════════════════════════
 // Endfield Ascension Planner — tracker.js
+
+
+
+
+
 // ════════════════════════════════════════════════════════════════════════
 
 // ── SUPABASE ─────────────────────────────────────────────────────────────
@@ -44,7 +49,6 @@ async function loadUserData() {
         if (typeof base === 'string') { try { base = JSON.parse(base); } catch { base = {}; } }
         base = base || {};
 
-        // Already-migrated full snapshot
         if (base.id && base.item) return { ...base, _dbId: row.id };
 
         const type = row.plan_type;
@@ -82,10 +86,16 @@ async function loadUserData() {
     if (matRows?.length) {
       haveQty = {}; expHave = {};
       for (const row of matRows) {
-        if (row.material_id === '__exp_have__') {
-          expHave = row.exp_have || {};
-        } else {
-          haveQty[row.material_id] = row.have_qty || 0;
+        const mid = row.material_id;
+        if (mid.startsWith('__exp_have__')) {
+          const planId = mid.replace('__exp_have__', '');
+          expHave[planId] = row.exp_have || {};
+        } else if (mid.includes('__')) {
+          const sepIdx = mid.indexOf('__');
+          const planId = mid.slice(0, sepIdx);
+          const matKey = mid.slice(sepIdx + 2);
+          if (!haveQty[planId]) haveQty[planId] = {};
+          haveQty[planId][matKey] = row.have_qty || 0;
         }
       }
     }
@@ -142,32 +152,35 @@ async function deletePlanFromDB(plan) {
 }
 
 const _haveDebounce = {};
-function scheduleHaveSave(matKey) {
+function scheduleHaveSave(planId, matKey) {
   if (!CURRENT_USER) return;
-  clearTimeout(_haveDebounce[matKey]);
-  _haveDebounce[matKey] = setTimeout(() => saveHaveToDB(matKey), 800);
+  const debKey = `${planId}__${matKey}`;
+  clearTimeout(_haveDebounce[debKey]);
+  _haveDebounce[debKey] = setTimeout(() => saveHaveToDB(planId, matKey), 800);
 }
-async function saveHaveToDB(matKey) {
+async function saveHaveToDB(planId, matKey) {
   if (!CURRENT_USER) return;
   try {
+    const storageKey = `${planId}__${matKey}`;
     await db.from('material_list_user_mats').upsert(
-      { user_id: CURRENT_USER.id, material_id: matKey, have_qty: haveQty[matKey] || 0 },
+      { user_id: CURRENT_USER.id, material_id: storageKey, have_qty: haveQty[planId]?.[matKey] || 0 },
       { onConflict: 'user_id,material_id' }
     );
   } catch (e) { console.warn('saveHaveToDB error:', e.message); }
 }
 
 const _expHaveDebounce = {};
-function scheduleExpHaveSave() {
+function scheduleExpHaveSave(planId) {
   if (!CURRENT_USER) return;
-  clearTimeout(_expHaveDebounce['__exp__']);
-  _expHaveDebounce['__exp__'] = setTimeout(() => saveExpHaveToDB(), 800);
+  clearTimeout(_expHaveDebounce[planId]);
+  _expHaveDebounce[planId] = setTimeout(() => saveExpHaveToDB(planId), 800);
 }
-async function saveExpHaveToDB() {
+async function saveExpHaveToDB(planId) {
   if (!CURRENT_USER) return;
   try {
+    const storageKey = `__exp_have__${planId}`;
     await db.from('material_list_user_mats').upsert(
-      { user_id: CURRENT_USER.id, material_id: '__exp_have__', have_qty: 0, exp_have: expHave },
+      { user_id: CURRENT_USER.id, material_id: storageKey, have_qty: 0, exp_have: expHave[planId] || {} },
       { onConflict: 'user_id,material_id' }
     );
   } catch (e) { console.warn('saveExpHaveToDB error:', e.message); }
@@ -487,36 +500,55 @@ function totalMats() {
 
 
 // ── INVENTORY STATE ───────────────────────────────────────────────────────
-let haveQty = {};
-let expHave  = {};
-
-function getHave(matKey)        { return haveQty[matKey] || 0; }
-function setHave(matKey, val)   {
-  haveQty[matKey] = Math.max(0, parseInt(val) || 0);
-  scheduleHaveSave(matKey);
+let haveQty = {};   // { [planId]: { [matKey]: qty } }
+let expHave  = {};  // { [planId]: { [groupKey]: { [itemKey]: qty } } }
+ 
+function getHave(planId, matKey) {
+  return haveQty[planId]?.[matKey] || 0;
+}
+function setHave(planId, matKey, val) {
+  if (!haveQty[planId]) haveQty[planId] = {};
+  haveQty[planId][matKey] = Math.max(0, parseInt(val) || 0);
+  scheduleHaveSave(planId, matKey);
   renderBoth();
 }
-function getExpHave(groupKey, itemKey)        { return (expHave[groupKey]?.[itemKey]) || 0; }
-function setExpHave(groupKey, itemKey, val)   {
-  if (!expHave[groupKey]) expHave[groupKey] = {};
-  expHave[groupKey][itemKey] = Math.max(0, parseInt(val) || 0);
-  scheduleExpHaveSave();
+function getExpHave(planId, groupKey, itemKey) {
+  if (planId === null) {
+    let total = 0;
+    for (const p of plans) {
+      if (focusedPlanIds.has(p.id)) total += expHave[p.id]?.[groupKey]?.[itemKey] || 0;
+    }
+    return total;
+  }
+  return expHave[planId]?.[groupKey]?.[itemKey] || 0;
+}
+function setExpHave(planId, groupKey, itemKey, val) {
+  if (!expHave[planId]) expHave[planId] = {};
+  if (!expHave[planId][groupKey]) expHave[planId][groupKey] = {};
+  expHave[planId][groupKey][itemKey] = Math.max(0, parseInt(val) || 0);
+  scheduleExpHaveSave(planId);
   renderBoth();
 }
-
+ 
+function getHaveCollective(matKey) {
+  let total = 0;
+  for (const p of plans) {
+    if (focusedPlanIds.has(p.id)) total += haveQty[p.id]?.[matKey] || 0;
+  }
+  return total;
+}
+ 
 function renderBoth() {
   renderNeed();
   if (midMode === 'individual') renderIndividual();
 }
-
-function computeExpBreakdown(rawExp, groupDef, groupKey) {
+ 
+function computeExpBreakdown(rawExp, groupDef, groupKey, planId) {
   let remaining = rawExp;
-  const used = {};
   for (const key of groupDef.keys) {
     const val  = MATS[key]?.expValue || 1;
-    const have = getExpHave(groupKey, key);
+    const have = getExpHave(planId, groupKey, key);
     const use  = Math.min(have, Math.floor(remaining / val));
-    used[key]  = use;
     remaining  = Math.max(0, remaining - use * val);
   }
   const coveredExp = rawExp - remaining;
@@ -524,7 +556,7 @@ function computeExpBreakdown(rawExp, groupDef, groupKey) {
   const perTier    = {};
   for (const key of groupDef.keys) {
     const val  = MATS[key]?.expValue || 1;
-    const have = getExpHave(groupKey, key);
+    const have = getExpHave(planId, groupKey, key);
     const need = remaining > 0 ? Math.ceil(remaining / val) : 0;
     perTier[key] = { standaloneTotal: Math.ceil(rawExp / val), need, have, expVal: val };
   }
@@ -954,9 +986,9 @@ function renderFocusBar() {
 
 // ── COLLECTIVE NEED LIST ──────────────────────────────────────────────────
 function renderNeed() {
-  const empty     = document.getElementById('mid-empty');
-  const list      = document.getElementById('need-list');
-  const badge     = document.getElementById('mid-badge-wrap');
+  const empty      = document.getElementById('mid-empty');
+  const list       = document.getElementById('need-list');
+  const badge      = document.getElementById('mid-badge-wrap');
   const badgeLabel = document.getElementById('mid-badge');
 
   if (!plans.length) { empty.style.display = 'flex'; list.innerHTML = ''; badge.style.display = 'none'; return; }
@@ -966,7 +998,7 @@ function renderNeed() {
     badge.style.display = 'none'; return;
   }
 
-  const mats        = totalMats();
+  const mats         = totalMats();
   const internalKeys = new Set(['_op_exp_raw', '_op_exp_hi_raw', '_wpn_exp_raw', '_wpn_exp_hi_raw']);
   const matsWithPinsSet = new Set();
   for (const map of dbMaps) for (const pin of map.pins) matsWithPinsSet.add(pin.material_id);
@@ -976,7 +1008,7 @@ function renderNeed() {
   if (!entries.length && !hasExpData) { list.innerHTML = ''; badge.style.display = 'none'; return; }
 
   const checkableItems = entries.filter(([k]) => { const m = MATS[k]; return m && !m.isExpItem; });
-  const metCount       = checkableItems.filter(([k, qty]) => getHave(k) >= qty).length;
+  const metCount       = checkableItems.filter(([k, qty]) => getHaveCollective(k) >= qty).length;
   badge.style.display  = 'block';
   badgeLabel.textContent = `${metCount}/${checkableItems.length}`;
 
@@ -1000,7 +1032,7 @@ function renderNeed() {
     html += `<div class="need-section-label">${cat}</div>`;
     if (data.type === 'exp') {
       const { gKey, gDef, rawExp } = data;
-      const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
+      const breakdown = computeExpBreakdown(rawExp, gDef, gKey, null);
       const { perTier, pct, coveredExp, remaining } = breakdown;
       const allDone = remaining === 0;
       html += `<div class="exp-breakdown">
@@ -1009,7 +1041,7 @@ function renderNeed() {
         <div class="exp-coverage-text">${allDone ? '✓ Fully covered by owned items' : `${pct}% covered · ${fmtExp(coveredExp)} in inventory`}</div>`;
       for (const itemKey of gDef.keys) {
         const mat = MATS[itemKey]; if (!mat) continue;
-        const tier    = perTier[itemKey], isDone = tier.need === 0;
+        const tier = perTier[itemKey], isDone = tier.need === 0;
         const hasFind = matsWithPinsSet.has(itemKey);
         const findBtn = hasFind ? `<button class="need-find-btn" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></button>` : '';
         html += `<div class="exp-item-row${isDone ? ' satisfied' : ''}">
@@ -1026,7 +1058,7 @@ function renderNeed() {
     } else {
       for (const { k, qty, mat } of (data.items || [])) {
         const highlighted = highlightedMat === k ? 'highlighted' : '';
-        const have        = getHave(k);
+        const have        = getHaveCollective(k);
         const pct         = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
         const remaining   = Math.max(0, qty - have);
         const isMet       = have >= qty;
@@ -1085,13 +1117,13 @@ function renderIndividual() {
 }
 
 function _updateIndivCardDerived(cardEl, plan) {
-  const mats        = calcMats(plan);
+  const mats         = calcMats(plan);
   const internalKeys = new Set(['_op_exp_raw', '_op_exp_hi_raw', '_wpn_exp_raw', '_wpn_exp_hi_raw']);
-  const matEntries  = Object.entries(mats).filter(([k]) => !internalKeys.has(k) && MATS[k] && !MATS[k].isExpItem);
-  const totalItems  = matEntries.length;
-  const doneCount   = matEntries.filter(([k, qty]) => getHave(k) >= qty).length;
-  const progressPct = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
-  const fillEl      = cardEl.querySelector('.indiv-card-progress-fill');
+  const matEntries   = Object.entries(mats).filter(([k]) => !internalKeys.has(k) && MATS[k] && !MATS[k].isExpItem);
+  const totalItems   = matEntries.length;
+  const doneCount    = matEntries.filter(([k, qty]) => getHave(plan.id, k) >= qty).length;
+  const progressPct  = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
+  const fillEl       = cardEl.querySelector('.indiv-card-progress-fill');
   if (fillEl) fillEl.style.width = progressPct + '%';
 
   let statusClass = 'pending', statusLabel = 'Pending';
@@ -1101,8 +1133,9 @@ function _updateIndivCardDerived(cardEl, plan) {
   if (statusEl) { statusEl.className = `indiv-card-status ${statusClass}`; statusEl.textContent = statusLabel; }
 
   cardEl.querySelectorAll('.indiv-mat-row[data-mat-key]').forEach(rowEl => {
-    const k   = rowEl.dataset.matKey, qty = parseInt(rowEl.dataset.matQty) || 0;
-    const have = getHave(k), isSat = have >= qty;
+    const k    = rowEl.dataset.matKey, qty = parseInt(rowEl.dataset.matQty) || 0;
+    const have = getHave(plan.id, k);
+    const isSat = have >= qty;
     const pct  = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
     const fmtQty = qty >= 1000 ? (qty / 1000).toFixed(1) + 'k' : qty.toLocaleString();
     const mat  = MATS[k];
@@ -1116,7 +1149,7 @@ function _updateIndivCardDerived(cardEl, plan) {
 
   for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
     if (!mats[gDef.rawKey]) continue;
-    const breakdown = computeExpBreakdown(mats[gDef.rawKey], gDef, gKey);
+    const breakdown = computeExpBreakdown(mats[gDef.rawKey], gDef, gKey, plan.id);
     const { perTier, pct, coveredExp, remaining } = breakdown;
     const allDone   = remaining === 0;
     const blockEl   = cardEl.querySelector(`.indiv-exp-block[data-gkey="${gKey}"]`); if (!blockEl) continue;
@@ -1152,12 +1185,12 @@ function _updateSaveBar(id) {
 }
 
 function buildIndivCard(plan) {
-  const isOp       = plan.type === 'operator';
-  const el         = plan.item.element || null;
-  const elColor    = getElColor(el);
+  const isOp        = plan.type === 'operator';
+  const el          = plan.item.element || null;
+  const elColor     = getElColor(el);
   const rarityColor = getRarityColor(plan.item.rarity);
-  const isOpen     = indivOpenCards.has(plan.id);
-  const mats       = calcMats(plan);
+  const isOpen      = indivOpenCards.has(plan.id);
+  const mats        = calcMats(plan);
 
   const matsWithPinsSet = new Set();
   for (const map of dbMaps) for (const pin of map.pins) matsWithPinsSet.add(pin.material_id);
@@ -1165,7 +1198,7 @@ function buildIndivCard(plan) {
   const internalKeys = new Set(['_op_exp_raw', '_op_exp_hi_raw', '_wpn_exp_raw', '_wpn_exp_hi_raw']);
   const matEntries   = Object.entries(mats).filter(([k]) => !internalKeys.has(k) && MATS[k] && !MATS[k].isExpItem);
   const totalItems   = matEntries.length;
-  const doneCount    = matEntries.filter(([k, qty]) => getHave(k) >= qty).length;
+  const doneCount    = matEntries.filter(([k, qty]) => getHave(plan.id, k) >= qty).length;
   const progressPct  = totalItems > 0 ? Math.round((doneCount / totalItems) * 100) : 0;
 
   let statusClass = 'pending', statusLabel = 'Pending';
@@ -1181,12 +1214,11 @@ function buildIndivCard(plan) {
     avatarContent = wpnImg ? `<img src="${wpnImg}" alt="${plan.item.name}" loading="lazy">` : WPN_ICON;
   }
 
-  // EXP sections
   let expSectionsHtml = '';
   for (const [gKey, gDef] of Object.entries(EXP_GROUPS)) {
     const rawKey = gDef.rawKey; if (!mats[rawKey]) continue;
     const rawExp    = mats[rawKey];
-    const breakdown = computeExpBreakdown(rawExp, gDef, gKey);
+    const breakdown = computeExpBreakdown(rawExp, gDef, gKey, plan.id);
     const { perTier, pct, coveredExp, remaining } = breakdown;
     const allDone   = remaining === 0;
     expSectionsHtml += `<div class="indiv-exp-block" data-gkey="${gKey}">
@@ -1198,7 +1230,9 @@ function buildIndivCard(plan) {
       <div class="indiv-exp-block-coverage">${allDone ? '✓ Fully covered by your inventory' : `${pct}% covered · ${fmtExp(coveredExp)} in inventory`}</div>`;
     for (const itemKey of gDef.keys) {
       const mat  = MATS[itemKey]; if (!mat) continue;
-      const tier = perTier[itemKey], have = tier.have, isSat = tier.need === 0;
+      const tier = perTier[itemKey];
+      const have = getExpHave(plan.id, gKey, itemKey);
+      const isSat = tier.need === 0;
       const hasFind = matsWithPinsSet.has(itemKey);
       const findBtn = hasFind ? `<button class="indiv-exp-tier-find" title="Find on map" onclick="onFindBtn('${itemKey}',this,event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></button>` : `<span></span>`;
       expSectionsHtml += `<div class="indiv-exp-tier-row${isSat ? ' satisfied-row' : ''}" data-tier-key="${itemKey}">
@@ -1208,7 +1242,7 @@ function buildIndivCard(plan) {
         <div class="indiv-exp-tier-need${isSat ? ' done' : ''}" style="${isSat ? '' : 'color:' + mat.color}">${isSat ? '✓' : tier.need}</div>
         <div class="indiv-have-wrap">
           <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
-          <input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setExpHave('${gKey}','${itemKey}',this.value)" oninput="setExpHave('${gKey}','${itemKey}',this.value)">
+          <input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setExpHave('${plan.id}','${gKey}','${itemKey}',this.value)" oninput="setExpHave('${plan.id}','${gKey}','${itemKey}',this.value)">
         </div>
       </div>`;
     }
@@ -1216,7 +1250,6 @@ function buildIndivCard(plan) {
     expSectionsHtml += `</div>`;
   }
 
-  // Material sections
   const byCategory = {};
   for (const [k, qty] of matEntries) {
     const mat = MATS[k];
@@ -1227,7 +1260,8 @@ function buildIndivCard(plan) {
   for (const [cat, items] of Object.entries(byCategory)) {
     matSectionsHtml += `<div class="indiv-section-head">${cat}</div>`;
     for (const { k, qty, mat } of items) {
-      const have    = getHave(k), isSat = have >= qty;
+      const have    = getHave(plan.id, k);
+      const isSat   = have >= qty;
       const fmtQty  = qty >= 1000 ? (qty / 1000).toFixed(1) + 'k' : qty.toLocaleString();
       const pct     = qty > 0 ? Math.min(100, Math.round((have / qty) * 100)) : 0;
       const hasFind = matsWithPinsSet.has(k);
@@ -1240,7 +1274,7 @@ function buildIndivCard(plan) {
           : `<div class="indiv-mat-need${isSat ? ' satisfied' : ''}" style="${isSat ? '' : 'color:' + mat.color}">${isSat ? '✓' : fmtQty}</div>`}
         <div class="indiv-have-wrap">
           <span style="font-size:8px;color:var(--muted);margin-right:2px">have</span>
-          <input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setHave('${k}',this.value)" oninput="setHave('${k}',this.value)">
+          <input class="indiv-have-input" type="number" min="0" value="${have}" onclick="event.stopPropagation()" onchange="setHave('${plan.id}','${k}',this.value)" oninput="setHave('${plan.id}','${k}',this.value)">
         </div>
         ${pct > 0 && !isSat ? `<div class="indiv-mat-row-progress" style="width:${pct}%"></div>` : ''}
       </div>`;
@@ -1292,9 +1326,17 @@ async function saveIndivPlan(id) {
   indivSaveStatus[id] = 'saving'; _updateSaveBar(id);
   try {
     await savePlanToDB(plan);
-    const pendingMats = Object.keys(_haveDebounce);
-    await Promise.all(pendingMats.map(k => { clearTimeout(_haveDebounce[k]); return saveHaveToDB(k); }));
-    clearTimeout(_expHaveDebounce['__exp__']); await saveExpHaveToDB();
+    await Promise.all(Object.keys(_haveDebounce).map(debKey => {
+      clearTimeout(_haveDebounce[debKey]);
+      const sepIdx = debKey.indexOf('__');
+      const pid    = debKey.slice(0, sepIdx);
+      const mkey   = debKey.slice(sepIdx + 2);
+      return saveHaveToDB(pid, mkey);
+    }));
+    await Promise.all(Object.keys(_expHaveDebounce).map(pid => {
+      clearTimeout(_expHaveDebounce[pid]);
+      return saveExpHaveToDB(pid);
+    }));
     indivSaveStatus[id] = 'saved'; _updateSaveBar(id);
     setTimeout(() => { if (indivSaveStatus[id] === 'saved') { delete indivSaveStatus[id]; _updateSaveBar(id); } }, 3000);
   } catch (e) {
