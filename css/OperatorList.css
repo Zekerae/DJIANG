@@ -310,21 +310,21 @@ body::before {
 .tour-overlay.active { opacity: 1; pointer-events: auto; }
 
 .tour-mask {
-  position: absolute; inset: 0;
-  background: rgba(4,3,10,.82);
-  transition: all .35s cubic-bezier(.4,0,.2,1);
+  display: none;
 }
 
 .tour-spotlight {
-  position: absolute; border-radius: 8px;
-  box-shadow: 0 0 0 9999px rgba(4,3,10,.82);
+  position: fixed; border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(4,3,10,.80);
   border: 2px solid var(--gold);
+  outline: 3px solid rgba(212,148,58,.25);
+  outline-offset: 3px;
   transition: all .35s cubic-bezier(.4,0,.2,1);
   pointer-events: none; z-index: 9001;
 }
 
 .tour-card {
-  position: absolute; width: 300px;
+  position: fixed; width: 300px;
   background: linear-gradient(145deg,#16121e,#0e0b16);
   border: 1px solid rgba(212,148,58,.35); border-radius: 10px;
   padding: 18px 20px 14px;
@@ -379,7 +379,7 @@ body::before {
 @media (max-width: 540px) {
   .container { padding: 0 15px; }
   .page-hero { padding: 40px 0 20px; }
-  .hero-left h1 { font-size: 2.5rem; }
+  .hero-left h1 { font-size: 2.5rem; margin-top: 5%; }
   .search-input { font-size: .9rem; }
   .fgroup { width: 100%; }
   .card-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }

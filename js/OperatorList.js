@@ -729,8 +729,17 @@ function advanceTour(delta) {
    the drawer is collapsed), the step is skipped.
 ───────────────────────────────────────────── */
 function renderTourStep(index) {
-  const step   = TOUR_STEPS[index];
-  const target = document.querySelector(step.selector);
+  const step = TOUR_STEPS[index];
+
+  /* Auto-open the filter dropdown for steps that target elements inside
+     .filter-row; close it for all other steps so it doesn't block the view. */
+  const filterZoneEl = document.getElementById('filterZone');
+  const isFilterStep = step.selector.startsWith('.fgroup');
+  if (isFilterStep) {
+    filterZoneEl.classList.add('dropdown-open');
+  } else {
+    filterZoneEl.classList.remove('dropdown-open');
+  }
 
   document.getElementById('tourStepText').textContent = `STEP ${index + 1} / ${TOUR_STEPS.length}`;
   document.getElementById('tourTitle').textContent     = step.title;
@@ -743,44 +752,54 @@ function renderTourStep(index) {
     `<div class="tour-dot${i === index ? ' active' : ''}"></div>`
   ).join('');
 
-  if (!target) {
-    advanceTour(1);
-    return;
-  }
+  /* Defer measurement one frame so the dropdown has time to render/expand */
+  requestAnimationFrame(() => {
+    const target = document.querySelector(step.selector);
 
-  const PAD  = 10;
-  const rect = target.getBoundingClientRect();
-  const sl   = tourSpotlight;
+    if (!target) {
+      advanceTour(1);
+      return;
+    }
 
-  sl.style.top    = (rect.top    - PAD + window.scrollY)  + 'px';
-  sl.style.left   = (rect.left   - PAD)                   + 'px';
-  sl.style.width  = (rect.width  + PAD * 2)               + 'px';
-  sl.style.height = (rect.height + PAD * 2)               + 'px';
+    target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-  const CARD_W    = 310;
-  const CARD_H    = 200;
-  const spaceRight = window.innerWidth - rect.right;
-  const spaceLeft  = rect.left;
+    /* Second frame: measure after scroll settles */
+    requestAnimationFrame(() => {
+      const PAD  = 10;
+      const rect = target.getBoundingClientRect();
+      const sl   = tourSpotlight;
 
-  let cardTop  = rect.top + window.scrollY + (rect.height / 2) - (CARD_H / 2);
-  let cardLeft;
+      /* Spotlight is position:fixed — pure viewport coords, no scrollY */
+      sl.style.top    = (rect.top    - PAD) + 'px';
+      sl.style.left   = (rect.left   - PAD) + 'px';
+      sl.style.width  = (rect.width  + PAD * 2) + 'px';
+      sl.style.height = (rect.height + PAD * 2) + 'px';
 
-  if (step.pos === 'below') {
-    cardTop  = rect.bottom + window.scrollY + 20;
-    cardLeft = Math.min(rect.left, window.innerWidth - CARD_W - 20);
-  } else if (step.pos === 'left' || spaceRight < CARD_W + 30) {
-    cardLeft = rect.left - CARD_W - 20;
-  } else {
-    cardLeft = rect.right + 20;
-  }
+      /* Tour card is also position:fixed — pure viewport coords */
+      const CARD_W     = 310;
+      const CARD_H     = 220;
+      const spaceRight = window.innerWidth - rect.right;
 
-  cardTop  = Math.max(10, Math.min(cardTop,  window.innerHeight + window.scrollY - CARD_H - 10));
-  cardLeft = Math.max(10, Math.min(cardLeft, window.innerWidth  - CARD_W - 10));
+      let cardTop, cardLeft;
 
-  tourCard.style.top  = cardTop  + 'px';
-  tourCard.style.left = cardLeft + 'px';
+      if (step.pos === 'below') {
+        cardTop  = rect.bottom + 20;
+        cardLeft = Math.min(rect.left, window.innerWidth - CARD_W - 20);
+      } else if (step.pos === 'left' || spaceRight < CARD_W + 30) {
+        cardTop  = rect.top + (rect.height / 2) - (CARD_H / 2);
+        cardLeft = rect.left - CARD_W - 20;
+      } else {
+        cardTop  = rect.top + (rect.height / 2) - (CARD_H / 2);
+        cardLeft = rect.right + 20;
+      }
 
-  target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      cardTop  = Math.max(10, Math.min(cardTop,  window.innerHeight - CARD_H - 10));
+      cardLeft = Math.max(10, Math.min(cardLeft, window.innerWidth  - CARD_W - 10));
+
+      tourCard.style.top  = cardTop  + 'px';
+      tourCard.style.left = cardLeft + 'px';
+    });
+  });
 }
 
 /* ═════════════════════════════════════════════
