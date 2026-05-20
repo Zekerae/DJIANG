@@ -10,7 +10,7 @@
   --font-body: 'IBM Plex Sans', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
   --left-w: 350px; --mid-w: 300px;
-  --navbar-h: 48px;
+  --navbar-h: 40px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
