@@ -103,10 +103,6 @@ window.addEventListener('DOMContentLoaded', async () => {
                     <div class="title">${op.name.toUpperCase()}</div>
                     <div class="name">${op.name.toUpperCase()}</div>
                     <div class="des">${op.description || 'No description available.'}</div>
-                    /* <div class="btn">
-                        <button>Profile</button>
-                        <button>Track</button>
-                    </div> */
                 </div>
             </div>
         `).join('');
