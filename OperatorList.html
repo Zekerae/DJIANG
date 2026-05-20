@@ -6,25 +6,31 @@
   <title>DJIANG — Operator Database</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  
+
   <link rel="stylesheet" href="css/OperatorList.css">
   <link rel="stylesheet" href="css/NavBar.css">
   <link rel="stylesheet" href="css/WipeHover.css">
   <link rel="stylesheet" href="css/MainStyle.css">
-  <link rel="stylesheet" href="css/LogIn.css"> 
+  <link rel="stylesheet" href="css/LogIn.css">
 </head>
 <body>
 
 <div class="container">
+
+  <!-- ── PAGE HERO ── -->
   <div class="page-hero">
     <div class="hero-flex">
       <div class="hero-left">
         <h1>Operator Database</h1>
         <div class="sub">Arknights: Endfield · Roster Overview</div>
       </div>
+
+      <!-- ? button — opens the guided tour -->
+      <button class="help-btn" id="helpBtn" title="Open guided tour" onclick="startTour()">?</button>
     </div>
   </div>
 
+  <!-- ── STICKY FILTER ZONE ── -->
   <div class="filter-zone" id="filterZone">
     <div class="search-header">
       <input type="text" id="opSearch" class="search-input" placeholder="Search by operator name...">
@@ -33,7 +39,7 @@
         Filters
       </button>
     </div>
-    
+
     <div class="filter-row" id="filterRow">
       <div class="fgroup">
         <div class="flabel">Rarity</div>
@@ -43,7 +49,7 @@
           <button class="pill" data-val="4">4 ★</button>
         </div>
       </div>
-      
+
       <div class="fgroup">
         <div class="flabel">Class</div>
         <div class="fpills" data-group="class">
@@ -55,7 +61,7 @@
           <button class="pill" data-val="Supporter">Supporter</button>
         </div>
       </div>
-      
+
       <div class="fgroup">
         <div class="flabel">Element</div>
         <div class="fpills" data-group="element">
@@ -66,7 +72,7 @@
           <button class="pill" data-val="Nature">Nature</button>
         </div>
       </div>
-      
+
       <div class="fgroup">
         <div class="flabel">Weapon</div>
         <div class="fpills" data-group="weapon">
@@ -77,7 +83,7 @@
           <button class="pill" data-val="Arts Unit">Arts Unit</button>
         </div>
       </div>
-      
+
       <div class="fgroup">
         <div class="flabel">Roster</div>
         <div class="fpills">
@@ -94,7 +100,7 @@
             <span id="filter-lv-max-out">90</span>
           </div>
           <div class="level-sliders">
-            <input type="range" id="filter-lv-min" class="lv-slider" min="1" max="90" value="1" step="1">
+            <input type="range" id="filter-lv-min" class="lv-slider" min="1" max="90" value="1"  step="1">
             <input type="range" id="filter-lv-max" class="lv-slider" min="1" max="90" value="90" step="1">
           </div>
           <div class="level-range-hint">Only matches operators with a saved level</div>
@@ -105,30 +111,29 @@
     </div>
   </div>
 
+  <!-- ── RESULTS + SORT ROW ── -->
   <div class="results-row">
     <div class="results-text">Showing <span id="visNum">26</span> operators</div>
-    
     <div class="sort-group">
-      <span class="flabel" style="margin-right: 8px;">Sort By:</span>
+      <span class="flabel" style="margin-right:8px">Sort By:</span>
       <button class="pill sort-btn active" data-sort="rarity">Rarity</button>
-      <button class="pill sort-btn" data-sort="name">Name</button>
-      <button class="pill sort-btn" data-sort="level">Level</button>
+      <button class="pill sort-btn"        data-sort="name">Name</button>
+      <button class="pill sort-btn"        data-sort="level">Level</button>
     </div>
   </div>
 
+  <!-- ── CARD GRID ── -->
   <div class="card-grid" id="cardGrid"></div>
 
-</div>
+</div><!-- /container -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/OperatorList.js"></script>
 <script src="js/TextGlitch.js"></script>
 <script src="js/NavBar.js"></script>
 <script src="js/LogIn.js"></script>
-    <script>
-    NavBar.init({
-        sections: []
-    });
-    </script>
+<script>
+  NavBar.init({ sections: [] });
+</script>
 </body>
 </html>
