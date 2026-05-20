@@ -9,12 +9,17 @@
 
 .auth-widget-container {
     position: fixed;
-    /* FLUID FIX: Adapts positioning based on screen size so it doesn't collide with edges on small screens */
-    top: clamp(16px, 3vh, 24px);
-    right: clamp(16px, 4vw, 40px);
     
+    /* 1. MATH FIX: Automatically perfectly centers inside whatever your navbar height is set to! */
+    /* (Checks for Homepage variable, then Tracker variable, then falls back to 48px) */
+    top: calc(var(--navbar-height, var(--navbar-h, 48px)) / 2) !important;
+    
+    right: clamp(16px, 4vw, 40px);
     transform: translateY(-50%);
-    z-index: 2147483647 !important; /* Maximum z-index */
+    
+    /* 2. Z-INDEX FIX: The undisputed king of the stacking order */
+    z-index: 2147483647 !important; 
+    
     font-family: 'Rajdhani', sans-serif;
 }
 
