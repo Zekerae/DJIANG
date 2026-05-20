@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="css/NavBar.css">
 <link rel="stylesheet" href="css/LogIn.css">
 <link rel="stylesheet" href="css/MaterialTracker.css">
+<link rel="stylesheet" href="css/MaterialTrackerTour.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -20,6 +21,7 @@
     <div class="header-eyebrow">Arknights: Endfield // v2.3</div>
     <div class="header-title">Ascension <span>Planner</span></div>
   </div>
+  <button class="mat-tour-help-btn" onclick="MatTour.start()" title="Page Tour">?</button>
   <div class="db-indicator">
     <div class="db-dot loading" id="db-dot"></div>
     <span id="db-status">Connecting…</span>
@@ -221,5 +223,6 @@
 </body>
 
 <script src="js/LogIn.js"></script>
+<script src="js/MaterialTrackerTour.js"></script>
 </body>
 </html>
