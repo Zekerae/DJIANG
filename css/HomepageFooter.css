@@ -23,6 +23,16 @@
     border-bottom: 0.01vw solid var(--myColor);
     display: flex;
     flex-direction: row;
+
+    /* 1. Use a very dark, 85% opaque background */
+    background: rgba(0, 0, 0, 0.75) !important; 
+        
+    /* 2. Optional: Add a slight blur to frost the topographic lines underneath */
+    backdrop-filter: blur(6px) !important; 
+    -webkit-backdrop-filter: blur(6px) !important; 
+    
+    /* 3. Add a subtle top border to separate it from the content above */
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
     /* Removed the hardcoded gap: 5% so flex can distribute space dynamically */
 }
 
@@ -41,14 +51,14 @@
 }
 
 .subFooter-container .top {
-    font-size: 0.7vw;
+    font-size: clamp(12px, 0.7vw, 16px) !important;
     margin-top: 10%;
     height: 35%;
     /* Removed width: 80% to stop the text from getting cut off */
 }
 
 .subFooter-container .bottom {
-    font-size: 1vw;
+    font-size: clamp(13px, 1vw, 18px) !important;
     height: 45%;
     /* Removed width: 80% to stop the text from getting cut off */
 }
@@ -61,7 +71,7 @@
 }
 
 .subFooter-container#sfc1 .bottom {
-    font-size: 0.75vw;
+    font-size: clamp(11px, 0.75vw, 14px) !important;
     /* This forces those super long JPG/WAV text strings to drop to the next line instead of clipping */
     word-wrap: break-word; 
     white-space: normal;
@@ -144,4 +154,163 @@
     100% {
         z-index: -3;
     }
+}
+
+/* ═══════════════════════════════════════════════
+   GLOBAL FIX — REMOVE DEAD SPACE BELOW FOOTER
+═══════════════════════════════════════════════ */
+
+/* 1. Remove any hidden margins pushing the page down */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 2. Force the footer to hug its content and hide anything that spills out */
+#footer {
+    position: relative !important;
+    height: auto !important; 
+    min-height: auto !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden !important; /* CRITICAL: Acts as scissors to cut off excess canvas */
+}
+
+/* 3. Lock the topographic canvas inside the footer boundaries */
+#res-canvas {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important; /* Forces it to match the footer height, not the screen height */
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Ensure the sub-footer isn't secretly creating a gap */
+.sub-footer {
+    margin-bottom: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════
+   MOBILE OPTIMIZATION — FOOTER (FIXED SCALING)
+═══════════════════════════════════════════════ */
+@media screen and (max-width: 768px) {
+    /* 1. Stack the 4 columns vertically instead of side-by-side */
+    .sub-footer {
+        flex-direction: column !important;
+        height: auto !important;
+        padding-bottom: 20px !important;
+    }
+
+    /* 2. Make each section take up the full width of the phone */
+    .subFooter-container {
+        width: 100% !important;
+        border-left: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding: 30px 5% !important;
+        box-sizing: border-box !important;
+        min-height: auto !important;
+    }
+
+    /* 3. Rescale the microscopic fonts to readable Pixel (px) sizes */
+    .subFooter-container .top {
+        font-size: 16px !important;
+        margin-bottom: 15px !important;
+        height: auto !important;
+        margin-top: 0 !important;
+    }
+
+    .subFooter-container .bottom {
+        font-size: 14px !important;
+        line-height: 1.8 !important;
+        height: auto !important;
+    }
+
+    /* 4. Fix the specific console text block so long file names don't break the screen */
+    .subFooter-container#sfc1 .bottom {
+        font-size: 12px !important;
+        word-wrap: break-word !important; 
+        white-space: normal !important;
+    }
+
+    /* 5. Shrink the bottom-most canvas container so it doesn't leave a massive void */
+    #footer {
+        height: auto !important;
+        min-height: 120px !important;
+    }
+
+    /* 1. Stop the Glitch Animation from slicing your text! */
+    .subFooter-container .top,
+    .subFooter-container .bottom,
+    .subFooter-container .tglitch-animation {
+        white-space: normal !important; /* Forces text to drop to a new line */
+        word-wrap: break-word !important;
+        overflow: visible !important;
+    }
+
+    /* 2. Shrink the header font slightly so long words fit better */
+    .subFooter-container .top {
+        font-size: 13px !important; /* Scaled down from 16px */
+        letter-spacing: 0.1em !important; /* Slightly tighter spacing */
+        margin-bottom: 15px !important;
+        height: auto !important;
+        margin-top: 0 !important;
+    }
+
+    /* 3. Absolutely crush any remaining space in the bottom footer container */
+    #footer, 
+    .parralax, 
+    .footer-container {
+        position: relative !important;
+        height: auto !important;
+        min-height: 0 !important; /* Kills the artificial height */
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* 4. Ensure the canvas doesn't stretch past its container on mobile */
+    #res-canvas {
+        height: 100% !important;
+        max-height: 100% !important;
+        display: block !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   GLOBAL FIX — THE PERFECT FOOTER CLAMP
+═══════════════════════════════════════════════ */
+
+/* 1. The Footer container tightly hugs the text inside it */
+#footer {
+    position: relative !important;
+    height: auto !important; 
+    min-height: 0 !important; /* No artificial heights! */
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important; 
+}
+
+/* 2. The Canvas stretches to exactly match the text height */
+#res-canvas {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+
+/* 3. The Text floats on top, dictating the exact height of the page */
+.sub-footer {
+    position: relative !important;
+    z-index: 10 !important;
+    padding-top: 60px !important; /* Provides breathing room inside the clamp */
+    padding-bottom: 60px !important;
+    margin-bottom: 0 !important;
+    background: rgba(8, 10, 14, 0.10) !important; /* The smoked glass effect */
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }

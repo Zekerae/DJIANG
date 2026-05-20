@@ -1,51 +1,72 @@
-// ==========================================
-// SUPABASE — same project as auth.html
-// ==========================================
+/*
+  OperatorList.js
+  Handles all logic for the Operator Database page:
+    - Supabase auth + roster persistence
+    - Card rendering and drawer (level/skill tracker)
+    - Filter, search, sort system
+    - Guided tour overlay (same pattern as WeaponIntroduction)
+*/
+
+/* ─────────────────────────────────────────────
+   SUPABASE CLIENT
+   Creates a single shared client using the project
+   URL and public anon key. All DB calls go through `db`.
+───────────────────────────────────────────── */
 const SUPABASE_URL      = 'https://vjcucliqjjljhgbqshmi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqY3VjbGlxampsamhnYnFzaG1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0OTU3MTIsImV4cCI6MjA5NDA3MTcxMn0.qq7tRmLpRjTv0y4dZxCjcEQ48rTiY5ZV1xunr32kh10';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Authenticated user — set in init()
+/* ─────────────────────────────────────────────
+   GLOBAL STATE
+   CURRENT_USER  — populated in init() from Supabase session.
+                   null means the visitor is a guest.
+   ROSTER        — in-memory cache of the logged-in user's
+                   user_roster rows, keyed by character_id.
+                   Shape: { [id]: { owned, level, skill_levels } }
+───────────────────────────────────────────── */
 let CURRENT_USER = null;
-// Roster cache: { [character_id]: { owned, level, skill_level } }
-let ROSTER = {};
+let ROSTER       = {};
 
-// ==========================================
-// ASSET DICTIONARY
-// Replace these URLs with your local image paths (e.g., "icons/heat.png")
-// ==========================================
-const STAR_IMAGE = "assets/RarityAssets/StarIcon.png"; // <-- Put your star image file name here!
+/* ─────────────────────────────────────────────
+   ASSET PATHS
+   All icon paths live here so changing a file
+   location only requires editing one place.
+───────────────────────────────────────────── */
+const STAR_IMAGE = "assets/RarityAssets/StarIcon.png";
 
 const ASSETS = {
   elements: {
-    "Heat": "assets/ElementAssets/Heaticon.png",
-    "Cryo": "assets/ElementAssets/Cryoicon.png",
+    "Heat":     "assets/ElementAssets/Heaticon.png",
+    "Cryo":     "assets/ElementAssets/Cryoicon.png",
     "Electric": "assets/ElementAssets/Electricicon.png",
     "Physical": "assets/ElementAssets/Physicalicon.png",
-    "Nature": "assets/ElementAssets/Natureicon.png"
+    "Nature":   "assets/ElementAssets/Natureicon.png"
   },
   classes: {
-    "Striker": "assets/ClassAssets/StrikerIcon.png",
-    "Guard": "assets/ClassAssets/GuardIcon.png",
-    "Vanguard": "assets/ClassAssets/VanguardIcon.png",
-    "Caster": "assets/ClassAssets/CasterIcon.png",
-    "Defender": "assets/ClassAssets/DefenderIcon.png",
+    "Striker":   "assets/ClassAssets/StrikerIcon.png",
+    "Guard":     "assets/ClassAssets/GuardIcon.png",
+    "Vanguard":  "assets/ClassAssets/VanguardIcon.png",
+    "Caster":    "assets/ClassAssets/CasterIcon.png",
+    "Defender":  "assets/ClassAssets/DefenderIcon.png",
     "Supporter": "assets/ClassAssets/SupporterIcon.png"
   },
   weapons: {
-    "Sword": "assets/WeaponCharAssets/Short-Weapon.webp",
+    "Sword":       "assets/WeaponCharAssets/Short-Weapon.webp",
     "Great Sword": "assets/WeaponCharAssets/36px-Great_Sword.webp",
-    "Polearm": "assets/WeaponCharAssets/36px-Polearm.webp",
+    "Polearm":     "assets/WeaponCharAssets/36px-Polearm.webp",
     "Hand Cannon": "assets/WeaponCharAssets/36px-Handcannon.webp",
-    "Arts Unit": "assets/WeaponCharAssets/36px-Arts_Unit.png"
+    "Arts Unit":   "assets/WeaponCharAssets/36px-Arts_Unit.png"
   }
 };
 
-// ==========================================
-// OPERATOR DATA
-// ==========================================
+/* ─────────────────────────────────────────────
+   OPERATOR DATA
+   Each entry is a plain object describing one
+   operator. `id` is also used as the Supabase
+   character_id and the URL param for the detail page.
+───────────────────────────────────────────── */
 const OPS = [
-  {id:"endministrator",name:"Endministrator",rarity:6,cls:"Guard",    element:"Physical",weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Endministrator/Endministrator_splash_art.png"}, 
+  {id:"endministrator",name:"Endministrator",rarity:6,cls:"Guard",    element:"Physical",weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Endministrator/Endministrator_splash_art.png"},
   {id:"ardelia",       name:"Ardelia",       rarity:6,cls:"Supporter",element:"Nature",  weapon:"Arts Unit",  img:"assets/CharacterAssets/6-stars/Ardelia/Ardelia_Splash_Art.png"},
   {id:"laevatain",     name:"Laevatain",     rarity:6,cls:"Striker",  element:"Heat",    weapon:"Sword",      img:"assets/CharacterAssets/6-stars/Laevatain/Laevatain_Splash_Art.png"},
   {id:"last-rite",     name:"Last Rite",     rarity:6,cls:"Striker",  element:"Cryo",    weapon:"Great Sword",img:"assets/CharacterAssets/6-stars/Last_Rite/Last_Rite_Splash_Art.png"},
@@ -70,23 +91,50 @@ const OPS = [
   {id:"fluorite",      name:"Fluorite",      rarity:4,cls:"Caster",   element:"Nature",  weapon:"Hand Cannon",img:"assets/CharacterAssets/4-stars/Fluorite/Fluorite_Splash_Art.png"},
   {id:"akekuri",       name:"Akekuri",       rarity:4,cls:"Vanguard", element:"Heat",    weapon:"Sword",      img:"assets/CharacterAssets/4-stars/Akekuri/Akekuri_Splash_Art.png"},
   {id:"estella",       name:"Estella",       rarity:4,cls:"Guard",    element:"Cryo",    weapon:"Polearm",    img:"assets/CharacterAssets/4-stars/Estella/Estella_Splash_Art.png"},
-  {id:"catcher",       name:"Catcher",       rarity:4,cls:"Defender",   element:"Physical",weapon:"Great Sword",img:"assets/CharacterAssets/4-stars/Catcher/Catcher_Splash_Art.png"}
+  {id:"catcher",       name:"Catcher",       rarity:4,cls:"Defender", element:"Physical",weapon:"Great Sword",img:"assets/CharacterAssets/4-stars/Catcher/Catcher_Splash_Art.png"}
 ];
 
-const grid = document.getElementById('cardGrid');
+/* ─────────────────────────────────────────────
+   FILTER + SORT STATE
+   These variables track the current UI state so
+   updateFilters() and applySort() can re-evaluate
+   which cards to show without re-rendering the DOM.
+───────────────────────────────────────────── */
+const grid        = document.getElementById('cardGrid');
 const searchInput = document.getElementById('opSearch');
-const filters = { rarity: new Set(), class: new Set(), element: new Set(), weapon: new Set() };
-let currentSort = 'rarity';
-let sortDir = -1; // -1 = descending, 1 = ascending
-let filterOwned = false;       // true = show only owned
-let filterLevelMin = 1;        // level range min
-let filterLevelMax = 90;       // level range max
-let filterLevelActive = false; // only apply level filter when user has changed range
 
-// ==========================================
-// ROSTER — Supabase read/write
-// ==========================================
+const filters = {
+  rarity:  new Set(),
+  class:   new Set(),
+  element: new Set(),
+  weapon:  new Set()
+};
 
+let currentSort      = 'rarity';
+let sortDir          = -1;
+let filterOwned      = false;
+let filterLevelMin   = 1;
+let filterLevelMax   = 90;
+let filterLevelActive = false;
+
+/* ─────────────────────────────────────────────
+   ROSTER — SUPABASE READ / WRITE
+
+   loadRoster()
+     Fetches all rows for the current user from
+     `user_roster` and populates the ROSTER cache.
+     Called once during init() after auth check.
+
+   upsertRosterEntry(characterId, patch)
+     Merges `patch` into the in-memory ROSTER entry,
+     then writes the full merged row to Supabase using
+     upsert (insert-or-update) on the composite key
+     (user_id, character_id).
+
+   getRosterEntry(id)
+     Safe getter — returns the cached entry or a
+     default empty object so callers never get undefined.
+───────────────────────────────────────────── */
 async function loadRoster() {
   if (!CURRENT_USER) return;
   const { data, error } = await db
@@ -105,12 +153,12 @@ async function upsertRosterEntry(characterId, patch) {
   ROSTER[characterId] = updated;
 
   const { error } = await db.from('user_roster').upsert({
-    user_id:       CURRENT_USER.id,
-    character_id:  characterId,
-    owned:         updated.owned,
-    level:         updated.level ? parseInt(updated.level) : null,
-    skill_levels:  updated.skill_levels || {},
-    updated_at:    new Date().toISOString(),
+    user_id:      CURRENT_USER.id,
+    character_id: characterId,
+    owned:        updated.owned,
+    level:        updated.level ? parseInt(updated.level) : null,
+    skill_levels: updated.skill_levels || {},
+    updated_at:   new Date().toISOString(),
   }, { onConflict: 'user_id,character_id' });
 
   if (error) console.warn('Roster save error:', error);
@@ -120,26 +168,29 @@ function getRosterEntry(id) {
   return ROSTER[id] || { owned: false, level: null, skill_levels: {} };
 }
 
-// ==========================================
-// CARD BUILDER
-// ==========================================
-
+/* ─────────────────────────────────────────────
+   CARD BUILDER — createCard(op)
+   Generates the full HTML string for one operator.
+   Each card is wrapped in a `.card-wrap` that holds:
+     • .op-card        — the visual card with art, badges, info
+     • .card-drawer    — collapsible tracker below the card
+                         (visible only when the operator is owned)
+   All filter-relevant values are stored as data-* attributes
+   on .card-wrap so filter/sort can read them without re-querying
+   the operator data array.
+───────────────────────────────────────────── */
 function createCard(op) {
-  const stars = Array(op.rarity).fill(`<img src="${STAR_IMAGE}" class="star-icon" alt="★">`).join('');
-  
-  const imgTag = op.img 
-    ? `<img src="${op.img}" class="card-art" onerror="this.style.display='none'">` 
+  const stars          = Array(op.rarity).fill(`<img src="${STAR_IMAGE}" class="star-icon" alt="★">`).join('');
+  const imgTag         = op.img
+    ? `<img src="${op.img}" class="card-art" onerror="this.style.display='none'">`
     : `<div class="card-art"></div>`;
-
   const elemIconPath   = ASSETS.elements[op.element] || '';
-  const classIconPath  = ASSETS.classes[op.cls] || '';
-  const weaponIconPath = ASSETS.weapons[op.weapon] || '';
-
-  const entry   = getRosterEntry(op.id);
-  const isOwned = !!entry.owned;
-
-  const sk = entry.skill_levels || {};
-  const drawerVisible = isOwned ? ' open' : '';
+  const classIconPath  = ASSETS.classes[op.cls]      || '';
+  const weaponIconPath = ASSETS.weapons[op.weapon]   || '';
+  const entry          = getRosterEntry(op.id);
+  const isOwned        = !!entry.owned;
+  const sk             = entry.skill_levels || {};
+  const drawerVisible  = isOwned ? ' open' : '';
 
   return `
     <div class="card-wrap${isOwned ? ' card-wrap-owned' : ''}"
@@ -152,7 +203,6 @@ function createCard(op) {
          data-owned="${isOwned}"
          data-level="${entry.level || ''}">
 
-      <!-- THE CARD (navigate on click) -->
       <div class="op-card rarity-${op.rarity} bg-${op.element}${isOwned ? ' card-owned' : ''}"
            onclick="cardNavigate(event, '${op.id}')">
 
@@ -187,7 +237,6 @@ function createCard(op) {
         </div>
       </div>
 
-      <!-- DRAWER — expands below the card when owned -->
       <div class="card-drawer${drawerVisible}">
         <div class="drawer-inner">
           <div class="drawer-row">
@@ -221,11 +270,26 @@ function createCard(op) {
   `;
 }
 
+/* ─────────────────────────────────────────────
+   cardNavigate(event, id)
+   Navigates to CharacterIntroduction.html for the
+   clicked card, unless the click landed on the
+   owned-badge (which toggles ownership instead).
+───────────────────────────────────────────── */
 function cardNavigate(event, id) {
   if (event.target.closest('.owned-badge')) return;
   window.location.href = `CharacterIntroduction.html?char=${id}`;
 }
 
+/* ─────────────────────────────────────────────
+   toggleOwned(event, id)
+   Flips the owned state for one operator:
+     1. Stops the click bubbling to cardNavigate.
+     2. Guards against guest users (no CURRENT_USER).
+     3. Writes the new state to Supabase via upsertRosterEntry.
+     4. Updates all DOM elements for that card instantly
+        so the UI responds without waiting for a re-render.
+───────────────────────────────────────────── */
 async function toggleOwned(event, id) {
   event.stopPropagation();
   if (!CURRENT_USER) { alert('Please log in to track your roster.'); return; }
@@ -234,30 +298,49 @@ async function toggleOwned(event, id) {
   const newOwned = !entry.owned;
   await upsertRosterEntry(id, { owned: newOwned });
 
-  const wrap  = document.querySelector(`.card-wrap[data-id="${id}"]`);
+  const wrap   = document.querySelector(`.card-wrap[data-id="${id}"]`);
   if (!wrap) return;
   const card   = wrap.querySelector('.op-card');
   const drawer = wrap.querySelector('.card-drawer');
-  card.classList.toggle('card-owned', newOwned);
+  const badge  = wrap.querySelector('.owned-badge');
+
+  card.classList.toggle('card-owned',      newOwned);
   wrap.classList.toggle('card-wrap-owned', newOwned);
   wrap.dataset.owned = newOwned;
-  drawer.classList.toggle('open', newOwned);
-  const badge = wrap.querySelector('.owned-badge');
-  badge.classList.toggle('owned', newOwned);
+  drawer.classList.toggle('open',  newOwned);
+  badge.classList.toggle('owned',  newOwned);
   badge.title = newOwned ? 'Owned — click to unmark' : 'Mark as owned';
 }
 
-// Debounce map to avoid hammering Supabase on every keystroke
+/* ─────────────────────────────────────────────
+   DEBOUNCE TIMER MAP
+   Keyed by `characterId + fieldName`.
+   Prevents hammering Supabase on every keystroke —
+   the actual save fires 600 ms after the user stops typing.
+───────────────────────────────────────────── */
 const _debounceTimers = {};
 
+/* ─────────────────────────────────────────────
+   clampInput(input, min, max)
+   Reads the input value, clamps it to [min, max],
+   writes the clamped value back into the input,
+   and returns it as a number (or null if empty).
+───────────────────────────────────────────── */
 function clampInput(input, min, max) {
   const val = parseInt(input.value);
-  if (isNaN(val) || input.value === '') return null; // allow clearing
+  if (isNaN(val) || input.value === '') return null;
   const clamped = Math.min(max, Math.max(min, val));
   input.value = clamped;
   return clamped;
 }
 
+/* ─────────────────────────────────────────────
+   saveTrackerField(event, id, field)
+   Called on every keystroke in the Level input.
+   Clamps to 1–90, updates data-level on the card-wrap
+   (so level-sort stays accurate), and debounces
+   the Supabase write to 600 ms.
+───────────────────────────────────────────── */
 function saveTrackerField(event, id, field) {
   if (!CURRENT_USER) return;
   const clamped = clampInput(event.target, 1, 90);
@@ -273,7 +356,13 @@ function saveTrackerField(event, id, field) {
   }, 600);
 }
 
-// Saves one key inside the skill_levels JSON object
+/* ─────────────────────────────────────────────
+   saveSkillLevel(event, id, key)
+   Called on every keystroke in a skill-level input.
+   Clamps to 1–12, merges the new value into the
+   skill_levels object in ROSTER cache, then debounces
+   the Supabase upsert to 600 ms.
+───────────────────────────────────────────── */
 function saveSkillLevel(event, id, key) {
   if (!CURRENT_USER) return;
   const clamped = clampInput(event.target, 1, 12);
@@ -286,17 +375,25 @@ function saveSkillLevel(event, id, key) {
   }, 600);
 }
 
+/* ─────────────────────────────────────────────
+   updateFilters()
+   Reads the current search query, all active filter
+   Sets, and the level range, then shows/hides each
+   .card-wrap by toggling the `.hidden` class.
+   Updates the visible-count badge and shows an
+   empty-state message when no operators match.
+───────────────────────────────────────────── */
 function updateFilters() {
   const query = searchInput.value.toLowerCase();
   let visibleCount = 0;
-  
+
   document.querySelectorAll('.card-wrap').forEach(card => {
     const matchesSearch  = card.dataset.name.includes(query);
-    const matchesRarity  = filters.rarity.size === 0 || filters.rarity.has(card.dataset.rarity);
-    const matchesClass   = filters.class.size === 0 || filters.class.has(card.dataset.class);
+    const matchesRarity  = filters.rarity.size  === 0 || filters.rarity.has(card.dataset.rarity);
+    const matchesClass   = filters.class.size   === 0 || filters.class.has(card.dataset.class);
     const matchesElement = filters.element.size === 0 || filters.element.has(card.dataset.element);
-    const matchesWeapon  = filters.weapon.size === 0 || filters.weapon.has(card.dataset.weapon);
-    const matchesOwned   = !filterOwned || card.dataset.owned === 'true';
+    const matchesWeapon  = filters.weapon.size  === 0 || filters.weapon.has(card.dataset.weapon);
+    const matchesOwned   = !filterOwned          || card.dataset.owned === 'true';
 
     let matchesLevel = true;
     if (filterLevelActive) {
@@ -304,16 +401,13 @@ function updateFilters() {
       matchesLevel = !isNaN(lv) && lv >= filterLevelMin && lv <= filterLevelMax;
     }
 
-    if (matchesSearch && matchesRarity && matchesClass && matchesElement && matchesWeapon && matchesOwned && matchesLevel) {
-      card.classList.remove('hidden');
-      visibleCount++;
-    } else {
-      card.classList.add('hidden');
-    }
+    const visible = matchesSearch && matchesRarity && matchesClass && matchesElement && matchesWeapon && matchesOwned && matchesLevel;
+    card.classList.toggle('hidden', !visible);
+    if (visible) visibleCount++;
   });
-  
+
   document.getElementById('visNum').innerText = visibleCount;
-  
+
   const existingEmpty = grid.querySelector('.empty');
   if (visibleCount === 0) {
     if (!existingEmpty) grid.insertAdjacentHTML('beforeend', '<div class="empty">No operators match the selected filters.</div>');
@@ -322,10 +416,19 @@ function updateFilters() {
   }
 }
 
+/* ─────────────────────────────────────────────
+   applySort()
+   Extracts all .card-wrap elements from the grid,
+   sorts them in-place using the current sort key
+   and direction (sortDir: -1 desc, 1 asc), then
+   re-appends them to the grid in sorted order.
+   Non-card children (e.g. empty-state div) are
+   not touched because they fail the classList check.
+───────────────────────────────────────────── */
 function applySort() {
-  const cards = Array.from(grid.children);
-  const opCards = cards.filter(card => card.classList.contains('card-wrap'));
-  const d = sortDir; // 1 = asc, -1 = desc
+  const allChildren = Array.from(grid.children);
+  const opCards     = allChildren.filter(c => c.classList.contains('card-wrap'));
+  const d           = sortDir;
 
   opCards.sort((a, b) => {
     if (currentSort === 'rarity') {
@@ -333,48 +436,53 @@ function applySort() {
       const rB = parseInt(b.dataset.rarity);
       if (rA !== rB) return (rB - rA) * d;
       return a.dataset.name.localeCompare(b.dataset.name);
-    } else if (currentSort === 'name') {
+    }
+    if (currentSort === 'name') {
       return a.dataset.name.localeCompare(b.dataset.name) * d;
-    } else if (currentSort === 'level') {
+    }
+    if (currentSort === 'level') {
       const lA = parseInt(a.dataset.level) || 0;
       const lB = parseInt(b.dataset.level) || 0;
       if (lA !== lB) return (lB - lA) * d;
       return a.dataset.name.localeCompare(b.dataset.name);
     }
+    return 0;
   });
 
   opCards.forEach(card => grid.appendChild(card));
 }
 
-// ==========================================
-// ==========================================
-// FILTER & SORT LISTENERS — all delegated so icons inside pills don't break targeting
-// ==========================================
+/* ─────────────────────────────────────────────
+   EVENT LISTENERS — filter, sort, clear, scroll
 
+   All pill clicks are caught via a single delegated
+   listener on `document` rather than one per pill,
+   so dynamically-added pills don't need re-binding.
+   The listener resolves the action by checking the
+   closest matching ancestor of the clicked target.
+───────────────────────────────────────────── */
 searchInput.addEventListener('input', updateFilters);
 
 document.addEventListener('click', e => {
+
   const pill = e.target.closest('.filter-row .pill');
   if (pill) {
-    // Owned pill
     if (pill.id === 'pill-owned') {
       filterOwned = !filterOwned;
       pill.classList.toggle('active', filterOwned);
       updateFilters();
       return;
     }
-    // Standard filter pills
-    const groupElement = pill.closest('[data-group]');
-    if (!groupElement) return;
-    const group = groupElement.dataset.group;
+    const groupEl = pill.closest('[data-group]');
+    if (!groupEl) return;
+    const group = groupEl.dataset.group;
     const val   = pill.dataset.val;
     if (filters[group].has(val)) { filters[group].delete(val); pill.classList.remove('active'); }
-    else                         { filters[group].add(val);    pill.classList.add('active'); }
+    else                         { filters[group].add(val);    pill.classList.add('active');    }
     updateFilters();
     return;
   }
 
-  // Sort buttons
   const sortBtn = e.target.closest('.sort-btn');
   if (sortBtn) {
     if (currentSort === sortBtn.dataset.sort) {
@@ -388,93 +496,338 @@ document.addEventListener('click', e => {
       currentSort = sortBtn.dataset.sort;
       sortDir = -1;
     }
-    const existing = sortBtn.querySelector('.sort-arrow');
-    if (existing) existing.remove();
+    sortBtn.querySelector('.sort-arrow')?.remove();
     const arrow = document.createElement('span');
-    arrow.className = 'sort-arrow';
+    arrow.className  = 'sort-arrow';
     arrow.textContent = sortDir === -1 ? ' ↓' : ' ↑';
     sortBtn.appendChild(arrow);
     applySort();
     return;
   }
 
-  // Clear button
   if (e.target.closest('#clearBtn')) {
     searchInput.value = '';
     filters.rarity.clear(); filters.class.clear(); filters.element.clear(); filters.weapon.clear();
     document.querySelectorAll('.filter-row .pill').forEach(b => b.classList.remove('active'));
-    filterOwned = false;
+    filterOwned       = false;
     filterLevelActive = false;
-    filterLevelMin = 1;
-    filterLevelMax = 90;
-    const minEl = document.getElementById('filter-lv-min');
-    const maxEl = document.getElementById('filter-lv-max');
+    filterLevelMin    = 1;
+    filterLevelMax    = 90;
+    const minEl  = document.getElementById('filter-lv-min');
+    const maxEl  = document.getElementById('filter-lv-max');
     const minOut = document.getElementById('filter-lv-min-out');
     const maxOut = document.getElementById('filter-lv-max-out');
-    if (minEl) { minEl.value = 1; minOut.textContent = '1'; }
+    if (minEl) { minEl.value = 1;  minOut.textContent = '1';  }
     if (maxEl) { maxEl.value = 90; maxOut.textContent = '90'; }
     updateFilters();
     return;
   }
 
-  // Filter toggle button
   if (e.target.closest('#filterToggleBtn')) {
     document.getElementById('filterZone').classList.toggle('dropdown-open');
     return;
   }
 });
 
-// Level range sliders
+/* ─────────────────────────────────────────────
+   LEVEL RANGE SLIDERS
+   Each `input` event re-reads both sliders,
+   prevents min from exceeding max (and vice versa),
+   updates the label display, and re-runs updateFilters.
+   filterLevelActive is false when the range is still
+   at its defaults (1–90) so the filter is a no-op
+   unless the user actually changes the sliders.
+───────────────────────────────────────────── */
 document.addEventListener('input', e => {
-  if (e.target.id === 'filter-lv-min' || e.target.id === 'filter-lv-max') {
-    const minEl  = document.getElementById('filter-lv-min');
-    const maxEl  = document.getElementById('filter-lv-max');
-    const minOut = document.getElementById('filter-lv-min-out');
-    const maxOut = document.getElementById('filter-lv-max-out');
-    filterLevelMin = parseInt(minEl.value);
-    filterLevelMax = parseInt(maxEl.value);
-    if (filterLevelMin > filterLevelMax) {
-      if (e.target.id === 'filter-lv-min') { filterLevelMin = filterLevelMax; minEl.value = filterLevelMin; }
-      else { filterLevelMax = filterLevelMin; maxEl.value = filterLevelMax; }
-    }
-    minOut.textContent = filterLevelMin;
-    maxOut.textContent = filterLevelMax;
-    filterLevelActive = !(filterLevelMin === 1 && filterLevelMax === 90);
-    updateFilters();
+  if (e.target.id !== 'filter-lv-min' && e.target.id !== 'filter-lv-max') return;
+  const minEl  = document.getElementById('filter-lv-min');
+  const maxEl  = document.getElementById('filter-lv-max');
+  const minOut = document.getElementById('filter-lv-min-out');
+  const maxOut = document.getElementById('filter-lv-max-out');
+  filterLevelMin = parseInt(minEl.value);
+  filterLevelMax = parseInt(maxEl.value);
+  if (filterLevelMin > filterLevelMax) {
+    if (e.target.id === 'filter-lv-min') { filterLevelMin = filterLevelMax; minEl.value = filterLevelMin; }
+    else                                  { filterLevelMax = filterLevelMin; maxEl.value = filterLevelMax; }
+  }
+  minOut.textContent    = filterLevelMin;
+  maxOut.textContent    = filterLevelMax;
+  filterLevelActive     = !(filterLevelMin === 1 && filterLevelMax === 90);
+  updateFilters();
+});
+
+/* ─────────────────────────────────────────────
+   SCROLL — sticky filter zone
+   Adds `.scrolled` when the page is scrolled down
+   (collapses the filter zone height via CSS).
+   Removes it and also closes the dropdown when
+   the user scrolls back near the top.
+───────────────────────────────────────────── */
+const filterZone = document.getElementById('filterZone');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 150) {
+    filterZone.classList.add('scrolled');
+  } else if (window.scrollY < 80) {
+    filterZone.classList.remove('scrolled');
+    filterZone.classList.remove('dropdown-open');
   }
 });
 
-const filterZone      = document.getElementById('filterZone');
-const filterToggleBtn = document.getElementById('filterToggleBtn');
+/* ═════════════════════════════════════════════
+   GUIDED TOUR
+   Mirrors the tour system from WeaponIntroduction.
+   TOUR_STEPS defines each step as:
+     { selector } — CSS selector of the element to spotlight
+     { title }    — heading text in the tour card
+     { desc }     — body HTML (supports <b> tags)
+     { pos }      — preferred card position: 'right' | 'left' | 'below'
+   The tour overlay uses a box-shadow trick on
+   .tour-spotlight to create the dimmed-mask-with-hole
+   effect without needing a canvas or SVG cutout.
+═════════════════════════════════════════════ */
+const TOUR_STEPS = [
+  {
+    selector: '#opSearch',
+    title:    'Search Operators',
+    desc:     'Type any operator name to instantly filter the grid. <b>Partial matches</b> work — try "ang" to find Tangtang or Zhuang Fangyi.',
+    pos:      'below'
+  },
+  {
+    selector: '#filterToggleBtn',
+    title:    'Open Filters',
+    desc:     'Click <b>Filters</b> to expand the full filter panel. You can narrow the roster by <b>Rarity, Class, Element, Weapon</b>, and Owned status.',
+    pos:      'below'
+  },
+  {
+    selector: '.fgroup:nth-child(2)',
+    title:    'Filter by Class',
+    desc:     'Select one or more <b>classes</b> (Striker, Guard, Caster…). Active pills are highlighted in their class colour. Multiple selections show operators matching <b>any</b> of them.',
+    pos:      'below'
+  },
+  {
+    selector: '.fgroup-level',
+    title:    'Level Range',
+    desc:     'Drag the two sliders to filter by operator level. This only applies to operators with a <b>saved level</b> in your roster tracker.',
+    pos:      'below'
+  },
+  {
+    selector: '.sort-group',
+    title:    'Sort the Grid',
+    desc:     'Sort by <b>Rarity</b> (default), alphabetical <b>Name</b>, or tracked <b>Level</b>. Click the same button twice to flip between ascending and descending.',
+    pos:      'left'
+  },
+  {
+    selector: '.op-card',
+    title:    'Operator Cards',
+    desc:     'Click a card to open the <b>full character profile</b>. The coloured stripe on the left shows rarity. The element badge is in the top-right corner.',
+    pos:      'right'
+  },
+  {
+    selector: '.owned-badge',
+    title:    'Mark as Owned',
+    desc:     'Click the <b>✓ badge</b> in the top-left of a card to mark that operator as owned. This syncs to your account so your roster is saved across devices.',
+    pos:      'right'
+  },
+  {
+    selector: '.card-drawer',
+    title:    'Roster Tracker',
+    desc:     'Once an operator is owned, a <b>tracker drawer</b> opens below the card. Log the operator\'s current <b>Level</b> and all four <b>Skill Levels</b>. Changes save automatically.',
+    pos:      'right'
+  }
+];
 
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 150) filterZone.classList.add('scrolled');
-  else if (window.scrollY < 80) { filterZone.classList.remove('scrolled'); filterZone.classList.remove('dropdown-open'); }
-});
+let tourStep    = 0;
+let tourActive  = false;
+let tourOverlay, tourSpotlight, tourCard;
 
-// ==========================================
-// INIT — auth → load roster → render cards
-// ==========================================
+/* ─────────────────────────────────────────────
+   buildTourDOM()
+   Injects the overlay, spotlight div, and tour card
+   into the document once (lazy). Subsequent calls
+   to startTour() re-use the same elements.
+───────────────────────────────────────────── */
+function buildTourDOM() {
+  if (document.getElementById('tourOverlay')) return;
 
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="tour-overlay" id="tourOverlay">
+      <div class="tour-mask" id="tourMask"></div>
+      <div class="tour-spotlight" id="tourSpotlight"></div>
+      <div class="tour-card" id="tourCard">
+        <div class="tour-step-label">
+          <span id="tourStepText">STEP 1 / ${TOUR_STEPS.length}</span>
+          <div class="tour-step-dots" id="tourDots"></div>
+        </div>
+        <div class="tour-title" id="tourTitle"></div>
+        <div class="tour-desc"  id="tourDesc"></div>
+        <div class="tour-actions">
+          <button class="tour-skip" id="tourSkip">Skip tour</button>
+          <div class="tour-nav">
+            <button class="tour-btn" id="tourPrev">← Back</button>
+            <button class="tour-btn primary" id="tourNext">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `);
+
+  tourOverlay   = document.getElementById('tourOverlay');
+  tourSpotlight = document.getElementById('tourSpotlight');
+  tourCard      = document.getElementById('tourCard');
+
+  document.getElementById('tourNext').addEventListener('click', () => advanceTour(1));
+  document.getElementById('tourPrev').addEventListener('click', () => advanceTour(-1));
+  document.getElementById('tourSkip').addEventListener('click', endTour);
+  tourOverlay.addEventListener('click', e => { if (e.target === tourOverlay) endTour(); });
+}
+
+/* ─────────────────────────────────────────────
+   startTour()
+   Entry point called by the ? button in the header.
+   Ensures tour DOM exists, resets to step 0,
+   and activates the overlay.
+───────────────────────────────────────────── */
+function startTour() {
+  buildTourDOM();
+  tourStep   = 0;
+  tourActive = true;
+  tourOverlay.classList.add('active');
+  renderTourStep(tourStep);
+}
+
+/* ─────────────────────────────────────────────
+   endTour()
+   Hides the overlay and clears the spotlight
+   so it doesn't linger on screen.
+───────────────────────────────────────────── */
+function endTour() {
+  tourActive = false;
+  if (tourOverlay) {
+    tourOverlay.classList.remove('active');
+    tourSpotlight.style.cssText = '';
+  }
+}
+
+/* ─────────────────────────────────────────────
+   advanceTour(delta)
+   Moves the tour forward (+1) or backward (-1).
+   Calls endTour() when the last step is confirmed.
+───────────────────────────────────────────── */
+function advanceTour(delta) {
+  tourStep += delta;
+  if (tourStep >= TOUR_STEPS.length) { endTour(); return; }
+  if (tourStep < 0) tourStep = 0;
+  renderTourStep(tourStep);
+}
+
+/* ─────────────────────────────────────────────
+   renderTourStep(index)
+   Positions the spotlight over the target element,
+   updates the tour card content, and places the card
+   on whichever side of the spotlight has more space.
+   If the target element doesn't exist yet (e.g.
+   the drawer is collapsed), the step is skipped.
+───────────────────────────────────────────── */
+function renderTourStep(index) {
+  const step = TOUR_STEPS[index];
+
+  /* Auto-open the filter dropdown for steps that target elements inside
+     .filter-row; close it for all other steps so it doesn't block the view. */
+  const filterZoneEl = document.getElementById('filterZone');
+  const isFilterStep = step.selector.startsWith('.fgroup');
+  if (isFilterStep) {
+    filterZoneEl.classList.add('dropdown-open');
+  } else {
+    filterZoneEl.classList.remove('dropdown-open');
+  }
+
+  document.getElementById('tourStepText').textContent = `STEP ${index + 1} / ${TOUR_STEPS.length}`;
+  document.getElementById('tourTitle').textContent     = step.title;
+  document.getElementById('tourDesc').innerHTML        = step.desc;
+  document.getElementById('tourNext').textContent      = index === TOUR_STEPS.length - 1 ? 'Done ✓' : 'Next →';
+  document.getElementById('tourPrev').disabled         = index === 0;
+
+  const dots = document.getElementById('tourDots');
+  dots.innerHTML = TOUR_STEPS.map((_, i) =>
+    `<div class="tour-dot${i === index ? ' active' : ''}"></div>`
+  ).join('');
+
+  /* Defer measurement one frame so the dropdown has time to render/expand */
+  requestAnimationFrame(() => {
+    const target = document.querySelector(step.selector);
+
+    if (!target) {
+      advanceTour(1);
+      return;
+    }
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    /* Second frame: measure after scroll settles */
+    requestAnimationFrame(() => {
+      const PAD  = 10;
+      const rect = target.getBoundingClientRect();
+      const sl   = tourSpotlight;
+
+      /* Spotlight is position:fixed — pure viewport coords, no scrollY */
+      sl.style.top    = (rect.top    - PAD) + 'px';
+      sl.style.left   = (rect.left   - PAD) + 'px';
+      sl.style.width  = (rect.width  + PAD * 2) + 'px';
+      sl.style.height = (rect.height + PAD * 2) + 'px';
+
+      /* Tour card is also position:fixed — pure viewport coords */
+      const CARD_W     = 310;
+      const CARD_H     = 220;
+      const spaceRight = window.innerWidth - rect.right;
+
+      let cardTop, cardLeft;
+
+      if (step.pos === 'below') {
+        cardTop  = rect.bottom + 20;
+        cardLeft = Math.min(rect.left, window.innerWidth - CARD_W - 20);
+      } else if (step.pos === 'left' || spaceRight < CARD_W + 30) {
+        cardTop  = rect.top + (rect.height / 2) - (CARD_H / 2);
+        cardLeft = rect.left - CARD_W - 20;
+      } else {
+        cardTop  = rect.top + (rect.height / 2) - (CARD_H / 2);
+        cardLeft = rect.right + 20;
+      }
+
+      cardTop  = Math.max(10, Math.min(cardTop,  window.innerHeight - CARD_H - 10));
+      cardLeft = Math.max(10, Math.min(cardLeft, window.innerWidth  - CARD_W - 10));
+
+      tourCard.style.top  = cardTop  + 'px';
+      tourCard.style.left = cardLeft + 'px';
+    });
+  });
+}
+
+/* ═════════════════════════════════════════════
+   INIT
+   Execution order matters here:
+     1. Get Supabase session — determines if user is logged in.
+     2. Load roster rows    — populates ROSTER cache before cards render.
+     3. Render cards        — createCard reads ROSTER for owned/level state.
+     4. Sort               — initial sort pass puts 6★ first.
+     5. Inject pill icons   — adds <img> tags to filter buttons using ASSETS.
+     6. Guest notice        — shown below results-row for non-logged-in users.
+     7. Tour hint           — shown once to new users (uses sessionStorage).
+═════════════════════════════════════════════ */
 async function init() {
-  // 1. Get current Supabase session
   const { data: { session } } = await db.auth.getSession();
   CURRENT_USER = session?.user || null;
 
-  // 2. Fetch this user's roster rows so cards render with correct state
   if (CURRENT_USER) await loadRoster();
 
-  // 3. Render cards (ROSTER is now populated)
   grid.innerHTML = OPS.map(createCard).join('');
   applySort();
 
-  // 4. Inject icons into filter pills
   document.querySelectorAll('.pill').forEach(pill => {
-    const groupElement = pill.closest('[data-group]');
-    if (!groupElement) return;
-    const group = groupElement.dataset.group;
-    const val   = pill.dataset.val;
-    let iconPath = '';
+    const groupEl = pill.closest('[data-group]');
+    if (!groupEl) return;
+    const group    = groupEl.dataset.group;
+    const val      = pill.dataset.val;
+    let iconPath   = '';
     if (group === 'element') iconPath = ASSETS.elements[val];
     if (group === 'class')   iconPath = ASSETS.classes[val];
     if (group === 'weapon')  iconPath = ASSETS.weapons[val];
@@ -482,12 +835,16 @@ async function init() {
     if (iconPath) pill.innerHTML = `<img src="${iconPath}" class="pill-icon" alt=""> ` + pill.innerHTML;
   });
 
-  // 5. Nudge guests to log in
   if (!CURRENT_USER) {
     const notice = document.createElement('div');
     notice.className = 'roster-notice';
     notice.innerHTML = `<a href="auth.html">Sign in</a> to track your roster across devices.`;
     document.querySelector('.results-row')?.prepend(notice);
+  }
+
+  if (!sessionStorage.getItem('opTourSeen')) {
+    sessionStorage.setItem('opTourSeen', '1');
+    setTimeout(startTour, 800);
   }
 }
 

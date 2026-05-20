@@ -1,7 +1,18 @@
+/*
+  LogIn.css — FLUID SCOPED VERSION
+  ══════════════════════════════════════════════════════════════════
+  Fluid architecture applied: Replaced rigid pixels and transform 
+  scales with clamp() so the auth button scales natively on phones
+  without losing crispness or breaking click hitboxes.
+  ══════════════════════════════════════════════════════════════════
+*/
+
 .auth-widget-container {
     position: fixed;
-    top: 24px;
-    right: 40px;
+    /* FLUID FIX: Adapts positioning based on screen size so it doesn't collide with edges on small screens */
+    top: clamp(16px, 3vh, 24px);
+    right: clamp(16px, 4vw, 40px);
+    
     transform: translateY(-50%);
     z-index: 2147483647 !important; /* Maximum z-index */
     font-family: 'Rajdhani', sans-serif;
@@ -11,13 +22,20 @@
 .auth-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 18px;
+    /* Reduced the gap between icon and text slightly */
+    gap: clamp(4px, 0.8vw, 6px);
+    
+    /* THE FIX: Shrunk the top/bottom and left/right padding */
+    padding: clamp(6px, 0.8vh, 8px) clamp(10px, 1.5vw, 14px);
+    
     background: rgba(0, 229, 192, 0.1);
     border: 1px solid rgba(0, 229, 192, 0.4);
     border-radius: 4px;
     color: #00e5c0;
-    font-size: 13px;
+    
+    /* THE FIX: Dropped the font size slightly so it fits the smaller button perfectly */
+    font-size: clamp(9px, 1vw, 11px);
+    
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -38,11 +56,13 @@
     position: absolute;
     top: 100%;
     right: 0;
-    margin-top: 10px;
+    /* FLUID FIX: Margin and width scale to ensure the menu fits mobile screens safely */
+    margin-top: clamp(8px, 1.5vh, 10px);
+    min-width: clamp(140px, 15vw, 160px);
+    
     background: rgba(7, 8, 11, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 4px;
-    min-width: 160px;
     display: none; /* Hidden by default */
     flex-direction: column;
     backdrop-filter: blur(12px);
@@ -55,9 +75,11 @@
 }
 
 .user-dropdown-item {
-    padding: 12px 16px;
+    /* FLUID FIX: Padding and font size adjust gracefully */
+    padding: clamp(10px, 1.5vh, 12px) clamp(12px, 2vw, 16px);
+    font-size: clamp(9px, 1vw, 11px);
+    
     color: #e4e0d8;
-    font-size: 11px;
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -74,7 +96,8 @@
 .user-dropdown-item:hover {
     background: rgba(0, 229, 192, 0.1);
     color: #00e5c0;
-    padding-left: 20px; /* Slight indent on hover */
+    /* FLUID FIX: Hover indent scales correctly */
+    padding-left: clamp(16px, 2.5vw, 20px); 
 }
 
 .user-dropdown-item.danger:hover {
@@ -82,11 +105,4 @@
     color: #e05a5a;
 }
 
-/* ── MOBILE OPTIMIZATION — AUTH BUTTON ── */
-@media screen and (max-width: 480px) {
-    .nav-auth {
-        /* Shrinks the entire dropdown button by 15% on phones */
-        transform: scale(0.85); 
-        transform-origin: right center;
-    }
-}
+/* The old @media (max-width: 480px) transform scale hack has been safely deleted! */

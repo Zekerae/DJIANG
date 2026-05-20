@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title">Operator — Arknights: Endfield</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Bebas+Neue&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/NavBar.css">
 <link rel="stylesheet" href="css/CharacterIntroduction.css">
 <link rel="stylesheet" href="css/LogIn.css">
@@ -24,21 +24,28 @@
 
 <div class="topbar">
   <div class="nav-left">
-    <div class="logo-mark">EF</div>
+    <a href="index.html" class="logo-mark" style="text-decoration: none; cursor: pointer;" title="Return to Homepage">DJIANG</a>
     <div class="nav-breadcrumbs">
+      <a href="javascript:history.back()" style="color: #00e5c0; font-weight: 700; margin-right: 12px; display: inline-flex; align-items: center; gap: 4px;">
+        <span>&larr;</span> BACK
+      </a>
+      <span style="opacity: 0.3;">|</span>
+      <a href="index.html" style="margin-left: 12px;">Home</a>
+      <span>/</span>
       <a href="#">Characters</a>
       <span>/</span>
-      <span class="current" id="nav-name">Loading…</span>
+      <span class="current" id="nav-name-sub">Loading…</span>
     </div>
   </div>
-  <select class="character-select" id="char-selector" onchange="navigateToCharacter(this.value)">
-    <option value="" disabled selected>Select Operator...</option>
-  </select>
+  <div class="topbar-right">
+    <div class="save-badge" id="saveBadge"></div>
+  </div>
 </div>
 
-<div class="hero">
+<div class="hero" id="heroSection">
   <div class="hero-bg-glow"></div>
-  <div class="hero-banner" id="dom-banner"></div> <div class="hero-inner">
+  <div class="hero-banner" id="dom-banner"></div> 
+  <div class="hero-inner">
     <div class="hero-avatar-wrap">
       <div class="hero-avatar">
         <div class="avatar-letter" id="dom-avatar">?</div>
@@ -57,38 +64,87 @@
     <button class="tab active" onclick="switchTab('profile')" role="tab"><span class="tab-icon">◈</span> Profile</button>
     <button class="tab" onclick="switchTab('builds')"  role="tab"><span class="tab-icon">⚔</span> Builds</button>
     <button class="tab" onclick="switchTab('teams')"   role="tab"><span class="tab-icon">⬡</span> Teams</button>
-    <button class="tab" onclick="switchTab('tracker')" role="tab"><span class="tab-icon">◎</span> Tracker</button>
+    <button class="tab" onclick="switchTab('tracker')" role="tab" id="trackerTab"><span class="tab-icon">◎</span> Tracker</button>
   </div>
 </div>
 
 <div class="content">
-
   <div class="panel-control-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
-    <div class="breadcrumbs-log" style="font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; color: var(--dim2, #7e7c8e);">
+    <div class="breadcrumbs-log" style="font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 1px; color: var(--text2);">
       OPERATOR PROFILE SYSTEM / <span id="nav-name" style="color: #fff;">LOADING...</span>
     </div>
     
-    <div class="selector-field" style="display: flex; align-items: center; gap: 12px;">
-      <label style="font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #00e5c0; text-transform: uppercase;">Switch File:</label>
-      <select class="character-select" id="char-selector" onchange="navigateToCharacter(this.value)" style="background: #0e1017; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 6px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; outline: none; min-width: 180px; border-radius: 2px; cursor: pointer;">
-        <option value="" disabled selected>Select Operator...</option>
-      </select>
+    <div class="selector-field" style="display: flex; align-items: center; gap: 12px; position: relative;">
+      <label style="font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--primary-text); text-transform: uppercase;">Switch File:</label>
+      <div id="charDropdownWrap" class="char-dropdown-wrap">
+        <div id="charTrigger" class="char-trigger" onclick="toggleCharDropdown()">
+          <span id="charTriggerLabel">Select Operator...</span>
+          <span class="char-filter-badge" id="charFilterBadge">0</span>
+          <span class="char-trigger-arrow">▼</span>
+        </div>
+        <div id="charPanel" class="char-panel">
+          <div class="char-panel-search">
+            <input type="text" class="char-search-input" id="charSearch" placeholder="Search operator..." autocomplete="off">
+          </div>
+          <div class="char-panel-filters">
+            <div class="char-filter-row">
+              <span class="char-filter-group-label">Rarity</span>
+              <button class="char-fpill" data-group="rarity" data-val="6">6 ★</button>
+              <button class="char-fpill" data-group="rarity" data-val="5">5 ★</button>
+              <button class="char-fpill" data-group="rarity" data-val="4">4 ★</button>
+              <button class="char-filter-clear" id="charFilterClear">✕ Reset</button>
+            </div>
+            <div class="char-filter-row">
+              <span class="char-filter-group-label">Element</span>
+              <button class="char-fpill" data-group="element" data-val="Heat">Heat</button>
+              <button class="char-fpill" data-group="element" data-val="Cryo">Cryo</button>
+              <button class="char-fpill" data-group="element" data-val="Electric">Electric</button>
+              <button class="char-fpill" data-group="element" data-val="Nature">Nature</button>
+              <button class="char-fpill" data-group="element" data-val="Physical">Physical</button>
+            </div>
+            <div class="char-filter-row">
+              <span class="char-filter-group-label">Role</span>
+              <button class="char-fpill" data-group="role" data-val="DPS">DPS</button>
+              <button class="char-fpill" data-group="role" data-val="Support">Support</button>
+              <button class="char-fpill" data-group="role" data-val="Tank">Tank</button>
+              <button class="char-fpill" data-group="role" data-val="Healer">Healer</button>
+            </div>
+            <div class="char-filter-row">
+              <span class="char-filter-group-label">Weapon</span>
+              <button class="char-fpill" data-group="weapon" data-val="Great Sword">Greatsword</button>
+              <button class="char-fpill" data-group="weapon" data-val="Polearm">Polearm</button>
+              <button class="char-fpill" data-group="weapon" data-val="Handcannon">Handcannon</button>
+              <button class="char-fpill" data-group="weapon" data-val="Arts Unit">Arts Unit</button>
+              <button class="char-fpill" data-group="weapon" data-val="Short Weapon">Short Weapon</button>
+            </div>
+          </div>
+          <div id="charList" class="char-list"></div>
+        </div>
+      </div>
+      <button class="tour-help-btn" onclick="startTour()" title="Page Tour">?</button>
     </div>
   </div>
 
   <div class="panel active" id="panel-profile">
     <div class="video-plug mb-20" id="dom-video-wrap">
       <div class="video-label">VIDEO GUIDE</div>
-      <iframe id="dom-video" width="100%" height="315" frameborder="0" allowfullscreen></iframe>
+      <iframe id="dom-video" width="100%" frameborder="0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
     </div>
     <div class="grid-2 mb-16">
-      <div class="card">
+      <div class="card" id="attrCard">
         <div class="card-header">
           <div class="card-title">Attributes</div>
-          <div class="control-row">
-            <span class="control-label">Level</span>
-            <input type="range" class="control-slider" id="prof-level" min="1" max="90" value="90" oninput="updateProfileStats()">
-            <span class="control-val" id="prof-level-out">90</span>
+          <div class="prof-slider-wrap">
+            <div class="prof-slider-labels">
+              <span class="prof-slider-label">LV</span>
+              <span class="prof-lv-display" id="prof-level-out">90<span class="prof-lv-max">/ 90</span></span>
+            </div>
+            <div class="prof-track-wrap" id="prof-level-track">
+              <div class="prof-track-bg"></div>
+              <div class="prof-track-fill" id="prof-level-fill" style="width:100%"></div>
+              <div class="prof-milestones" id="prof-level-pips"></div>
+              <div class="prof-thumb" id="prof-level-thumb" style="left:100%"></div>
+            </div>
           </div>
         </div>
         <div class="attr-grid" id="dom-attr-grid"></div>
@@ -98,14 +154,9 @@
         <div class="stat-list" id="dom-overview"></div>
       </div>
     </div>
-    <div class="card mb-16">
+    <div class="card mb-16" id="skillsCard">
       <div class="card-header">
-        <div class="card-title">Skills (Scalable)</div>
-        <div class="control-row">
-          <span class="control-label">Rank</span>
-          <input type="range" class="control-slider" id="prof-rank" min="1" max="12" value="12" oninput="updateSkills()">
-          <span class="control-val" id="prof-rank-out">12</span>
-        </div>
+        <div class="card-title">Skills & Multipliers</div>
       </div>
       <div class="skill-list" id="dom-skills"></div>
     </div>
@@ -157,31 +208,35 @@
   <div class="panel" id="panel-tracker">
     <div class="metrics">
       <div class="metric hot"><div class="metric-label">Final ATK (est.)</div><div class="metric-val ht" id="t-atk">—</div></div>
-      <div class="metric"><div class="metric-label">Avg Skill DMG</div><div class="metric-val gd" id="t-dps">—</div></div>
-      <div class="metric"><div class="metric-label">Total Est. Gold</div><div class="metric-val gr" id="t-cost">0</div></div>
+      <div class="metric"><div class="metric-label">Avg Expected DMG</div><div class="metric-val gd" id="t-dps">—</div></div>
     </div>
 
     <div class="card mb-20">
       <div class="card-header"><div class="card-title">Damage Calculator</div></div>
       <div class="calc-grid">
         <div>
-          <div class="calc-row-std">
-            <span class="calc-label">Operator Level <span id="c-level-out" class="highlight">90</span></span>
-            <input type="range" id="c-level" min="1" max="90" value="90" step="1" oninput="recalcDmg()">
+          <div class="calc-row-std" style="background: var(--surface2); padding: 12px; border-radius: 8px; border: 1px solid var(--border2);">
+            <span class="calc-label" style="margin-bottom:0">Operator Level (Synced to Profile) <span id="c-level-out" class="highlight">90</span></span>
+          </div>
+          <div class="calc-row-std mt-12">
+            <span class="calc-label">Primary Stat / Base ATK</span>
+            <div style="display:flex;gap:10px">
+              <input type="number" id="c-primary" value="177" placeholder="Primary" oninput="recalcDmg()">
+              <input type="number" id="c-atk" value="550" placeholder="Base ATK" oninput="recalcDmg()">
+            </div>
           </div>
           <div class="calc-row-std">
-            <span class="calc-label">Primary Stat</span>
-            <input type="number" id="c-primary" value="177" oninput="recalcDmg()">
-          </div>
-          <div class="calc-row-std">
-            <span class="calc-label">Base ATK (weapon included)</span>
-            <input type="number" id="c-atk" value="550" oninput="recalcDmg()">
-          </div>
-          <div class="calc-row-std">
-            <span class="calc-label">ATK Bonus % / Element DMG Bonus %</span>
+            <span class="calc-label">ATK Bonus % / Element DMG %</span>
             <div style="display:flex;gap:10px">
               <input type="number" id="c-atkp" value="40" placeholder="ATK %" oninput="recalcDmg()">
               <input type="number" id="c-elem" value="60" placeholder="Elem %" oninput="recalcDmg()">
+            </div>
+          </div>
+          <div class="calc-row-std">
+            <span class="calc-label">Crit Rate % / Crit DMG %</span>
+            <div style="display:flex;gap:10px">
+              <input type="number" id="c-crit-rate" value="5" placeholder="Crit Rate" oninput="recalcDmg()">
+              <input type="number" id="c-crit-dmg" value="150" placeholder="Crit DMG" oninput="recalcDmg()">
             </div>
           </div>
           <div class="calc-row-std">
@@ -193,45 +248,15 @@
           <div class="result-box-title">Output Estimation</div>
           <div class="result-grid">
             <div><div class="result-label">Final ATK</div><div class="result-val" id="r-atk">—</div></div>
-            <div><div class="result-label">Expected DMG</div><div class="result-val" id="r-avg">—</div></div>
+            <div><div class="result-label">Non-Crit DMG</div><div class="result-val" id="r-avg">—</div></div>
+            <div><div class="result-label">Crit DMG</div><div class="result-val highlight-gold" id="r-crit">—</div></div>
+            <div><div class="result-label">Avg Expected DMG</div><div class="result-val highlight-primary" id="r-avg-crit">—</div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="card mb-20">
-      <div class="card-header">
-        <div class="card-title">Character Leveling &amp; Ascension</div>
-        <div class="tracker-total" id="t-lv-summary">Lv 1 → 90</div>
-      </div>
-      <div class="range-row">
-        <div class="range-group">
-          <div class="range-label">Current Level <span class="range-val" id="lv-c-out">1</span></div>
-          <input type="range" id="m-lv-c" min="1" max="90" value="1" step="1" oninput="onTrackerLevelChange()">
-          <div class="range-ticks"><span>1</span><span>20</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span></div>
-        </div>
-        <div class="range-arrow">→</div>
-        <div class="range-group">
-          <div class="range-label">Target Level <span class="range-val" id="lv-t-out">90</span></div>
-          <input type="range" id="m-lv-t" min="1" max="90" value="90" step="1" oninput="recalcMats()">
-          <div class="range-ticks"><span>1</span><span>20</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span></div>
-        </div>
-      </div>
-      <div id="dom-lv-mats"></div>
-    </div>
-
-    <div class="card mb-20">
-      <div class="card-header">
-        <div class="card-title">Skill Upgrades &amp; Masteries</div>
-        <div class="tracker-total" id="t-sk-summary">Ranks 1 → 12</div>
-      </div>
-      <div id="dom-skill-tracks"></div>
-      <div id="dom-sk-mats"></div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="card mb-20">
+    <div class="card mb-20" id="checklistCard">
       <div class="card-header">
         <div class="card-title">Build Progression Checklist</div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
@@ -247,10 +272,30 @@
       </div>
       <div class="checklist" id="dom-checklist"></div>
     </div>
+  </div>
+</div>
 
-  </div></div>
-  <script src="js/NavBar.js"></script>
-  <script src="js/CharacterIntroduction.js"></script>
-  <script src="js/LogIn.js"></script>
+<div class="tour-overlay" id="tourOverlay">
+  <div class="tour-spotlight" id="tourSpotlight"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-step-label">
+      <span id="tourStepNum">Step 1 of 6</span>
+      <div class="tour-step-dots" id="tourDots"></div>
+    </div>
+    <div class="tour-title" id="tourTitle">Tour Title</div>
+    <div class="tour-desc" id="tourDesc">Tour Description</div>
+    <div class="tour-actions">
+      <button class="tour-skip" onclick="endTour()">Skip Tour</button>
+      <div class="tour-nav">
+        <button class="tour-btn" id="tourPrev" onclick="tourPrev()">← Back</button>
+        <button class="tour-btn primary" id="tourNext" onclick="tourNext()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/NavBar.js"></script>
+<script src="js/CharacterIntroduction.js"></script>
+<script src="js/LogIn.js"></script>
 </body>
 </html>

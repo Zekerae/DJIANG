@@ -1,12 +1,28 @@
+/*
+  NavBar.css — FLUID SCOPED VERSION
+  ══════════════════════════════════════════════════════════════════
+  Rigid pixel math has been replaced with CSS Variables and clamp().
+  The sidebar mathematically calculates its own width and hidden state,
+  eliminating the need for multiple stacked media queries!
+  ══════════════════════════════════════════════════════════════════
+*/
+
 :root {
     --navbar-color: rgb(135, 135, 135);
-    --navbar-height: 48px;
-    --sidebar-width: 520px;
-    --border: 0.5px solid rgba(135, 135, 135, 0.4);
+    
+    /* FLUID: Navbar height grows slightly on tall monitors */
+    --navbar-height: clamp(40px, 5vh, 52px);
+    
+    /* FLUID: Sidebar scales with screen width, capped gracefully */
+    --sidebar-width: clamp(260px, 30vw, 450px);
+    
+    --navbar--border: 0.5px solid rgba(135, 135, 135, 0.4);
 
     --sidebar-active-bg: #fff;
     --sidebar-active-text: #000;
-    --sidebar-notch: 16px;
+    
+    /* FLUID: The angled notch dynamically scales */
+    --sidebar-notch: clamp(12px, 1.5vw, 20px);
     --sidebar-item-indent: 5%;
     --sidebar-font: 'Arial Black', Arial, sans-serif;
     --sidebar-page-count-offset: 0px;
@@ -20,38 +36,27 @@
     src: local('HarmonyOS Sans Regular'), url('../assets/fonts/HarmonyOS/HarmonyOS_Sans_Regular.woff') format('woff');
 }
 
-/* 2. Apply it to the Navbar */
-/* Target the navbar container and its links (adjust the class names if NavBar.js uses different ones like .nav-item or .nav-menu) */
-#navbar, 
-.navbar, 
-/* Fix for clipped Navbar font */
-.nav-links a, 
-.navbar a {
-    /* Increases the invisible box around the text so the bottom doesn't cut off */
-    line-height: 1.5 !important; 
-    
-    /* Ensures the links behave like blocks so vertical spacing applies correctly */
-    display: center !important;
-    align-items: center !important;
-    
-    /* Optional: Add a tiny bit of bottom padding if it's still clipping the bottom pixel */
-    padding-bottom: 2px !important; 
-}
+/* 2. Apply Typography Cleanly (Decoupled from layout containers) */
+#navbar,
+.navbar,
+.nav-links a,
+.navbar a,
 .navbar button {
     font-family: 'HarmonyOS Sans Regular', sans-serif !important;
-}
-/* ─────────────────────────────────────────────────────────────────────────────
-   STACKING CONTEXT FIX
-   Any element with transform/filter/will-change/opacity creates its own
-   stacking context, which traps children — even z-index:9999 ones.
-   Giving <body> an explicit stacking context at z=0 means the navbar's
-   z-index is always measured against the root, not a trapped ancestor.
-───────────────────────────────────────────────────────────────────────────── */
-body {
-    isolation: isolate;   /* creates root stacking context without side-effects */
+    font-weight: bolder; 
 }
 
-/* ─── NAVBAR ─── */
+.nav-links a,
+.navbar a {
+    line-height: 1.5 !important;
+    padding-bottom: 2px !important;
+}
+
+body {
+    isolation: isolate; 
+}
+
+/* ─── NAVBAR STRUCTURE ─── */
 .navbar {
     position: fixed;
     top: 0;
@@ -59,16 +64,13 @@ body {
     width: 100%;
     height: var(--navbar-height);
     background: #0a0a0a;
-    /* Use the highest possible z-index so nothing — transforms, filters, etc. — 
-       can push content over the bar.                                          */
     z-index: 2147483647;
-    display: grid;
+    display: grid !important; /* Force Grid context to remain untouched */
     grid-template-columns: var(--navbar-height) 1fr var(--navbar-height);
     align-items: center;
-    border-bottom: var(--border);
+    border-bottom: var(--navbar--border);
 }
 
-/* ─── PROGRESS BAR ─── */
 .progress-bar {
     position: absolute;
     bottom: -1px;
@@ -91,9 +93,10 @@ body {
 
 .nav-btn {
     height: 100%;
-    padding: 0 20px;
+    /* FLUID PADDING & FONT: Breathes with the screen size */
+    padding: 0 clamp(12px, 1.5vw, 24px);
+    font-size: clamp(10px, 1vw, 13px);
     color: rgba(135, 135, 135, 0.6);
-    font-size: 11px;
     letter-spacing: 0.12em;
     cursor: pointer;
     display: flex;
@@ -127,7 +130,7 @@ body {
     justify-content: center;
     gap: 5px;
     cursor: pointer;
-    border-right: var(--border);
+    border-right: var(--navbar--border);
     flex-shrink: 0;
 }
 
@@ -147,20 +150,17 @@ body {
 .sidebar {
     position: fixed;
     top: 0;
-    left: -30vw;
-    width: 30vw;
-    min-width: 260px;
+    width: var(--sidebar-width);
+    left: calc(var(--sidebar-width) * -1); 
     height: 100%;
     background: #0a0a0a;
-    border-right: var(--border);
-    /* One below navbar so the bar always renders on top */
+    border-right: var(--navbar--border);
     z-index: 2147483646;
     display: flex;
     flex-direction: column;
     padding-top: var(--navbar-height);
     transition: left 0.4s cubic-bezier(0.77, 0, 0.18, 1);
     overflow: hidden;
-
     padding-bottom: env(safe-area-inset-bottom, 0px); 
 }
 
@@ -168,14 +168,16 @@ body {
 
 /* ─── SIDEBAR LABEL ─── */
 .sidebar-label {
-    padding: 18px 28px 12px;
-    font-size: 9px;
+    padding: clamp(12px, 2vh, 18px) 16px clamp(8px, 1vh, 12px) clamp(16px, 2vw, 28px);
+    font-size: clamp(8px, 0.8vw, 10px);
     letter-spacing: 0.2em;
     color: rgb(255, 255, 255);
-    border-bottom: var(--border);
+    border-bottom: var(--navbar--border);
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: normal !important;
+    word-wrap: break-word !important;
 }
 
 .sidebar-label::before {
@@ -190,7 +192,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: 8px 0;
-    border-bottom: var(--border);
+    border-bottom: var(--navbar--border);
     overflow: hidden;
     min-height: 0; 
 }
@@ -198,7 +200,7 @@ body {
 .sidebar-item {
     padding: 2px 0;                         
     color: rgba(135, 135, 135, 0.5);
-    font-size: clamp(18px, 2.6vw, 30px);
+    font-size: clamp(14px, 1.8vw, 22px) !important; 
     font-family: var(--sidebar-font);
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -212,6 +214,8 @@ body {
     user-select: none;
     line-height: 1.15;
     position: relative;
+    white-space: normal !important; 
+    word-wrap: break-word !important;
 }
 
 .sidebar-item:hover { color: #fff; }
@@ -219,9 +223,12 @@ body {
 .sidebar-item.active:hover { color: var(--sidebar-active-text); }
 
 .sidebar-item-inner {
-    padding: 6px 40px 6px 26px;
+    padding: 8px 16px 8px 24px !important; 
     margin-left: var(--sidebar-item-indent);
     position: relative;
+    width: 95% !important; 
+    box-sizing: border-box !important;
+    gap: 12px !important;  
     z-index: 1;
     display: inline-flex;
     align-items: center;
@@ -243,20 +250,23 @@ body {
 .sidebar-text {
     display: inline-block;
     color: inherit;
+    flex: 1 !important; 
+    white-space: normal !important; 
+    word-wrap: break-word !important;
+    line-height: 1.1 !important;
 }
 
 .sidebar-page-num {
     position: relative;
     z-index: 1;
-    font-size: 9px;
+    font-size: clamp(8px, 0.8vw, 10px);
     font-weight: 400;
     letter-spacing: 0.15em;
     color: rgba(135, 135, 135, 0.5);
     line-height: 1.4;
     white-space: nowrap;
-    flex-shrink: 0;
-    align-self: flex-start;
-    padding-top: 6px;
+    flex-shrink: 0 !important;
+    align-self: center !important;
     opacity: 0;
     transform: translateX(6px);
     transition: opacity 0.2s ease, transform 0.2s ease;
@@ -272,33 +282,36 @@ body {
 
 /* ─── SIDEBAR FOOTER ─── */
 .sidebar-footer {
-    padding: 18px 28px 24px;
+    padding: clamp(14px, 2vh, 18px) 12px clamp(18px, 3vh, 24px) clamp(16px, 2vw, 28px);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .sidebar-footer-item {
-    font-size: 9px;
+    font-size: clamp(9px, 1vw, 11px); 
     letter-spacing: 0.16em;
     color: rgb(255, 255, 255);
     cursor: pointer;
     display: flex;
-    align-items: center;
+    align-items: flex-start; 
     gap: 8px;
     transition: color 0.2s;
     user-select: none;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    line-height: 1.4 !important;
 }
 
 .sidebar-footer-item:hover { color: rgba(255, 255, 255, 0.7); }
 
 /* ─── PAGE COUNTER ─── */
 .sidebar-page-count {
-    padding: 12px 28px;
-    font-size: 9px;
+    padding: clamp(8px, 1.5vh, 12px) clamp(16px, 2vw, 28px);
+    font-size: clamp(8px, 0.8vw, 10px);
     letter-spacing: 0.15em;
     color: rgb(255, 255, 255);
-    border-top: var(--border);
+    border-top: var(--navbar--border);
     display: flex;
     justify-content: space-between;
 }
@@ -323,63 +336,68 @@ body {
 }
 
 /* ═══════════════════════════════════════════════
-   RESPONSIVE — Mid tablets / small laptops  1025px → 768px
-═══════════════════════════════════════════════ */
-@media (max-width: 1024px) {
-    .sidebar { width: 38vw; left: -38vw; }
-    .nav-btn { padding: 0 14px; font-size: 10px; }
-    .sidebar-item { font-size: clamp(20px, 3vw, 32px); }
-}
-
-/* ═══════════════════════════════════════════════
-   RESPONSIVE — Tablets (portrait)  769px → 480px
+   MOBILE OPTIMIZATION — THE CONTEXTUAL TRACKER
 ═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
-    :root { --navbar-height: 52px; }
-    .nav-links { display: none; }
-    .navbar { grid-template-columns: var(--navbar-height) 1fr var(--navbar-height); }
-    .sidebar { width: 60vw; left: -60vw; }
-    .sidebar-item { font-size: clamp(16px, 4vw, 26px); white-space: normal; word-break: break-word; }
-    .sidebar-page-num { display: none; }
-    .sidebar-item-inner { padding: 8px 16px 8px 20px; width: 100%; box-sizing: border-box; }
-    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
+    :root { 
+        --navbar-height: 52px; 
+        --sidebar-width: 85vw; 
+        --sidebar-notch: 12px;
+    }
+    
+    /* 1. Force container to sit centered in the middle navbar grid slot */
+    .nav-links { 
+        display: flex !important; 
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100% !important;
+        width: 100% !important;
+    } 
+
+    /* 2. Hide ALL link tags and classes on mobile by default */
+    .nav-links a,
+    .nav-links .nav-btn {
+        display: none !important;
+    }
+
+    /* 3. Display the single link that is currently flagged active */
+    .nav-links a.active,
+    .nav-links .nav-btn.active {
+        display: flex !important; 
+        align-items: center !important;
+        justify-content: center !important;
+        color: #ffffff !important;         /* Force pure white text */
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.15em !important;
+        padding: 0 !important;
+        opacity: 1 !important;             /* Guarantee visibility */
+        visibility: visible !important;
+        pointer-events: none !important; 
+    }
+
+    /* 4. Completely destroy the desktop underline on mobile */
+    .nav-links a.active::after,
+    .nav-links .nav-btn.active::after {
+        content: none !important;          /* This kills the ghost line! */
+        display: none !important;
+    }
+    .sidebar-page-num { display: none; } 
+    
+    .navbar { 
+        grid-template-columns: var(--navbar-height) 1fr var(--navbar-height) !important; 
+    }
     .hamburger span { width: 20px; }
+    
+    .sidebar-item { 
+        font-size: clamp(18px, 6vw, 26px); 
+        white-space: normal; 
+        word-break: break-word; 
+    }
+    
+    .sidebar-item-inner { 
+        padding: 8px 16px 8px 20px; 
+        width: 100%; 
+        box-sizing: border-box; 
+    }
 }
-
-/* ═══════════════════════════════════════════════
-   RESPONSIVE — Mobile landscape  601px → 480px
-═══════════════════════════════════════════════ */
-@media (max-width: 600px) and (orientation: landscape) {
-    :root { --navbar-height: 44px; }
-    .sidebar { width: 70vw; left: -70vw; padding-top: var(--navbar-height); }
-    .sidebar-item { font-size: clamp(13px, 3.2vw, 18px); padding: 2px 0; white-space: normal; word-break: break-word; }
-    .sidebar-page-num { display: none; }
-    .sidebar-item-inner { padding: 4px 14px 4px 14px; width: 100%; box-sizing: border-box; }
-    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
-    .sidebar-label { padding: 10px 20px 8px; }
-    .sidebar-footer { padding: 10px 20px 14px; gap: 6px; }
-    .sidebar-page-count { padding: 8px 20px; }
-}
-
-/* ═══════════════════════════════════════════════
-   RESPONSIVE — Mobile portrait  ≤ 480px
-═══════════════════════════════════════════════ */
-@media (max-width: 480px) {
-    :root { --navbar-height: 52px; --sidebar-notch: 12px; }
-    .nav-links { display: none; }
-    .sidebar { width: 88vw; left: -88vw; min-width: unset; }
-    .hamburger { width: var(--navbar-height); height: var(--navbar-height); gap: 6px; }
-    .hamburger span { width: 22px; height: 2px; }
-    .hamburger.open span:nth-child(1) { transform: translateY(8px)  rotate(45deg); }
-    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-    .sidebar-label { padding: 14px 20px 10px; font-size: 8px; }
-    .sidebar-item { font-size: clamp(16px, 6vw, 28px); padding: 3px 0; white-space: normal; word-break: break-word; }
-    .sidebar-item-inner { padding: 6px 14px 6px 16px; margin-left: 0; width: 100%; box-sizing: border-box; }
-    .sidebar-text { white-space: normal; word-break: break-word; flex: 1; }
-    .sidebar-page-num { display: none; }
-    .sidebar-footer { padding: 14px 20px 18px; gap: 12px; }
-    .sidebar-footer-item { font-size: 9px; letter-spacing: 0.14em; min-height: 36px; }
-    .sidebar-page-count { padding: 10px 20px; font-size: 8px; }
-    .progress-bar { height: 2px; }
-}
-

@@ -1,41 +1,28 @@
 /*
-  landingPage.css — SCOPED VERSION
+  landingPage.css — SCOPED & FLUID VERSION
   ══════════════════════════════════════════════════════════════════
-  All selectors are namespaced under .landing-page so this stylesheet
-  is safe to inject into any page without polluting global styles.
-
-  .landing-page itself should receive its positioning from the OUTSIDE:
-
-    Inline in document  →  position: relative;  width: 100%; height: 100vh;
-    Anchored to parent  →  position: absolute;  inset: 0;
-    Anchored to screen  →  position: fixed;      inset: 0;
-
-  Internal elements use position: absolute relative to .landing-page.
+  All selectors are namespaced under .landing-page.
+  Rigid pixels have been replaced with clamp(), %, and dvh/vw to
+  ensure the interface scales infinitely across all screen sizes.
   ══════════════════════════════════════════════════════════════════
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap');
 
 /* ── ROOT WRAPPER ─────────────────────────────────────────────── */
-/* 
-  .landing-page is the positioning anchor for ALL internal children.
-  Width/height/position are intentionally NOT set here — 
-  the parent (or HTML-fetcher.js) controls that.
-*/
 .landing-page {
-  /* Establish a stacking and positioning context */
-  position: relative;       /* Children with position:absolute anchor here */
+  position: relative; 
   overflow: hidden;
   width: 100%;
-  height: 100vh;
+  
+  /* FLUID FIX: 'dvh' accounts for mobile browser address bars shrinking/growing */
+  height: 100dvh; 
+  
   background: black;
-
-  /* Styles that used to live on body */
   font-family: 'Barlow', sans-serif;
-  background: black;
   color: var(--lp-text);
 
-  /* CSS custom properties scoped to this component */
+  /* CSS custom properties */
   --lp-purple:        #6b4fa0;
   --lp-purple-dark:   #3b2560;
   --lp-green-neon:    #7fff00;
@@ -53,15 +40,10 @@
 }
 
 /* ── HUD OVERLAY ──────────────────────────────────────────────── */
-/*
-  KEY CHANGE: was position:fixed (viewport-relative).
-  Now position:absolute (landing-page-relative), so it overlays
-  the section correctly regardless of where landing-page lives on the page.
-*/
 .landing-page .user-interface {
   width: 100%;
-  height: 100%;           /* fills .landing-page, not the viewport */
-  position: absolute;     /* ← was fixed */
+  height: 100%; 
+  position: absolute; 
   top: 0; left: 0;
   display: flex;
   align-items: center;
@@ -70,85 +52,7 @@
   pointer-events: none;
 }
 
-.landing-page .user-interface .ui-container {
-  width: 95%;
-  height: 95%;
-  border: 0.1vw solid var(--lp-navbar-color);
-  border-radius: 1vw;
-  position: absolute;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.landing-page .user-interface .navbar {
-  height: 7.5%;
-  width: 100%;
-  border-bottom: 0.1vw solid var(--lp-navbar-color);
-  gap: 2vw;
-  position: absolute;
-  top: 0; left: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  z-index: 99;
-  background: transparent;
-  backdrop-filter: blur(1px);
-  pointer-events: auto;
-}
-
-.landing-page .user-interface .navbar .button {
-  height: 100%;
-  width: auto;
-  color: var(--lp-navbar-color);
-  position: relative;
-  align-content: center;
-  cursor: pointer;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 11px;
-  transition: color 0.2s;
-}
-
-.landing-page .user-interface .navbar .button:hover {
-  color: var(--lp-teal);
-}
-
-.landing-page .user-interface .sidebar {
-  height: 100%;
-  width: 5%;
-  border-right: 0.1vw solid var(--lp-navbar-color);
-  position: absolute;
-  top: 0; left: 0;
-  z-index: 100;
-  background: transparent;
-  backdrop-filter: blur(1px);
-  pointer-events: auto;
-}
-
-.landing-page .user-interface .sidebar .menu {
-  height: 7.5%;
-  width: 100%;
-  border-right: 0.1vw solid var(--lp-navbar-color);
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--lp-navbar-color);
-  cursor: pointer;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-weight: 700;
-  transition: all 0.2s;
-}
-
-.landing-page .user-interface .sidebar .menu:hover {
-  border: 0.1vw solid var(--lp-teal);
-  color: var(--lp-teal);
-  border-top-left-radius: 1vw;
-}
-
-/* ── HERO ─────────────────────────────────────────────────────── */
+/* ── HERO & BACKGROUND ────────────────────────────────────────── */
 .landing-page #hero {
   position: relative;
   width: 100%;
@@ -183,24 +87,32 @@
   width: 100%; height: 100%;
 }
 
-/* UI corner decorations */
+/* ── FLUID UI DECORATIONS ─────────────────────────────────────── */
+/* UI Corners */
 .landing-page .ui-corner {
   position: absolute;
-  width: 30px; height: 30px;
+  /* FLUID FIX: Corners scale down slightly on phones so they aren't clunky */
+  width: clamp(20px, 3vw, 40px);
+  aspect-ratio: 1; /* Keeps them perfectly square */
   border-color: var(--lp-teal);
   border-style: solid;
   opacity: .6;
 }
-.landing-page .ui-corner.tl { top: 10px;    left: 10px;  border-width: 2px 0 0 2px; }
-.landing-page .ui-corner.tr { top: 10px;    right: 25px; border-width: 2px 2px 0 0; }
-.landing-page .ui-corner.bl { bottom: 10px; left: 10px;  border-width: 0 0 2px 2px; }
-.landing-page .ui-corner.br { bottom: 10px; right: 25px; border-width: 0 2px 2px 0; }
 
+/* FLUID FIX: Padding from the edge scales with the screen */
+.landing-page .ui-corner.tl { top: clamp(10px, 2vh, 25px);    left: clamp(10px, 2vw, 25px);  border-width: 2px 0 0 2px; }
+.landing-page .ui-corner.tr { top: clamp(10px, 2vh, 25px);    right: clamp(10px, 2vw, 25px); border-width: 2px 2px 0 0; }
+.landing-page .ui-corner.bl { bottom: clamp(10px, 2vh, 25px); left: clamp(10px, 2vw, 25px);  border-width: 0 0 2px 2px; }
+.landing-page .ui-corner.br { bottom: clamp(10px, 2vh, 25px); right: clamp(10px, 2vw, 25px); border-width: 0 2px 2px 0; }
+
+/* Left Crosshair */
 .landing-page .ui-crosshair {
   position: absolute;
-  left: 22px; top: 50%;
+  left: clamp(15px, 2vw, 30px); 
+  top: 50%;
   transform: translateY(-50%);
-  width: 28px; height: 28px;
+  width: clamp(20px, 2vw, 28px); 
+  height: clamp(20px, 2vw, 28px);
   opacity: .5;
 }
 .landing-page .ui-crosshair::before,
@@ -212,24 +124,46 @@
 .landing-page .ui-crosshair::before { width: 2px; height: 100%; left: 50%; transform: translateX(-50%); }
 .landing-page .ui-crosshair::after  { height: 2px; width: 100%; top: 50%; transform: translateY(-50%); }
 
+/* Background Floating Numbers */
 .landing-page .ui-counter {
   position: absolute;
-  font-size: 15px;
+  /* FLUID FIX: Fonts scale naturally */
+  font-size: clamp(10px, 1vw, 15px);
   letter-spacing: 1.5px;
   color: var(--lp-teal);
   opacity: .6;
   font-family: 'Barlow Condensed', sans-serif;
 }
-.landing-page .ui-counter.c1 { top: 170px; left: 380px; }
-.landing-page .ui-counter.c2 { top: 310px; left: 620px; }
-.landing-page .ui-counter.c3 { top: 470px; left: 200px; }
+/* FLUID FIX: Replaced fixed px positions with percentages so they never float off-screen! */
+.landing-page .ui-counter.c1 { top: 15%; left: 20%; }
+.landing-page .ui-counter.c2 { top: 30%; left: 32%; }
+.landing-page .ui-counter.c3 { top: 45%; left: 10%; }
 
+/* Bottom Left Camera Icon */
+.landing-page .ui-camera {
+  position: absolute;
+  bottom: clamp(12px, 2vh, 20px); 
+  left: clamp(15px, 2vw, 30px);
+  width: clamp(16px, 1.5vw, 22px); 
+  height: clamp(12px, 1vw, 16px);
+  border: 1.5px solid var(--lp-teal);
+  border-radius: 2px;
+  opacity: .5;
+}
+.landing-page .ui-camera::before {
+  content: ''; position: absolute;
+  right: -7px; top: 50%; transform: translateY(-50%);
+  border: clamp(3px, 0.4vw, 5px) solid transparent;
+  border-left: clamp(4px, 0.5vw, 6px) solid var(--lp-teal);
+}
+
+/* ── TEXT CONTENT ─────────────────────────────────────────────── */
 .landing-page .hero-blurb {
   position: absolute;
-  top: 90px;
+  top: clamp(60px, 10vh, 100px); /* Pushes down gently based on screen height */
   left: 9vw;
-  max-width: 280px;
-  font-size: 10px;
+  max-width: clamp(200px, 30vw, 400px); /* Lets the paragraph get wider on large screens */
+  font-size: clamp(10px, 1vw, 14px); /* Fluid text sizing */
   line-height: 1.6;
   color: #fff;
   letter-spacing: .5px;
@@ -256,7 +190,7 @@
   font-weight: 900;
   text-transform: uppercase;
   color: rgba(255,255,255,0.6);
-  line-height: 0.75;
+  line-height: 0.8;
   letter-spacing: -2px;
   text-shadow: 0 10px 40px rgba(0,0,0,0.9);
   opacity: 0;
@@ -264,41 +198,45 @@
   animation: lp-slideUp .7s forwards;
 }
 
-.landing-page .hero-headline .line:nth-child(1) { font-size: clamp(90px, 14vw, 180px);  margin-left: 20%; animation-delay: .1s;  }
-.landing-page .hero-headline .line:nth-child(2) { font-size: clamp(110px, 16vw, 210px); margin-left: 40%; animation-delay: .25s; }
-.landing-page .hero-headline .line:nth-child(3) { font-size: clamp(130px, 18vw, 250px); margin-left: 5%;  animation-delay: .4s;  }
+/* Staggered fluid sizing for the three giant words */
+.landing-page .hero-headline .line:nth-child(1) { font-size: clamp(60px, 12vw, 180px); margin-left: 20%; animation-delay: .1s;  }
+.landing-page .hero-headline .line:nth-child(2) { font-size: clamp(80px, 14vw, 210px); margin-left: 40%; animation-delay: .25s; }
+.landing-page .hero-headline .line:nth-child(3) { font-size: clamp(100px, 16vw, 250px); margin-left: 5%;  animation-delay: .4s;  }
 
-/* Prefixed keyframe name avoids collision with host page animations */
 @keyframes lp-slideUp {
   to { opacity: 1; transform: translateY(0); }
 }
 
 .landing-page .scroll-hint {
   position: absolute;
-  bottom: 30px; right: 65px;
+  bottom: clamp(15px, 3vh, 30px); 
+  right: clamp(15px, 3vw, 65px);
   display: flex; align-items: center; gap: 8px;
-  font-size: 10px; letter-spacing: 2px;
+  font-size: clamp(8px, 0.8vw, 10px); 
+  letter-spacing: 2px;
   text-transform: uppercase; opacity: .55;
 }
-.landing-page .scroll-hint svg { animation: lp-bounce .9s ease-in-out infinite alternate; }
+.landing-page .scroll-hint svg { 
+  width: clamp(8px, 1vw, 12px);
+  animation: lp-bounce .9s ease-in-out infinite alternate; 
+}
 @keyframes lp-bounce { to { transform: translateY(5px); } }
 
-.landing-page .ui-camera {
-  position: absolute;
-  bottom: 16px; left: 22px;
-  width: 22px; height: 16px;
-  border: 1.5px solid var(--lp-teal);
-  border-radius: 2px;
-  opacity: .5;
-}
-.landing-page .ui-camera::before {
-  content: ''; position: absolute;
-  right: -7px; top: 50%; transform: translateY(-50%);
-  border: 5px solid transparent;
-  border-left: 6px solid var(--lp-teal);
+/* ── RESPONSIVE EXCEPTIONS ────────────────────────────────────── */
+@media (max-width: 768px) {
+  .landing-page .hero-blurb { display: none; } /* Hide the tiny text on phones to keep it clean */
+  .landing-page .hero-headline .line { letter-spacing: -1px; } /* Less aggressive squish on mobile */
 }
 
-/* ── RESPONSIVE ───────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  .landing-page .hero-blurb { display: none; }
+.hero-scanlines {
+  /* Existing code... */
+  
+  /* 1. Force the browser to use the GPU */
+  transform: translateZ(0); 
+  
+  /* 2. Tell the browser exactly what will change ahead of time */
+  will-change: transform, opacity; 
+  
+  /* 3. NEVER animate background-position. If it moves, use transform: translateY() */
+  pointer-events: none; /* Stops it from capturing taps and slowing down scrolling */
 }

@@ -6,30 +6,60 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let CURRENT_USER  = null;
-// Cache: { [weapon_id]: { owned, level } }
+// Cache: { [weapon_id]: { owned } }
 let WEAPON_ROSTER = {};
+// Cache: { [weapon_id]: { level } } — sourced from weapon_progress (set in WeaponIntroduction)
+let WEAPON_PROGRESS = {};
 
 async function loadWeaponRoster() {
   if (!CURRENT_USER) return;
   const { data, error } = await db
     .from('user_weapon_roster')
-    .select('weapon_id, owned, level')
+    .select('weapon_id, owned')
     .eq('user_id', CURRENT_USER.id);
   if (error) { console.warn('Weapon roster load error:', error); return; }
   WEAPON_ROSTER = {};
   (data || []).forEach(row => { WEAPON_ROSTER[row.weapon_id] = row; });
 }
 
+// Load levels saved in WeaponIntroduction (weapon_progress table)
+async function loadWeaponProgress() {
+  if (!CURRENT_USER) {
+    // Fall back to localStorage written by WeaponIntroduction
+    try {
+      const all = JSON.parse(localStorage.getItem('wpn_progress_v1') || '{}');
+      WEAPON_PROGRESS = {};
+      Object.entries(all).forEach(([id, val]) => {
+        if (val && val.level != null) WEAPON_PROGRESS[id] = { level: val.level };
+      });
+    } catch { WEAPON_PROGRESS = {}; }
+    return;
+  }
+  try {
+    const { data, error } = await db
+      .from('weapon_progress')
+      .select('weapon_id, level')
+      .eq('user_id', CURRENT_USER.id);
+    if (error) { console.warn('Weapon progress load error:', error); return; }
+    WEAPON_PROGRESS = {};
+    (data || []).forEach(row => { if (row.level != null) WEAPON_PROGRESS[row.weapon_id] = { level: row.level }; });
+  } catch(e) { console.warn('Weapon progress fetch failed:', e); }
+}
+
+function getProgressLevel(id) {
+  return WEAPON_PROGRESS[id]?.level ?? null;
+}
+
 async function upsertWeaponEntry(weaponId, patch) {
   if (!CURRENT_USER) return;
-  const existing = WEAPON_ROSTER[weaponId] || { owned: false, level: null };
+  const existing = WEAPON_ROSTER[weaponId] || { owned: false };
   const updated  = { ...existing, ...patch };
   WEAPON_ROSTER[weaponId] = updated;
   const { error } = await db.from('user_weapon_roster').upsert({
     user_id:    CURRENT_USER.id,
     weapon_id:  weaponId,
     owned:      updated.owned,
-    level:      updated.level !== null ? parseInt(updated.level) : null,
+    level:      null,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id,weapon_id' });
   if (error) console.warn('Weapon roster save error:', error);
@@ -139,7 +169,8 @@ function createCard(w) {
     : '';
 
   const entry   = getWeaponEntry(w.id);
-  const isOwned = !!entry.owned;
+  const progressLevel = getProgressLevel(w.id);
+  const isOwned = !!entry.owned || progressLevel !== null;
   const drawerVisible = isOwned ? ' open' : '';
 
   return `
@@ -151,7 +182,7 @@ function createCard(w) {
          data-atk="${w.base_atk || 0}"
          data-tags="${w._tags.join('|')}"
          data-owned="${isOwned}"
-         data-level="${entry.level || ''}">
+         data-level="${progressLevel !== null ? progressLevel : ''}">
 
       <div class="wpn-card rarity-${w.rarity} bg-${typeKey}${isOwned ? ' card-owned' : ''}"
            onclick="cardNavigate(event, '${w.id}')">
@@ -194,12 +225,10 @@ function createCard(w) {
 
       <div class="wpn-drawer${drawerVisible}">
         <div class="drawer-inner">
-          <label class="drawer-field">
+          <div class="drawer-field">
             <span class="drawer-lbl">Level</span>
-            <input class="drawer-input" type="number" min="1" max="90" placeholder="—"
-              value="${entry.level || ''}"
-              oninput="saveWeaponLevel(event, '${w.id}')">
-          </label>
+            <span class="drawer-level-val">${progressLevel !== null ? progressLevel + ' / ' + (w.rarity >= 5 ? 90 : 80) : '—'}</span>
+          </div>
         </div>
       </div>
 
@@ -274,9 +303,12 @@ async function init() {
 
   await loadWeaponsFromDB();
   if (CURRENT_USER) await loadWeaponRoster();
+  try { await loadWeaponProgress(); } catch(e) { console.warn("loadWeaponProgress error:", e); }
 
   grid.innerHTML = WEAPONS.map(createCard).join('');
   applySort();
+  updateFilters();
+
 
   // Inject icons into type / rarity filter pills
   document.querySelectorAll('.filter-row .pill').forEach(pill => {
@@ -327,25 +359,6 @@ async function toggleOwned(event, id) {
 
   if (filterOwned || filterLevelActive) updateFilters();
   if (currentSort === 'level') applySort();
-}
-
-// ==========================================
-// LEVEL SAVE
-// ==========================================
-function saveWeaponLevel(event, id) {
-  if (!CURRENT_USER) return;
-  const input = event.target;
-  let val = parseInt(input.value);
-  if (isNaN(val) || input.value === '') { val = null; }
-  else { val = Math.min(90, Math.max(1, val)); input.value = val; }
-
-  const wrap = document.querySelector(`.wpn-card-wrap[data-id="${id}"]`);
-  if (wrap) wrap.dataset.level = val !== null ? String(val) : '';
-
-  if (currentSort === 'level') applySort();
-  if (filterLevelActive) updateFilters();
-
-  wpnDebounce('level-' + id, () => upsertWeaponEntry(id, { level: val }));
 }
 
 // ==========================================
@@ -503,6 +516,182 @@ window.addEventListener('scroll', () => {
 
 filterToggleBtn.addEventListener('click', () => {
   filterZone.classList.toggle('dropdown-open');
+});
+
+// ==========================================
+// GUIDED TOUR
+// ==========================================
+const TOUR_STEPS = [
+  {
+    targetId: 'wpnSearch',
+    title: 'Search Weapons',
+    desc: 'Type any weapon name here to instantly filter the grid. Results update as you type — no need to hit Enter.',
+    cardPos: 'below-right',
+    pad: 8,
+  },
+  {
+    targetId: 'filterZone',
+    title: 'Filters & Sorting',
+    desc: 'Click <b>Filters</b> to open the full filter panel. You can narrow results by <b>Rarity</b>, <b>Type</b>, and individual <b>Stat tags</b>. The <b>Owned Only</b> toggle shows just the weapons you\'ve marked. Use the <b>Sort By</b> buttons to order by Rarity, Name, Base ATK, or Level.',
+    cardPos: 'below-right',
+    pad: 8,
+  },
+  {
+    targetId: 'filterRow',
+    title: 'Filter Pills',
+    desc: 'Select one or more pills to combine filters — e.g. pick <b>6 ★</b> + <b>Sword</b> to see only 6-star swords. The <b>Stat</b> row lets you filter by secondary stats like <b>ATK%</b>, <b>Crit Rate</b>, or damage types. Hit <b>✕ Reset Filters</b> to clear everything.',
+    cardPos: 'below-right',
+    pad: 8,
+    preOpen: true,
+  },
+  {
+    targetId: 'cardGrid',
+    title: 'Weapon Cards',
+    desc: 'Each card shows the weapon\'s <b>art</b>, <b>type</b>, <b>rarity</b>, <b>Base ATK</b>, and <b>sub-stats</b>. Click the <b>▾ button</b> at the bottom-right of a card to preview its <b>Passive</b> inline. <b>Click anywhere else</b> on the card to open the full detail page.',
+    cardPos: 'above-left',
+    pad: 12,
+  },
+  {
+    targetId: 'cardGrid',
+    title: 'Owned Badge',
+    desc: 'The <b>circle in the top-left</b> of each card is the owned toggle. Click it to mark a weapon as owned — it turns green and the card gains a green highlight. Use the <b>Owned Only</b> filter to show only your collection.',
+    cardPos: 'above-left',
+    pad: 12,
+  },
+  {
+    targetId: 'helpBtn',
+    title: 'That\'s Everything!',
+    desc: 'You\'re all set. Click any card to open the full <b>Weapon Introduction</b> page where you can track level, skill levels, notes, and tags. Click the <b>?</b> button here any time to replay this tour.',
+    cardPos: 'below-left',
+    pad: 10,
+  },
+];
+
+let tourStepIdx = 0;
+let tourActive  = false;
+let _tourFilterWasOpen = false;
+
+function startTour() {
+  tourActive  = true;
+  tourStepIdx = 0;
+  document.getElementById('tourOverlay').classList.add('active');
+  renderTourStep(tourStepIdx);
+}
+
+function endTour() {
+  tourActive = false;
+  document.getElementById('tourOverlay').classList.remove('active');
+  // close filter dropdown if we opened it
+  if (_tourFilterWasOpen) {
+    filterZone.classList.remove('dropdown-open');
+    _tourFilterWasOpen = false;
+  }
+}
+
+function tourStep(delta) {
+  const next = tourStepIdx + delta;
+  // Close filter if leaving step that opened it
+  if (tourStepIdx === 2 && delta > 0 && _tourFilterWasOpen) {
+    filterZone.classList.remove('dropdown-open');
+    _tourFilterWasOpen = false;
+  }
+  tourStepIdx = Math.max(0, Math.min(TOUR_STEPS.length - 1, next));
+  renderTourStep(tourStepIdx);
+}
+
+function renderTourStep(idx) {
+  const step  = TOUR_STEPS[idx];
+  const total = TOUR_STEPS.length;
+
+  // pre-open filter dropdown for step index 2 (filter pills step)
+  if (step.preOpen) {
+    if (!filterZone.classList.contains('dropdown-open')) {
+      filterZone.classList.add('dropdown-open');
+      _tourFilterWasOpen = true;
+    }
+  }
+
+  // dots
+  let dots = '';
+  for (let i = 0; i < total; i++) dots += `<div class="tour-dot${i===idx?' active':''}"></div>`;
+  document.getElementById('tourDots').innerHTML    = dots;
+  document.getElementById('tourStepNum').textContent = `Step ${idx+1} of ${total}`;
+  document.getElementById('tourTitle').textContent  = step.title;
+  document.getElementById('tourDesc').innerHTML     = step.desc;
+
+  const prev = document.getElementById('tourPrev');
+  const next = document.getElementById('tourNext');
+  prev.style.display = idx === 0 ? 'none' : '';
+  next.textContent   = idx === total - 1 ? 'Finish ✓' : 'Next →';
+  next.onclick       = idx === total - 1 ? endTour : () => tourStep(1);
+
+  // Use a small delay so dropdown animation finishes before measuring
+  setTimeout(() => positionTourStep(step), step.preOpen ? 60 : 0);
+}
+
+function positionTourStep(step) {
+  const target = document.getElementById(step.targetId);
+  if (!target) return;
+
+  const rect = target.getBoundingClientRect();
+  const pad  = step.pad || 8;
+  const sp   = document.getElementById('tourSpotlight');
+  sp.style.top    = (rect.top    - pad) + 'px';
+  sp.style.left   = (rect.left   - pad) + 'px';
+  sp.style.width  = (rect.width  + pad*2) + 'px';
+  sp.style.height = (rect.height + pad*2) + 'px';
+
+  const card = document.getElementById('tourCard');
+  const vw   = window.innerWidth;
+  const vh   = window.innerHeight;
+  const isMobile = vw <= 600;
+  const cardW    = isMobile ? vw - 24 : 300;
+  const cardH    = 220;
+
+  if (isMobile) {
+    card.style.left   = '12px';
+    card.style.right  = '12px';
+    card.style.width  = '';
+    card.style.bottom = '16px';
+    card.style.top    = 'auto';
+    return;
+  }
+
+  card.style.bottom = '';
+  card.style.right  = '';
+  card.style.width  = '';
+
+  let cx, cy;
+  const pos = step.cardPos || 'below-right';
+  if (pos === 'below-right') {
+    cx = rect.left;
+    cy = rect.bottom + pad + 12;
+  } else if (pos === 'below-left') {
+    cx = Math.min(rect.right - cardW, vw - cardW - 16);
+    cy = rect.bottom + pad + 12;
+  } else if (pos === 'above-left') {
+    cx = Math.min(rect.right - cardW, vw - cardW - 16);
+    cy = rect.top - cardH - pad - 12;
+  } else if (pos === 'right') {
+    cx = rect.right + pad + 16;
+    cy = rect.top + rect.height / 2 - cardH / 2;
+  } else if (pos === 'left') {
+    cx = rect.left - cardW - pad - 16;
+    cy = rect.top + rect.height / 2 - cardH / 2;
+  }
+
+  cx = Math.max(12, Math.min(vw - cardW - 12, cx));
+  cy = Math.max(12, Math.min(vh - cardH - 12, cy));
+
+  card.style.left = cx + 'px';
+  card.style.top  = cy + 'px';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && tourActive) endTour();
+});
+window.addEventListener('resize', () => {
+  if (tourActive) renderTourStep(tourStepIdx);
 });
 
 init();

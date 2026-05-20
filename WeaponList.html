@@ -6,22 +6,42 @@
   <title>DJIANG — Weapon Database</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/WeaponList.css">
   <link rel="stylesheet" href="css/NavBar.css">
   <link rel="stylesheet" href="css/WipeHover.css">
   <link rel="stylesheet" href="css/MainStyle.css">
   <link rel="stylesheet" href="css/LogIn.css">
+  <link rel="stylesheet" href="css/WeaponList.css">
 </head>
 <body>
 
-<div class="container">
-  <div class="page-hero">
-    <div class="hero-flex">
-      <div class="hero-left">
-        <h1>Weapon Database</h1>
-        <div class="sub">Arknights: Endfield · Weapon Overview</div>
+<!-- GUIDED TOUR OVERLAY -->
+<div class="tour-overlay" id="tourOverlay">
+  <div class="tour-spotlight" id="tourSpotlight"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-step-label">
+      <span id="tourStepNum">Step 1 of 6</span>
+      <div class="tour-step-dots" id="tourDots"></div>
+    </div>
+    <div class="tour-title" id="tourTitle">Welcome</div>
+    <div class="tour-desc" id="tourDesc">Let's walk you through the page.</div>
+    <div class="tour-actions">
+      <button class="tour-skip" id="tourSkip" onclick="endTour()">Skip Tour</button>
+      <div class="tour-nav">
+        <button class="tour-btn" id="tourPrev" onclick="tourStep(-1)">← Back</button>
+        <button class="tour-btn primary" id="tourNext" onclick="tourStep(1)">Next →</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <div class="page-hero">
+    <div class="hero-left">
+      <h1>Weapon Database</h1>
+      <div class="sub">Arknights: Endfield · Weapon Overview</div>
+    </div>
+    <button class="help-btn" id="helpBtn" onclick="startTour()" title="Page Tour">?</button>
   </div>
 
   <div class="filter-zone" id="filterZone">
@@ -35,7 +55,6 @@
 
     <div class="filter-row" id="filterRow">
 
-      <!-- Rarity -->
       <div class="fgroup">
         <div class="flabel">Rarity</div>
         <div class="fpills" data-group="rarity">
@@ -46,7 +65,6 @@
         </div>
       </div>
 
-      <!-- Type -->
       <div class="fgroup">
         <div class="flabel">Type</div>
         <div class="fpills" data-group="type">
@@ -58,7 +76,6 @@
         </div>
       </div>
 
-      <!-- Stat Tags (from Prydwen) -->
       <div class="fgroup full-width">
         <div class="flabel">Filter by Stat</div>
         <div class="fpills" data-group="stat">
@@ -82,28 +99,10 @@
         </div>
       </div>
 
-      <!-- Roster -->
       <div class="fgroup">
         <div class="flabel">Roster</div>
         <div class="fpills">
           <button class="pill" id="pill-owned" data-val="owned">✓ Owned Only</button>
-        </div>
-      </div>
-
-      <!-- Level Range -->
-      <div class="fgroup fgroup-level">
-        <div class="flabel">Weapon Level</div>
-        <div class="level-range-wrap">
-          <div class="level-range-labels">
-            <span id="filter-lv-min-out">1</span>
-            <span class="level-range-sep">—</span>
-            <span id="filter-lv-max-out">90</span>
-          </div>
-          <div class="level-sliders">
-            <input type="range" id="filter-lv-min" class="lv-slider" min="1" max="90" value="1" step="1">
-            <input type="range" id="filter-lv-max" class="lv-slider" min="1" max="90" value="90" step="1">
-          </div>
-          <div class="level-range-hint">Only matches weapons with a saved level</div>
         </div>
       </div>
 
@@ -112,9 +111,9 @@
   </div>
 
   <div class="results-row">
-    <div class="results-text">Showing <span id="visNum">68</span> weapons</div>
+    <div class="results-text">Showing <span id="visNum">0</span> weapons</div>
     <div class="sort-group">
-      <span class="flabel" style="margin-right: 8px;">Sort By:</span>
+      <span class="flabel">Sort By:</span>
       <button class="pill sort-btn active" data-sort="rarity">Rarity</button>
       <button class="pill sort-btn" data-sort="name">Name</button>
       <button class="pill sort-btn" data-sort="atk">Base ATK</button>
@@ -123,6 +122,7 @@
   </div>
 
   <div class="card-grid" id="cardGrid"></div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

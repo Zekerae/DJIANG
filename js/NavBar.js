@@ -278,3 +278,100 @@ const NavBar = (() => {
 
   return { init, toggleSidebar };
 })();
+
+/* ═══════════════════════════════════════════════
+   SMART SCROLL-SPY (Prevents Blank Navbar Bug)
+═══════════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", () => {
+  const sections = document.querySelectorAll("section, [id]");
+  const navLinks = document.querySelectorAll(".nav-links a, .nav-links .nav-btn");
+
+  // SAFETY NET: If no link is active on page load, force the first one (HOME) to be active
+  if (!document.querySelector(".nav-links .active") && navLinks.length > 0) {
+      navLinks[0].classList.add("active");
+  }
+
+  window.addEventListener("scroll", () => {
+      let currentSectionId = "";
+
+      // 1. Find which section is currently in the viewport
+      sections.forEach((section) => {
+          const sectionTop = section.offsetTop;
+          if (window.scrollY >= sectionTop - 160) {
+              currentSectionId = section.getAttribute("id");
+          }
+      });
+
+      if (currentSectionId) {
+          // 2. THE FIX: Search the navbar for a button that matches this section's ID
+          // Using .includes() is much safer in case your href looks like "index.html#events"
+          const targetLink = Array.from(navLinks).find(
+              link => link.href.includes(`#${currentSectionId}`) || link.dataset.target === currentSectionId
+          );
+
+          // 3. ONLY wipe the menu and switch IF a matching button actually exists!
+          if (targetLink) {
+              navLinks.forEach(l => l.classList.remove("active"));
+              targetLink.classList.add("active");
+          }
+      }
+  });
+});
+
+/* ═══════════════════════════════════════════════
+   SMART VIDEO FEED (Observer + Manual Override)
+═══════════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", () => {
+  const videoFrame = document.getElementById("ei-youtube-video");
+  const toggleBtn = document.getElementById("video-toggle-btn");
+  const infoSection = document.getElementById("endfield-info");
+
+  if (!videoFrame || !infoSection) return;
+
+  let feedActive = true;        // Tracks if the video is currently playing
+  let isManuallyPaused = false; // Tracks if the user intentionally locked it
+
+  // 1. MANUAL OVERRIDE (The Button)
+  if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+          if (feedActive) {
+              // Pause it securely
+              videoFrame.contentWindow.postMessage(JSON.stringify({"event": "command", "func": "pauseVideo", "args": ""}), "*");
+              toggleBtn.classList.add("paused");
+              toggleBtn.querySelector(".btn-text").textContent = "RESUME FEED";
+              
+              feedActive = false;
+              isManuallyPaused = true; // LOCK the state!
+          } else {
+              // Resume it securely
+              videoFrame.contentWindow.postMessage(JSON.stringify({"event": "command", "func": "playVideo", "args": ""}), "*");
+              toggleBtn.classList.remove("paused");
+              toggleBtn.querySelector(".btn-text").textContent = "PAUSE FEED";
+              
+              feedActive = true;
+              isManuallyPaused = false; // UNLOCK the state!
+          }
+      });
+  }
+
+  // 2. AUTOMATIC OBSERVER (The Scroll Spy)
+  const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+          // A. If it leaves the screen, and it's currently playing, pause it to save bandwidth!
+          if (!entry.isIntersecting && feedActive) {
+              videoFrame.contentWindow.postMessage(JSON.stringify({"event": "command", "func": "pauseVideo", "args": ""}), "*");
+              feedActive = false; 
+              // Notice we do NOT change the UI button or the manual lock here. 
+              // It pauses silently in the background.
+          } 
+          // B. If it comes back on screen, ONLY play it if the user hasn't manually locked it!
+          else if (entry.isIntersecting && !feedActive && !isManuallyPaused) {
+              videoFrame.contentWindow.postMessage(JSON.stringify({"event": "command", "func": "playVideo", "args": ""}), "*");
+              feedActive = true;
+          }
+      });
+  }, { threshold: 0.1 }); // Triggers when 10% of the section is visible
+
+  // Start watching the section
+  videoObserver.observe(infoSection);
+});
