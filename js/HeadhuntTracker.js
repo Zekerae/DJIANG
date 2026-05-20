@@ -79,7 +79,7 @@ const SHOP_UNIT_CFG = {
 
 // 🔧 Replace with your actual Vercel deployment URL after deploying
 const CORS_PROXIES = [
-  url => `https://djiang.vercel.app/api/proxy?url=${encodeURIComponent(url)}`,
+  url => `https://djiang.site/api/proxy?url=${encodeURIComponent(url)}`,
 ];
 
 /* ════════════════════════════════════
