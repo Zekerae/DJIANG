@@ -377,7 +377,7 @@ body::after {
 .me-mat-list::-webkit-scrollbar-thumb { background: var(--bg3); }
 .me-mat-group-head {
   padding: 4px 9px; font-family: var(--font-mono); font-size: 7px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--gold2); background: rgba(212,148,58,0.05);
+  text-transform: uppercase; color: var(--gold2); background: rgb(15, 15, 15);
   border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1;
 }
 .me-mat-item {
@@ -472,10 +472,69 @@ body::after {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--bg3); }
+
+
+/* ── UNIFIED TOPBAR NAV (Matches Admin Dash) ── */
+.me-topbar {
+  height: 52px;
+  background: rgba(6,8,13,0.97);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+  backdrop-filter: blur(20px) saturate(1.2);
+}
+.me-topbar-left { display: flex; align-items: center; gap: 16px; }
+.me-topbar-logo { font-family: 'HarmonyOS Sans', 'Poppins', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 6px; color: #fff; text-transform: uppercase; position: relative; }
+.me-topbar-logo::after { content: ''; display: block; height: 1px; background: linear-gradient(90deg, var(--teal), transparent); margin-top: 2px; opacity: 0.7; }
+.me-topbar-sep { width: 1px; height: 20px; background: var(--border2); }
+.me-topbar-badge { display: flex; align-items: center; gap: 6px; font-family: 'Poppins', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); padding: 3px 10px; border: 1px solid rgba(212,148,58,0.35); border-radius: 2px; background: rgba(212,148,58,0.07); }
+.me-topbar-badge::before { content: '■'; font-size: 5px; opacity: 0.7; }
+
+.me-btn-back {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  color: var(--dim2);
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.me-btn-back:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  box-shadow: 0 0 12px rgba(0,229,192,0.15);
+}
 </style>
 </head>
 <body>
-
+<div class="me-topbar">
+    <div class="me-topbar-left">
+      <div class="me-topbar-logo">DJIANG</div>
+      <div class="me-topbar-sep"></div>
+      <div class="me-topbar-badge">Map Editor</div>
+    </div>
+    <div>
+      <a href="admin.html" class="me-btn-back">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Console
+      </a>
+    </div>
+  </div>
 <!-- DB STATUS — remove this bar when embedding in admin (use admin's own status) -->
 <div class="me-db-bar">
   <div class="me-db-dot loading" id="me-db-dot"></div>
